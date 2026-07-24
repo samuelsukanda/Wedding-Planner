@@ -36,12 +36,17 @@
                     class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden flex flex-col hover:border-[#D8A7B1] transition-all group">
                     <!-- Visual Card Header -->
                     <div
-                        class="relative h-44 sm:h-48 bg-gradient-to-tr from-[#D8A7B1]/20 via-[#FAF7F2] to-[#A3B7A6]/20 flex items-center justify-center overflow-hidden">
-                        <div class="text-center p-6 space-y-2">
-                            <i class="fa-solid fa-wand-magic-sparkles text-[#D8A7B1] text-3xl"></i>
-                            <div class="text-xs text-[#5F6F5B] font-semibold tracking-wide uppercase">{{ $mb->category }}
+                        class="relative h-44 sm:h-48 flex items-center justify-center overflow-hidden @if(!$mb->link_preview) bg-gradient-to-tr from-[#D8A7B1]/20 via-[#FAF7F2] to-[#A3B7A6]/20 @endif">
+                        @if($mb->link_preview)
+                            <img src="{{ $mb->link_preview }}" alt="{{ $mb->title }}" class="w-full h-full object-cover"
+                                onerror="this.closest('.relative').classList.add('bg-gradient-to-tr', 'from-[#D8A7B1]/20', 'via-[#FAF7F2]', 'to-[#A3B7A6]/20'); this.remove();">
+                        @else
+                            <div class="text-center p-6 space-y-2">
+                                <i class="fa-solid fa-wand-magic-sparkles text-[#D8A7B1] text-3xl"></i>
+                                <div class="text-xs text-[#5F6F5B] font-semibold tracking-wide uppercase">{{ $mb->category }}
+                                </div>
                             </div>
-                        </div>
+                        @endif
                         <span
                             class="absolute top-3 right-3 bg-white/90 backdrop-blur text-[#5F6F5B] text-[10px] font-bold px-2.5 py-1 rounded-full border border-[#B6ADA3]/30 shadow-xs">
                             {{ $mb->category }}

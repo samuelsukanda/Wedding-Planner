@@ -16,6 +16,7 @@ class Moodboard extends Model
         'image',
         'description',
         'link_reference',
+        'link_preview',
         'notes',
     ];
 

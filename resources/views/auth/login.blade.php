@@ -12,7 +12,7 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="shortcut icon" href="{{ asset('build/img/icon.jpg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('img/icon.jpg') }}" type="image/x-icon">
     @vite(['resources/css/app.css'])
     <style>
         * {
@@ -222,10 +222,10 @@
         </div>
     </div>
 
-<script>
-sessionStorage.removeItem('sidebarScrollPos');
-sessionStorage.removeItem('adminRestore');
-</script>
+    <script>
+        sessionStorage.removeItem('sidebarScrollPos');
+        sessionStorage.removeItem('adminRestore');
+    </script>
 </body>
 
 </html>

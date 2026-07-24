@@ -9,7 +9,7 @@
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
-    <link rel="shortcut icon" href="{{ asset('build/img/icon.jpg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('img/icon.jpg') }}" type="image/x-icon">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -568,7 +568,7 @@
         <div class="p-5 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md">
-                    <img src="{{ asset('build/img/logo.png') }}" alt="Logo">
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo">
                 </div>
                 <div>
                     <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight">Samuel & Angela</h1>
