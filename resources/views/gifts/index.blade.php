@@ -21,21 +21,21 @@
         </div>
 
         <!-- Summary Widgets -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-center">
+        <div class="grid grid-cols-3 gap-3">
+            <div class="bg-white p-3 sm:p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs text-center">
                 <div class="text-xs text-[#5F6F5B] mb-1">Total Hadiah Tercatat</div>
-                <div class="text-3xl font-bold">{{ $gifts->count() }}</div>
+                <div class="text-xl sm:text-2xl font-bold">{{ $gifts->count() }}</div>
                 <div class="text-xs text-[#5F6F5B] font-medium mt-1">Item Terdaftar</div>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-center">
+            <div class="bg-white p-3 sm:p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs text-center">
                 <div class="text-xs text-[#5F6F5B] mb-1">Total Amplop (Cash)</div>
                 <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">Rp {{ number_format($totalCash, 0, ',', '.') }}
                 </div>
                 <div class="text-xs text-[#5F6F5B] font-medium mt-1">+ {{ $totalGoodsCount }} Hadiah Barang</div>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-center">
+            <div class="bg-white p-3 sm:p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs text-center">
                 <div class="text-xs text-[#5F6F5B] mb-1">Thank You Terkirim</div>
-                <div class="text-3xl font-bold text-[#5F6F5B]">{{ $thankYouSentCount }}</div>
+                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $thankYouSentCount }}</div>
                 <div class="text-xs text-[#5F6F5B] font-medium mt-1">dari {{ $gifts->count() }} Total Tamu</div>
             </div>
         </div>
