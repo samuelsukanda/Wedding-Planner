@@ -178,10 +178,6 @@
         <h1>Wedding Planner</h1>
         <p class="subtitle">Masuk untuk mengelola acara pernikahan</p>
 
-        <p style="font-size:11px;color:#B6ADA3;text-align:center;margin-bottom:20px;">
-            Demo: <strong>admin@gmail.com</strong> / <strong>lopyu</strong>
-        </p>
-
         @if ($errors->any())
             <div class="error">
                 <i class="fa-solid fa-circle-exclamation"></i>
