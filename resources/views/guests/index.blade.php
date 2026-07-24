@@ -9,13 +9,13 @@
             <div>
                 <h1 class="text-2xl font-bold font-serif-title">Guest Management</h1>
             </div>
-            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <div class="grid grid-cols-2 gap-3 w-full md:w-auto md:flex md:items-center md:gap-3">
                 <a href="{{ route('guests.export') }}"
-                    class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm flex items-center justify-center gap-2 shadow-xs font-semibold w-full sm:w-auto">
+                    class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm flex items-center justify-center gap-2 shadow-xs font-semibold w-full md:w-auto">
                     <i class="fa-solid fa-file-excel text-[#D8A7B1]"></i> Export Excel
                 </a>
                 <button @click="modalOpen = true; editMode = false; currentItem = {}"
-                    class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
+                    class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
                     <i class="fa-solid fa-plus"></i> Tambah Tamu
                 </button>
             </div>
@@ -48,27 +48,29 @@
         <!-- Search & Filter Bar -->
         <form method="GET" action="{{ route('guests.index') }}"
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
-            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama tamu..."
-                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full sm:w-56">
-                <select name="category" onchange="this.form.submit()"
-                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-1/2 sm:w-auto">
-                    <option value="">Semua Kategori</option>
-                    @foreach ($categories as $cat)
-                        <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
-                            {{ $cat }}
-                        </option>
-                    @endforeach
-                </select>
-                <select name="status" onchange="this.form.submit()"
-                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-1/2 sm:w-auto">
-                    <option value="">Semua Kehadiran</option>
-                    @foreach ($statuses as $st)
-                        <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
-                            {{ $st }}
-                        </option>
-                    @endforeach
-                </select>
+                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
+                <div class="grid grid-cols-2 gap-3 md:flex md:items-center md:gap-3">
+                    <select name="category" onchange="this.form.submit()"
+                        class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
+                        <option value="">Semua Kategori</option>
+                        @foreach ($categories as $cat)
+                            <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
+                                {{ $cat }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <select name="status" onchange="this.form.submit()"
+                        class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
+                        <option value="">Semua Kehadiran</option>
+                        @foreach ($statuses as $st)
+                            <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
+                                {{ $st }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
             @if (request()->anyFilled(['search', 'category', 'status']))
                 <a href="{{ route('guests.index') }}"

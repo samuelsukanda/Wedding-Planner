@@ -14,7 +14,7 @@
             <div>
                 <h1 class="text-2xl font-bold font-serif-title">Laporan & Rekap Pernikahan</h1>
             </div>
-            <div class="no-print flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <div class="no-print grid grid-cols-2 gap-3 w-full md:w-auto sm:flex sm:items-center sm:gap-3">
                 <button onclick="printSection('report-content')"
                     class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm flex items-center justify-center gap-2 shadow-xs font-semibold cursor-pointer w-full sm:w-auto">
                     <i class="fa-solid fa-print text-[#D8A7B1]"></i> Cetak Laporan
@@ -121,10 +121,10 @@
                 <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
                     <i class="fa-solid fa-handshake text-[#D8A7B1]"></i> Rekap Status Vendor
                 </h3>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-3 gap-3">
                     @foreach ($vendorStatusSummary as $status => $count)
-                        <div class="p-3 rounded-xl border text-center bg-[#FAF7F2] border-[#B6ADA3]/30">
-                            <div class="text-xl font-bold text-[#5F6F5B]">
+                        <div class="p-3 sm:p-4 rounded-xl border text-center bg-[#FAF7F2] border-[#B6ADA3]/30">
+                            <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">
                                 {{ $count }}
                             </div>
                             <div class="text-xs text-[#5F6F5B] font-medium">{{ $status }}</div>

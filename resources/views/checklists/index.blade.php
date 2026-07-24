@@ -50,27 +50,29 @@
         <!-- Filter & Search Bar -->
         <form method="GET" action="{{ route('checklists.index') }}"
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
-            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama checklist..."
-                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full sm:w-56">
+                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
 
-                <select name="status" onchange="this.form.submit()"
-                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-1/2 sm:w-auto">
-                    <option value="">Semua Status</option>
-                    @foreach ($statuses as $st)
-                        <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
-                            {{ $st }}</option>
-                    @endforeach
-                </select>
+                <div class="grid grid-cols-2 gap-3 md:flex md:items-center md:gap-3">
+                    <select name="status" onchange="this.form.submit()"
+                        class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
+                        <option value="">Semua Status</option>
+                        @foreach ($statuses as $st)
+                            <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
+                                {{ $st }}</option>
+                        @endforeach
+                    </select>
 
-                <select name="priority" onchange="this.form.submit()"
-                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-1/2 sm:w-auto">
-                    <option value="">Semua Prioritas</option>
-                    @foreach ($priorities as $pr)
-                        <option value="{{ $pr }}" {{ request('priority') == $pr ? 'selected' : '' }}>
-                            {{ $pr }} Priority</option>
-                    @endforeach
-                </select>
+                    <select name="priority" onchange="this.form.submit()"
+                        class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
+                        <option value="">Semua Prioritas</option>
+                        @foreach ($priorities as $pr)
+                            <option value="{{ $pr }}" {{ request('priority') == $pr ? 'selected' : '' }}>
+                                {{ $pr }} Priority</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             @if (request()->anyFilled(['search', 'status', 'priority']))

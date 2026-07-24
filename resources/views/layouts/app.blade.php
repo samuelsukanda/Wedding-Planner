@@ -9,6 +9,7 @@
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
+    <link rel="shortcut icon" href="{{ asset('build/img/icon.jpg') }}" type="image/x-icon">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,6 +76,7 @@
            PRINT STYLES — targets precise IDs, hides UI chrome
         ============================================================ */
         @media print {
+
             /* ---- Hide sidebar, mobile top bar, desktop header, footer, modal, action buttons ---- */
             aside,
             header,
@@ -171,7 +173,8 @@
                 border-collapse: collapse !important;
             }
 
-            th, td {
+            th,
+            td {
                 border: 1px solid #ccc !important;
                 padding: 6pt 8pt !important;
                 font-size: 10pt !important;
@@ -462,22 +465,66 @@
             };
         }
 
-        // Simpan & restore scroll posisi sidebar agar tidak kembali ke atas setelah reload
-        (function() {
-            const sidebarNav = document.querySelector('nav.flex-1.overflow-y-auto');
+        // Simpan & restore posisi scroll sidebar (agar tidak kembali ke atas)
+        document.addEventListener('DOMContentLoaded', function() {
+            var sidebarNav = document.querySelector('nav.flex-1.overflow-y-auto');
             if (sidebarNav) {
-                // Restore posisi scroll
-                const savedPos = sessionStorage.getItem('sidebarScrollPos');
-                if (savedPos) {
-                    sidebarNav.scrollTop = parseInt(savedPos, 10);
-                }
-                // Simpan posisi saat klik link di sidebar
+                var saved = sessionStorage.getItem('sidebarScrollPos');
+                if (saved) sidebarNav.scrollTop = parseInt(saved, 10);
                 sidebarNav.addEventListener('click', function(e) {
-                    const link = e.target.closest('a');
+                    var link = e.target.closest('a');
                     if (link && link.getAttribute('href')) {
                         sessionStorage.setItem('sidebarScrollPos', sidebarNav.scrollTop);
                     }
                 });
+            }
+        });
+
+        // Simpan & restore posisi scroll halaman khusus admin panel (master dropdown)
+        (function() {
+            var isAdminPage = window.location.pathname.indexOf('/admin') !== -1;
+            var isDropdownTab = window.location.search.indexOf('tab=dropdowns') !== -1;
+            if (!isAdminPage && !isDropdownTab) return;
+
+            // Nonaktifkan scroll restoration bawaan browser
+            if (window.history && window.history.scrollRestoration) {
+                window.history.scrollRestoration = 'manual';
+            }
+
+            // Elemen scroll utama adalah #main-content (overflow-y-auto), BUKAN window
+            var scrollContainer = function() {
+                return document.querySelector('#main-content');
+            };
+
+            // Simpan scroll & flag hanya saat klik group dropdown di admin
+            function saveScroll(e) {
+                var link = e.target.closest('a[href*="tab=dropdowns"][href*="group="]');
+                if (link) {
+                    var el = scrollContainer();
+                    if (el) {
+                        sessionStorage.setItem('adminScrollY', el.scrollTop);
+                        sessionStorage.setItem('adminRestore', '1');
+                    }
+                }
+            }
+            document.addEventListener('click', saveScroll);
+
+            // Restore scroll hanya jika ada flag (berarti navigasi dari klik group dropdown)
+            if (sessionStorage.getItem('adminRestore') === '1') {
+                sessionStorage.removeItem('adminRestore');
+
+                function doRestore() {
+                    var saved = sessionStorage.getItem('adminScrollY');
+                    if (saved) {
+                        var el = scrollContainer();
+                        if (el) el.scrollTop = parseInt(saved, 10);
+                    }
+                }
+                if (document.readyState === 'complete') {
+                    doRestore();
+                } else {
+                    window.addEventListener('load', doRestore);
+                }
             }
         })();
     </script>
@@ -521,7 +568,7 @@
         <div class="p-5 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md">
-                    <img src="{{ asset('build/assets/logo.png') }}" alt="Logo">
+                    <img src="{{ asset('build/img/logo.png') }}" alt="Logo">
                 </div>
                 <div>
                     <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight">Samuel & Angela</h1>
@@ -621,6 +668,17 @@
                 <i class="fa-solid fa-sliders w-5 text-center text-[#D8A7B1]"></i>
                 <span>Admin Panel</span>
             </a>
+
+            <div class="border-t border-[#B6ADA3]/30 my-3 mx-3"></div>
+
+            <form method="POST" action="{{ route('logout') }}" class="px-3">
+                @csrf
+                <button type="submit"
+                    class="flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#B6ADA3] hover:bg-[#FAF7F2] hover:text-[#D8A7B1] cursor-pointer transition-all">
+                    <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
+                    <span>Keluar</span>
+                </button>
+            </form>
         </nav>
     </aside>
 

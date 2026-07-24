@@ -18,25 +18,27 @@
         <!-- Filter Bar -->
         <form method="GET" action="{{ route('vendors.index') }}"
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
-            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama vendor..."
-                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full sm:w-56">
-                <select name="category" onchange="this.form.submit()"
-                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-1/2 sm:w-auto">
-                    <option value="">Semua Kategori Vendor</option>
-                    @foreach ($categories as $cat)
-                        <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
-                            {{ $cat }}</option>
-                    @endforeach
-                </select>
-                <select name="status" onchange="this.form.submit()"
-                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-1/2 sm:w-auto">
-                    <option value="">Semua Status Booking</option>
-                    @foreach ($statuses as $st)
-                        <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
-                            {{ $st }}</option>
-                    @endforeach
-                </select>
+                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
+                <div class="grid grid-cols-2 gap-3 md:flex md:items-center md:gap-3">
+                    <select name="category" onchange="this.form.submit()"
+                        class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
+                        <option value="">Semua Kategori Vendor</option>
+                        @foreach ($categories as $cat)
+                            <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
+                                {{ $cat }}</option>
+                        @endforeach
+                    </select>
+                    <select name="status" onchange="this.form.submit()"
+                        class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
+                        <option value="">Semua Status Booking</option>
+                        @foreach ($statuses as $st)
+                            <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
+                                {{ $st }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
             @if (request()->anyFilled(['search', 'category', 'status']))
                 <a href="{{ route('vendors.index') }}"
