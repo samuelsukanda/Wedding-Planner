@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Budget extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'wedding_id',
+        'category',
+        'item_name',
+        'planned_budget',
+        'actual_cost',
+        'invoice',
+        'notes',
+    ];
+
+    protected $casts = [
+        'planned_budget' => 'decimal:2',
+        'actual_cost' => 'decimal:2',
+    ];
+
+    public function wedding()
+    {
+        return $this->belongsTo(Wedding::class);
+    }
+}
