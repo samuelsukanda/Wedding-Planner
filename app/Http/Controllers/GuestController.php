@@ -6,6 +6,7 @@ use App\Models\Wedding;
 use App\Models\Guest;
 use App\Models\DropdownOption;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class GuestController extends Controller
 {
@@ -30,6 +31,13 @@ class GuestController extends Controller
 
         $categories = DropdownOption::getOptions('guest_category', ['Family', 'Friend', 'Office', 'VIP', 'Neighbor']);
         $statuses = DropdownOption::getOptions('guest_status', ['Pending', 'Attend', 'Decline']);
+        $guestTitles = DropdownOption::getOptions('guest_title', ['Bpk.', 'Ibu.', 'Mr.', 'Mrs.', 'Ms.', 'Sdr.']);
+
+        $categoryPax = DropdownOption::where('group_key', 'guest_category')
+            ->whereNotNull('meta_value')
+            ->pluck('meta_value', 'option_value')
+            ->map(function ($v) { return (int) $v; })
+            ->toArray();
 
         $totalGuests = $wedding->guests()->count();
         $totalPax = $wedding->guests()->sum('guest_count');
@@ -42,6 +50,8 @@ class GuestController extends Controller
             'guests',
             'categories',
             'statuses',
+            'guestTitles',
+            'categoryPax',
             'totalGuests',
             'totalPax',
             'attendCount',
@@ -54,6 +64,7 @@ class GuestController extends Controller
     {
         $wedding = Wedding::first();
         $validated = $request->validate([
+            'title' => 'nullable|string|max:50',
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
@@ -70,6 +81,7 @@ class GuestController extends Controller
     public function update(Request $request, Guest $guest)
     {
         $validated = $request->validate([
+            'title' => 'nullable|string|max:50',
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
@@ -181,6 +193,127 @@ class GuestController extends Controller
             $writer->save('php://output');
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    public function sendWa(Guest $guest)
+    {
+        $phone = preg_replace('/[^0-9]/', '', $guest->phone);
+        if (!$phone) {
+            return redirect()->route('guests.index')->with('error', 'Nomor telepon tamu tidak tersedia.');
+        }
+
+        $waUrl = $this->buildWaUrl($guest);
+
+        return redirect()->away($waUrl);
+    }
+
+    public function sendWaAll()
+    {
+        $wedding = Wedding::first();
+        $guests = $wedding->guests()->whereNotNull('phone')->where('phone', '!=', '')->get();
+
+        $links = $guests->map(function ($g) {
+            $phone = preg_replace('/[^0-9]/', '', $g->phone);
+            if (!$phone) return null;
+
+            $namaLengkap = $g->title ? $g->title . ' ' . $g->name : $g->name;
+            $waUrl = $this->buildWaUrl($g);
+
+            return (object) [
+                'id' => $g->id,
+                'nama' => $namaLengkap,
+                'phone' => $phone,
+                'url' => $waUrl,
+            ];
+        })->filter();
+
+        return view('guests.wa-all', compact('links'));
+    }
+
+    private function buildWaUrl(Guest $guest): string
+    {
+        $wedding = Wedding::first();
+        $namaLengkap = $guest->title ? $guest->title . ' ' . $guest->name : $guest->name;
+
+        $bride = $wedding->bride_name;
+        $groom = $wedding->groom_name;
+        $date = $wedding->wedding_date ? $wedding->wedding_date->format('d F Y') : '—';
+        $time = '17:00';
+        $location = $wedding->location ?: 'Bandung';
+        $link = 'weddingplanner.web.id';
+
+        $msg = "Kepada Yth. {$namaLengkap},\n\n";
+        $msg .= "Dengan penuh sukacita, kami mengundang {$namaLengkap} untuk hadir dan turut merayakan hari bahagia kami dalam acara pernikahan:\n\n";
+        $msg .= "*{$bride} & {$groom}*\n\n";
+        $msg .= "Tanggal: *{$date}*\n";
+        $msg .= "Waktu: *{$time}*\n";
+        $msg .= "Tempat: *{$location}*\n\n";
+        $msg .= "Merupakan suatu kebahagiaan dan kehormatan bagi kami apabila {$namaLengkap} berkenan hadir serta memberikan doa dan ucapan selamat untuk mengiringi langkah baru kami.\n\n";
+        $msg .= "Informasi lengkap mengenai acara dapat dilihat melalui undangan digital berikut:\n\n";
+        $msg .= "*{$link}*\n\n";
+        $msg .= "Atas kehadiran, doa, dan perhatian yang diberikan, kami mengucapkan terima kasih.\n\n";
+        $msg .= "Hormat kami,\n\n";
+        $msg .= "*{$bride} & {$groom}*";
+
+        $phone = preg_replace('/[^0-9]/', '', $guest->phone);
+        $phoneNum = $phone[0] === '0' ? substr($phone, 1) : $phone;
+
+        return 'https://api.whatsapp.com/send?phone=62' . $phoneNum . '&text=' . rawurlencode($msg);
+    }
+
+    public function exportLabels()
+    {
+        $wedding = Wedding::first();
+        $guests = $wedding->guests;
+
+        $html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';
+        $html .= '<head><meta charset="UTF-8"><title>Label Undangan</title>';
+        $html .= '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->';
+        $html .= '<!--[if gte mso 9]><xml><w:PageSetup><w:PageWidth>29.7cm</w:PageWidth><w:PageHeight>21cm</w:PageHeight><w:Orient w:val="landscape"/></w:PageSetup></xml><![endif]-->';
+        $html .= '<style>';
+        $html .= '@page { size: 29.7cm 21cm landscape; mso-page-orientation: landscape; margin: 0.5cm; }';
+        $html .= 'body { margin: 0; padding: 0; }';
+        $html .= 'table { border-collapse: collapse; width: 19.2cm; margin: 0 auto; }';
+        $html .= 'td { width: 6.4cm; height: 3.2cm; padding: 0.2cm 0.3cm; vertical-align: middle; text-align: center; font-family: Arial, sans-serif; font-size: 9pt; border: 1px dashed #ccc; }';
+        $html .= '.label-name { font-weight: bold; font-size: 10pt; margin-bottom: 4px; }';
+        $html .= '.label-place { font-size: 10pt; font-weight: bold; }';
+        $html .= '</style>';
+        $html .= '</head><body>';
+        $html .= '<table>';
+
+        $count = 0;
+        $cols = 3;
+        foreach ($guests as $g) {
+            if ($count % $cols == 0) {
+                if ($count > 0) $html .= '</tr>';
+                $html .= '<tr>';
+            }
+            $label = $g->title ? $g->title . ' ' . $g->name : $g->name;
+            $html .= '<td>';
+            $html .= '<div class="label-name">' . e($label) . '</div>';
+            $html .= '<div style="height:6px"></div>';
+            $html .= '<div class="label-place">Di</div>';
+            $html .= '<div style="height:2px"></div>';
+            $html .= '<div class="label-place">Tempat</div>';
+            $html .= '</td>';
+            $count++;
+        }
+
+        // Fill remaining cells in last row
+        $remainder = $count % $cols;
+        if ($remainder > 0) {
+            for ($i = $remainder; $i < $cols; $i++) {
+                $html .= '<td>&nbsp;</td>';
+            }
+        }
+        if ($count > 0) $html .= '</tr>';
+
+        $html .= '</table></body></html>';
+
+        return response($html, 200, [
+            'Content-Type' => 'application/msword',
+            'Content-Disposition' => 'attachment; filename="Label_Undangan.doc"',
         ]);
     }
 }

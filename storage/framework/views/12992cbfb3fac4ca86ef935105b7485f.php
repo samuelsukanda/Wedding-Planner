@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Wedding Planner') — Samuel & Angela</title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title><?php echo $__env->yieldContent('title', 'Wedding Planner'); ?> — Samuel & Angela</title>
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
-    <link rel="shortcut icon" href="{{ asset('img/icon.jpg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="<?php echo e(asset('img/icon.jpg')); ?>" type="image/x-icon">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 
     <style>
         body {
@@ -542,7 +542,7 @@
                 aria-label="Buka Menu Navigation">
                 <i class="fa-solid fa-bars text-lg"></i>
             </button>
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
+            <a href="<?php echo e(route('dashboard')); ?>" class="flex items-center gap-2">
                 <i class="fa-solid fa-heart text-[#D8A7B1] text-lg"></i>
                 <span class="font-serif-title font-bold text-lg text-[#5F6F5B]">Samuel & Angela</span>
             </a>
@@ -552,7 +552,7 @@
         <div
             class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D8A7B1]/20 text-[#5F6F5B] text-xs font-semibold border border-[#D8A7B1]/40">
             <i class="fa-solid fa-calendar-days text-[#D8A7B1]" style="color: #D8A7B1 !important;"></i>
-            <span>{{ $daysLeft ?? 0 }} Hari</span>
+            <span><?php echo e($daysLeft ?? 0); ?> Hari</span>
         </div>
     </header>
 
@@ -566,9 +566,9 @@
 
         <!-- Logo & Header -->
         <div class="p-5 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
+            <a href="<?php echo e(route('dashboard')); ?>" class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md">
-                    <img src="{{ asset('img/logo.png') }}" alt="Logo">
+                    <img src="<?php echo e(asset('img/logo.png')); ?>" alt="Logo">
                 </div>
                 <div>
                     <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight">Samuel & Angela</h1>
@@ -585,34 +585,34 @@
         <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
             <div class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Utama</div>
 
-            <a href="{{ route('dashboard') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('dashboard') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('dashboard')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('dashboard') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-chart-pie w-5 text-center text-[#D8A7B1]"></i>
                 <span>Dashboard</span>
             </a>
 
             <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Perencanaan</div>
 
-            <a href="{{ route('checklists.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('checklists.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('checklists.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('checklists.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-list-check w-5 text-center text-[#D8A7B1]"></i>
                 <span>Checklist</span>
             </a>
 
-            <a href="{{ route('budgets.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('budgets.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('budgets.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('budgets.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-wallet w-5 text-center text-[#D8A7B1]"></i>
                 <span>Budget Planner</span>
             </a>
 
-            <a href="{{ route('vendors.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('vendors.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('vendors.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('vendors.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-store w-5 text-center text-[#D8A7B1]"></i>
                 <span>Vendor Management</span>
             </a>
 
-            <a href="{{ route('guests.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('guests.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('guests.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('guests.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-users w-5 text-center text-[#D8A7B1]"></i>
                 <span>Guest Management</span>
             </a>
@@ -620,14 +620,14 @@
             <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Inspirasi & Jadwal
             </div>
 
-            <a href="{{ route('moodboards.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('moodboards.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('moodboards.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('moodboards.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-palette w-5 text-center text-[#D8A7B1]"></i>
                 <span>Moodboard</span>
             </a>
 
-            <a href="{{ route('rundowns.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('rundowns.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('rundowns.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('rundowns.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-clock w-5 text-center text-[#D8A7B1]"></i>
                 <span>Rundown Acara</span>
             </a>
@@ -635,44 +635,44 @@
             <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Keuangan & Dokumen
             </div>
 
-            <a href="{{ route('contracts.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('contracts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('contracts.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('contracts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-file-contract w-5 text-center text-[#D8A7B1]"></i>
                 <span>Vendor Contract</span>
             </a>
 
-            <a href="{{ route('payments.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('payments.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('payments.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('payments.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-credit-card w-5 text-center text-[#D8A7B1]"></i>
                 <span>Payment Tracker</span>
             </a>
 
-            <a href="{{ route('gifts.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('gifts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('gifts.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('gifts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-gift w-5 text-center text-[#D8A7B1]"></i>
                 <span>Gift Management</span>
             </a>
 
             <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Laporan</div>
 
-            <a href="{{ route('reports.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('reports.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('reports.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('reports.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-file-invoice-dollar w-5 text-center text-[#D8A7B1]"></i>
                 <span>Laporan & Export</span>
             </a>
 
             <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Pengaturan</div>
 
-            <a href="{{ route('admin.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+            <a href="<?php echo e(route('admin.index')); ?>"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all <?php echo e(request()->routeIs('admin.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]'); ?>">
                 <i class="fa-solid fa-sliders w-5 text-center text-[#D8A7B1]"></i>
                 <span>Admin Panel</span>
             </a>
 
             <div class="border-t border-[#B6ADA3]/30 my-3 mx-3"></div>
 
-            <form method="POST" action="{{ route('logout') }}" class="px-3">
-                @csrf
+            <form method="POST" action="<?php echo e(route('logout')); ?>" class="px-3">
+                <?php echo csrf_field(); ?>
                 <button type="submit"
                     class="flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#B6ADA3] hover:bg-[#FAF7F2] hover:text-[#D8A7B1] cursor-pointer transition-all">
                     <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
@@ -688,7 +688,7 @@
         <header
             class="hidden md:flex items-center justify-between px-8 py-4 bg-white/80 border-b border-[#B6ADA3]/30 backdrop-blur sticky top-0 z-30">
             <div class="flex items-center gap-3">
-                <h2 class="text-xl font-bold font-serif-title text-[#5F6F5B]">@yield('title', 'Wedding Planner')</h2>
+                <h2 class="text-xl font-bold font-serif-title text-[#5F6F5B]"><?php echo $__env->yieldContent('title', 'Wedding Planner'); ?></h2>
             </div>
 
             <div class="flex items-center gap-5">
@@ -696,14 +696,14 @@
                 <div
                     class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/40 text-xs font-semibold shadow-xs">
                     <i class="fa-solid fa-hourglass-half text-[#D8A7B1]"></i>
-                    <span>Hari H: {{ $daysLeft ?? 0 }} Hari Lagi</span>
+                    <span>Hari H: <?php echo e($daysLeft ?? 0); ?> Hari Lagi</span>
                 </div>
 
                 <!-- Profile Avatar -->
                 <div class="flex items-center gap-3 pl-4 border-l border-[#B6ADA3]/30">
                     <div class="text-xs">
-                        <div class="font-semibold text-[#5F6F5B]">{{ $wedding->groom_name }} &
-                            {{ $wedding->bride_name }}</div>
+                        <div class="font-semibold text-[#5F6F5B]"><?php echo e($wedding->groom_name); ?> &
+                            <?php echo e($wedding->bride_name); ?></div>
                         <div class="text-[#B6ADA3]">Bride & Groom</div>
                     </div>
                 </div>
@@ -711,21 +711,21 @@
         </header>
 
         <!-- Flash Messages -->
-        @if (session('success'))
+        <?php if(session('success')): ?>
             <div
                 class="mx-4 sm:mx-6 mt-4 p-4 rounded-xl bg-[#A3B7A6]/20 border border-[#A3B7A6]/50 text-[#5F6F5B] text-sm flex items-center justify-between shadow-xs">
                 <div class="flex items-center gap-3">
                     <i class="fa-solid fa-circle-check text-[#D8A7B1] text-lg"></i>
-                    <span>{{ session('success') }}</span>
+                    <span><?php echo e(session('success')); ?></span>
                 </div>
                 <button onclick="this.parentElement.remove()"
                     class="text-[#5F6F5B] hover:opacity-80 p-1 cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-        @endif
+        <?php endif; ?>
 
-        @if ($errors->any())
+        <?php if($errors->any()): ?>
             <div
                 class="mx-4 sm:mx-6 mt-4 p-4 rounded-xl bg-[#D8A7B1]/25 border border-[#D8A7B1]/60 text-[#5F6F5B] text-sm shadow-xs">
                 <div class="flex items-center gap-3 mb-2">
@@ -733,28 +733,29 @@
                     <span class="font-semibold">Mohon lengkapi data berikut:</span>
                 </div>
                 <ul class="list-disc list-inside space-y-0.5 ml-1">
-                    @foreach ($errors->all() as $err)
-                        <li class="text-xs text-[#5F6F5B]/90">{{ $err }}</li>
-                    @endforeach
+                    <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $err): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <li class="text-xs text-[#5F6F5B]/90"><?php echo e($err); ?></li>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </ul>
             </div>
-        @endif
+        <?php endif; ?>
 
         <!-- Main Yield View -->
         <div id="page-content" class="p-4 sm:p-6 md:p-8 space-y-6 flex-1">
-            @yield('content')
+            <?php echo $__env->yieldContent('content'); ?>
         </div>
 
         <!-- Footer -->
         <footer
             class="px-6 md:px-8 py-4 border-t border-[#B6ADA3]/30 bg-white/60 text-xs text-[#B6ADA3] flex flex-col md:flex-row items-center justify-between gap-2">
-            <div>&copy; {{ date('Y') }} Wedding Planner. All rights reserved.</div>
+            <div>&copy; <?php echo e(date('Y')); ?> Wedding Planner. All rights reserved.</div>
             <div class="flex items-center gap-4 text-[#5F6F5B]">
             </div>
         </footer>
     </main>
 
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 
 </html>
+<?php /**PATH C:\Users\Admin\Herd\wedding_planner\resources\views/layouts/app.blade.php ENDPATH**/ ?>

@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Perencanaan - Budget Planner'); ?>
 
-@section('title', 'Perencanaan - Budget Planner')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         [x-cloak] {
             display: none !important;
@@ -12,7 +10,7 @@
         modalOpen: false,
         editMode: false,
         currentItem: {},
-        vendors: {{ $vendorsJson }},
+        vendors: <?php echo e($vendorsJson); ?>,
         selectedVendorId: '',
         get availableVendors() {
             const cat = this.currentItem.category;
@@ -44,7 +42,7 @@
                 <div>
                     <div class="text-xs text-[#5F6F5B ]">Total Direncanakan</div>
                     <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">Rp
-                        {{ number_format($totalPlanned, 0, ',', '.') }}</div>
+                        <?php echo e(number_format($totalPlanned, 0, ',', '.')); ?></div>
                 </div>
                 <div
                     class="w-11 h-11 rounded-xl bg-[#A3B7A6]/20 border border-[#A3B7A6]/40 flex items-center justify-center text-[#5F6F5B] text-lg">
@@ -56,7 +54,7 @@
                 <div>
                     <div class="text-xs text-[#5F6F5B ]">Total Biaya Terpakai</div>
                     <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">Rp
-                        {{ number_format($totalActual, 0, ',', '.') }}</div>
+                        <?php echo e(number_format($totalActual, 0, ',', '.')); ?></div>
                 </div>
                 <div
                     class="w-11 h-11 rounded-xl bg-[#A3B7A6]/20 border border-[#A3B7A6]/40 flex items-center justify-center text-[#5F6F5B] text-lg">
@@ -68,7 +66,7 @@
                 <div>
                     <div class="text-xs text-[#5F6F5B]">Sisa Anggaran Pernikahan</div>
                     <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">Rp
-                        {{ number_format($totalRemaining, 0, ',', '.') }}</div>
+                        <?php echo e(number_format($totalRemaining, 0, ',', '.')); ?></div>
                 </div>
                 <div
                     class="w-11 h-11 rounded-xl bg-[#A3B7A6]/25 border border-[#A3B7A6]/40 flex items-center justify-center text-[#5F6F5B] text-lg">
@@ -126,45 +124,48 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
-                        @forelse($budgets as $b)
-                            @php
+                        <?php $__empty_1 = true; $__currentLoopData = $budgets; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <?php
                                 $diff = $b->planned_budget - $b->actual_cost;
-                            @endphp
+                            ?>
                             <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
                                 <td class="p-4 font-semibold text-[#5F6F5B] text-xs">
                                     <span class="bg-[#FAF7F2] px-2.5 py-1 rounded-lg border border-[#B6ADA3]/40">
-                                        {{ $b->category }}
+                                        <?php echo e($b->category); ?>
+
                                     </span>
                                 </td>
-                                <td class="p-4 font-medium text-[#5F6F5B]">{{ $b->item_name }}</td>
+                                <td class="p-4 font-medium text-[#5F6F5B]"><?php echo e($b->item_name); ?></td>
                                 <td class="p-4 text-xs text-[#5F6F5B]/80">
-                                    @if($b->vendor)
-                                        <span class="font-medium">{{ $b->vendor->name }}</span>
-                                    @else
+                                    <?php if($b->vendor): ?>
+                                        <span class="font-medium"><?php echo e($b->vendor->name); ?></span>
+                                    <?php else: ?>
                                         <span class="text-[#B6ADA3]">—</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
-                                <td class="p-4 text-[#5F6F5B]/80">Rp {{ number_format($b->planned_budget, 0, ',', '.') }}
+                                <td class="p-4 text-[#5F6F5B]/80">Rp <?php echo e(number_format($b->planned_budget, 0, ',', '.')); ?>
+
                                 </td>
                                 <td class="p-4 font-semibold text-[#5F6F5B]">Rp
-                                    {{ number_format($b->actual_cost, 0, ',', '.') }}</td>
-                                <td class="p-4 font-bold {{ $diff >= 0 ? 'text-[#5F6F5B]' : 'text-[#5F6F5B]' }}">
-                                    Rp {{ number_format($diff, 0, ',', '.') }}
+                                    <?php echo e(number_format($b->actual_cost, 0, ',', '.')); ?></td>
+                                <td class="p-4 font-bold <?php echo e($diff >= 0 ? 'text-[#5F6F5B]' : 'text-[#5F6F5B]'); ?>">
+                                    Rp <?php echo e(number_format($diff, 0, ',', '.')); ?>
+
                                 </td>
-                                <td class="p-4 text-xs text-[#B6ADA3] max-w-xs truncate">{{ $b->notes ?? '—' }}</td>
+                                <td class="p-4 text-xs text-[#B6ADA3] max-w-xs truncate"><?php echo e($b->notes ?? '—'); ?></td>
                                 <td class="p-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
                                         <button
-                                            @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($b) }}"
+                                            @click="modalOpen = true; editMode = true; currentItem = <?php echo e(json_encode($b)); ?>"
                                             title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
-                                        <form id="del-budget-{{ $b->id }}"
-                                            action="{{ route('budgets.destroy', $b->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
+                                        <form id="del-budget-<?php echo e($b->id); ?>"
+                                            action="<?php echo e(route('budgets.destroy', $b->id)); ?>" method="POST">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
                                             <button type="button" title="Hapus"
-                                                onclick="confirmDelete('del-budget-{{ $b->id }}', '{{ addslashes($b->item_name) }}')"
+                                                onclick="confirmDelete('del-budget-<?php echo e($b->id); ?>', '<?php echo e(addslashes($b->item_name)); ?>')"
                                                 class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
@@ -172,12 +173,12 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="8" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada rincian
                                     anggaran.</td>
                             </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -195,9 +196,9 @@
                             class="fa-solid fa-xmark"></i></button>
                 </div>
 
-                <form :action="editMode ? '/budgets/' + currentItem.id : '{{ route('budgets.store') }}'" method="POST"
+                <form :action="editMode ? '/budgets/' + currentItem.id : '<?php echo e(route('budgets.store')); ?>'" method="POST"
                     class="space-y-4">
-                    @csrf
+                    <?php echo csrf_field(); ?>
                     <template x-if="editMode">
                         <input type="hidden" name="_method" value="PUT">
                     </template>
@@ -208,9 +209,9 @@
                         <select name="category" x-model="currentItem.category" @change="selectedVendorId = ''" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             <option value="">-- Pilih Kategori --</option>
-                            @foreach ($categories as $cat)
-                                <option value="{{ $cat }}">{{ $cat }}</option>
-                            @endforeach
+                            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($cat); ?>"><?php echo e($cat); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                     </div>
 
@@ -260,12 +261,12 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const chartData = @json($chartData);
+            const chartData = <?php echo json_encode($chartData, 15, 512) ?>;
             const labels = Object.keys(chartData);
             const plannedValues = labels.map(k => chartData[k].planned);
             const actualValues = labels.map(k => chartData[k].actual);
@@ -348,4 +349,6 @@
             });
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Admin\Herd\wedding_planner\resources\views/budgets/index.blade.php ENDPATH**/ ?>

@@ -1,14 +1,12 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Perencanaan - Guest Management'); ?>
 
-@section('title', 'Perencanaan - Guest Management')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="space-y-6" x-data="{
         modalOpen: false,
         editMode: false,
         currentItem: {},
-        titles: {{ json_encode($guestTitles) }},
-        paxMap: {{ json_encode($categoryPax) }},
+        titles: <?php echo e(json_encode($guestTitles)); ?>,
+        paxMap: <?php echo e(json_encode($categoryPax)); ?>,
         autoFillPax() {
             if (!this.editMode && this.currentItem.category && this.paxMap[this.currentItem.category]) {
                 this.currentItem.guest_count = this.paxMap[this.currentItem.category];
@@ -21,15 +19,15 @@
                 <h1 class="text-2xl font-bold font-serif-title">Guest Management</h1>
             </div>
             <div class="grid grid-cols-3 gap-2 w-full md:w-auto md:flex md:items-center md:gap-2">
-                <a href="{{ route('guests.wa-all') }}"
+                <a href="<?php echo e(route('guests.wa-all')); ?>"
                     class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-green-50 border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold w-full md:w-auto">
                     <i class="fa-brands fa-whatsapp text-green-600"></i> Kirim WA
                 </a>
-                <a href="{{ route('guests.labels') }}"
+                <a href="<?php echo e(route('guests.labels')); ?>"
                     class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold w-full md:w-auto">
                     <i class="fa-solid fa-tag text-[#D8A7B1]"></i> Label
                 </a>
-                <a href="{{ route('guests.export') }}"
+                <a href="<?php echo e(route('guests.export')); ?>"
                     class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold w-full md:w-auto">
                     <i class="fa-solid fa-file-excel text-[#D8A7B1]"></i> Excel
                 </a>
@@ -44,57 +42,59 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
                 <div class="text-xs text-[#5F6F5B]">Total Undangan</div>
-                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $totalGuests }}</div>
-                <div class="text-xs text-[#5F6F5B] mt-1 font-semibold">{{ $totalPax }} Pax Total</div>
+                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]"><?php echo e($totalGuests); ?></div>
+                <div class="text-xs text-[#5F6F5B] mt-1 font-semibold"><?php echo e($totalPax); ?> Pax Total</div>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
                 <div class="text-xs text-[#5F6F5B]">Konfirmasi Hadir</div>
-                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $attendCount }}</div>
+                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]"><?php echo e($attendCount); ?></div>
                 <div class="text-xs text-[#A3B7A6] mt-1 font-semibold">RSVP Hadir</div>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
                 <div class="text-xs text-[#5F6F5B]">Menunggu Konfirmasi</div>
-                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $pendingCount }}</div>
+                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]"><?php echo e($pendingCount); ?></div>
                 <div class="text-xs text-[#D8A7B1] mt-1 font-semibold">Pending</div>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
                 <div class="text-xs text-[#5F6F5B]">Berhalangan</div>
-                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $declineCount }}</div>
+                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]"><?php echo e($declineCount); ?></div>
                 <div class="text-xs text-[#5F6F5B]/80 mt-1 font-semibold">Decline</div>
             </div>
         </div>
 
         <!-- Search & Filter Bar -->
-        <form method="GET" action="{{ route('guests.index') }}"
+        <form method="GET" action="<?php echo e(route('guests.index')); ?>"
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
             <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama tamu..."
+                <input type="text" name="search" value="<?php echo e(request('search')); ?>" placeholder="Cari nama tamu..."
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
                 <div class="grid grid-cols-2 gap-3 md:flex md:items-center md:gap-3">
                     <select name="category" onchange="this.form.submit()"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Kategori</option>
-                        @foreach ($categories as $cat)
-                            <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
-                                {{ $cat }}
+                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($cat); ?>" <?php echo e(request('category') == $cat ? 'selected' : ''); ?>>
+                                <?php echo e($cat); ?>
+
                             </option>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                     <select name="status" onchange="this.form.submit()"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Kehadiran</option>
-                        @foreach ($statuses as $st)
-                            <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
-                                {{ $st }}
+                        <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $st): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($st); ?>" <?php echo e(request('status') == $st ? 'selected' : ''); ?>>
+                                <?php echo e($st); ?>
+
                             </option>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                 </div>
             </div>
-            @if (request()->anyFilled(['search', 'category', 'status']))
-                <a href="{{ route('guests.index') }}"
+            <?php if(request()->anyFilled(['search', 'category', 'status'])): ?>
+                <a href="<?php echo e(route('guests.index')); ?>"
                     class="text-xs text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline">Reset Filter</a>
-            @endif
+            <?php endif; ?>
         </form>
 
         <!-- Guest List Table -->
@@ -114,68 +114,71 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
-                        @forelse($guests as $g)
+                        <?php $__empty_1 = true; $__currentLoopData = $guests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $g): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
                                 <td class="p-4 font-semibold text-[#5F6F5B]">
-                                    {{ $g->title ? $g->title . ' ' : '' }}{{ $g->name }}</td>
+                                    <?php echo e($g->title ? $g->title . ' ' : ''); ?><?php echo e($g->name); ?></td>
                                 <td class="p-4">
                                     <span
                                         class="bg-[#FAF7F2] text-[#5F6F5B] text-xs px-2.5 py-1 rounded-lg border border-[#B6ADA3]/40 font-medium">
-                                        {{ $g->category }}
+                                        <?php echo e($g->category); ?>
+
                                     </span>
                                 </td>
                                 <td class="p-4">
                                     <span
                                         class="px-2.5 py-1 rounded-full text-xs font-semibold 
-                                    @if ($g->attendance_status == 'Attend') bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40
-                                    @elseif($g->attendance_status == 'Pending') bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/40
-                                    @else bg-[#D8A7B1]/25 text-[#5F6F5B] border border-[#D8A7B1]/40 @endif">
-                                        {{ $g->attendance_status }}
+                                    <?php if($g->attendance_status == 'Attend'): ?> bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40
+                                    <?php elseif($g->attendance_status == 'Pending'): ?> bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/40
+                                    <?php else: ?> bg-[#D8A7B1]/25 text-[#5F6F5B] border border-[#D8A7B1]/40 <?php endif; ?>">
+                                        <?php echo e($g->attendance_status); ?>
+
                                     </span>
                                 </td>
-                                <td class="p-4 font-bold text-[#5F6F5B]">{{ $g->guest_count }} Pax</td>
+                                <td class="p-4 font-bold text-[#5F6F5B]"><?php echo e($g->guest_count); ?> Pax</td>
                                 <td class="p-4 text-xs text-[#5F6F5B]">
-                                    @if ($g->phone)
-                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $g->phone) }}"
+                                    <?php if($g->phone): ?>
+                                        <a href="https://wa.me/<?php echo e(preg_replace('/[^0-9]/', '', $g->phone)); ?>"
                                             target="_blank"
                                             class="inline-flex items-center gap-1 text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline">
-                                            <i class="fa-brands fa-whatsapp text-[#D8A7B1]"></i> {{ $g->phone }}
+                                            <i class="fa-brands fa-whatsapp text-[#D8A7B1]"></i> <?php echo e($g->phone); ?>
+
                                         </a>
-                                    @else
+                                    <?php else: ?>
                                         —
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
-                                <td class="p-4 text-xs text-[#5F6F5B]/80 max-w-xs truncate">{{ $g->address ?? '—' }}</td>
+                                <td class="p-4 text-xs text-[#5F6F5B]/80 max-w-xs truncate"><?php echo e($g->address ?? '—'); ?></td>
                                 <td class="p-4 text-right">
                                     <div class="flex items-center justify-end gap-1">
-                                        @if($g->phone)
-                                            <a href="{{ route('guests.wa', $g->id) }}" target="_blank" title="Kirim WA"
+                                        <?php if($g->phone): ?>
+                                            <a href="<?php echo e(route('guests.wa', $g->id)); ?>" target="_blank" title="Kirim WA"
                                                 class="p-2 text-[#B6ADA3] hover:text-green-600 cursor-pointer">
                                                 <i class="fa-brands fa-whatsapp"></i>
                                             </a>
-                                        @endif
+                                        <?php endif; ?>
                                         <button
-                                            @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($g) }}"
+                                            @click="modalOpen = true; editMode = true; currentItem = <?php echo e(json_encode($g)); ?>"
                                             title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                                                 class="fa-solid fa-pen-to-square"></i></button>
-                                        <form id="del-guest-{{ $g->id }}"
-                                            action="{{ route('guests.destroy', $g->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
+                                        <form id="del-guest-<?php echo e($g->id); ?>"
+                                            action="<?php echo e(route('guests.destroy', $g->id)); ?>" method="POST">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
                                             <button type="button" title="Hapus"
-                                                onclick="confirmDelete('del-guest-{{ $g->id }}', '{{ addslashes($g->name) }}')"
+                                                onclick="confirmDelete('del-guest-<?php echo e($g->id); ?>', '<?php echo e(addslashes($g->name)); ?>')"
                                                 class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                                                     class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada data tamu.
                                 </td>
                             </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -192,9 +195,9 @@
                     <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                             class="fa-solid fa-xmark"></i></button>
                 </div>
-                <form :action="editMode ? '/guests/' + currentItem.id : '{{ route('guests.store') }}'" method="POST"
+                <form :action="editMode ? '/guests/' + currentItem.id : '<?php echo e(route('guests.store')); ?>'" method="POST"
                     class="space-y-4">
-                    @csrf
+                    <?php echo csrf_field(); ?>
                     <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
                     <div>
                         <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Tamu / Penanggung Jawab
@@ -217,18 +220,18 @@
                             <select name="category" x-model="currentItem.category" @change="autoFillPax()" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 <option value="">-- Pilih Kategori --</option>
-                                @foreach ($categories as $cat)
-                                    <option value="{{ $cat }}">{{ $cat }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($cat); ?>"><?php echo e($cat); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status Kehadiran *</label>
                             <select name="attendance_status" x-model="currentItem.attendance_status" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
-                                @foreach ($statuses as $st)
-                                    <option value="{{ $st }}">{{ $st }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $st): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($st); ?>"><?php echo e($st); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                     </div>
@@ -260,4 +263,6 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Admin\Herd\wedding_planner\resources\views/guests/index.blade.php ENDPATH**/ ?>

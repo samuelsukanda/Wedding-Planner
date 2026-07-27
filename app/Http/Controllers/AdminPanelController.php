@@ -77,6 +77,7 @@ class AdminPanelController extends Controller
         $validated = $request->validate([
             'group_key' => 'required|string',
             'option_value' => 'required|string|max:255',
+            'meta_value' => 'nullable|string|max:255',
             'sort_order' => 'nullable|integer|min:0',
         ]);
 
@@ -87,6 +88,7 @@ class AdminPanelController extends Controller
             'group_key' => $validated['group_key'],
             'group_name' => $groupName,
             'option_value' => trim($validated['option_value']),
+            'meta_value' => $validated['meta_value'] ?? null,
             'sort_order' => $validated['sort_order'] ?? 0,
         ]);
 
@@ -98,11 +100,13 @@ class AdminPanelController extends Controller
     {
         $validated = $request->validate([
             'option_value' => 'required|string|max:255',
+            'meta_value' => 'nullable|string|max:255',
             'sort_order' => 'nullable|integer|min:0',
         ]);
 
         $dropdownOption->update([
             'option_value' => trim($validated['option_value']),
+            'meta_value' => $validated['meta_value'] ?? null,
             'sort_order' => $validated['sort_order'] ?? 0,
         ]);
 

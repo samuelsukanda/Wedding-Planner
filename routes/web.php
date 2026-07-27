@@ -42,6 +42,9 @@ Route::middleware('auth')->group(function () {
     // Module 5 - Guest Management
     Route::resource('guests', GuestController::class)->except(['create', 'edit', 'show']);
     Route::get('guests/export/csv', [GuestController::class, 'exportCsv'])->name('guests.export');
+    Route::get('guests/export/labels', [GuestController::class, 'exportLabels'])->name('guests.labels');
+    Route::get('guests/{guest}/wa', [GuestController::class, 'sendWa'])->name('guests.wa');
+    Route::get('guests/wa-all', [GuestController::class, 'sendWaAll'])->name('guests.wa-all');
 
     // Module 6 - Moodboard
     Route::resource('moodboards', MoodboardController::class)->except(['create', 'edit', 'show']);
@@ -72,4 +75,3 @@ Route::middleware('auth')->group(function () {
     Route::put('admin/dropdowns/{dropdownOption}', [AdminPanelController::class, 'update'])->name('admin.dropdowns.update');
     Route::delete('admin/dropdowns/{dropdownOption}', [AdminPanelController::class, 'destroy'])->name('admin.dropdowns.destroy');
 });
-

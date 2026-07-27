@@ -29,6 +29,11 @@ class Vendor extends Model
         'rating' => 'float',
     ];
 
+    public function setRatingAttribute($value)
+    {
+        $this->attributes['rating'] = $value ?? 5.0;
+    }
+
     public function wedding()
     {
         return $this->belongsTo(Wedding::class);

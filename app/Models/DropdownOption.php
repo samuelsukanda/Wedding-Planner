@@ -13,6 +13,7 @@ class DropdownOption extends Model
         'group_key',
         'group_name',
         'option_value',
+        'meta_value',
         'sort_order',
     ];
 
@@ -48,6 +49,7 @@ class DropdownOption extends Model
             'vendor_status' => 'Status Booking Vendor',
             'guest_category' => 'Kategori Tamu',
             'guest_status' => 'Status Kehadiran (RSVP)',
+            'guest_title' => 'Gelar Tamu',
             'moodboard_category' => 'Kategori Moodboard',
             'contract_status' => 'Status Kontrak Vendor',
             'payment_status' => 'Status Pembayaran',

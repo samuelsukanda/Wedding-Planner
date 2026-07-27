@@ -11,6 +11,7 @@ class Budget extends Model
 
     protected $fillable = [
         'wedding_id',
+        'vendor_id',
         'category',
         'item_name',
         'planned_budget',
@@ -27,5 +28,10 @@ class Budget extends Model
     public function wedding()
     {
         return $this->belongsTo(Wedding::class);
+    }
+
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class);
     }
 }

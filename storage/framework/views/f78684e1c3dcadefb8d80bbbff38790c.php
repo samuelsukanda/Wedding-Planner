@@ -1,10 +1,8 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Pengaturan - Admin Panel'); ?>
 
-@section('title', 'Pengaturan - Admin Panel')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="space-y-6" x-data="{
-        activeTab: '{{ request('tab', $activeTab ?? 'wedding') }}',
+        activeTab: '<?php echo e(request('tab', $activeTab ?? 'wedding')); ?>',
         modalOpen: false,
         editMode: false,
         currentItem: {}
@@ -50,18 +48,19 @@
                         </h2>
                         <span
                             class="text-xs text-[#5F6F5B] font-bold bg-[#FAF7F2] px-3 py-1 rounded-lg border border-[#B6ADA3]/30">
-                            ID Acara #{{ $wedding->id }}
+                            ID Acara #<?php echo e($wedding->id); ?>
+
                         </span>
                     </div>
 
-                    <form action="{{ route('admin.wedding.update', $wedding->id) }}" method="POST" class="space-y-4">
-                        @csrf
-                        @method('PUT')
+                    <form action="<?php echo e(route('admin.wedding.update', $wedding->id)); ?>" method="POST" class="space-y-4">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('PUT'); ?>
 
                         <!-- Judul Acara -->
                         <div>
                             <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Judul Acara Pernikahan *</label>
-                            <input type="text" name="title" value="{{ old('title', $wedding->title) }}" required
+                            <input type="text" name="title" value="<?php echo e(old('title', $wedding->title)); ?>" required
                                 placeholder="Contoh: Pernikahan Romeo & Juliet"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-bold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
                         </div>
@@ -73,7 +72,7 @@
                                     <i class="fa-solid fa-venus text-[#D8A7B1] mr-1"></i> Nama Pengantin Wanita (Bride) *
                                 </label>
                                 <input type="text" name="bride_name"
-                                    value="{{ old('bride_name', $wedding->bride_name) }}" required
+                                    value="<?php echo e(old('bride_name', $wedding->bride_name)); ?>" required
                                     placeholder="Juliet Capulet"
                                     class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
                             </div>
@@ -83,7 +82,7 @@
                                     <i class="fa-solid fa-mars text-[#5F6F5B] mr-1"></i> Nama Pengantin Pria (Groom) *
                                 </label>
                                 <input type="text" name="groom_name"
-                                    value="{{ old('groom_name', $wedding->groom_name) }}" required
+                                    value="<?php echo e(old('groom_name', $wedding->groom_name)); ?>" required
                                     placeholder="Romeo Montague"
                                     class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
                             </div>
@@ -97,7 +96,7 @@
                                     *
                                 </label>
                                 <input type="date" name="wedding_date"
-                                    value="{{ old('wedding_date', $wedding->wedding_date ? $wedding->wedding_date->format('Y-m-d') : '') }}"
+                                    value="<?php echo e(old('wedding_date', $wedding->wedding_date ? $wedding->wedding_date->format('Y-m-d') : '')); ?>"
                                     required
                                     class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
                             </div>
@@ -108,7 +107,7 @@
                                     *
                                 </label>
                                 <input type="number" name="total_budget"
-                                    value="{{ old('total_budget', (int) $wedding->total_budget) }}" required min="0"
+                                    value="<?php echo e(old('total_budget', (int) $wedding->total_budget)); ?>" required min="0"
                                     placeholder="150000000"
                                     class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-bold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
                             </div>
@@ -119,7 +118,7 @@
                             <label class="block text-xs font-bold text-[#5F6F5B] mb-1">
                                 <i class="fa-solid fa-location-dot text-[#D8A7B1] mr-1"></i> Lokasi Venue Pernikahan
                             </label>
-                            <input type="text" name="location" value="{{ old('location', $wedding->location) }}"
+                            <input type="text" name="location" value="<?php echo e(old('location', $wedding->location)); ?>"
                                 placeholder="Grand Ballroom Hotel Indonesia, Jakarta"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
                         </div>
@@ -128,7 +127,7 @@
                         <div>
                             <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Catatan & Tema Pernikahan</label>
                             <textarea name="notes" rows="3" placeholder="Misal: Tema warna Dusty Rose & Sage Green..."
-                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-medium text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all resize-none">{{ old('notes', $wedding->notes) }}</textarea>
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-medium text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all resize-none"><?php echo e(old('notes', $wedding->notes)); ?></textarea>
                         </div>
 
                         <div class="pt-3 border-t border-[#B6ADA3]/30 flex justify-end">
@@ -152,12 +151,12 @@
                         </div>
 
                         <div class="space-y-1">
-                            <h3 class="text-xl font-bold font-serif-title text-[#FAF7F2]">{{ $wedding->title }}</h3>
+                            <h3 class="text-xl font-bold font-serif-title text-[#FAF7F2]"><?php echo e($wedding->title); ?></h3>
                             <p class="text-xs text-white/80">Pasangan Pengantin:</p>
                             <div class="text-lg font-bold text-[#FAF7F2] flex items-center gap-2 pt-0.5">
-                                <span>{{ $wedding->bride_name }}</span>
+                                <span><?php echo e($wedding->bride_name); ?></span>
                                 <span class="text-[#D8A7B1] font-serif">&amp;</span>
-                                <span>{{ $wedding->groom_name }}</span>
+                                <span><?php echo e($wedding->groom_name); ?></span>
                             </div>
                         </div>
 
@@ -166,25 +165,27 @@
                                 <span class="text-[#D8A7B1] block text-[10px] uppercase font-bold mb-0.5">TANGGAL HARI
                                     H</span>
                                 <span class="font-bold text-white text-xs sm:text-sm">
-                                    {{ $wedding->wedding_date ? $wedding->wedding_date->format('d M Y') : '—' }}
+                                    <?php echo e($wedding->wedding_date ? $wedding->wedding_date->format('d M Y') : '—'); ?>
+
                                 </span>
                             </div>
                             <div class="bg-black/20 p-3 rounded-xl border border-white/15">
                                 <span class="text-[#D8A7B1] block text-[10px] uppercase font-bold mb-0.5">TARGET
                                     BUDGET</span>
                                 <span class="font-bold text-white text-xs sm:text-sm">
-                                    Rp {{ number_format($wedding->total_budget, 0, ',', '.') }}
+                                    Rp <?php echo e(number_format($wedding->total_budget, 0, ',', '.')); ?>
+
                                 </span>
                             </div>
                         </div>
 
-                        @if ($wedding->location)
+                        <?php if($wedding->location): ?>
                             <div
                                 class="text-xs text-white flex items-center gap-2 pt-1 bg-black/20 px-3.5 py-2.5 rounded-xl border border-white/15">
                                 <i class="fa-solid fa-location-dot text-[#D8A7B1]"></i>
-                                <span class="truncate font-semibold">{{ $wedding->location }}</span>
+                                <span class="truncate font-semibold"><?php echo e($wedding->location); ?></span>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
 
                     <!-- High Contrast Info Box -->
@@ -215,13 +216,13 @@
                     Menu</label>
                 <select onchange="window.location.href = this.value"
                     class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-bold text-[#5F6F5B] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
-                    @foreach ($groups as $key => $name)
-                        @php $count = $groupCounts[$key] ?? 0; @endphp
-                        <option value="{{ route('admin.index', ['tab' => 'dropdowns', 'group' => $key]) }}"
-                            {{ $selectedGroup === $key ? 'selected' : '' }}>
-                            {{ $name }} ({{ $count }} item)
+                    <?php $__currentLoopData = $groups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $count = $groupCounts[$key] ?? 0; ?>
+                        <option value="<?php echo e(route('admin.index', ['tab' => 'dropdowns', 'group' => $key])); ?>"
+                            <?php echo e($selectedGroup === $key ? 'selected' : ''); ?>>
+                            <?php echo e($name); ?> (<?php echo e($count); ?> item)
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
 
@@ -235,28 +236,30 @@
                         <span class="text-xs font-bold uppercase tracking-wider text-[#5F6F5B]">Daftar Master
                             Dropdown</span>
                         <span
-                            class="text-[10px] bg-[#FAF7F2] text-[#5F6F5B] px-2 py-0.5 rounded-full border border-[#B6ADA3]/30 font-bold">{{ count($groups) }}
+                            class="text-[10px] bg-[#FAF7F2] text-[#5F6F5B] px-2 py-0.5 rounded-full border border-[#B6ADA3]/30 font-bold"><?php echo e(count($groups)); ?>
+
                             Group</span>
                     </div>
 
                     <div class="space-y-1.5 pt-1">
-                        @foreach ($groups as $key => $name)
-                            @php
+                        <?php $__currentLoopData = $groups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
                                 $count = $groupCounts[$key] ?? 0;
                                 $isActive = $selectedGroup === $key;
-                            @endphp
-                            <a href="{{ route('admin.index', ['tab' => 'dropdowns', 'group' => $key]) }}"
-                                class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isActive ? 'bg-[#5F6F5B] text-white shadow-xs font-bold' : 'text-[#5F6F5B] hover:bg-[#FAF7F2]' }}">
+                            ?>
+                            <a href="<?php echo e(route('admin.index', ['tab' => 'dropdowns', 'group' => $key])); ?>"
+                                class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all <?php echo e($isActive ? 'bg-[#5F6F5B] text-white shadow-xs font-bold' : 'text-[#5F6F5B] hover:bg-[#FAF7F2]'); ?>">
                                 <div class="flex items-center gap-2.5 truncate">
                                     <i class="fa-solid fa-list-ul text-[#D8A7B1]"></i>
-                                    <span class="truncate">{{ $name }}</span>
+                                    <span class="truncate"><?php echo e($name); ?></span>
                                 </div>
                                 <span
-                                    class="px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 {{ $isActive ? 'bg-white/20 text-white' : 'bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/30' }}">
-                                    {{ $count }}
+                                    class="px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 <?php echo e($isActive ? 'bg-white/20 text-white' : 'bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/30'); ?>">
+                                    <?php echo e($count); ?>
+
                                 </span>
                             </a>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
 
@@ -270,12 +273,13 @@
                             <span class="text-[10px] text-[#5F6F5B] uppercase tracking-wider font-bold">Group
                                 Terpilih</span>
                             <h2 class="text-lg sm:text-xl font-bold font-serif-title text-[#5F6F5B] mt-0.5">
-                                {{ $groups[$selectedGroup] ?? $selectedGroup }}
+                                <?php echo e($groups[$selectedGroup] ?? $selectedGroup); ?>
+
                             </h2>
                         </div>
 
                         <button
-                            @click="modalOpen = true; editMode = false; currentItem = { group_key: '{{ $selectedGroup }}', sort_order: {{ $options->count() }} }"
+                            @click="modalOpen = true; editMode = false; currentItem = { group_key: '<?php echo e($selectedGroup); ?>', sort_order: <?php echo e($options->count()); ?> }"
                             class="btn-primary-rose px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-xs w-full sm:w-auto">
                             <i class="fa-solid fa-plus"></i> Tambah Pilihan Dropdown
                         </button>
@@ -290,51 +294,55 @@
                                         class="bg-[#FAF7F2] text-xs text-[#5F6F5B] uppercase tracking-wider border-b border-[#B6ADA3]/30">
                                         <th class="p-4 w-20 text-center">Urutan</th>
                                         <th class="p-4">Nilai Pilihan (Option Value)</th>
-                                        @if($selectedGroup === 'guest_category')
+                                        <?php if($selectedGroup === 'guest_category'): ?>
                                             <th class="p-4 w-24 text-center">Default Pax</th>
-                                        @endif
+                                        <?php endif; ?>
                                         <th class="p-4">Tanggal Dibuat</th>
                                         <th class="p-4 text-right w-28">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
-                                    @forelse($options as $opt)
+                                    <?php $__empty_1 = true; $__currentLoopData = $options; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $opt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                         <tr class="hover:bg-[#FAF7F2]/70 transition-colors">
                                             <td class="p-4 text-center font-bold text-[#5F6F5B]">
                                                 <span
                                                     class="w-7 h-7 inline-flex items-center justify-center rounded-full text-xs">
-                                                    {{ $opt->sort_order }}
+                                                    <?php echo e($opt->sort_order); ?>
+
                                                 </span>
                                             </td>
                                             <td class="p-4 font-bold text-[#2D372E]">
                                                 <span
                                                     class="px-3 py-1 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/40 inline-block text-xs sm:text-sm text-[#5F6F5B]">
-                                                    {{ $opt->option_value }}
+                                                    <?php echo e($opt->option_value); ?>
+
                                                 </span>
                                             </td>
-                                            @if($selectedGroup === 'guest_category')
+                                            <?php if($selectedGroup === 'guest_category'): ?>
                                                 <td class="p-4 text-center font-bold text-[#5F6F5B]">
-                                                    {{ $opt->meta_value ?? '—' }}
+                                                    <?php echo e($opt->meta_value ?? '—'); ?>
+
                                                 </td>
-                                            @endif
+                                            <?php endif; ?>
                                             <td class="p-4 text-xs font-medium text-[#5F6F5B]">
-                                                {{ $opt->created_at ? $opt->created_at->format('d M Y, H:i') : '—' }}
+                                                <?php echo e($opt->created_at ? $opt->created_at->format('d M Y, H:i') : '—'); ?>
+
                                             </td>
                                             <td class="p-4 text-right">
                                                 <div class="flex items-center justify-end gap-2">
                                                     <button
-                                                        @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($opt) }}"
+                                                        @click="modalOpen = true; editMode = true; currentItem = <?php echo e(json_encode($opt)); ?>"
                                                         class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"
                                                         title="Edit">
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                     </button>
-                                                    <form id="del-dropdown-{{ $opt->id }}" action="{{ route('admin.dropdowns.destroy', $opt->id) }}"
+                                                    <form id="del-dropdown-<?php echo e($opt->id); ?>" action="<?php echo e(route('admin.dropdowns.destroy', $opt->id)); ?>"
                                                          method="POST">
-                                                         @csrf
-                                                         @method('DELETE')
+                                                         <?php echo csrf_field(); ?>
+                                                         <?php echo method_field('DELETE'); ?>
                                                          <button type="button"
                                                              title="Hapus"
-                                                             onclick="confirmDelete('del-dropdown-{{ $opt->id }}', '{{ addslashes($opt->option_value) }}')"
+                                                             onclick="confirmDelete('del-dropdown-<?php echo e($opt->id); ?>', '<?php echo e(addslashes($opt->option_value)); ?>')"
                                                              class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
                                                              <i class="fa-solid fa-trash"></i>
                                                          </button>
@@ -342,7 +350,7 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                    @empty
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                         <tr>
                                             <td colspan="4" class="text-center py-12 text-[#5F6F5B] text-sm">
                                                 <i class="fa-solid fa-folder-open text-2xl text-[#D8A7B1] mb-2 block"></i>
@@ -350,7 +358,7 @@
                                                     Pilihan Dropdown</strong> untuk membuat.
                                             </td>
                                         </tr>
-                                    @endforelse
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -374,18 +382,18 @@
                     </button>
                 </div>
 
-                <form :action="editMode ? '/admin/dropdowns/' + currentItem.id : '{{ route('admin.dropdowns.store') }}'"
+                <form :action="editMode ? '/admin/dropdowns/' + currentItem.id : '<?php echo e(route('admin.dropdowns.store')); ?>'"
                     method="POST" class="space-y-4">
-                    @csrf
+                    <?php echo csrf_field(); ?>
                     <template x-if="editMode">
                         <input type="hidden" name="_method" value="PUT">
                     </template>
 
-                    <input type="hidden" name="group_key" :value="currentItem.group_key || '{{ $selectedGroup }}'">
+                    <input type="hidden" name="group_key" :value="currentItem.group_key || '<?php echo e($selectedGroup); ?>'">
 
                     <div>
                         <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Group Target</label>
-                        <input type="text" readonly :value="'{{ $groups[$selectedGroup] ?? $selectedGroup }}'"
+                        <input type="text" readonly :value="'<?php echo e($groups[$selectedGroup] ?? $selectedGroup); ?>'"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm font-bold text-[#5F6F5B] px-3.5 py-2.5 rounded-xl focus:outline-none">
                     </div>
 
@@ -396,7 +404,7 @@
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none">
                     </div>
 
-                    @if($selectedGroup === 'guest_category')
+                    <?php if($selectedGroup === 'guest_category'): ?>
                     <div>
                         <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Default Pax</label>
                         <input type="number" name="meta_value" x-model="currentItem.meta_value" min="1"
@@ -404,7 +412,7 @@
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none">
                         <p class="text-[11px] text-[#5F6F5B]/70 mt-1">Jumlah pax default saat pilih kategori ini.</p>
                     </div>
-                    @endif
+                    <?php endif; ?>
 
                     <div>
                         <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Urutan Tampil (Sort Order)</label>
@@ -427,4 +435,6 @@
         </div>
 
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Admin\Herd\wedding_planner\resources\views/admin/index.blade.php ENDPATH**/ ?>

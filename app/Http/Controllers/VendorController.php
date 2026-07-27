@@ -49,13 +49,15 @@ class VendorController extends Controller
             'category' => 'required|string',
             'contact' => 'nullable|string',
             'address' => 'nullable|string',
-            'google_maps_url' => 'nullable|url',
+            'google_maps_url' => 'nullable|url|max:2048',
             'package' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'rating' => 'nullable|numeric|between:0,5',
             'review' => 'nullable|string',
             'booking_status' => 'required|string',
         ]);
+
+        $validated['rating'] = $validated['rating'] ?? 5.0;
 
         $wedding->vendors()->create($validated);
 
@@ -69,13 +71,15 @@ class VendorController extends Controller
             'category' => 'required|string',
             'contact' => 'nullable|string',
             'address' => 'nullable|string',
-            'google_maps_url' => 'nullable|url',
+            'google_maps_url' => 'nullable|url|max:2048',
             'package' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'rating' => 'nullable|numeric|between:0,5',
             'review' => 'nullable|string',
             'booking_status' => 'required|string',
         ]);
+
+        $validated['rating'] = $validated['rating'] ?? 5.0;
 
         $vendor->update($validated);
 
