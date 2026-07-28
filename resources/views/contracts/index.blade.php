@@ -57,22 +57,21 @@
                                     </span>
                                 </td>
                                 <td class="p-4 text-right">
-                                     <div class="flex items-center justify-end gap-2">
-                                         <button
-                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($c) }}"
-                                             title="Edit"
-                                             class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                                                 class="fa-solid fa-pen-to-square"></i></button>
-                                         <form id="del-contract-{{ $c->id }}" action="{{ route('contracts.destroy', $c->id) }}" method="POST">
-                                             @csrf
-                                             @method('DELETE')
-                                             <button type="button"
-                                                 title="Hapus"
-                                                 onclick="confirmDelete('del-contract-{{ $c->id }}', '{{ addslashes($c->contract_name ?? $c->vendor_name) }}')"
-                                                 class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                                                     class="fa-solid fa-trash"></i></button>
-                                         </form>
-                                     </div>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button
+                                            @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($c) }}"
+                                            title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                                class="fa-solid fa-pen-to-square"></i></button>
+                                        <form id="del-contract-{{ $c->id }}"
+                                            action="{{ route('contracts.destroy', $c->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" title="Hapus"
+                                                onclick="confirmDelete('del-contract-{{ $c->id }}', '{{ addslashes($c->contract_name ?? $c->vendor_name) }}')"
+                                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                                    class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -89,7 +88,7 @@
         <!-- Modal Form -->
         <div x-show="modalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
-            <div @click.away="modalOpen = false"
+            <div @click.away="if (!$event.target.closest('.flatpickr-calendar')) modalOpen = false"
                 class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
@@ -130,25 +129,25 @@
                     </div>
                     <div class="grid grid-cols-3 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal Total (Rp) *</label>
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal Total *</label>
                             <input type="number" name="nominal" x-model="currentItem.nominal" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">DP (Rp) *</label>
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">DP *</label>
                             <input type="number" name="dp_amount" x-model="currentItem.dp_amount" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Pelunasan (Rp) *</label>
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Pelunasan *</label>
                             <input type="number" name="final_amount" x-model="currentItem.final_amount" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Jatuh Tempo</label>
-                        <input type="date" name="due_date" x-model="currentItem.due_date"
-                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                        <input type="text" name="due_date" x-model="currentItem.due_date"
+                            class="datepicker w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan Perjanjian</label>

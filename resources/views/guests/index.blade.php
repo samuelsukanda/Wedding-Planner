@@ -20,21 +20,23 @@
             <div>
                 <h1 class="text-2xl font-bold font-serif-title">Guest Management</h1>
             </div>
-            <div class="grid grid-cols-3 gap-2 w-full md:w-auto md:flex md:items-center md:gap-2">
-                <a href="{{ route('guests.wa-all') }}"
-                    class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-green-50 border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold w-full md:w-auto">
-                    <i class="fa-brands fa-whatsapp text-green-600"></i> Kirim WA
-                </a>
-                <a href="{{ route('guests.labels') }}"
-                    class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold w-full md:w-auto">
-                    <i class="fa-solid fa-tag text-[#D8A7B1]"></i> Label
-                </a>
-                <a href="{{ route('guests.export') }}"
-                    class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold w-full md:w-auto">
-                    <i class="fa-solid fa-file-excel text-[#D8A7B1]"></i> Excel
-                </a>
+            <div class="w-full md:w-auto md:flex md:items-center md:gap-2">
+                <div class="grid grid-cols-3 gap-2">
+                    <a href="{{ route('guests.wa-all') }}"
+                        class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-green-50 border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold">
+                        <i class="fa-brands fa-whatsapp text-green-600"></i> Kirim WA
+                    </a>
+                    <a href="{{ route('guests.labels') }}"
+                        class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold">
+                        <i class="fa-solid fa-tag text-[#D8A7B1]"></i> Label
+                    </a>
+                    <a href="{{ route('guests.export') }}"
+                        class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold">
+                        <i class="fa-solid fa-file-excel text-[#D8A7B1]"></i> Excel
+                    </a>
+                </div>
                 <button @click="modalOpen = true; editMode = false; currentItem = {}"
-                    class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
+                    class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto mt-2 md:mt-0">
                     <i class="fa-solid fa-plus"></i> Tambah Tamu
                 </button>
             </div>
