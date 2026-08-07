@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::get('guests/export/labels', [GuestController::class, 'exportLabels'])->name('guests.labels');
     Route::get('guests/{guest}/wa', [GuestController::class, 'sendWa'])->name('guests.wa');
     Route::get('guests/wa-all', [GuestController::class, 'sendWaAll'])->name('guests.wa-all');
+    Route::post('guests/{guest}/wa-sent', [GuestController::class, 'toggleWaSent'])->name('guests.wa-sent');
 
     // Module 6 - Moodboard
     Route::resource('moodboards', MoodboardController::class)->except(['create', 'edit', 'show']);

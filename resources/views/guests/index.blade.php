@@ -112,8 +112,7 @@
                             <th class="p-4">Jumlah Pax</th>
                             <th class="p-4">Kontak / Telepon</th>
                             <th class="p-4">Alamat</th>
-                            <th class="p-4 text-right">Aksi</th>
-                        </tr>
+                            <th class="p-4 text-right">Aksi</th>                        </tr>
                     </thead>
                     <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
                         @forelse($guests as $g)
@@ -143,6 +142,12 @@
                                             class="inline-flex items-center gap-1 text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline">
                                             <i class="fa-brands fa-whatsapp text-[#D8A7B1]"></i> {{ $g->phone }}
                                         </a>
+                                        <span
+                                            class="ml-1.5 inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold
+                                        @if ($g->wa_sent) bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40
+                                        @else bg-[#FAF7F2] text-[#B6ADA3] border border-[#B6ADA3]/40 @endif">
+                                            {{ $g->wa_sent ? 'WA Terkirim' : 'Belum' }}
+                                        </span>
                                     @else
                                         —
                                     @endif

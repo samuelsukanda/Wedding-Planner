@@ -220,10 +220,17 @@ class GuestController extends Controller
             $namaLengkap = $g->title ? $g->title . ' ' . $g->name : $g->name;
             $waUrl = $this->buildWaUrl($g);
 
+            $phoneDisplay = $phone;
+            if (str_starts_with($phone, '62') && strlen($phone) > 2) {
+                $phoneDisplay = '0' . substr($phone, 2);
+            }
+
             return (object) [
                 'id' => $g->id,
                 'nama' => $namaLengkap,
                 'phone' => $phone,
+                'phone_display' => $phoneDisplay,
+                'wa_sent' => (bool) $g->wa_sent,
                 'url' => $waUrl,
             ];
         })->filter();
@@ -231,6 +238,13 @@ class GuestController extends Controller
         return view('guests.wa-all', compact('links'));
     }
 
+    public function toggleWaSent(Guest $guest)
+    {
+        $guest->update(['wa_sent' => !$guest->wa_sent]);
+
+        $status = $guest->wa_sent ? 'Undangan WA ditandai terkirim.' : 'Undangan WA ditandai belum terkirim.';
+        return redirect()->back()->with('success', $status);
+    }
     private function buildWaUrl(Guest $guest): string
     {
         $wedding = Wedding::first();

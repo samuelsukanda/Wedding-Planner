@@ -112,8 +112,7 @@
                             <th class="p-4">Jumlah Pax</th>
                             <th class="p-4">Kontak / Telepon</th>
                             <th class="p-4">Alamat</th>
-                            <th class="p-4 text-right">Aksi</th>
-                        </tr>
+                            <th class="p-4 text-right">Aksi</th>                        </tr>
                     </thead>
                     <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
                         <?php $__empty_1 = true; $__currentLoopData = $guests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $g): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
@@ -146,6 +145,13 @@
                                             <i class="fa-brands fa-whatsapp text-[#D8A7B1]"></i> <?php echo e($g->phone); ?>
 
                                         </a>
+                                        <span
+                                            class="ml-1.5 inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold
+                                        <?php if($g->wa_sent): ?> bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40
+                                        <?php else: ?> bg-[#FAF7F2] text-[#B6ADA3] border border-[#B6ADA3]/40 <?php endif; ?>">
+                                            <?php echo e($g->wa_sent ? 'WA Terkirim' : 'Belum'); ?>
+
+                                        </span>
                                     <?php else: ?>
                                         —
                                     <?php endif; ?>
