@@ -215,7 +215,7 @@
         </form>
 
         <div class="footer-text">
-            &copy; <?php echo e(date('Y')); ?> <span>Samuel & Angela</span> Wedding Planner
+            &copy; <?php echo e(date('Y')); ?> Wedding Planner
         </div>
     </div>
 

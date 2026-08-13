@@ -214,7 +214,7 @@
         </form>
 
         <div class="footer-text">
-            &copy; {{ date('Y') }} <span>Samuel & Angela</span> Wedding Planner
+            &copy; {{ date('Y') }} Wedding Planner
         </div>
     </div>
 

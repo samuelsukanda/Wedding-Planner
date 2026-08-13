@@ -5,7 +5,7 @@
 @section('content')
     {{-- Print Header: hidden on screen, shown in printSection() window --}}
     <div class="print-header" style="display:none;">
-        <h1>Laporan Rekapitulasi Pernikahan Samuel & Angela</h1>
+        <h1>Laporan Rekapitulasi Pernikahan</h1>
         <p>Dicetak pada: {{ now()->format('d F Y, H:i') }} WIB</p>
     </div>
 

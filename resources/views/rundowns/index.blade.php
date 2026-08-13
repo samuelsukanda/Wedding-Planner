@@ -16,8 +16,9 @@
 
         {{-- Print Header: hidden on screen, shown inside printSection() window --}}
         <div class="print-header" style="display:none;">
-            <h1>Event Rundown &mdash; Pernikahan Samuel & Angela</h1>
-            <p>Dicetak pada: {{ now()->format('d F Y, H:i') }} WIB &nbsp;|&nbsp; Total {{ $rundowns->count() }} Susunan Acara</p>
+            <h1>Event Rundown &mdash; Pernikahan</h1>
+            <p>Dicetak pada: {{ now()->format('d F Y, H:i') }} WIB &nbsp;|&nbsp; Total {{ $rundowns->count() }} Susunan
+                Acara</p>
         </div>
 
         <!-- Timeline View -->
@@ -26,7 +27,8 @@
                 <h3 class="font-bold text-[#5F6F5B] text-base sm:text-lg flex items-center gap-2">
                     <i class="fa-solid fa-timeline text-[#D8A7B1]"></i> Rundown Acara
                 </h3>
-                <button onclick="printSection('rundown-content')" class="no-print text-xs px-3 py-1.5 rounded-lg bg-[#FAF7F2] text-[#5F6F5B] hover:bg-[#D8A7B1]/20 border border-[#B6ADA3]/40 font-medium cursor-pointer">
+                <button onclick="printSection('rundown-content')"
+                    class="no-print text-xs px-3 py-1.5 rounded-lg bg-[#FAF7F2] text-[#5F6F5B] hover:bg-[#D8A7B1]/20 border border-[#B6ADA3]/40 font-medium cursor-pointer">
                     <i class="fa-solid fa-print mr-1"></i> Cetak Rundown
                 </button>
             </div>
@@ -68,14 +70,13 @@
 
                         <div class="no-print flex items-center gap-2 self-end md:self-center">
                             <button @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($rd) }}"
-                                title="Edit"
-                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                                     class="fa-solid fa-pen-to-square"></i></button>
-                            <form id="del-rundown-{{ $rd->id }}" action="{{ route('rundowns.destroy', $rd->id) }}" method="POST">
+                            <form id="del-rundown-{{ $rd->id }}" action="{{ route('rundowns.destroy', $rd->id) }}"
+                                method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button"
-                                    title="Hapus"
+                                <button type="button" title="Hapus"
                                     onclick="confirmDelete('del-rundown-{{ $rd->id }}', '{{ addslashes($rd->activity) }}')"
                                     class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                                         class="fa-solid fa-trash"></i></button>
@@ -89,7 +90,8 @@
         </div>
 
         <!-- Modal Form -->
-        <div x-show="modalOpen" x-transition.opacity class="no-print fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
+        <div x-show="modalOpen" x-transition.opacity
+            class="no-print fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div @click.away="modalOpen = false"
                 class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">

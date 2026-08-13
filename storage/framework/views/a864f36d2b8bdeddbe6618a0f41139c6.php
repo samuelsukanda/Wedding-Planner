@@ -3,7 +3,7 @@
 <?php $__env->startSection('content'); ?>
     
     <div class="print-header" style="display:none;">
-        <h1>Laporan Rekapitulasi Pernikahan Samuel & Angela</h1>
+        <h1>Laporan Rekapitulasi Pernikahan</h1>
         <p>Dicetak pada: <?php echo e(now()->format('d F Y, H:i')); ?> WIB</p>
     </div>
 

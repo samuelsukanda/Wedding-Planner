@@ -336,17 +336,17 @@
                                                         title="Edit">
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                     </button>
-                                                    <form id="del-dropdown-<?php echo e($opt->id); ?>" action="<?php echo e(route('admin.dropdowns.destroy', $opt->id)); ?>"
-                                                         method="POST">
-                                                         <?php echo csrf_field(); ?>
-                                                         <?php echo method_field('DELETE'); ?>
-                                                         <button type="button"
-                                                             title="Hapus"
-                                                             onclick="confirmDelete('del-dropdown-<?php echo e($opt->id); ?>', '<?php echo e(addslashes($opt->option_value)); ?>')"
-                                                             class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
-                                                             <i class="fa-solid fa-trash"></i>
-                                                         </button>
-                                                     </form>
+                                                    <form id="del-dropdown-<?php echo e($opt->id); ?>"
+                                                        action="<?php echo e(route('admin.dropdowns.destroy', $opt->id)); ?>"
+                                                        method="POST">
+                                                        <?php echo csrf_field(); ?>
+                                                        <?php echo method_field('DELETE'); ?>
+                                                        <button type="button" title="Hapus"
+                                                            onclick="confirmDelete('del-dropdown-<?php echo e($opt->id); ?>', '<?php echo e(addslashes($opt->option_value)); ?>')"
+                                                            class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </td>
                                         </tr>
@@ -405,13 +405,13 @@
                     </div>
 
                     <?php if($selectedGroup === 'guest_category'): ?>
-                    <div>
-                        <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Default Pax</label>
-                        <input type="number" name="meta_value" x-model="currentItem.meta_value" min="1"
-                            placeholder="2"
-                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none">
-                        <p class="text-[11px] text-[#5F6F5B]/70 mt-1">Jumlah pax default saat pilih kategori ini.</p>
-                    </div>
+                        <div>
+                            <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Default Pax</label>
+                            <input type="number" name="meta_value" x-model="currentItem.meta_value" min="1"
+                                placeholder="2"
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none">
+                            <p class="text-[11px] text-[#5F6F5B]/70 mt-1">Jumlah pax default saat pilih kategori ini.</p>
+                        </div>
                     <?php endif; ?>
 
                     <div>

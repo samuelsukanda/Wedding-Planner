@@ -290,7 +290,7 @@
                                         class="bg-[#FAF7F2] text-xs text-[#5F6F5B] uppercase tracking-wider border-b border-[#B6ADA3]/30">
                                         <th class="p-4 w-20 text-center">Urutan</th>
                                         <th class="p-4">Nilai Pilihan (Option Value)</th>
-                                        @if($selectedGroup === 'guest_category')
+                                        @if ($selectedGroup === 'guest_category')
                                             <th class="p-4 w-24 text-center">Default Pax</th>
                                         @endif
                                         <th class="p-4">Tanggal Dibuat</th>
@@ -312,7 +312,7 @@
                                                     {{ $opt->option_value }}
                                                 </span>
                                             </td>
-                                            @if($selectedGroup === 'guest_category')
+                                            @if ($selectedGroup === 'guest_category')
                                                 <td class="p-4 text-center font-bold text-[#5F6F5B]">
                                                     {{ $opt->meta_value ?? '—' }}
                                                 </td>
@@ -328,17 +328,17 @@
                                                         title="Edit">
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                     </button>
-                                                    <form id="del-dropdown-{{ $opt->id }}" action="{{ route('admin.dropdowns.destroy', $opt->id) }}"
-                                                         method="POST">
-                                                         @csrf
-                                                         @method('DELETE')
-                                                         <button type="button"
-                                                             title="Hapus"
-                                                             onclick="confirmDelete('del-dropdown-{{ $opt->id }}', '{{ addslashes($opt->option_value) }}')"
-                                                             class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
-                                                             <i class="fa-solid fa-trash"></i>
-                                                         </button>
-                                                     </form>
+                                                    <form id="del-dropdown-{{ $opt->id }}"
+                                                        action="{{ route('admin.dropdowns.destroy', $opt->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="button" title="Hapus"
+                                                            onclick="confirmDelete('del-dropdown-{{ $opt->id }}', '{{ addslashes($opt->option_value) }}')"
+                                                            class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </td>
                                         </tr>
@@ -396,14 +396,14 @@
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none">
                     </div>
 
-                    @if($selectedGroup === 'guest_category')
-                    <div>
-                        <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Default Pax</label>
-                        <input type="number" name="meta_value" x-model="currentItem.meta_value" min="1"
-                            placeholder="2"
-                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none">
-                        <p class="text-[11px] text-[#5F6F5B]/70 mt-1">Jumlah pax default saat pilih kategori ini.</p>
-                    </div>
+                    @if ($selectedGroup === 'guest_category')
+                        <div>
+                            <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Default Pax</label>
+                            <input type="number" name="meta_value" x-model="currentItem.meta_value" min="1"
+                                placeholder="2"
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none">
+                            <p class="text-[11px] text-[#5F6F5B]/70 mt-1">Jumlah pax default saat pilih kategori ini.</p>
+                        </div>
                     @endif
 
                     <div>
