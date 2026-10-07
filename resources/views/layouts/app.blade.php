@@ -34,6 +34,42 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        #page-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            background: #FAF7F2;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 180ms ease, visibility 180ms ease;
+        }
+
+        #page-loader.is-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        #page-loader-spinner {
+            width: 34px;
+            height: 34px;
+            border: 3px solid rgba(216, 167, 177, 0.28);
+            border-top-color: #D8A7B1;
+            border-radius: 999px;
+            animation: page-loader-spin 700ms linear infinite;
+        }
+
+        @keyframes page-loader-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #page-loader { transition: none; }
+            #page-loader-spinner { animation-duration: 1.5s; }
+        }
+
         /* ---- Flatpickr custom theme ---- */
         .flatpickr-calendar {
             background: #fff;
@@ -395,6 +431,12 @@
 
 <body class="h-full flex flex-col md:flex-row antialiased selection:bg-[#D8A7B1] selection:text-white"
     x-data="{ sidebarOpen: false }">
+    <div id="page-loader" role="status" aria-live="polite" aria-label="Memuat">
+        <div class="flex flex-col items-center gap-3 text-[#5F6F5B]">
+            <div id="page-loader-spinner" aria-hidden="true"></div>
+            <span class="text-sm font-semibold tracking-wide">Memuat...</span>
+        </div>
+    </div>
 
     <!-- Mobile Header -->
     <header
