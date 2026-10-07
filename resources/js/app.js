@@ -20,8 +20,48 @@ function rememberRoute(route) {
 }
 
 document.addEventListener('turbo:before-visit', function(event) {
-    rememberRoute(routeFor(event.detail.url));
+    const route = routeFor(event.detail.url);
+    if (!route || route === '/' || event.detail.url.startsWith('http') && !event.detail.url.startsWith(window.location.origin)) {
+        return;
+    }
+
+    event.preventDefault();
+    rememberRoute(route);
+    visitWithoutUrl(route);
 });
+
+async function visitWithoutUrl(route) {
+    try {
+        const response = await fetch(route, {
+            headers: { Accept: 'text/html', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+        });
+
+        if (!response.ok) throw new Error(`Navigation failed: ${response.status}`);
+
+        const html = await response.text();
+        const nextDocument = new DOMParser().parseFromString(html, 'text/html');
+        const nextBody = nextDocument.body;
+
+        document.title = nextDocument.title;
+        document.body.replaceWith(nextBody);
+        window.history.replaceState(window.history.state, '', '/');
+
+        // Re-execute page-specific scripts pushed into the replaced body.
+        document.body.querySelectorAll('script').forEach(function(oldScript) {
+            const newScript = document.createElement('script');
+            [...oldScript.attributes].forEach(attribute => {
+                newScript.setAttribute(attribute.name, attribute.value);
+            });
+            newScript.textContent = oldScript.textContent;
+            oldScript.replaceWith(newScript);
+        });
+
+        document.dispatchEvent(new CustomEvent('turbo:load', { detail: { url: route } }));
+    } catch (error) {
+        window.location.assign(route);
+    }
+}
 
 document.addEventListener('submit', function(event) {
     if (event.target.matches('form[action*="/logout"]')) {
