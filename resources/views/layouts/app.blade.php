@@ -585,7 +585,9 @@
                 <div class="flex items-center gap-3 pl-4 border-l border-[#B6ADA3]/30">
                     <div class="text-xs">
                         <div class="font-semibold text-[#5F6F5B]">{{ $brandName ?? 'Wedding Planner' }}</div>
-                        <div class="text-[#B6ADA3]">{{ $roleLabel ?? 'Bride & Groom' }}</div>
+                        @unless ($isSuper ?? false)
+                        <div class="text-[#B6ADA3]">Bride &amp; Groom</div>
+                        @endunless
                     </div>
                 </div>
             </div>

@@ -34,7 +34,6 @@ class AppServiceProvider extends ServiceProvider
             $view->with('brandName', $isSuper
                 ? (auth()->user()->name ?? 'Superadmin')
                 : ($wedding?->couple_name ?? 'Wedding Planner'));
-            $view->with('roleLabel', $isSuper ? 'Superadmin' : 'Bride & Groom');
         });
     }
 }
