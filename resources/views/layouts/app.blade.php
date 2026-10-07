@@ -353,8 +353,9 @@
         // di awal, script ini (di <head>) hanya jalan sekali dan listener
         // scroll tidak pernah terdaftar saat masuk lewat klik menu.
         (function() {
-            var isMasterData = function() {
-                return window.location.pathname.indexOf('/admin/master-data') !== -1;
+            var isMasterData = function(url) {
+                return new URL(url || window.location.href, window.location.origin)
+                    .pathname.indexOf('/admin/master-data') !== -1;
             };
 
             if (window.history && window.history.scrollRestoration) {
@@ -368,20 +369,18 @@
 
             // Simpan scroll & flag hanya saat klik group dropdown di admin
             document.addEventListener('click', function(e) {
-                if (!isMasterData()) return;
                 var link = e.target.closest('a[href*="/admin/master-data"][href*="group="]');
-                if (link) {
-                    var el = scrollContainer();
-                    if (el) {
-                        sessionStorage.setItem('adminScrollY', el.scrollTop);
-                        sessionStorage.setItem('adminRestore', '1');
-                    }
+                if (!link || !isMasterData(link.href)) return;
+                var el = scrollContainer();
+                if (el) {
+                    sessionStorage.setItem('adminScrollY', el.scrollTop);
+                    sessionStorage.setItem('adminRestore', '1');
                 }
             });
 
             // Restore scroll hanya jika ada flag (berarti navigasi dari klik group dropdown)
-            document.addEventListener('turbo:load', function() {
-                if (!isMasterData()) return;
+            document.addEventListener('turbo:load', function(event) {
+                if (!isMasterData(event.detail && event.detail.url)) return;
                 if (sessionStorage.getItem('adminRestore') !== '1') return;
                 sessionStorage.removeItem('adminRestore');
 
