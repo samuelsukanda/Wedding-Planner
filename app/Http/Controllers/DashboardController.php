@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Wedding;
 use App\Models\Checklist;
 use App\Models\Budget;
@@ -12,11 +13,22 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $wedding = Wedding::current();
         if (!$wedding) {
             if (auth()->user()?->is_superadmin) {
+                $lastRoute = $request->cookie('weddingPlanner.lastRoute');
+
+                if (str_starts_with($lastRoute ?? '', '/admin/master-data')) {
+                    parse_str(parse_url($lastRoute, PHP_URL_QUERY) ?? '', $query);
+                    if (isset($query['group'])) {
+                        $request->query->set('group', $query['group']);
+                    }
+
+                    return app(AdminPanelController::class)->masterData($request);
+                }
+
                 return app(AdminPanelController::class)->users();
             }
 

@@ -16,8 +16,16 @@ function routeFor(url) {
 }
 
 function rememberRoute(route) {
-    if (route && route !== '/') sessionStorage.setItem(LAST_ROUTE_KEY, route);
-    if (route === '/') sessionStorage.removeItem(LAST_ROUTE_KEY);
+    if (route && route !== '/') {
+        sessionStorage.setItem(LAST_ROUTE_KEY, route);
+        document.cookie = `${LAST_ROUTE_KEY}=${encodeURIComponent(route)}; Max-Age=86400; Path=/; SameSite=Lax`;
+    }
+    if (route === '/') clearLastRoute();
+}
+
+function clearLastRoute() {
+    sessionStorage.removeItem(LAST_ROUTE_KEY);
+    document.cookie = `${LAST_ROUTE_KEY}=; Max-Age=0; Path=/; SameSite=Lax`;
 }
 
 function internalLinkRoute(link) {
@@ -92,7 +100,7 @@ async function visitWithoutUrl(route) {
 document.addEventListener('submit', function(event) {
     if (event.target.method.toLowerCase() !== 'get') pageCache.clear();
     if (event.target.matches('form[action*="/logout"]')) {
-        sessionStorage.removeItem(LAST_ROUTE_KEY);
+        clearLastRoute();
     }
 });
 
@@ -103,7 +111,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const lastRoute = sessionStorage.getItem(LAST_ROUTE_KEY);
 
     if (currentRoute === '/' && lastRoute && !sessionStorage.getItem(INITIAL_LOAD_KEY)) {
+        const alreadyRendered = lastRoute.startsWith('/admin/master-data')
+            ? document.body.innerText.includes('Kelola Master Dropdown')
+            : lastRoute === '/admin/users' && document.body.innerText.includes('Kelola seluruh user');
+
         sessionStorage.setItem(INITIAL_LOAD_KEY, '1');
+        if (alreadyRendered) return;
         sessionStorage.setItem(RESTORING_ROUTE_KEY, lastRoute);
         Turbo.visit(lastRoute, { action: 'replace' });
     }
