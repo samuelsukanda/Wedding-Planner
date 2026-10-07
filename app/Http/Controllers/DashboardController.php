@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $wedding = Wedding::current();
         if (!$wedding) {
             if (auth()->user()?->is_superadmin) {
-                return app(AdminPanelController::class)->index();
+                return app(AdminPanelController::class)->users();
             }
 
             return redirect()->route('checklists.index');
