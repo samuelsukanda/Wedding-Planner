@@ -11,7 +11,9 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            return redirect()->route(
+                Auth::user()->is_superadmin ? 'admin.users.index' : 'dashboard'
+            );
         }
         return view('auth.login');
     }
@@ -25,6 +27,10 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
+            if ($request->user()->is_superadmin) {
+                return redirect()->route('admin.users.index');
+            }
+
             return redirect()->intended(route('dashboard'));
         }
 
