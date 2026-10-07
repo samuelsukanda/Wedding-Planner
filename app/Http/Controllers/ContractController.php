@@ -12,7 +12,7 @@ class ContractController extends Controller
 {
     public function index()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $contracts = $wedding->vendorContracts()->with('vendor')->latest()->get();
         $vendors = $wedding->vendors;
 
@@ -23,7 +23,7 @@ class ContractController extends Controller
 
     public function store(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $validated = $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
             'contract_number' => 'required|string|max:255',

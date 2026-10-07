@@ -11,7 +11,7 @@ class GiftController extends Controller
 {
     public function index(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $query = $wedding->gifts();
 
         if ($request->filled('type')) {
@@ -34,7 +34,7 @@ class GiftController extends Controller
 
     public function store(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $validated = $request->validate([
             'giver_name' => 'required|string|max:255',
             'gift_type' => 'required|string',
@@ -66,7 +66,7 @@ class GiftController extends Controller
 
     public function exportCsv()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $gifts = $wedding->gifts;
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -80,7 +80,7 @@ class GiftController extends Controller
 
         $totalCash = $gifts->where('gift_type', 'Cash')->sum('nominal');
         $totalGoods = $gifts->where('gift_type', 'Barang')->count();
-        $sheet->setCellValue('A2', 'Samuel & Angela — Total Uang Tunai: Rp ' . number_format($totalCash, 0, ',', '.') . ' | Total Hadiah Barang: ' . $totalGoods . ' Item');
+        $sheet->setCellValue('A2', $wedding->couple_name . ' — Total Uang Tunai: Rp ' . number_format($totalCash, 0, ',', '.') . ' | Total Hadiah Barang: ' . $totalGoods . ' Item');
         $sheet->mergeCells('A2:F2');
         $sheet->getStyle('A2')->getFont()->setItalic(true)->setSize(10)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('706F6C'));
 

@@ -3,9 +3,9 @@
 @section('title', 'Laporan - Wedding Reports')
 
 @section('content')
-    {{-- Print Header: hidden on screen, shown in printSection() window --}}
+    {{-- Print Header: hidden on screen, shown only when printing --}}
     <div class="print-header" style="display:none;">
-        <h1>Laporan Rekapitulasi Pernikahan</h1>
+        <h1>Laporan Rekapitulasi Pernikahan &mdash; {{ $wedding?->couple_name }}</h1>
         <p>Dicetak pada: {{ now()->format('d F Y, H:i') }} WIB</p>
     </div>
 
@@ -15,19 +15,19 @@
                 <h1 class="text-2xl font-bold font-serif-title">Laporan & Rekap Pernikahan</h1>
             </div>
             <div class="no-print grid grid-cols-2 gap-3 w-full md:w-auto sm:flex sm:items-center sm:gap-3">
-                <button onclick="printSection('report-content')"
+                <button onclick="window.print()"
                     class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm flex items-center justify-center gap-2 shadow-xs font-semibold cursor-pointer w-full sm:w-auto">
                     <i class="fa-solid fa-print text-[#D8A7B1]"></i> Cetak Laporan
                 </button>
                 <a href="{{ route('reports.export') }}"
                     class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 w-full sm:w-auto">
-                    <i class="fa-solid fa-file-excel"></i> Export Excel (.xlsx)
+                    <i class="fa-solid fa-file-excel"></i> Export Excel
                 </a>
             </div>
         </div>
 
         <!-- KPI Summary Row -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 print:grid-cols-4 gap-3 sm:gap-4">
             <div class="bg-gradient-to-br from-[#A3B7A6] to-[#5F6F5B] p-5 rounded-2xl text-white shadow-md text-center">
                 <div class="text-xs font-medium opacity-90 mb-1">Total Anggaran</div>
                 <div class="text-lg sm:text-xl font-bold leading-tight">Rp {{ number_format($totalBudget, 0, ',', '.') }}
@@ -57,7 +57,7 @@
         </div>
 
         <!-- 2-column report blocks -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6">
             <!-- Checklist Progress -->
             <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
                 <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
@@ -163,7 +163,7 @@
             <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2 mb-4">
                 <i class="fa-solid fa-money-bill-transfer text-[#D8A7B1]"></i> Rekap Total Pembayaran Vendor Tercatat
             </h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 print:grid-cols-4 gap-3 sm:gap-4">
                 @foreach ($paymentStatusSummary as $status => $total)
                     <div class="p-4 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 text-center">
                         <div class="text-sm sm:text-base font-bold text-[#5F6F5B]">Rp

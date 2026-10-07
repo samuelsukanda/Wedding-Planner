@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Wedding Planner') — Samuel & Angela</title>
+    <title>@yield('title', 'Wedding Planner') — {{ $wedding?->couple_name ?? 'Wedding Planner' }}</title>
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
@@ -206,6 +206,10 @@
         ============================================================ */
         @media print {
 
+            @page {
+                margin: 1.2cm;
+            }
+
             /* ---- Hide sidebar, mobile top bar, desktop header, footer, modal, action buttons ---- */
             aside,
             header,
@@ -233,8 +237,7 @@
                 width: 100% !important;
                 height: auto !important;
                 background: #ffffff !important;
-                color: #1e293b !important;
-                font-size: 11pt !important;
+                color: inherit !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
@@ -252,15 +255,17 @@
                 overflow: visible !important;
             }
 
-            /* ---- Content yield wrapper: reset padding/margin ---- */
+            /* ---- Content yield wrapper: full width (page margin handled by @page) ---- */
             #page-content {
                 display: block !important;
                 width: 100% !important;
                 max-width: 100% !important;
                 margin: 0 !important;
-                padding: 0.8cm 1cm !important;
+                padding: 0 !important;
                 background: #ffffff !important;
                 flex: none !important;
+                height: auto !important;
+                overflow: visible !important;
             }
 
             /* ---- Show print-only header (hidden by default on screen) ---- */
@@ -286,32 +291,11 @@
                 margin: 0;
             }
 
-            /* ---- Prevent page breaks inside timeline/report cards ---- */
-            .card,
-            .timeline-item,
-            .rundown-card,
-            .report-card,
+            /* ---- Prevent page breaks inside cards/rows ---- */
+            #page-content > div,
             tr {
-                break-inside: avoid !important;
-                page-break-inside: avoid !important;
-            }
-
-            /* ---- Tables ---- */
-            table {
-                width: 100% !important;
-                border-collapse: collapse !important;
-            }
-
-            th,
-            td {
-                border: 1px solid #ccc !important;
-                padding: 6pt 8pt !important;
-                font-size: 10pt !important;
-            }
-
-            th {
-                background-color: #5F6F5B !important;
-                color: #ffffff !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
             }
 
             a {
@@ -340,258 +324,6 @@
                     document.getElementById(formId).submit();
                 }
             });
-        }
-
-        /**
-         * printSection(sectionId)
-         * Opens a clean print-only window with proper layout for reports & rundown.
-         */
-        function printSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            const printHeader = document.querySelector('.print-header');
-
-            if (!section) {
-                window.print();
-                return;
-            }
-
-            const printWindow = window.open('', '_blank', 'width=900,height=700');
-            const headerHtml = printHeader ? printHeader.outerHTML : '';
-            const contentHtml = section.innerHTML;
-
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="id">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Cetak</title>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-                    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
-                    <style>
-                        * { box-sizing: border-box; margin: 0; padding: 0; }
-                        body {
-                            font-family: 'Outfit', sans-serif;
-                            color: #1e293b;
-                            font-size: 11pt;
-                            padding: 1cm;
-                            background: #ffffff;
-                            -webkit-print-color-adjust: exact;
-                            print-color-adjust: exact;
-                        }
-                        .print-header {
-                            display: block !important;
-                            text-align: center;
-                            border-bottom: 2px solid #5F6F5B;
-                            margin-bottom: 16pt;
-                            padding-bottom: 8pt;
-                        }
-                        .print-header h1 {
-                            font-size: 16pt;
-                            font-weight: bold;
-                            color: #5F6F5B;
-                            font-family: 'Playfair Display', serif;
-                            margin-bottom: 4pt;
-                        }
-                        .print-header p { font-size: 10pt; color: #555; }
-                        .no-print, form button:not(.print-keep), button:not(.print-keep) { display: none !important; }
-                        form[id^="del-"] { display: none !important; }
-
-                        /* === SPACING === */
-                        .space-y-6 > * + *, .space-y-8 > * + * { margin-top: 12pt; }
-                        .space-y-4 > * + * { margin-top: 10pt; }
-                        .space-y-3 > * + * { margin-top: 8pt; }
-                        .space-y-2 > * + * { margin-top: 6pt; }
-                        .gap-2 { gap: 6pt; }
-                        .gap-3 { gap: 8pt; }
-                        .gap-4 { gap: 10pt; }
-                        .gap-6 { gap: 12pt; }
-
-                        /* === GRID LAYOUT (preserve for print) === */
-                        .grid { display: grid; }
-                        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-                        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-                        .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
-                        .md\\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-                        .md\\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
-                        .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
-
-                        /* === FLEX LAYOUT === */
-                        .flex { display: flex; }
-                        .flex-col { flex-direction: column; }
-                        .flex-row { flex-direction: row; }
-                        .items-center { align-items: center; }
-                        .justify-between { justify-content: space-between; }
-                        .justify-center { justify-content: center; }
-                        .flex-wrap { flex-wrap: wrap; }
-                        .self-end { align-self: flex-end; }
-                        .text-center { text-align: center; }
-
-                        /* === CARD STYLING === */
-                        .bg-white, [class*="rounded-2xl"], [class*="rounded-xl"] {
-                            border: 1px solid #e5e7eb;
-                            border-radius: 8pt;
-                            padding: 10pt 12pt;
-                            break-inside: avoid;
-                            page-break-inside: avoid;
-                            margin-bottom: 8pt;
-                        }
-                        .bg-white { background: #ffffff; }
-                        [class*="bg-\\[\\#FAF7F2\\]"], [class*="bg-gradient"] { background: #f5f0ea !important; }
-
-                        /* === TYPOGRAPHY === */
-                        h1, h2, h3, h4, h5, h6 { color: #5F6F5B; }
-                        .font-bold { font-weight: 700; }
-                        .font-semibold { font-weight: 600; }
-                        .font-medium { font-weight: 500; }
-                        .font-serif-title { font-family: 'Playfair Display', serif; }
-                        .text-xs { font-size: 9pt; }
-                        .text-sm { font-size: 10pt; }
-                        .text-base { font-size: 11pt; }
-                        .text-lg { font-size: 13pt; }
-                        .text-xl { font-size: 15pt; }
-                        .text-2xl { font-size: 18pt; }
-                        .leading-tight { line-height: 1.25; }
-                        .leading-snug { line-height: 1.375; }
-                        .italic { font-style: italic; }
-
-                        /* === KPI / STAT CARDS === */
-                        .p-5 { padding: 12pt; }
-                        .p-4 { padding: 10pt; }
-                        .p-3 { padding: 8pt; }
-                        .px-4 { padding-left: 10pt; padding-right: 10pt; }
-                        .px-3 { padding-left: 8pt; padding-right: 8pt; }
-                        .py-2 { padding-top: 6pt; padding-bottom: 6pt; }
-                        .py-4 { padding-top: 10pt; padding-bottom: 10pt; }
-                        .pb-4 { padding-bottom: 10pt; }
-                        .pt-2 { padding-top: 6pt; }
-                        .pt-3 { padding-top: 8pt; }
-                        .mb-1 { margin-bottom: 3pt; }
-                        .mb-2 { margin-bottom: 6pt; }
-                        .mb-4 { margin-bottom: 10pt; }
-                        .mt-1 { margin-top: 3pt; }
-                        .mt-2 { margin-top: 6pt; }
-
-                        /* === TABLES === */
-                        table { width: 100%; border-collapse: collapse; }
-                        th, td { border: 1px solid #ccc; padding: 6pt 8pt; font-size: 10pt; }
-                        th { background-color: #5F6F5B; color: #fff; }
-                        .border-b { border-bottom: 1px solid #e5e7eb; }
-
-                        /* === PROGRESS BARS === */
-                        .h-2, .h-3 { height: 8pt; }
-                        .w-full { width: 100%; }
-                        .rounded-full { border-radius: 999pt; }
-                        .overflow-hidden { overflow: hidden; }
-                        [class*="bg-gradient-to-r"] { background: #5F6F5B !important; }
-
-                        /* === TIMELINE RUNDOWN === */
-                        .relative { position: relative; }
-                        .pl-6 { padding-left: 24pt; }
-                        .pl-8 { padding-left: 28pt; }
-                        .md\\:pl-10 { padding-left: 32pt; }
-
-                        /* timeline vertical line */
-                        [class*="before:absolute"]::before { display: none; }
-
-                        /* Timeline number badges */
-                        .absolute.-left-6, .absolute.-left-8,
-                        [class*="-left-6"], [class*="-left-8"] {
-                            position: static;
-                            display: inline-flex;
-                            width: 20pt;
-                            height: 20pt;
-                            border-radius: 50%;
-                            background: #fff;
-                            border: 2px solid #D8A7B1;
-                            align-items: center;
-                            justify-content: center;
-                            font-size: 9pt;
-                            font-weight: 700;
-                            color: #5F6F5B;
-                            margin-right: 6pt;
-                            flex-shrink: 0;
-                        }
-
-                        /* Timeline item row layout — rata kiri untuk cetak */
-                        [class*="md:flex-row"] {
-                            display: flex;
-                            flex-direction: row;
-                            align-items: flex-start;
-                            justify-content: flex-start;
-                        }
-                        .md\\:items-center { align-items: center; }
-
-                        /* Time badge */
-                        [class*="px-3 py-1 rounded-lg bg-\\[\\#D8A7B1\\]"], .text-xs.font-bold.font-mono {
-                            display: inline-block;
-                            padding: 2pt 8pt;
-                            border-radius: 4pt;
-                            background: #f0d6dd;
-                            font-size: 9pt;
-                            font-weight: 700;
-                            font-family: monospace;
-                            border: 1px solid #e0bcc6;
-                        }
-
-                        /* === SHADOWS: remove for print === */
-                        .shadow-xs, .shadow-md, .shadow-sm, .shadow-lg, .shadow-xl, .shadow-2xl {
-                            box-shadow: none !important;
-                        }
-
-                        /* === COLOR OVERRIDES === */
-                        [class*="text-\\[\\#5F6F5B\\]"] { color: #5F6F5B; }
-                        .text-\\[\\#D8A7B1\\] { color: #D8A7B1; }
-                        .text-\\[\\#B6ADA3\\] { color: #B6ADA3; }
-                        .text-white, [class*="text-white"] { color: #ffffff !important; }
-                        .opacity-80 { opacity: 0.8; }
-                        .opacity-90 { opacity: 0.9; }
-
-                        /* === BORDERS === */
-                        .border { border: 1px solid #e5e7eb; }
-                        .border-t { border-top: 1px solid #e5e7eb; }
-                        .border-b { border-bottom: 1px solid #e5e7eb; }
-                        .border-\\[\\#B6ADA3\\] { border-color: #d5d0c9; }
-                        [class*="border-\\[\\#B6ADA3\\]"] { border-color: #d5d0c9; }
-                        .border-\\[\\#D8A7B1\\] { border-color: #e0bcc6; }
-                        [class*="border-\\[\\#D8A7B1\\]"] { border-color: #e0bcc6; }
-                        [class*="border-\\[\\#A3B7A6\\]"] { border-color: #a3b7a6; }
-
-                        /* === BACKGROUNDS === */
-                        .bg-white { background: #ffffff; }
-                        [class*="bg-\\[\\#FAF7F2\\]"] { background: #f5f0ea; }
-                        [class*="bg-\\[\\#5F6F5B\\]"] { background: #5F6F5B; }
-                        [class*="bg-\\[\\#D8A7B1\\]"] { background: #f0d6dd; }
-
-                        /* Force KPI gradient cards */
-                        [class*="bg-gradient-to-br"], [class*="bg-gradient-to-r"] {
-                            background: #5F6F5B !important;
-                            color: #fff !important;
-                        }
-
-                        /* === LAPORAN: two-column layout === */
-                        .md\\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-                        .gap-6 { gap: 12pt; }
-
-                        /* Fix inner spacing for report cards */
-                        .space-y-4 > * + * { margin-top: 10pt; }
-                        .space-y-3 > * + * { margin-top: 8pt; }
-                        .space-y-1 > * + * { margin-top: 4pt; }
-                    </style>
-                </head>
-                <body>
-                    ${headerHtml}
-                    ${contentHtml}
-                </body>
-                </html>
-            `);
-
-            printWindow.document.close();
-            printWindow.onload = function() {
-                setTimeout(() => {
-                    printWindow.print();
-                    printWindow.close();
-                }, 600);
-            };
         }
 
         // Simpan & restore posisi scroll sidebar (agar tidak kembali ke atas)
@@ -673,8 +405,7 @@
             </button>
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
                 <i class="fa-solid fa-heart text-[#D8A7B1] text-lg"></i>
-                <span class="font-serif-title font-bold text-lg text-[#5F6F5B]">{{ $wedding->groom_name }} &
-                    {{ $wedding->bride_name }}</span>
+                <span class="font-serif-title font-bold text-lg text-[#5F6F5B]">{{ $wedding?->couple_name }}</span>
             </a>
         </div>
 
@@ -701,7 +432,7 @@
                     <img src="{{ asset('img/logo.png') }}" alt="Logo">
                 </div>
                 <div>
-                    <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight">Samuel & Angela</h1>
+                    <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight">{{ $wedding?->couple_name }}</h1>
                     <p class="text-[11px] text-[#5F6F5B] font-bold tracking-wide uppercase">Wedding Planner</p>
                 </div>
             </a>
@@ -791,13 +522,23 @@
                 <span>Laporan & Export</span>
             </a>
 
-            <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Pengaturan</div>
+            <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Akun</div>
 
             <a href="{{ route('admin.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.index', 'admin.wedding.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                <i class="fa-solid fa-user-gear w-5 text-center text-[#D8A7B1]"></i>
+                <span>Profile</span>
+            </a>
+
+            @if (auth()->user()?->is_superadmin)
+            <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Admin</div>
+
+            <a href="{{ route('admin.dropdowns.index') }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.dropdowns.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                 <i class="fa-solid fa-sliders w-5 text-center text-[#D8A7B1]"></i>
                 <span>Admin Panel</span>
             </a>
+            @endif
 
             <div class="border-t border-[#B6ADA3]/30 my-3 mx-3"></div>
 
@@ -832,8 +573,7 @@
                 <!-- Profile Avatar -->
                 <div class="flex items-center gap-3 pl-4 border-l border-[#B6ADA3]/30">
                     <div class="text-xs">
-                        <div class="font-semibold text-[#5F6F5B]">{{ $wedding->groom_name }} &
-                            {{ $wedding->bride_name }}</div>
+                        <div class="font-semibold text-[#5F6F5B]">{{ $wedding?->couple_name }}</div>
                         <div class="text-[#B6ADA3]">Bride & Groom</div>
                     </div>
                 </div>

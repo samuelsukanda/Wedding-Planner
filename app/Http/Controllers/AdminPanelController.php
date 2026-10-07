@@ -8,16 +8,16 @@ use Illuminate\Http\Request;
 
 class AdminPanelController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
 
         // If no wedding record exists, create a default one
         if (!$wedding) {
             $wedding = Wedding::create([
-                'title' => 'Pernikahan Romeo & Juliet',
-                'bride_name' => 'Juliet Capulet',
-                'groom_name' => 'Romeo Montague',
+                'title' => 'Pernikahan',
+                'bride_name' => 'Wanita',
+                'groom_name' => 'Pria',
                 'wedding_date' => now()->addMonths(6),
                 'total_budget' => 150000000,
                 'location' => 'Grand Ballroom Hotel Indonesia, Jakarta',
@@ -25,9 +25,13 @@ class AdminPanelController extends Controller
             ]);
         }
 
+        return view('admin.index', compact('wedding'));
+    }
+
+    public function dropdowns(Request $request)
+    {
         $groups = DropdownOption::getGroups();
         $selectedGroup = $request->query('group', 'checklist_category');
-        $activeTab = $request->query('tab', 'wedding');
 
         if (!array_key_exists($selectedGroup, $groups)) {
             $selectedGroup = 'checklist_category';
@@ -44,18 +48,18 @@ class AdminPanelController extends Controller
             ->pluck('total', 'group_key')
             ->toArray();
 
-        return view('admin.index', compact(
-            'wedding',
-            'groups',
-            'selectedGroup',
-            'activeTab',
-            'options',
-            'groupCounts'
-        ));
+        return view('admin.dropdowns', compact('groups', 'selectedGroup', 'options', 'groupCounts'));
     }
 
     public function updateWedding(Request $request, Wedding $wedding)
     {
+        // Pengguna hanya boleh mengubah wedding miliknya sendiri.
+        abort_unless(
+            $request->user()?->wedding_id === $wedding->id,
+            403,
+            'Anda tidak berhak mengubah data acara pasangan lain.'
+        );
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'bride_name' => 'required|string|max:255',
@@ -68,7 +72,7 @@ class AdminPanelController extends Controller
 
         $wedding->update($validated);
 
-        return redirect()->route('admin.index', ['tab' => 'wedding'])
+        return redirect()->route('admin.index')
             ->with('success', 'Informasi acara pernikahan berhasil diperbarui!');
     }
 
@@ -92,7 +96,7 @@ class AdminPanelController extends Controller
             'sort_order' => $validated['sort_order'] ?? 0,
         ]);
 
-        return redirect()->route('admin.index', ['tab' => 'dropdowns', 'group' => $validated['group_key']])
+        return redirect()->route('admin.dropdowns.index', ['group' => $validated['group_key']])
             ->with('success', 'Pilihan dropdown berhasil ditambahkan!');
     }
 
@@ -110,7 +114,7 @@ class AdminPanelController extends Controller
             'sort_order' => $validated['sort_order'] ?? 0,
         ]);
 
-        return redirect()->route('admin.index', ['tab' => 'dropdowns', 'group' => $dropdownOption->group_key])
+        return redirect()->route('admin.dropdowns.index', ['group' => $dropdownOption->group_key])
             ->with('success', 'Pilihan dropdown berhasil diperbarui!');
     }
 
@@ -119,7 +123,7 @@ class AdminPanelController extends Controller
         $groupKey = $dropdownOption->group_key;
         $dropdownOption->delete();
 
-        return redirect()->route('admin.index', ['tab' => 'dropdowns', 'group' => $groupKey])
+        return redirect()->route('admin.dropdowns.index', ['group' => $groupKey])
             ->with('success', 'Pilihan dropdown berhasil dihapus!');
     }
 }

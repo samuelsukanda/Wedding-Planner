@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
     {
         // Default User
         $user = User::firstOrCreate(
-            ['email' => 'admin@gmail.com'],
+            ['email' => 'samuelangela@gmail.com'],
             [
                 'name' => 'Samuel & Angela',
                 'password' => bcrypt('lopyu'),

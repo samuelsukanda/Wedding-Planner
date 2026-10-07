@@ -12,7 +12,7 @@ class BudgetController extends Controller
 {
     public function index(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $budgets = $wedding->budgets()->with('vendor')->get();
 
         // Auto calculate stats
@@ -54,7 +54,7 @@ class BudgetController extends Controller
 
     public function store(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $validated = $request->validate([
             'category' => 'required|string',
             'item_name' => 'required|string|max:255',

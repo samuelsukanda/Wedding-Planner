@@ -102,12 +102,8 @@
 
         <!-- Budget Items Table -->
         <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden space-y-4 p-4">
-            <div class="flex items-center justify-between px-2 pt-2">
+            <div class="px-2 pt-2">
                 <h3 class="font-bold text-[#5F6F5B] text-base sm:text-lg">Rincian Anggaran Kategori</h3>
-                <button onclick="window.print()"
-                    class="text-xs px-3 py-1.5 rounded-lg bg-[#FAF7F2] text-[#5F6F5B] hover:bg-[#D8A7B1]/20 border border-[#B6ADA3]/40 font-medium cursor-pointer">
-                    <i class="fa-solid fa-print mr-1"></i> Cetak Laporan
-                </button>
             </div>
 
             <div class="overflow-x-auto">

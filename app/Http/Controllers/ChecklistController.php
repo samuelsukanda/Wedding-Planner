@@ -11,7 +11,7 @@ class ChecklistController extends Controller
 {
     public function index(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $query = $wedding->checklists();
 
         if ($request->filled('status')) {
@@ -56,7 +56,7 @@ class ChecklistController extends Controller
 
     public function store(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string',

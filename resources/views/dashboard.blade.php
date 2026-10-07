@@ -16,7 +16,7 @@
                         Dashboard
                     </div>
                     <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold font-serif-title text-white mb-2 leading-tight">
-                        Weeding of <br> <span>{{ $wedding->groom_name }} & {{ $wedding->bride_name }}</span>!
+                        Weeding of <br> <span>{{ $wedding?->couple_name }}</span>!
                     </h1>
                 </div>
                 <!-- D-Day Countdown Card -->

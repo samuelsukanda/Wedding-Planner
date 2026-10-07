@@ -12,7 +12,7 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $payments = $wedding->vendorPayments()->with('vendor')->latest()->get();
         $vendors = $wedding->vendors;
 
@@ -23,7 +23,7 @@ class PaymentController extends Controller
 
     public function store(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $validated = $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
             'nominal' => 'required|numeric|min:0',

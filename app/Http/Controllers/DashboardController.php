@@ -14,7 +14,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         if (!$wedding) {
             return redirect()->route('checklists.index');
         }

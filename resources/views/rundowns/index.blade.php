@@ -14,9 +14,9 @@
             </button>
         </div>
 
-        {{-- Print Header: hidden on screen, shown inside printSection() window --}}
+        {{-- Print Header: hidden on screen, shown only when printing --}}
         <div class="print-header" style="display:none;">
-            <h1>Event Rundown &mdash; Pernikahan</h1>
+            <h1>Event Rundown &mdash; {{ $wedding?->couple_name }}</h1>
             <p>Dicetak pada: {{ now()->format('d F Y, H:i') }} WIB &nbsp;|&nbsp; Total {{ $rundowns->count() }} Susunan
                 Acara</p>
         </div>
@@ -27,20 +27,20 @@
                 <h3 class="font-bold text-[#5F6F5B] text-base sm:text-lg flex items-center gap-2">
                     <i class="fa-solid fa-timeline text-[#D8A7B1]"></i> Rundown Acara
                 </h3>
-                <button onclick="printSection('rundown-content')"
+                <button onclick="window.print()"
                     class="no-print text-xs px-3 py-1.5 rounded-lg bg-[#FAF7F2] text-[#5F6F5B] hover:bg-[#D8A7B1]/20 border border-[#B6ADA3]/40 font-medium cursor-pointer">
                     <i class="fa-solid fa-print mr-1"></i> Cetak Rundown
                 </button>
             </div>
 
             <div
-                class="relative pl-6 md:pl-10 space-y-6 sm:space-y-8 before:absolute before:left-3 md:before:left-5 before:top-3 before:bottom-3 before:w-0.5 before:bg-gradient-to-b before:from-[#D8A7B1] before:via-[#A3B7A6] before:to-[#5F6F5B]">
+                class="relative pl-6 md:pl-10 print:pl-10 space-y-6 sm:space-y-8 before:absolute before:left-3 md:before:left-5 print:before:left-5 before:top-3 before:bottom-3 before:w-0.5 before:bg-gradient-to-b before:from-[#D8A7B1] before:via-[#A3B7A6] before:to-[#5F6F5B]">
                 @forelse($rundowns as $index => $rd)
                     <div
-                        class="relative flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] transition-all">
+                        class="relative flex flex-col md:flex-row md:items-center print:flex-row print:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] transition-all">
                         <!-- Timeline Node -->
                         <div
-                            class="absolute -left-6 md:-left-10 top-5 w-6 h-6 rounded-full bg-white border-2 border-[#D8A7B1] flex items-center justify-center text-[10px] font-bold text-[#5F6F5B] shadow-xs">
+                            class="absolute -left-6 md:-left-10 print:-left-10 top-5 w-6 h-6 rounded-full bg-white border-2 border-[#D8A7B1] flex items-center justify-center text-[10px] font-bold text-[#5F6F5B] shadow-xs">
                             {{ $index + 1 }}
                         </div>
 

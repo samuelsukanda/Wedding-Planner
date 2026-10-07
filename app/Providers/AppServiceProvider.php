@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('layouts.app', function ($view) {
-            $wedding = Wedding::first();
+            $wedding = Wedding::current();
             $daysLeft = $wedding ? max(0, (int) Carbon::now()->diffInDays($wedding->wedding_date, false)) : 0;
             $view->with('daysLeft', $daysLeft);
             $view->with('wedding', $wedding);

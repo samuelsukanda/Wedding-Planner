@@ -69,10 +69,15 @@ Route::middleware('auth')->group(function () {
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
 
-    // Module 12 - Admin Panel
+// Module 12 - Profile & Admin Panel
     Route::get('admin', [AdminPanelController::class, 'index'])->name('admin.index');
     Route::put('admin/wedding/{wedding}', [AdminPanelController::class, 'updateWedding'])->name('admin.wedding.update');
-    Route::post('admin/dropdowns', [AdminPanelController::class, 'store'])->name('admin.dropdowns.store');
-    Route::put('admin/dropdowns/{dropdownOption}', [AdminPanelController::class, 'update'])->name('admin.dropdowns.update');
-    Route::delete('admin/dropdowns/{dropdownOption}', [AdminPanelController::class, 'destroy'])->name('admin.dropdowns.destroy');
+
+    // Master dropdown = data global, hanya superadmin yang boleh kelola.
+    Route::middleware('superadmin')->group(function () {
+        Route::get('admin/dropdowns', [AdminPanelController::class, 'dropdowns'])->name('admin.dropdowns.index');
+        Route::post('admin/dropdowns', [AdminPanelController::class, 'store'])->name('admin.dropdowns.store');
+        Route::put('admin/dropdowns/{dropdownOption}', [AdminPanelController::class, 'update'])->name('admin.dropdowns.update');
+        Route::delete('admin/dropdowns/{dropdownOption}', [AdminPanelController::class, 'destroy'])->name('admin.dropdowns.destroy');
+    });
 });

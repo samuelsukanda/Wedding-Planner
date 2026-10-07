@@ -12,7 +12,7 @@ class GuestController extends Controller
 {
     public function index(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $query = $wedding->guests();
 
         if ($request->filled('category')) {
@@ -62,7 +62,7 @@ class GuestController extends Controller
 
     public function store(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $validated = $request->validate([
             'title' => 'nullable|string|max:50',
             'name' => 'required|string|max:255',
@@ -103,7 +103,7 @@ class GuestController extends Controller
 
     public function exportCsv()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $guests = $wedding->guests;
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -117,7 +117,7 @@ class GuestController extends Controller
 
         $totalPax = $guests->sum('guest_count');
         $attendCount = $guests->where('attendance_status', 'Attend')->count();
-        $sheet->setCellValue('A2', 'Samuel & Angela — Total Undangan: ' . $guests->count() . ' Tamu | Hadir: ' . $attendCount . ' | Total Pax: ' . $totalPax);
+        $sheet->setCellValue('A2', $wedding->couple_name . ' — Total Undangan: ' . $guests->count() . ' Tamu | Hadir: ' . $attendCount . ' | Total Pax: ' . $totalPax);
         $sheet->mergeCells('A2:G2');
         $sheet->getStyle('A2')->getFont()->setItalic(true)->setSize(10)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('706F6C'));
 
@@ -210,7 +210,7 @@ class GuestController extends Controller
 
     public function sendWaAll()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $guests = $wedding->guests()->whereNotNull('phone')->where('phone', '!=', '')->get();
 
         $links = $guests->map(function ($g) {
@@ -247,11 +247,11 @@ class GuestController extends Controller
     }
     private function buildWaUrl(Guest $guest): string
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $namaLengkap = $guest->title ? $guest->title . ' ' . $guest->name : $guest->name;
 
-        $bride = $wedding->bride_name;
-        $groom = $wedding->groom_name;
+        $bride = $wedding->bride_first_name;
+        $groom = $wedding->groom_first_name;
         $date = $wedding->wedding_date ? $wedding->wedding_date->format('d F Y') : '—';
         $time = '17:00';
         $location = $wedding->location ?: 'Bandung';
@@ -278,7 +278,7 @@ class GuestController extends Controller
 
     public function exportLabels()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $guests = $wedding->guests;
 
         $html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';

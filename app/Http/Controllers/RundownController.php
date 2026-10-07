@@ -10,7 +10,7 @@ class RundownController extends Controller
 {
     public function index()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $rundowns = $wedding->rundownEvents()->orderBy('sort_order', 'asc')->get();
 
         return view('rundowns.index', compact('wedding', 'rundowns'));
@@ -18,7 +18,7 @@ class RundownController extends Controller
 
     public function store(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $validated = $request->validate([
             'time' => 'required|string',
             'activity' => 'required|string|max:255',

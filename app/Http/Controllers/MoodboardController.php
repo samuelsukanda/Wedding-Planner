@@ -11,7 +11,7 @@ class MoodboardController extends Controller
 {
     public function index(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $query = $wedding->moodboards();
 
         if ($request->filled('category')) {
@@ -27,7 +27,7 @@ class MoodboardController extends Controller
 
     public function store(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $validated = $request->validate([
             'category' => 'required|string',
             'title' => 'required|string|max:255',

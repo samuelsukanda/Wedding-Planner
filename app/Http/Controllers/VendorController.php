@@ -12,7 +12,7 @@ class VendorController extends Controller
 {
     public function index(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $query = $wedding->vendors();
 
         if ($request->filled('category')) {
@@ -43,7 +43,7 @@ class VendorController extends Controller
 
     public function store(Request $request)
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|string',

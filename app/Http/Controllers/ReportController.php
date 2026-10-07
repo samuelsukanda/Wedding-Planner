@@ -16,7 +16,7 @@ class ReportController extends Controller
 {
     public function index()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
 
         // Budget summary
         $totalBudget   = $wedding->total_budget;
@@ -77,7 +77,7 @@ class ReportController extends Controller
 
     public function export()
     {
-        $wedding = Wedding::first();
+        $wedding = Wedding::current();
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
@@ -85,7 +85,7 @@ class ReportController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Ringkasan Laporan');
 
-        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI PERNIKAHAN SAMUEL & ANGELA');
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI PERNIKAHAN ' . mb_strtoupper($wedding->couple_name));
         $sheet->mergeCells('A1:C1');
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('5F6F5B'));
 
@@ -190,7 +190,7 @@ class ReportController extends Controller
         foreach (range('A', 'G') as $c) { $sheet2->getColumnDimension($c)->setAutoSize(true); }
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $filename = 'Laporan_Pernikahan_Samuel_Angela.xlsx';
+        $filename = 'Laporan_Pernikahan_' . str_replace([' ', '&'], '_', $wedding->couple_name) . '.xlsx';
 
         return response()->streamDownload(function () use ($writer) {
             $writer->save('php://output');
