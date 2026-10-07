@@ -29,6 +29,10 @@ class EnsureWedding
 
         if ($user->is_superadmin && ! $user->wedding_id) {
             if ($isAdminArea || $request->routeIs('dashboard', 'logout')) {
+                if ($request->isMethod('GET') && $request->routeIs('admin.master-data.index', 'admin.users.index')) {
+                    $request->session()->put('weddingPlanner.lastRoute', $request->getRequestUri());
+                }
+
                 return $next($request);
             }
 

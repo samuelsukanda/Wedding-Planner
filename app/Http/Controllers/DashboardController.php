@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $wedding = Wedding::current();
         if (!$wedding) {
             if (auth()->user()?->is_superadmin) {
-                $lastRoute = $request->cookie('weddingPlanner.lastRoute');
+                $lastRoute = $request->session()->get('weddingPlanner.lastRoute');
 
                 if (str_starts_with($lastRoute ?? '', '/admin/master-data')) {
                     parse_str(parse_url($lastRoute, PHP_URL_QUERY) ?? '', $query);

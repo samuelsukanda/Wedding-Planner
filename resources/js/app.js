@@ -18,18 +18,12 @@ function routeFor(url) {
 function rememberRoute(route) {
     if (route && route !== '/') {
         sessionStorage.setItem(LAST_ROUTE_KEY, route);
-        document.cookie = `${LAST_ROUTE_KEY}=${encodeURIComponent(route)}; Max-Age=86400; Path=/; SameSite=Lax`;
     }
     if (route === '/') clearLastRoute();
 }
 
 function clearLastRoute() {
     sessionStorage.removeItem(LAST_ROUTE_KEY);
-    document.cookie = `${LAST_ROUTE_KEY}=; Max-Age=0; Path=/; SameSite=Lax`;
-}
-
-function setPageLoader(visible) {
-    document.getElementById('page-loader')?.classList.toggle('is-visible', visible);
 }
 
 function internalLinkRoute(link) {
@@ -121,16 +115,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         sessionStorage.setItem(INITIAL_LOAD_KEY, '1');
         if (alreadyRendered) {
-            setPageLoader(false);
             return;
         }
-        setPageLoader(true);
         sessionStorage.setItem(RESTORING_ROUTE_KEY, lastRoute);
         Turbo.visit(lastRoute, { action: 'replace' });
         return;
     }
-
-    setPageLoader(false);
 });
 
 // Flatpickr milik layout app (halaman form tanggal). Head tidak di-re-execute
@@ -148,9 +138,6 @@ document.addEventListener('turbo:load', function(event) {
         rememberRoute(currentRoute);
         sessionStorage.removeItem(RESTORING_ROUTE_KEY);
         window.history.replaceState(window.history.state, '', '/');
-        setPageLoader(false);
-    } else if (!sessionStorage.getItem(LAST_ROUTE_KEY) || !sessionStorage.getItem(RESTORING_ROUTE_KEY)) {
-        setPageLoader(false);
     }
 
     document.querySelectorAll('.datepicker').forEach(function(el) {
