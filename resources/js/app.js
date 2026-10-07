@@ -29,7 +29,7 @@ function clearLastRoute() {
 }
 
 function setPageLoader(visible) {
-    document.getElementById('page-loader')?.classList.toggle('is-hidden', !visible);
+    document.getElementById('page-loader')?.classList.toggle('is-visible', visible);
 }
 
 function internalLinkRoute(link) {
@@ -72,7 +72,6 @@ document.addEventListener('turbo:before-visit', function(event) {
 
     event.preventDefault();
     rememberRoute(route);
-    setPageLoader(true);
     visitWithoutUrl(route);
 });
 

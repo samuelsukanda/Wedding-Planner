@@ -41,14 +41,14 @@
             display: grid;
             place-items: center;
             background: #FAF7F2;
-            opacity: 1;
-            visibility: visible;
+            opacity: 0;
+            visibility: hidden;
             transition: opacity 180ms ease, visibility 180ms ease;
         }
 
-        #page-loader.is-hidden {
-            opacity: 0;
-            visibility: hidden;
+        #page-loader.is-visible {
+            opacity: 1;
+            visibility: visible;
             pointer-events: none;
         }
 
@@ -431,7 +431,7 @@
 
 <body class="h-full flex flex-col md:flex-row antialiased selection:bg-[#D8A7B1] selection:text-white"
     x-data="{ sidebarOpen: false }">
-    <div id="page-loader" role="status" aria-live="polite" aria-label="Memuat">
+    <div id="page-loader" class="{{ request()->is('/') && request()->cookie('weddingPlanner.lastRoute') ? 'is-visible' : '' }}" role="status" aria-live="polite" aria-label="Memuat">
         <div class="flex flex-col items-center gap-3 text-[#5F6F5B]">
             <div id="page-loader-spinner" aria-hidden="true"></div>
             <span class="text-sm font-semibold tracking-wide">Memuat...</span>
