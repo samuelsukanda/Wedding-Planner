@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    {{-- Halaman dinamis: jangan pernah tampilkan snapshot basi saat kembali/back. --}}
+    <meta name="turbo-cache-control" content="no-cache">
     <title>@yield('title', 'Wedding Planner') — {{ $brandName ?? 'Wedding Planner' }}</title>
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
@@ -321,13 +323,17 @@
                 reverseButtons: true,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById(formId).submit();
+                    // requestSubmit(), bukan submit(): form.submit() bypass event
+                    // submit sehingga Turbo tidak bisa mengintercept navigasi.
+                    document.getElementById(formId).requestSubmit();
                 }
             });
         }
 
         // Simpan & restore posisi scroll sidebar (agar tidak kembali ke atas)
-        document.addEventListener('DOMContentLoaded', function() {
+        // Pakai turbo:load, bukan DOMContentLoaded: DOMContentLoaded hanya
+        // terjadi sekali, sedangkan Turbo mengganti <body> tiap perpindahan menu.
+        document.addEventListener('turbo:load', function() {
             var sidebarNav = document.querySelector('nav.flex-1.overflow-y-auto');
             if (sidebarNav) {
                 var saved = sessionStorage.getItem('sidebarScrollPos');
@@ -341,11 +347,15 @@
             }
         });
 
-        // Simpan & restore posisi scroll halaman Master Data (admin panel)
+        // Simpan & restore posisi scroll halaman Master Data (admin panel).
+        // Turbo mengganti <body> tiap perpindahan menu, jadi pemeriksaan
+        // pathname harus di dalam event, bukan di awal IIFE — kalau placed
+        // di awal, script ini (di <head>) hanya jalan sekali dan listener
+        // scroll tidak pernah terdaftar saat masuk lewat klik menu.
         (function() {
-            // Hanya halaman master data yang butuh ini; hapus scrollRestoration
-            // global karena halaman /admin lain ikut terganggu.
-            if (window.location.pathname.indexOf('/admin/master-data') === -1) return;
+            var isMasterData = function() {
+                return window.location.pathname.indexOf('/admin/master-data') !== -1;
+            };
 
             if (window.history && window.history.scrollRestoration) {
                 window.history.scrollRestoration = 'manual';
@@ -357,7 +367,8 @@
             };
 
             // Simpan scroll & flag hanya saat klik group dropdown di admin
-            function saveScroll(e) {
+            document.addEventListener('click', function(e) {
+                if (!isMasterData()) return;
                 var link = e.target.closest('a[href*="/admin/master-data"][href*="group="]');
                 if (link) {
                     var el = scrollContainer();
@@ -366,26 +377,19 @@
                         sessionStorage.setItem('adminRestore', '1');
                     }
                 }
-            }
-            document.addEventListener('click', saveScroll);
+            });
 
             // Restore scroll hanya jika ada flag (berarti navigasi dari klik group dropdown)
-            if (sessionStorage.getItem('adminRestore') === '1') {
+            document.addEventListener('turbo:load', function() {
+                if (!isMasterData()) return;
+                if (sessionStorage.getItem('adminRestore') !== '1') return;
                 sessionStorage.removeItem('adminRestore');
 
-                function doRestore() {
-                    var saved = sessionStorage.getItem('adminScrollY');
-                    if (saved) {
-                        var el = scrollContainer();
-                        if (el) el.scrollTop = parseInt(saved, 10);
-                    }
-                }
-                if (document.readyState === 'complete') {
-                    doRestore();
-                } else {
-                    window.addEventListener('load', doRestore);
-                }
-            }
+                var saved = sessionStorage.getItem('adminScrollY');
+                if (!saved) return;
+                var el = scrollContainer();
+                if (el) el.scrollTop = parseInt(saved, 10);
+            });
         })();
     </script>
 </head>
@@ -551,7 +555,7 @@
 
             <div class="border-t border-[#B6ADA3]/30 my-3 mx-3"></div>
 
-            <form method="POST" action="{{ route('logout') }}" class="px-3">
+            <form method="POST" action="{{ route('logout') }}" class="px-3" data-turbo="false">
                 @csrf
                 <button type="submit"
                     class="flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#B6ADA3] hover:bg-[#FAF7F2] hover:text-[#D8A7B1] cursor-pointer transition-all">
@@ -652,22 +656,6 @@
     </main>
 
     @stack('scripts')
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.datepicker').forEach(function(el) {
-                flatpickr(el, {
-                    dateFormat: 'Y-m-d',
-                    allowInput: true,
-                    onChange: function(selectedDates, dateStr, instance) {
-                        el.dispatchEvent(new Event('input', {
-                            bubbles: true
-                        }));
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>

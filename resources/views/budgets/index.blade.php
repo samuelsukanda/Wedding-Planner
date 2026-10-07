@@ -260,15 +260,31 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const chartData = @json($chartData);
-            const labels = Object.keys(chartData);
-            const plannedValues = labels.map(k => chartData[k].planned);
-            const actualValues = labels.map(k => chartData[k].actual);
+        // Script ini ada di dalam <body>, jadi Turbo mengevaluasi ulang setiap
+        // kali halaman ini di-load — listener turbo:load harus dipasang satu kali
+        // saja (guard di bawah), kalau tidak Chart digambar berkali-kali.
+        // Instance lama juga harus dihancurkan dulu: <canvas> di-replace oleh
+        // Turbo, tapi Chart yang lama masih memegang context canvas yang lama.
+        if (!window.__budgetChartBound) {
+            window.__budgetChartBound = true;
 
-            // Pie Chart — Soft Romantic Palette (#D8A7B1, #A3B7A6, #5F6F5B, #B6ADA3)
-            const pieCtx = document.getElementById('budgetPieChart').getContext('2d');
-            new Chart(pieCtx, {
+            document.addEventListener('turbo:load', function() {
+                const canvas = document.getElementById('budgetPieChart');
+                if (!canvas || !window.Chart) return;
+
+                if (window.__budgetPieChart) {
+                    window.__budgetPieChart.destroy();
+                    window.__budgetPieChart = null;
+                }
+
+                const chartData = @json($chartData);
+                const labels = Object.keys(chartData);
+                const plannedValues = labels.map(k => chartData[k].planned);
+                const actualValues = labels.map(k => chartData[k].actual);
+
+                // Pie Chart — Soft Romantic Palette (#D8A7B1, #A3B7A6, #5F6F5B, #B6ADA3)
+                const pieCtx = canvas.getContext('2d');
+                window.__budgetPieChart = new Chart(pieCtx, {
                 type: 'doughnut',
                 data: {
                     labels: labels,
@@ -297,9 +313,14 @@
                 }
             });
 
-            // Bar Chart — Soft Romantic Palette
-            const barCtx = document.getElementById('budgetBarChart').getContext('2d');
-            new Chart(barCtx, {
+                // Bar Chart — Soft Romantic Palette
+                const barCanvas = document.getElementById('budgetBarChart');
+                if (barCanvas) {
+                    if (window.__budgetBarChart) {
+                        window.__budgetBarChart.destroy();
+                        window.__budgetBarChart = null;
+                    }
+                    window.__budgetBarChart = new Chart(barCanvas.getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -341,7 +362,9 @@
                         }
                     }
                 }
+                });
+                }
             });
-        });
+        }
     </script>
 @endpush

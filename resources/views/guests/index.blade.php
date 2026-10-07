@@ -26,11 +26,11 @@
                         class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-green-50 border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold">
                         <i class="fa-brands fa-whatsapp text-green-600"></i> Kirim WA
                     </a>
-                    <a href="{{ route('guests.labels') }}"
+                    <a href="{{ route('guests.labels') }}" data-turbo="false"
                         class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold">
                         <i class="fa-solid fa-tag text-[#D8A7B1]"></i> Label
                     </a>
-                    <a href="{{ route('guests.export') }}"
+                    <a href="{{ route('guests.export') }}" data-turbo="false"
                         class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold">
                         <i class="fa-solid fa-file-excel text-[#D8A7B1]"></i> Excel
                     </a>

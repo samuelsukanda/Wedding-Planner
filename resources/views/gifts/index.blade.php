@@ -9,7 +9,7 @@
                 <h1 class="text-2xl font-bold font-serif-title">Wedding Gifts & Souvenir</h1>
             </div>
             <div class="grid grid-cols-2 gap-3 w-full md:w-auto md:flex md:items-center md:gap-3">
-                <a href="{{ route('gifts.export') }}"
+                <a href="{{ route('gifts.export') }}" data-turbo="false"
                     class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm flex items-center justify-center gap-2 shadow-xs font-semibold w-full md:w-auto">
                     <i class="fa-solid fa-file-excel text-[#D8A7B1]"></i> Export Excel
                 </a>

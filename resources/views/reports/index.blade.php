@@ -19,7 +19,7 @@
                     class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm flex items-center justify-center gap-2 shadow-xs font-semibold cursor-pointer w-full sm:w-auto">
                     <i class="fa-solid fa-print text-[#D8A7B1]"></i> Cetak Laporan
                 </button>
-                <a href="{{ route('reports.export') }}"
+                <a href="{{ route('reports.export') }}" data-turbo="false"
                     class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 w-full sm:w-auto">
                     <i class="fa-solid fa-file-excel"></i> Export Excel
                 </a>
