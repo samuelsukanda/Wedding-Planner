@@ -28,7 +28,7 @@ class EnsureWedding
         $isAdminArea = $request->routeIs('admin.*');
 
         if ($user->is_superadmin && ! $user->wedding_id) {
-            if ($isAdminArea || $request->routeIs('logout')) {
+            if ($isAdminArea || $request->routeIs('dashboard', 'logout')) {
                 return $next($request);
             }
 
