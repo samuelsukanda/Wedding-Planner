@@ -163,8 +163,6 @@
                 </div>
             </div>
 
-        </div>
-
         <!-- ================= MODAL FORM (TAMBAH / EDIT DROPDOWN OPTION) ================= -->
         <div x-show="modalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4" x-cloak>
@@ -228,5 +226,6 @@
                     </div>
                 </form>
             </div>
+        </div>
     </div>
 @endsection

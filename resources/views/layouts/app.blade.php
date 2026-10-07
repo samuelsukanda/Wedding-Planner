@@ -341,13 +341,12 @@
             }
         });
 
-        // Simpan & restore posisi scroll halaman khusus admin panel (master dropdown)
+        // Simpan & restore posisi scroll halaman Master Data (admin panel)
         (function() {
-            var isAdminPage = window.location.pathname.indexOf('/admin') !== -1;
-            var isDropdownTab = window.location.search.indexOf('tab=dropdowns') !== -1;
-            if (!isAdminPage && !isDropdownTab) return;
+            // Hanya halaman master data yang butuh ini; hapus scrollRestoration
+            // global karena halaman /admin lain ikut terganggu.
+            if (window.location.pathname.indexOf('/admin/master-data') === -1) return;
 
-            // Nonaktifkan scroll restoration bawaan browser
             if (window.history && window.history.scrollRestoration) {
                 window.history.scrollRestoration = 'manual';
             }
@@ -359,7 +358,7 @@
 
             // Simpan scroll & flag hanya saat klik group dropdown di admin
             function saveScroll(e) {
-                var link = e.target.closest('a[href*="tab=dropdowns"][href*="group="]');
+                var link = e.target.closest('a[href*="/admin/master-data"][href*="group="]');
                 if (link) {
                     var el = scrollContainer();
                     if (el) {
