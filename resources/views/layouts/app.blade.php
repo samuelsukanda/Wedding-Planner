@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Wedding Planner') — {{ $wedding?->couple_name ?? 'Wedding Planner' }}</title>
+    <title>@yield('title', 'Wedding Planner') — {{ $brandName ?? 'Wedding Planner' }}</title>
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
@@ -405,16 +405,18 @@
             </button>
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
                 <i class="fa-solid fa-heart text-[#D8A7B1] text-lg"></i>
-                <span class="font-serif-title font-bold text-lg text-[#5F6F5B]">{{ $wedding?->couple_name }}</span>
+                <span class="font-serif-title font-bold text-lg text-[#5F6F5B]">{{ $brandName ?? 'Wedding Planner' }}</span>
             </a>
         </div>
 
         <!-- Mobile Days Badge -->
+        @unless ($isSuper ?? false)
         <div
             class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D8A7B1]/20 text-[#5F6F5B] text-xs font-semibold border border-[#D8A7B1]/40">
             <i class="fa-solid fa-calendar-days text-[#D8A7B1]" style="color: #D8A7B1 !important;"></i>
             <span>{{ $daysLeft ?? 0 }} Hari</span>
         </div>
+        @endunless
     </header>
 
     <!-- Sidebar Backdrop for Mobile -->
@@ -432,7 +434,7 @@
                     <img src="{{ asset('img/logo.png') }}" alt="Logo">
                 </div>
                 <div>
-                    <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight">{{ $wedding?->couple_name }}</h1>
+                    <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight">{{ $brandName ?? 'Wedding Planner' }}</h1>
                     <p class="text-[11px] text-[#5F6F5B] font-bold tracking-wide uppercase">Wedding Planner</p>
                 </div>
             </a>
@@ -444,6 +446,7 @@
 
         <!-- Navigation Links (All 11 PRD Modules) -->
         <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+            @unless (auth()->user()?->is_superadmin)
             <div class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Utama</div>
 
             <a href="{{ route('dashboard') }}"
@@ -529,6 +532,7 @@
                 <i class="fa-solid fa-user-gear w-5 text-center text-[#D8A7B1]"></i>
                 <span>Profile</span>
             </a>
+            @endunless
 
             @if (auth()->user()?->is_superadmin)
             <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Admin</div>
@@ -570,17 +574,19 @@
 
             <div class="flex items-center gap-5">
                 <!-- D-Day Badge Header -->
+                @unless ($isSuper ?? false)
                 <div
                     class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/40 text-xs font-semibold shadow-xs">
                     <i class="fa-solid fa-hourglass-half text-[#D8A7B1]"></i>
                     <span>Hari H: {{ $daysLeft ?? 0 }} Hari Lagi</span>
                 </div>
+                @endunless
 
                 <!-- Profile Avatar -->
                 <div class="flex items-center gap-3 pl-4 border-l border-[#B6ADA3]/30">
                     <div class="text-xs">
-                        <div class="font-semibold text-[#5F6F5B]">{{ $wedding?->couple_name }}</div>
-                        <div class="text-[#B6ADA3]">Bride & Groom</div>
+                        <div class="font-semibold text-[#5F6F5B]">{{ $brandName ?? 'Wedding Planner' }}</div>
+                        <div class="text-[#B6ADA3]">{{ $roleLabel ?? 'Bride & Groom' }}</div>
                     </div>
                 </div>
             </div>

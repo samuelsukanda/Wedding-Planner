@@ -10,7 +10,6 @@ class Wedding extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
         'bride_name',
         'groom_name',
         'wedding_date',

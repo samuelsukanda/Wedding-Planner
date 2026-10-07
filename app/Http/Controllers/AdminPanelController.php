@@ -54,7 +54,6 @@ class AdminPanelController extends Controller
         );
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
             'bride_name' => 'required|string|max:255',
             'groom_name' => 'required|string|max:255',
             'wedding_date' => 'required|date',
@@ -127,7 +126,7 @@ class AdminPanelController extends Controller
     public function users()
     {
         $users = User::with('wedding')->orderBy('id')->get();
-        $weddings = Wedding::orderBy('id')->get(['id', 'title', 'groom_name', 'bride_name']);
+        $weddings = Wedding::orderBy('id')->get(['id', 'groom_name', 'bride_name']);
 
         return view('admin.users', compact('users', 'weddings'));
     }
@@ -149,9 +148,8 @@ class AdminPanelController extends Controller
 
         if ($validated['wedding_mode'] === 'new') {
             $wedding = Wedding::create([
-                'title' => trim($validated['groom_name'] . ' & ' . $validated['bride_name']),
-                'groom_name' => $validated['groom_name'],
                 'bride_name' => $validated['bride_name'],
+                'groom_name' => $validated['groom_name'],
                 'wedding_date' => $validated['wedding_date'],
                 'total_budget' => 0,
             ]);

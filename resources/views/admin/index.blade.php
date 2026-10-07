@@ -30,14 +30,6 @@
                             @csrf
                             @method('PUT')
 
-                            <!-- Judul Acara -->
-                            <div>
-                                <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Judul Acara Pernikahan *</label>
-                                <input type="text" name="title" value="{{ old('title', $wedding->title) }}" required
-                                    placeholder="Contoh: Pernikahan Romeo & Juliet"
-                                    class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-bold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
-                            </div>
-
                             <!-- Bride & Groom Name Grid -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>

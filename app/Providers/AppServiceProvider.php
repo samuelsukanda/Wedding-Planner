@@ -24,9 +24,17 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('layouts.app', function ($view) {
             $wedding = Wedding::current();
+            $isSuper = (bool) auth()->user()?->is_superadmin;
             $daysLeft = $wedding ? max(0, (int) Carbon::now()->diffInDays($wedding->wedding_date, false)) : 0;
+
             $view->with('daysLeft', $daysLeft);
             $view->with('wedding', $wedding);
+            $view->with('isSuper', $isSuper);
+            // Superadmin tidak punya data pernikahan, jadi tampilkan nama akunnya.
+            $view->with('brandName', $isSuper
+                ? (auth()->user()->name ?? 'Superadmin')
+                : ($wedding?->couple_name ?? 'Wedding Planner'));
+            $view->with('roleLabel', $isSuper ? 'Superadmin' : 'Bride & Groom');
         });
     }
 }
