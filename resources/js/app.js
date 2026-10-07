@@ -3,6 +3,7 @@ import * as Turbo from '@hotwired/turbo';
 const LAST_ROUTE_KEY = 'weddingPlanner.lastRoute';
 const RESTORING_ROUTE_KEY = 'weddingPlanner.restoringRoute';
 const INITIAL_LOAD_KEY = 'weddingPlanner.initialLoadHandled';
+const pageCache = new Map();
 
 if (performance.getEntriesByType('navigation')[0]?.type !== 'back_forward') {
     sessionStorage.removeItem(INITIAL_LOAD_KEY);
@@ -19,6 +20,38 @@ function rememberRoute(route) {
     if (route === '/') sessionStorage.removeItem(LAST_ROUTE_KEY);
 }
 
+function internalLinkRoute(link) {
+    if (!link || link.dataset.turbo === 'false' || link.target === '_blank') return null;
+    const isMenuLink = link.closest('nav, aside');
+    const isMasterDataTab = link.href.includes('/admin/master-data?group=');
+    if (!isMenuLink && !isMasterDataTab) return null;
+    return routeFor(link.href);
+}
+
+function fetchPage(route) {
+    if (!pageCache.has(route)) {
+        const request = fetch(route, {
+            headers: { Accept: 'text/html', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+        }).then(async response => {
+            if (!response.ok) throw new Error(`Navigation failed: ${response.status}`);
+            return response.text();
+        }).catch(error => {
+            pageCache.delete(route);
+            throw error;
+        });
+        pageCache.set(route, request);
+    }
+    return pageCache.get(route);
+}
+
+// Mulai fetch saat pointer menyentuh menu. Klik berikutnya tidak menunggu
+// request baru jika hasilnya sudah tersedia.
+document.addEventListener('pointerover', function(event) {
+    const route = internalLinkRoute(event.target.closest('a'));
+    if (route && route !== '/') fetchPage(route).catch(() => {});
+});
+
 document.addEventListener('turbo:before-visit', function(event) {
     const route = routeFor(event.detail.url);
     if (!route || route === '/' || event.detail.url.startsWith('http') && !event.detail.url.startsWith(window.location.origin)) {
@@ -32,14 +65,7 @@ document.addEventListener('turbo:before-visit', function(event) {
 
 async function visitWithoutUrl(route) {
     try {
-        const response = await fetch(route, {
-            headers: { Accept: 'text/html', 'X-Requested-With': 'XMLHttpRequest' },
-            credentials: 'same-origin',
-        });
-
-        if (!response.ok) throw new Error(`Navigation failed: ${response.status}`);
-
-        const html = await response.text();
+        const html = await fetchPage(route);
         const nextDocument = new DOMParser().parseFromString(html, 'text/html');
         const nextBody = nextDocument.body;
 
@@ -64,6 +90,7 @@ async function visitWithoutUrl(route) {
 }
 
 document.addEventListener('submit', function(event) {
+    if (event.target.method.toLowerCase() !== 'get') pageCache.clear();
     if (event.target.matches('form[action*="/logout"]')) {
         sessionStorage.removeItem(LAST_ROUTE_KEY);
     }
