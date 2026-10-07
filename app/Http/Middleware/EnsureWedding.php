@@ -7,9 +7,13 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Akun yang belum dipasangkan dengan data pernikahan tidak punya wedding_id, sehingga
- * halaman modul akan gagal (data null). Arahkan saja ke halaman Profile agar muncul
- * penjelasan, bukan error 500.
+ * Menangani akun yang belum punya data pernikahan.
+ *
+ * - Superadmin tanpa wedding: hanya boleh di area admin (menu Admin Panel &
+ *   Master Data). Semua modul aplikasi di-redirect ke /admin/users supaya
+ *   tidak error 500, karena Wedding::current() akan null.
+ * - User biasa tanpa wedding: diarahkan ke halaman Profile yang menampilkan
+ *   empty state "Akun belum dipasangkan".
  */
 class EnsureWedding
 {
@@ -17,7 +21,21 @@ class EnsureWedding
     {
         $user = $request->user();
 
-        if ($user && ! $user->is_superadmin && ! $user->wedding_id) {
+        if (! $user) {
+            return $next($request);
+        }
+
+        $isAdminArea = $request->routeIs('admin.*');
+
+        if ($user->is_superadmin && ! $user->wedding_id) {
+            if ($isAdminArea || $request->routeIs('logout')) {
+                return $next($request);
+            }
+
+            return redirect()->route('admin.users.index');
+        }
+
+        if (! $user->wedding_id) {
             if ($request->routeIs('admin.index') || $request->routeIs('logout')) {
                 return $next($request);
             }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Wedding;
 use App\Models\DropdownOption;
 use App\Models\User;
+use App\Support\ChecklistTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -13,20 +14,9 @@ class AdminPanelController extends Controller
 {
     public function index()
     {
+        // Jangan auto-create weddings di sini. Superadmin sengaja tidak punya
+        // weddings, dan view sudah menampilkan empty state kalau null.
         $wedding = Wedding::current();
-
-        // If no wedding record exists, create a default one
-        if (!$wedding) {
-            $wedding = Wedding::create([
-                'title' => 'Pernikahan',
-                'bride_name' => 'Wanita',
-                'groom_name' => 'Pria',
-                'wedding_date' => now()->addMonths(6),
-                'total_budget' => 150000000,
-                'location' => 'Grand Ballroom Hotel Indonesia, Jakarta',
-                'notes' => 'Tema: Modern Minimalist & Botanical Elegance',
-            ]);
-        }
 
         return view('admin.index', compact('wedding'));
     }
@@ -158,13 +148,18 @@ class AdminPanelController extends Controller
         $weddingId = $validated['wedding_id'] ?? null;
 
         if ($validated['wedding_mode'] === 'new') {
-            $weddingId = Wedding::create([
+            $wedding = Wedding::create([
                 'title' => trim($validated['groom_name'] . ' & ' . $validated['bride_name']),
                 'groom_name' => $validated['groom_name'],
                 'bride_name' => $validated['bride_name'],
                 'wedding_date' => $validated['wedding_date'],
                 'total_budget' => 0,
-            ])->id;
+            ]);
+
+            // Setiap pasangan baru langsung dapat checklist awal.
+            ChecklistTemplate::seedFor($wedding);
+
+            $weddingId = $wedding->id;
         }
 
         User::create([
