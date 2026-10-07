@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Wedding;
 use App\Models\DropdownOption;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AdminPanelController extends Controller
 {
@@ -28,7 +31,7 @@ class AdminPanelController extends Controller
         return view('admin.index', compact('wedding'));
     }
 
-    public function dropdowns(Request $request)
+    public function masterData(Request $request)
     {
         $groups = DropdownOption::getGroups();
         $selectedGroup = $request->query('group', 'checklist_category');
@@ -48,7 +51,7 @@ class AdminPanelController extends Controller
             ->pluck('total', 'group_key')
             ->toArray();
 
-        return view('admin.dropdowns', compact('groups', 'selectedGroup', 'options', 'groupCounts'));
+        return view('admin.master-data', compact('groups', 'selectedGroup', 'options', 'groupCounts'));
     }
 
     public function updateWedding(Request $request, Wedding $wedding)
@@ -96,7 +99,7 @@ class AdminPanelController extends Controller
             'sort_order' => $validated['sort_order'] ?? 0,
         ]);
 
-        return redirect()->route('admin.dropdowns.index', ['group' => $validated['group_key']])
+        return redirect()->route('admin.master-data.index', ['group' => $validated['group_key']])
             ->with('success', 'Pilihan dropdown berhasil ditambahkan!');
     }
 
@@ -114,7 +117,7 @@ class AdminPanelController extends Controller
             'sort_order' => $validated['sort_order'] ?? 0,
         ]);
 
-        return redirect()->route('admin.dropdowns.index', ['group' => $dropdownOption->group_key])
+        return redirect()->route('admin.master-data.index', ['group' => $dropdownOption->group_key])
             ->with('success', 'Pilihan dropdown berhasil diperbarui!');
     }
 
@@ -123,7 +126,92 @@ class AdminPanelController extends Controller
         $groupKey = $dropdownOption->group_key;
         $dropdownOption->delete();
 
-        return redirect()->route('admin.dropdowns.index', ['group' => $groupKey])
+        return redirect()->route('admin.master-data.index', ['group' => $groupKey])
             ->with('success', 'Pilihan dropdown berhasil dihapus!');
+    }
+
+    // ==========================================================
+    // ADMIN PANEL — Manajemen User
+    // ==========================================================
+
+    public function users()
+    {
+        $users = User::with('wedding')->orderBy('id')->get();
+        $weddings = Wedding::orderBy('id')->get(['id', 'title', 'groom_name', 'bride_name']);
+
+        return view('admin.users', compact('users', 'weddings'));
+    }
+
+    public function storeUser(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8',
+            'wedding_mode' => 'required|in:existing,new',
+            'wedding_id' => 'required_if:wedding_mode,existing|nullable|exists:weddings,id',
+            'groom_name' => 'required_if:wedding_mode,new|nullable|string|max:255',
+            'bride_name' => 'required_if:wedding_mode,new|nullable|string|max:255',
+            'wedding_date' => 'required_if:wedding_mode,new|nullable|date',
+        ]);
+
+        $weddingId = $validated['wedding_id'] ?? null;
+
+        if ($validated['wedding_mode'] === 'new') {
+            $weddingId = Wedding::create([
+                'title' => trim($validated['groom_name'] . ' & ' . $validated['bride_name']),
+                'groom_name' => $validated['groom_name'],
+                'bride_name' => $validated['bride_name'],
+                'wedding_date' => $validated['wedding_date'],
+                'total_budget' => 0,
+            ])->id;
+        }
+
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+            'wedding_id' => $weddingId,
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan!');
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'password' => 'nullable|string|min:8',
+            'wedding_id' => 'nullable|exists:weddings,id',
+            'is_superadmin' => 'nullable|boolean',
+        ]);
+
+        $user->fill([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'wedding_id' => $validated['wedding_id'] ?? null,
+            'is_superadmin' => $request->boolean('is_superadmin'),
+        ]);
+
+        if (!empty($validated['password'])) {
+            $user->password = $validated['password'];
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil diperbarui!');
+    }
+
+    public function destroyUser(Request $request, User $user)
+    {
+        if ($user->id === $request->user()->id) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Tidak bisa menghapus akun yang sedang login.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus!');
     }
 }

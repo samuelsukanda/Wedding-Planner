@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Panel - Admin')
+@section('title', 'Master Data - Admin')
 
 @section('content')
     <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {} }">
@@ -21,7 +21,7 @@
                     class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-bold text-[#5F6F5B] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                     @foreach ($groups as $key => $name)
                         @php $count = $groupCounts[$key] ?? 0; @endphp
-                        <option value="{{ route('admin.dropdowns.index', ['group' => $key]) }}"
+                        <option value="{{ route('admin.master-data.index', ['group' => $key]) }}"
                             {{ $selectedGroup === $key ? 'selected' : '' }}>
                             {{ $name }} ({{ $count }} item)
                         </option>
@@ -49,7 +49,7 @@
                                 $count = $groupCounts[$key] ?? 0;
                                 $isActive = $selectedGroup === $key;
                             @endphp
-                            <a href="{{ route('admin.dropdowns.index', ['group' => $key]) }}"
+                            <a href="{{ route('admin.master-data.index', ['group' => $key]) }}"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isActive ? 'bg-[#5F6F5B] text-white shadow-xs font-bold' : 'text-[#5F6F5B] hover:bg-[#FAF7F2]' }}">
                                 <div class="flex items-center gap-2.5 truncate">
                                     <i class="fa-solid fa-list-ul text-[#D8A7B1]"></i>
@@ -133,7 +133,7 @@
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                     </button>
                                                     <form id="del-dropdown-{{ $opt->id }}"
-                                                        action="{{ route('admin.dropdowns.destroy', $opt->id) }}"
+                                                        action="{{ route('admin.master-data.destroy', $opt->id) }}"
                                                         method="POST">
                                                         @csrf
                                                         @method('DELETE')
@@ -178,7 +178,7 @@
                     </button>
                 </div>
 
-                <form :action="editMode ? '/admin/dropdowns/' + currentItem.id : '{{ route('admin.dropdowns.store') }}'"
+                <form :action="editMode ? '{{ url('admin/master-data') }}/' + currentItem.id : '{{ route('admin.master-data.store') }}'"
                     method="POST" class="space-y-4">
                     @csrf
                     <template x-if="editMode">

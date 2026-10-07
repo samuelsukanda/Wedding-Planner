@@ -73,11 +73,17 @@ Route::middleware('auth')->group(function () {
     Route::get('admin', [AdminPanelController::class, 'index'])->name('admin.index');
     Route::put('admin/wedding/{wedding}', [AdminPanelController::class, 'updateWedding'])->name('admin.wedding.update');
 
-    // Master dropdown = data global, hanya superadmin yang boleh kelola.
+    // Master Data (dropdown options) + Admin Panel (user management).
+    // Keduanya data tingkat sistem, hanya superadmin yang boleh kelola.
     Route::middleware('superadmin')->group(function () {
-        Route::get('admin/dropdowns', [AdminPanelController::class, 'dropdowns'])->name('admin.dropdowns.index');
-        Route::post('admin/dropdowns', [AdminPanelController::class, 'store'])->name('admin.dropdowns.store');
-        Route::put('admin/dropdowns/{dropdownOption}', [AdminPanelController::class, 'update'])->name('admin.dropdowns.update');
-        Route::delete('admin/dropdowns/{dropdownOption}', [AdminPanelController::class, 'destroy'])->name('admin.dropdowns.destroy');
+        Route::get('admin/master-data', [AdminPanelController::class, 'masterData'])->name('admin.master-data.index');
+        Route::post('admin/master-data', [AdminPanelController::class, 'store'])->name('admin.master-data.store');
+        Route::put('admin/master-data/{dropdownOption}', [AdminPanelController::class, 'update'])->name('admin.master-data.update');
+        Route::delete('admin/master-data/{dropdownOption}', [AdminPanelController::class, 'destroy'])->name('admin.master-data.destroy');
+
+        Route::get('admin/users', [AdminPanelController::class, 'users'])->name('admin.users.index');
+        Route::post('admin/users', [AdminPanelController::class, 'storeUser'])->name('admin.users.store');
+        Route::put('admin/users/{user}', [AdminPanelController::class, 'updateUser'])->name('admin.users.update');
+        Route::delete('admin/users/{user}', [AdminPanelController::class, 'destroyUser'])->name('admin.users.destroy');
     });
 });

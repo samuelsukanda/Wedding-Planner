@@ -533,9 +533,15 @@
             @if (auth()->user()?->is_superadmin)
             <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Admin</div>
 
-            <a href="{{ route('admin.dropdowns.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.dropdowns.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                <i class="fa-solid fa-sliders w-5 text-center text-[#D8A7B1]"></i>
+            <a href="{{ route('admin.master-data.index') }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.master-data.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                <i class="fa-solid fa-layer-group w-5 text-center text-[#D8A7B1]"></i>
+                <span>Master Data</span>
+            </a>
+
+            <a href="{{ route('admin.users.index') }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.users.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                <i class="fa-solid fa-users-gear w-5 text-center text-[#D8A7B1]"></i>
                 <span>Admin Panel</span>
             </a>
             @endif
@@ -587,6 +593,20 @@
                 <div class="flex items-center gap-3">
                     <i class="fa-solid fa-circle-check text-[#D8A7B1] text-lg"></i>
                     <span>{{ session('success') }}</span>
+                </div>
+                <button onclick="this.parentElement.remove()"
+                    class="text-[#5F6F5B] hover:opacity-80 p-1 cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div
+                class="mx-4 sm:mx-6 mt-4 p-4 rounded-xl bg-[#D8A7B1]/25 border border-[#D8A7B1]/60 text-[#5F6F5B] text-sm flex items-center justify-between shadow-xs">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-circle-exclamation text-[#D8A7B1] text-lg"></i>
+                    <span>{{ session('error') }}</span>
                 </div>
                 <button onclick="this.parentElement.remove()"
                     class="text-[#5F6F5B] hover:opacity-80 p-1 cursor-pointer">
