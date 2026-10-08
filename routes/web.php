@@ -48,8 +48,9 @@ Route::middleware('auth')->group(function () {
 
 // Foto profil. Halamannya sendiri reusing "Akun - Profile" (admin.index),
 // jadi tidak ada halaman profile terpisah.
-Route::post('profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
-Route::delete('profile/photo', [ProfileController::class, 'destroyPhoto'])->name('profile.photo.destroy');
+Route::get('profile', fn () => redirect()->route('admin.index'));
+    Route::post('profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+    Route::delete('profile/photo', [ProfileController::class, 'destroyPhoto'])->name('profile.photo.destroy');
 
     // Module 2 - Wedding Checklist
     Route::resource('checklists', ChecklistController::class)->except(['create', 'edit', 'show']);
