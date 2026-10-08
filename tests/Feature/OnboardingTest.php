@@ -51,6 +51,22 @@ class OnboardingTest extends TestCase
         $this->assertSame(1, User::where('email', 'nabila@example.com')->count());
     }
 
+    public function test_root_redirects_to_last_menu_before_dashboard_renders(): void
+    {
+        $wedding = Wedding::create([
+            'groom_name' => 'Diki',
+            'bride_name' => 'Nabila',
+            'wedding_date' => '2027-10-07',
+            'total_budget' => 100000000,
+        ]);
+        $user = User::factory()->create(['wedding_id' => $wedding->id]);
+
+        $this->actingAs($user)
+            ->withUnencryptedCookie('weddingPlannerLastRoute', '/checklists')
+            ->get('/')
+            ->assertRedirect('/checklists');
+    }
+
     public function test_onboarding_page_renders_all_five_steps_in_one_document(): void
     {
         $user = User::factory()->create(['name' => 'Nabila']);

@@ -39,6 +39,17 @@ class DashboardController extends Controller
             return view('onboarding.index');
         }
 
+        // URL publik sengaja selalu root. Cookie ini menyimpan menu aktif,
+        // sehingga refresh langsung diarahkan ke menu tersebut oleh server
+        // sebelum Dashboard sempat dirender (tidak ada flash Dashboard).
+        $lastRoute = rawurldecode((string) $request->cookie('weddingPlannerLastRoute', ''));
+        $path = parse_url($lastRoute, PHP_URL_PATH) ?: '';
+        $knownMenu = preg_match('#^/(checklists|budgets|vendors|guests|moodboards|rundowns|contracts|payments|gifts|reports|admin)(?:/|$)#', $path);
+
+        if ($knownMenu) {
+            return redirect()->to($lastRoute);
+        }
+
         // Countdown
         $daysLeft = max(0, (int) Carbon::now()->diffInDays($wedding->wedding_date, false));
 

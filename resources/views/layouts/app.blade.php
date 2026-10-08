@@ -38,14 +38,6 @@
             document.documentElement.classList.add('sidebar-collapsed');
         }
 
-        // Sembunyikan konten utama sebelum JavaScript memutuskan halaman apa
-        // yang harus ditampilkan. Tanpa ini, refresh saat di menu Checklist
-        // akan memperlihatkan kilasan Dashboard sebelum restore-route selesai.
-        var _lastRoute = sessionStorage.getItem('weddingPlanner.lastRoute');
-        var _handled   = sessionStorage.getItem('weddingPlanner.initialLoadHandled');
-        if (_lastRoute && !_handled) {
-            document.documentElement.classList.add('restoring-route');
-        }
     </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -193,11 +185,6 @@
            .sidebar-label, isi <nav> (span + header section), dan avatar,
            supaya tiap menu tidak perlu diubah satu per satu. */
         @media (min-width: 768px) {
-/* Sembunyikan konten utama saat restore-route sedang berjalan.
-           Class dicopot oleh JS setelah konten yang benar sudah terpasang. */
-        html.restoring-route #main-content {
-            visibility: hidden;
-        }
             html.sidebar-collapsed .sidebar {
                 width: 4rem !important;
             }

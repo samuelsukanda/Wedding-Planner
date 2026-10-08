@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
+        // Cookie ini ditulis oleh app.js sebelum browser refresh. Cookie tidak
+        // berisi data sensitif, hanya path menu aktif yang tetap divalidasi di
+        // DashboardController sebelum dipakai sebagai redirect.
+        $middleware->encryptCookies(except: ['weddingPlannerLastRoute']);
         $middleware->alias([
             'superadmin' => EnsureSuperadmin::class,
             'wedding' => EnsureWedding::class,

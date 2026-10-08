@@ -3,6 +3,7 @@ import * as Turbo from '@hotwired/turbo';
 const LAST_ROUTE_KEY = 'weddingPlanner.lastRoute';
 const RESTORING_ROUTE_KEY = 'weddingPlanner.restoringRoute';
 const INITIAL_LOAD_KEY = 'weddingPlanner.initialLoadHandled';
+const LAST_ROUTE_COOKIE = 'weddingPlannerLastRoute';
 const pageCache = new Map();
 
 if (performance.getEntriesByType('navigation')[0]?.type !== 'back_forward') {
@@ -18,12 +19,16 @@ function routeFor(url) {
 function rememberRoute(route) {
     if (route && route !== '/') {
         sessionStorage.setItem(LAST_ROUTE_KEY, route);
+        document.cookie = `${LAST_ROUTE_COOKIE}=${encodeURIComponent(route)}; Path=/; Max-Age=28800; SameSite=Lax`;
     }
     if (route === '/') clearLastRoute();
 }
 
 function clearLastRoute() {
     sessionStorage.removeItem(LAST_ROUTE_KEY);
+    sessionStorage.removeItem(RESTORING_ROUTE_KEY);
+    sessionStorage.removeItem(INITIAL_LOAD_KEY);
+    document.cookie = `${LAST_ROUTE_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`;
 }
 
 function internalLinkRoute(link) {
@@ -56,6 +61,14 @@ function fetchPage(route) {
 document.addEventListener('pointerover', function(event) {
     const route = internalLinkRoute(event.target.closest('a'));
     if (route && route !== '/') fetchPage(route).catch(() => {});
+});
+
+// Dashboard memakai route root, sehingga sengaja tidak melewati
+// visitWithoutUrl(). Bersihkan state menu lama SEBELUM Turbo menangani klik;
+// tanpa ini refresh Dashboard bisa me-restore Checklist sebelumnya.
+document.addEventListener('click', function(event) {
+    const route = internalLinkRoute(event.target.closest('a'));
+    if (route === '/') clearLastRoute();
 });
 
 // Submit form menghasilkan dua visit pada Turbo: visit POST-nya sendiri dan
@@ -123,41 +136,6 @@ document.addEventListener('submit', function(event) {
     if (event.target.matches('form[action*="/logout"]')) {
         clearLastRoute();
     }
-});
-
-// Restore menu terakhir hanya saat browser membuka/refresh dokumen root,
-// bukan pada setiap turbo:load internal.
-document.addEventListener('DOMContentLoaded', function() {
-    const currentRoute = routeFor(window.location.href);
-    const lastRoute = sessionStorage.getItem(LAST_ROUTE_KEY);
-
-    // Selalu copot class restoring-route agar main-content tidak tersembunyi
-    // selamanya kalau tidak ada yang perlu di-restore.
-    function revealContent() {
-        document.documentElement.classList.remove('restoring-route');
-    }
-
-    if (currentRoute === '/' && lastRoute && !sessionStorage.getItem(INITIAL_LOAD_KEY)) {
-        const alreadyRendered = lastRoute.startsWith('/admin/master-data')
-            ? document.body.innerText.includes('Kelola Master Dropdown')
-            : lastRoute === '/admin/users' && document.body.innerText.includes('Kelola seluruh user');
-
-        sessionStorage.setItem(INITIAL_LOAD_KEY, '1');
-        if (alreadyRendered) {
-            revealContent();
-            return;
-        }
-
-        // Gunakan visitWithoutUrl (bukan Turbo.visit) supaya swap body terjadi
-        // langsung tanpa Turbo render cycle yang memperlihatkan konten lama.
-        // main-content sudah tersembunyi via .restoring-route, jadi tidak ada
-        // flash dashboard sebelum halaman yang benar tampil.
-        sessionStorage.setItem(RESTORING_ROUTE_KEY, lastRoute);
-        visitWithoutUrl(lastRoute).finally(revealContent);
-        return;
-    }
-
-    revealContent();
 });
 
 // Flatpickr milik layout app (halaman form tanggal). Head tidak di-re-execute
