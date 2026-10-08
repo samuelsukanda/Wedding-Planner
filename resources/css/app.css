@@ -232,3 +232,41 @@ body {
 .font-serif-title {
     font-family: 'Playfair Display', serif;
 }
+
+/* Animasi toast dipakai bersama oleh komponen <x-flash-toast> dan toast
+   validasi di wizard, supaya keduanya identik.
+   Masuk: dari bawah naik ke posisi akhir. Keluar: fade out. */
+@keyframes flash-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes flash-toast-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+[data-flash],
+[data-toast] {
+    animation: flash-toast-in 300ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    [data-flash],
+    [data-toast] {
+        animation: none !important;
+    }
+}

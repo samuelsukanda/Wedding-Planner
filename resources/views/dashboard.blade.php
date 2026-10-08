@@ -29,8 +29,9 @@
                     <div>
                         <div class="text-2xl sm:text-3xl font-extrabold text-white">{{ $daysLeft }} Hari</div>
                         <div class="text-xs text-white/90 font-medium">Menuju Hari H Pernikahan</div>
-                        <div class="text-[11px] text-white/80 mt-0.5"><i class="fa-solid fa-location-dot"></i>
-                            {{ $wedding->location }}</div>
+                        @if ($wedding->location)
+                            <div class="text-[11px] text-white/80 mt-0.5">{{ $wedding->location }}</div>
+                        @endif
                     </div>
                 </div>
             </div>

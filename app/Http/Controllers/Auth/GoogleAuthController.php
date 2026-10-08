@@ -28,9 +28,15 @@ class GoogleAuthController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
         } catch (\Throwable $exception) {
-            return redirect()->route('login')->withErrors([
-                'email' => 'Login dengan Google gagal. Silakan coba lagi.',
-            ]);
+            // Sebelumnya exception ditelan begitu saja sehingga kegagalan
+            // OAuth tidak pernah bisa dicari penyebabnya lewat log.
+            report($exception);
+
+            $message = $exception instanceof \Laravel\Socialite\Two\InvalidStateException
+                ? 'Sesi login Google kedaluwarsa. Silakan coba lagi.'
+                : 'Login dengan Google gagal. Silakan coba lagi.';
+
+            return redirect()->route('login')->withErrors(['email' => $message]);
         }
 
         $email = $googleUser->getEmail();

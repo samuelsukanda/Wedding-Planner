@@ -28,22 +28,11 @@
 @endphp
 
 @if ($success || $error || count($errorList))
-    <style>
-        @keyframes flash-toast-in {
-            from { opacity: 0; transform: translateY(-16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            [data-flash] { animation: none !important; }
-        }
-    </style>
-
     <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-2rem)] max-w-xl space-y-2">
         {{-- Semua jenis pesan hilang sendiri setelah 4 detik, dan tetap bisa
-             ditutup manual lewat tombol ×. --}}
+             ditutup manual lewat tombol ×. Animasi masuk/keluar ada di app.css. --}}
         @if ($success)
-            <div data-flash data-flash-auto style="animation: flash-toast-in 300ms ease-out both;"
+            <div data-flash data-flash-auto
                 class="flex items-start gap-3 rounded-2xl border border-[#A3B7A6]/60 bg-[#F1F5F0] px-4 py-3.5 text-sm text-[#5F6F5B] shadow-lg shadow-[#5F6F5B]/10">
                 <i class="fa-solid fa-circle-check mt-0.5 text-[#A3B7A6]"></i>
                 <span class="flex-1">{{ $success }}</span>
@@ -55,7 +44,7 @@
         @endif
 
         @if ($error)
-            <div data-flash data-flash-auto style="animation: flash-toast-in 300ms ease-out both;"
+            <div data-flash data-flash-auto
                 class="flex items-start gap-3 rounded-2xl border border-[#D8A7B1]/70 bg-[#FBF2F4] px-4 py-3.5 text-sm text-[#5F6F5B] shadow-lg shadow-[#D8A7B1]/15">
                 <i class="fa-solid fa-circle-exclamation mt-0.5 text-[#D8A7B1]"></i>
                 <span class="flex-1">{{ $error }}</span>
@@ -67,7 +56,7 @@
         @endif
 
         @if (count($errorList))
-            <div data-flash data-flash-auto style="animation: flash-toast-in 300ms ease-out both;"
+            <div data-flash data-flash-auto
                 class="rounded-2xl border border-[#D8A7B1]/70 bg-[#FBF2F4] px-4 py-3.5 text-sm text-[#5F6F5B] shadow-lg shadow-[#D8A7B1]/15">
                 <div class="flex items-start gap-3">
                     <i class="fa-solid fa-circle-exclamation mt-0.5 text-[#D8A7B1]"></i>
@@ -90,22 +79,25 @@
 
     <script>
         (function() {
+            // Fade out lalu baru dilepas dari DOM, baik lewat tombol × maupun
+            // lewat timer 4 detik.
+            function dismiss(node) {
+                if (!node || node.dataset.closing) return;
+                node.dataset.closing = '1';
+                node.style.animation = 'flash-toast-out 260ms ease-in forwards';
+                window.setTimeout(function() { node.remove(); }, 280);
+            }
+
             document.querySelectorAll('[data-flash-dismiss]').forEach(function(button) {
                 button.addEventListener('click', function() {
-                    const node = button.closest('[data-flash]');
-                    if (node) node.remove();
+                    dismiss(button.closest('[data-flash]'));
                 });
             });
 
             // Semua pesan (sukses, error, validasi) hilang sendiri, dan tombol
             // × tetap bisa menutup lebih cepat.
             document.querySelectorAll('[data-flash-auto]').forEach(function(node) {
-                window.setTimeout(function() {
-                    node.style.transition = 'opacity 250ms ease, transform 250ms ease';
-                    node.style.opacity = '0';
-                    node.style.transform = 'translateY(-16px)';
-                    window.setTimeout(function() { node.remove(); }, 260);
-                }, 4000);
+                window.setTimeout(function() { dismiss(node); }, 4000);
             });
         })();
     </script>

@@ -264,7 +264,7 @@
                 <h1>Kapan kalian menikah?</h1>
                 <p class="subtitle">Kami akan menghitung mundur untuk kalian.</p>
                 <input type="text" class="field datepicker-input" :class="{ 'is-invalid': errors.wedding_date }"
-                    x-model="form.wedding_date" placeholder="Contoh: 9 Oktober 2026" data-date>
+                    x-model="form.wedding_date" placeholder="DD-MM-YYYY" data-date>
                 <div class="actions">
                     <button type="button" class="btn btn-secondary" @click="step = 2">Kembali</button>
                     <button type="button" class="btn btn-primary" @click="next(3)">Lanjut</button>
@@ -341,6 +341,7 @@
             }
 
             const toast = document.createElement('div');
+            toast.setAttribute('data-toast', '');
             toast.className = 'flex items-start gap-3 rounded-2xl border border-[#D8A7B1]/70 bg-[#FBF2F4] px-4 py-3.5 text-sm text-[#5F6F5B] shadow-lg shadow-[#D8A7B1]/15';
             toast.innerHTML = '<i class="fa-solid fa-circle-exclamation mt-0.5 text-[#D8A7B1]"></i>'
                 + '<span class="flex-1"></span>'
@@ -348,11 +349,11 @@
             toast.querySelector('span').textContent = message;
             host.appendChild(toast);
 
+            // Fade out dulu, baru dilepas. Keyframes ada di app.css.
             const dismiss = () => {
-                toast.style.transition = 'opacity 250ms ease, transform 250ms ease';
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-16px)';
-                window.setTimeout(() => toast.remove(), 260);
+                if (!toast.isConnected) return;
+                toast.style.animation = 'flash-toast-out 260ms ease-in forwards';
+                window.setTimeout(() => toast.remove(), 280);
             };
 
             toast.querySelector('button').addEventListener('click', dismiss);
