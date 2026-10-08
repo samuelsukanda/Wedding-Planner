@@ -184,10 +184,16 @@
            .sidebar-label, isi <nav> (span + header section), dan avatar,
            supaya tiap menu tidak perlu diubah satu per satu. */
         @media (min-width: 768px) {
-            /* Dipakai sebelum Alpine selesai hydrate, termasuk setelah Turbo
-               form submit. Ini mencegah lebar w-64 terlihat sesaat. */
+/* Dipakai sebelum Alpine selesai hydrate, termasuk setelah Turbo form
+               submit. Ini mencegah lebar w-64 terlihat sesaat. */
             html.sidebar-collapsed .sidebar {
                 width: 4rem !important;
+            }
+
+            /* Saat user menekan tombol chevron, biarkan lebar ikut
+               beranimasi; saat navigasi biasa tetap snap untuk mengindari
+               efek "sidebar menutup" di setiap ganti menu. */
+            html.sidebar-collapsed:not(.sidebar-toggling) .sidebar {
                 transition-property: transform;
             }
 
@@ -360,7 +366,7 @@
 
     <!-- Sidebar Navigation -->
     <aside :class="[sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0', sidebarCollapsed ? 'is-collapsed md:w-16' : 'md:w-64']"
-        class="sidebar fixed md:relative inset-y-0 left-0 z-50 w-64 md:transition-[width] duration-300 ease-in-out bg-white border-r border-[#B6ADA3]/35 flex flex-col transition-transform duration-300 ease-in-out shadow-lg md:shadow-none">
+        class="sidebar fixed md:relative inset-y-0 left-0 z-50 w-64 md:transition-[width,transform] duration-300 ease-in-out bg-white border-r border-[#B6ADA3]/35 flex flex-col shadow-lg md:shadow-none">
 
         <!-- Logo & Header -->
         <div class="p-5 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
@@ -518,7 +524,7 @@
         </div>
 
         {{-- Tombol ciut/buka sidebar, menempel di tepi kanan tengah sidebar. --}}
-        <button type="button" @click="$dispatch('sidebar-collapsed', ! sidebarCollapsed)"
+        <button type="button" @click="$dispatch('sidebar-collapsed', ! sidebarCollapsed); document.documentElement.classList.add('sidebar-toggling'); window.setTimeout(() => document.documentElement.classList.remove('sidebar-toggling'), 320)"
             class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-6 h-12 items-center justify-center rounded-full bg-white border border-[#B6ADA3]/40 text-[#B6ADA3] hover:text-[#D8A7B1] shadow-sm transition-colors cursor-pointer"
             :aria-label="sidebarCollapsed ? 'Perlebar sidebar' : 'Ciutkan sidebar'">
             <i class="fa-solid text-[10px]" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>

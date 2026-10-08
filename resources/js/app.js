@@ -88,12 +88,10 @@ async function visitWithoutUrl(route) {
         const nextDocument = new DOMParser().parseFromString(html, 'text/html');
         const nextBody = nextDocument.body;
 
-        // Body baru harus sudah memakai lebar sidebar yang tersimpan sebelum
-        // dimasukkan ke DOM. Tanpa ini Alpine sempat merender w-64, lalu
-        // transition menuju w-16 terlihat seperti sidebar menutup tiap menu.
+        // Terapkan lebar sidebar ciut sebelum body masuk DOM agar tidak ada
+        // flash animasi menutup setiap kali ganti menu.
         if (localStorage.getItem('wp.sidebarCollapsed') === '1') {
             nextDocument.documentElement.classList.add('sidebar-collapsed');
-            nextBody.querySelector('.sidebar')?.classList.replace('md:w-64', 'md:w-16');
         }
 
         document.title = nextDocument.title;
