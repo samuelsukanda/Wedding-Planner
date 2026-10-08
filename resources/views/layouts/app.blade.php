@@ -31,11 +31,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <script>
+<script>
         // Dipasang sebelum <body> dirender agar sidebar yang sebelumnya ciut
         // tidak sempat melebar lalu menciut lagi saat Alpine mulai.
         if (localStorage.getItem('wp.sidebarCollapsed') === '1') {
             document.documentElement.classList.add('sidebar-collapsed');
+        }
+
+        // Sembunyikan konten utama sebelum JavaScript memutuskan halaman apa
+        // yang harus ditampilkan. Tanpa ini, refresh saat di menu Checklist
+        // akan memperlihatkan kilasan Dashboard sebelum restore-route selesai.
+        var _lastRoute = sessionStorage.getItem('weddingPlanner.lastRoute');
+        var _handled   = sessionStorage.getItem('weddingPlanner.initialLoadHandled');
+        if (_lastRoute && !_handled) {
+            document.documentElement.classList.add('restoring-route');
         }
     </script>
 
@@ -184,15 +193,17 @@
            .sidebar-label, isi <nav> (span + header section), dan avatar,
            supaya tiap menu tidak perlu diubah satu per satu. */
         @media (min-width: 768px) {
-/* Dipakai sebelum Alpine selesai hydrate, termasuk setelah Turbo form
-               submit. Ini mencegah lebar w-64 terlihat sesaat. */
+/* Sembunyikan konten utama saat restore-route sedang berjalan.
+           Class dicopot oleh JS setelah konten yang benar sudah terpasang. */
+        html.restoring-route #main-content {
+            visibility: hidden;
+        }
             html.sidebar-collapsed .sidebar {
                 width: 4rem !important;
             }
 
-            /* Saat user menekan tombol chevron, biarkan lebar ikut
-               beranimasi; saat navigasi biasa tetap snap untuk mengindari
-               efek "sidebar menutup" di setiap ganti menu. */
+            /* Dipakai sebelum Alpine selesai hydrate, termasuk setelah Turbo
+               form submit. Ini mencegah lebar w-64 terlihat sesaat. */
             html.sidebar-collapsed:not(.sidebar-toggling) .sidebar {
                 transition-property: transform;
             }
