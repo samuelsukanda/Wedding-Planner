@@ -235,11 +235,12 @@ body {
 
 /* Animasi toast dipakai bersama oleh komponen <x-flash-toast> dan toast
    validasi di wizard, supaya keduanya identik.
-   Masuk: dari bawah naik ke posisi akhir. Keluar: fade out. */
+   Masuk: fade in dari atas ke bawah. Keluar: fade out ke arah sebaliknya,
+   dari bawah ke atas. */
 @keyframes flash-toast-in {
     from {
         opacity: 0;
-        transform: translateY(16px);
+        transform: translateY(-16px);
     }
 
     to {
@@ -251,10 +252,12 @@ body {
 @keyframes flash-toast-out {
     from {
         opacity: 1;
+        transform: translateY(0);
     }
 
     to {
         opacity: 0;
+        transform: translateY(-16px);
     }
 }
 
