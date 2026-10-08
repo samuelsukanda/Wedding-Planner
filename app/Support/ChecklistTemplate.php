@@ -25,14 +25,14 @@ class ChecklistTemplate
     public static function items(): array
     {
         return [
-            ['title' => 'Menentukan tanggal pernikahan', 'category' => 'General', 'deadline' => '-60', 'priority' => 'High', 'status' => 'Done', 'description' => 'Tanggal sudah disepakati oleh keluarga pengantin'],
-            ['title' => 'Menentukan venue acara', 'category' => 'Venue', 'deadline' => '-45', 'priority' => 'High', 'status' => 'Done', 'description' => 'Venue sudah dipilih dan ditawar'],
-            ['title' => 'Booking gedung / venue', 'category' => 'Venue', 'deadline' => '-30', 'priority' => 'High', 'status' => 'Done', 'description' => 'DP gedung sudah dibayarkan'],
-            ['title' => 'Booking catering', 'category' => 'Catering', 'deadline' => '-20', 'priority' => 'High', 'status' => 'Done', 'description' => 'Jumlah pax & menu sudah disepakati'],
-            ['title' => 'Booking dekorasi', 'category' => 'Dekorasi', 'deadline' => '-10', 'priority' => 'High', 'status' => 'Progress', 'description' => 'Konsep dekorasi sudah disetujui'],
-            ['title' => 'Booking fotografer & videografer', 'category' => 'Fotografer', 'deadline' => '+5', 'priority' => 'Medium', 'status' => 'Progress', 'description' => 'Paket liputan pre-wedding sudah dipilih'],
-            ['title' => 'Booking MUA & rias pengantin', 'category' => 'MUA', 'deadline' => '+10', 'priority' => 'High', 'status' => 'Done', 'description' => 'Konsep makeup & rias sudah fix'],
-            ['title' => 'Membuat & cetak undangan', 'category' => 'Undangan', 'deadline' => '+20', 'priority' => 'Medium', 'status' => 'Progress', 'description' => 'Jumlah undangan sudah dihitung dari daftar tamu'],
+            ['title' => 'Menentukan tanggal pernikahan', 'category' => 'General', 'deadline' => '-60', 'priority' => 'High', 'status' => 'Todo', 'description' => 'Tanggal sudah disepakati oleh keluarga pengantin'],
+            ['title' => 'Menentukan venue acara', 'category' => 'Venue', 'deadline' => '-45', 'priority' => 'High', 'status' => 'Todo', 'description' => 'Venue sudah dipilih dan ditawar'],
+            ['title' => 'Booking gedung / venue', 'category' => 'Venue', 'deadline' => '-30', 'priority' => 'High', 'status' => 'Todo', 'description' => 'DP gedung sudah dibayarkan'],
+            ['title' => 'Booking catering', 'category' => 'Catering', 'deadline' => '-20', 'priority' => 'High', 'status' => 'Todo', 'description' => 'Jumlah pax & menu sudah disepakati'],
+            ['title' => 'Booking dekorasi', 'category' => 'Dekorasi', 'deadline' => '-10', 'priority' => 'High', 'status' => 'Todo', 'description' => 'Konsep dekorasi sudah disetujui'],
+            ['title' => 'Booking fotografer & videografer', 'category' => 'Fotografer', 'deadline' => '+5', 'priority' => 'Medium', 'status' => 'Todo', 'description' => 'Paket liputan pre-wedding sudah dipilih'],
+            ['title' => 'Booking MUA & rias pengantin', 'category' => 'MUA', 'deadline' => '+10', 'priority' => 'High', 'status' => 'Todo', 'description' => 'Konsep makeup & rias sudah fix'],
+            ['title' => 'Membuat & cetak undangan', 'category' => 'Undangan', 'deadline' => '+20', 'priority' => 'Medium', 'status' => 'Todo', 'description' => 'Jumlah undangan sudah dihitung dari daftar tamu'],
             ['title' => 'Memesan souvenir pernikahan', 'category' => 'Souvenir', 'deadline' => '+30', 'priority' => 'Low', 'status' => 'Todo', 'description' => 'Pilih souvenir & vendor produksi'],
             ['title' => 'Gladi resik susunan acara', 'category' => 'Acara', 'deadline' => '+115', 'priority' => 'High', 'status' => 'Todo', 'description' => 'Gladi resik bersama WO & keluarga'],
             ['title' => 'Pelaksanaan Akad / Holy Matrimony', 'category' => 'Acara', 'deadline' => '+120', 'priority' => 'High', 'status' => 'Todo', 'description' => 'Penghulu & saksi sudah dikonfirmasi'],

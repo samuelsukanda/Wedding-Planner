@@ -56,14 +56,14 @@ class OnboardingTest extends TestCase
         $user = User::factory()->create(['name' => 'Nabila']);
 
         // Kelima langkah harus ada sekaligus supaya perpindahan hanya client-side.
-        $this->actingAs($user)->get('/onboarding')
+        $this->actingAs($user)->get('/')
             ->assertOk()
             ->assertSee('Siapa nama kamu?')
             ->assertSee('Siapa nama pasanganmu?')
             ->assertSee('Kapan kalian menikah?')
             ->assertSee('target anggaran pernikahan kalian?')
             ->assertSee('Siap memulai perjalanan!')
-            ->assertSee('Contoh: Nabila');
+            ->assertSee('DD-MM-YYYY');
     }
 
     public function test_finish_creates_wedding_and_seeds_checklist_template(): void

@@ -20,7 +20,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AdminPanelController;
 
 // ========== LOGIN (tanpa middleware auth) ==========
-Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('login', fn () => redirect()->route('dashboard'))->name('login');
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -36,15 +36,16 @@ Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])->n
 // Seluruh langkah wizard berjalan di client (Alpine), jadi hanya ada dua
 // route: buka halaman wizard dan simpan hasil akhirnya.
 Route::middleware('auth')->group(function () {
-    Route::get('onboarding', [OnboardingController::class, 'index'])->name('onboarding.index');
+    Route::get('onboarding', fn () => redirect()->route('dashboard'))->name('onboarding.index');
     Route::post('onboarding/finish', [OnboardingController::class, 'finish'])->name('onboarding.finish');
 });
 
+// Dashboard / public entry point: guest=login, new user=onboarding, user with
+// wedding=dashboard. Keeping it outside auth avoids /login and /onboarding in URL.
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
 // ========== SEMUA HALAMAN UTAMA (wajib login) ==========
 Route::middleware('auth')->group(function () {
-
-// Dashboard Module
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 // Foto profil. Halamannya sendiri reusing "Akun - Profile" (admin.index),
 // jadi tidak ada halaman profile terpisah.

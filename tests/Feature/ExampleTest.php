@@ -6,17 +6,14 @@ use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * Smoke test untuk halaman publik. Dashboard berada di dalam middleware
-     * auth, jadi request ke / akan mengarahkan ke halaman login.
-     */
+    /** Root entry renders login for guests. */
     public function test_the_application_returns_a_successful_response(): void
     {
-        $this->get('/login')->assertStatus(200);
+        $this->get('/')->assertOk()->assertSee('Masuk');
     }
 
-    public function test_dashboard_redirects_guests_to_login(): void
+    public function test_legacy_login_url_redirects_to_root(): void
     {
-        $this->get('/')->assertRedirect(route('login'));
+        $this->get('/login')->assertRedirect(route('dashboard'));
     }
 }

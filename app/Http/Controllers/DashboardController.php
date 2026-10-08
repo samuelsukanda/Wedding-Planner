@@ -15,6 +15,10 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        if (! auth()->check()) {
+            return view('auth.login');
+        }
+
         $wedding = Wedding::current();
         if (!$wedding) {
             if (auth()->user()?->is_superadmin) {
@@ -32,7 +36,7 @@ class DashboardController extends Controller
                 return app(AdminPanelController::class)->users();
             }
 
-            return redirect()->route('checklists.index');
+            return view('onboarding.index');
         }
 
         // Countdown

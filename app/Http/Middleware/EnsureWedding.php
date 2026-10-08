@@ -42,7 +42,7 @@ class EnsureWedding
 
         if (! $user->wedding_id) {
             // User baru / belum dipasangkan diarahkan ke wizard onboarding.
-            if ($request->routeIs('onboarding.*', 'admin.index', 'logout')) {
+            if ($request->routeIs('onboarding.*', 'dashboard', 'admin.index', 'logout')) {
                 return $next($request);
             }
 
