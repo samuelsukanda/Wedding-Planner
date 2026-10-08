@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id" class="h-full">
 
 <head>
@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- Halaman dinamis: jangan pernah tampilkan snapshot basi saat kembali/back. --}}
     <meta name="turbo-cache-control" content="no-cache">
-    <title>@yield('title', 'Wedding Planner') — {{ $brandName ?? 'Wedding Planner' }}</title>
+    <title>@yield('title', 'Wedding Planner') â€” {{ $brandName ?? 'Wedding Planner' }}</title>
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
@@ -69,7 +69,7 @@
         }
 
         /* ============================================================
-           PRINT STYLES — targets precise IDs, hides UI chrome
+           PRINT STYLES â€” targets precise IDs, hides UI chrome
         ============================================================ */
         @media print {
 
@@ -94,7 +94,7 @@
                 text-shadow: none !important;
             }
 
-            /* ---- Reset body layout (flex → block for print) ---- */
+            /* ---- Reset body layout (flex â†’ block for print) ---- */
             html {
                 height: auto !important;
             }
@@ -170,6 +170,34 @@
                 text-decoration: none !important;
             }
         }
+
+        /* ---- Sidebar dalam keadaan ter-ciut ----
+           Hanya ikon menu yang terlihat. Selector ini sengaja menyasar
+           .sidebar-label, isi <nav> (span + header section), dan avatar,
+           supaya tiap menu tidak perlu diubah satu per satu. */
+        @media (min-width: 768px) {
+            .sidebar.is-collapsed .sidebar-label,
+            .sidebar.is-collapsed nav span,
+            .sidebar.is-collapsed .nav-section {
+                display: none;
+            }
+
+            .sidebar.is-collapsed nav a,
+            .sidebar.is-collapsed .border-t a {
+                justify-content: center;
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+
+            .sidebar.is-collapsed .shrink-0.border-t {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+
+            .sidebar.is-collapsed .shrink-0.border-t form {
+                display: none;
+            }
+        }
     </style>
 
     <script>
@@ -214,7 +242,7 @@
 
         // Simpan & restore posisi scroll halaman Master Data (admin panel).
         // Turbo mengganti <body> tiap perpindahan menu, jadi pemeriksaan
-        // pathname harus di dalam event, bukan di awal IIFE — kalau placed
+        // pathname harus di dalam event, bukan di awal IIFE â€” kalau placed
         // di awal, script ini (di <head>) hanya jalan sekali dan listener
         // scroll tidak pernah terdaftar saat masuk lewat klik menu.
         (function() {
@@ -259,7 +287,9 @@
 </head>
 
 <body class="h-full flex flex-col md:flex-row antialiased selection:bg-[#D8A7B1] selection:text-white"
-    x-data="{ sidebarOpen: false }">
+    x-data="{ sidebarOpen: false, sidebarCollapsed: false }"
+    x-init="sidebarCollapsed = localStorage.getItem('wp.sidebarCollapsed') === '1'"
+    @sidebar-collapsed.window="sidebarCollapsed = $event.detail; localStorage.setItem('wp.sidebarCollapsed', $event.detail ? '1' : '0')">
 
     <!-- Mobile Header -->
     <header
@@ -291,16 +321,16 @@
         class="fixed inset-0 bg-[#5F6F5B]/50 backdrop-blur-sm z-50 md:hidden" x-cloak></div>
 
     <!-- Sidebar Navigation -->
-    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
-        class="fixed md:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-[#B6ADA3]/35 flex flex-col transition-transform duration-300 ease-in-out shadow-lg md:shadow-none">
+    <aside :class="[sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0', sidebarCollapsed ? 'is-collapsed md:w-16' : 'md:w-64']"
+        class="sidebar fixed md:relative inset-y-0 left-0 z-50 w-64 md:transition-[width] duration-300 ease-in-out bg-white border-r border-[#B6ADA3]/35 flex flex-col transition-transform duration-300 ease-in-out shadow-lg md:shadow-none">
 
         <!-- Logo & Header -->
         <div class="p-5 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md shrink-0">
                     <img src="{{ asset('img/logo.png') }}" alt="Logo">
                 </div>
-                <div>
+                <div class="sidebar-label min-w-0">
                     <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight">{{ $brandName ?? 'Wedding Planner' }}</h1>
                     <p class="text-[11px] text-[#5F6F5B] font-bold tracking-wide uppercase">Wedding Planner</p>
                 </div>
@@ -312,9 +342,9 @@
         </div>
 
         <!-- Navigation Links (All 11 PRD Modules) -->
-        <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+        <nav class="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
             @unless (auth()->user()?->is_superadmin)
-            <div class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Utama</div>
+            <div class="nav-section px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Utama</div>
 
             <a href="{{ route('dashboard') }}"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('dashboard') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
@@ -322,7 +352,7 @@
                 <span>Dashboard</span>
             </a>
 
-            <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Perencanaan</div>
+            <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Perencanaan</div>
 
             <a href="{{ route('checklists.index') }}"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('checklists.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
@@ -348,7 +378,7 @@
                 <span>Guest Management</span>
             </a>
 
-            <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Inspirasi & Jadwal
+            <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Inspirasi & Jadwal
             </div>
 
             <a href="{{ route('moodboards.index') }}"
@@ -363,7 +393,7 @@
                 <span>Rundown Acara</span>
             </a>
 
-            <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Keuangan & Dokumen
+            <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Keuangan & Dokumen
             </div>
 
             <a href="{{ route('contracts.index') }}"
@@ -384,7 +414,7 @@
                 <span>Gift Management</span>
             </a>
 
-            <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Laporan</div>
+            <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Laporan</div>
 
             <a href="{{ route('reports.index') }}"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('reports.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
@@ -392,7 +422,7 @@
                 <span>Laporan & Export</span>
             </a>
 
-            <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Akun</div>
+            <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Akun</div>
 
             <a href="{{ route('admin.index') }}"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.index', 'admin.wedding.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
@@ -402,7 +432,7 @@
             @endunless
 
             @if (auth()->user()?->is_superadmin)
-            <div class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Admin</div>
+            <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Admin</div>
 
             <a href="{{ route('admin.master-data.index') }}"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.master-data.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
@@ -416,18 +446,49 @@
                 <span>Admin Panel</span>
             </a>
             @endif
-
-            <div class="border-t border-[#B6ADA3]/30 my-3 mx-3"></div>
-
-            <form method="POST" action="{{ route('logout') }}" class="px-3" data-turbo="false">
-                @csrf
-                <button type="submit"
-                    class="flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#B6ADA3] hover:bg-[#FAF7F2] hover:text-[#D8A7B1] cursor-pointer transition-all">
-                    <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
-                    <span>Keluar</span>
-                </button>
-            </form>
         </nav>
+
+        {{-- Footer sidebar: DI LUAR <nav> scrollable, jadi kartu user dan
+             tombol Keluar selalu menempel di bawah dan tidak ikut bergeser. --}}
+        <div class="shrink-0 border-t border-[#B6ADA3]/30 bg-white">
+            <a href="{{ route('profile') }}"
+                class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-all hover:bg-[#FAF7F2] {{ request()->routeIs('profile') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold' : 'text-[#5F6F5B]/80' }}">
+                <i class="fa-solid fa-user w-5 text-center text-[#D8A7B1]"></i>
+                <span class="sidebar-label">Profile</span>
+            </a>
+
+            <div class="flex items-center gap-3 px-4 py-3 border-t border-[#B6ADA3]/25">
+                @if (auth()->user()?->avatarUrl())
+                    <img src="{{ auth()->user()->avatarUrl() }}" alt="Foto {{ auth()->user()->name }}"
+                        class="w-9 h-9 rounded-full object-cover shrink-0">
+                @else
+                    <div
+                        class="w-9 h-9 rounded-full bg-[#A855A0] text-white flex items-center justify-center text-sm font-bold shrink-0">
+                        {{ auth()->user()?->initial() }}
+                    </div>
+                @endif
+
+                <div class="sidebar-label min-w-0 flex-1">
+                    <div class="text-sm font-bold text-[#5F6F5B] truncate">{{ auth()->user()?->name }}</div>
+                    <div class="text-[11px] text-[#B6ADA3] truncate">{{ auth()->user()?->email }}</div>
+                </div>
+
+                <form method="POST" action="{{ route('logout') }}" data-turbo="false" class="shrink-0">
+                    @csrf
+                    <button type="submit" aria-label="Keluar" title="Keluar"
+                        class="w-8 h-8 rounded-lg text-[#B6ADA3] hover:bg-[#FAF7F2] hover:text-[#D8A7B1] cursor-pointer transition-all flex items-center justify-center">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {{-- Tombol ciut/buka sidebar, menempel di tepi kanan tengah sidebar. --}}
+        <button type="button" @click="$dispatch('sidebar-collapsed', ! sidebarCollapsed)"
+            class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-6 h-12 items-center justify-center rounded-full bg-white border border-[#B6ADA3]/40 text-[#B6ADA3] hover:text-[#D8A7B1] shadow-sm transition-colors cursor-pointer"
+            :aria-label="sidebarCollapsed ? 'Perlebar sidebar' : 'Ciutkan sidebar'">
+            <i class="fa-solid text-[10px]" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+        </button>
     </aside>
 
     <!-- Main Content Body -->

@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\VendorController;
@@ -42,8 +43,13 @@ Route::middleware('auth')->group(function () {
 // ========== SEMUA HALAMAN UTAMA (wajib login) ==========
 Route::middleware('auth')->group(function () {
 
-    // Dashboard Module
+// Dashboard Module
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Profil user: lihat, ganti foto, hapus foto
+    Route::get('profile', [ProfileController::class, 'show'])->name('profile');
+    Route::post('profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+    Route::delete('profile/photo', [ProfileController::class, 'destroyPhoto'])->name('profile.photo.destroy');
 
     // Module 2 - Wedding Checklist
     Route::resource('checklists', ChecklistController::class)->except(['create', 'edit', 'show']);

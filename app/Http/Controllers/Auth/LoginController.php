@@ -28,10 +28,12 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
             if ($request->user()->is_superadmin) {
-                return redirect()->route('admin.users.index');
+                return redirect()->route('admin.users.index')
+                    ->with('success', 'Login berhasil. Selamat datang kembali!');
             }
 
-            return redirect()->intended(route('dashboard'));
+            return redirect()->intended(route('dashboard'))
+                ->with('success', 'Login berhasil. Selamat datang kembali!');
         }
 
         return back()->withErrors([

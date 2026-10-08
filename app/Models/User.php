@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['name', 'email', 'password', 'wedding_id', 'is_superadmin'])]
+#[Fillable(['name', 'email', 'password', 'wedding_id', 'is_superadmin', 'profile_photo'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -32,5 +33,23 @@ class User extends Authenticatable
     public function wedding()
     {
         return $this->belongsTo(Wedding::class);
+    }
+
+    /**
+     * URL foto profil, atau null kalau user belum memasang foto.
+     */
+    public function avatarUrl(): ?string
+    {
+        return $this->profile_photo
+            ? Storage::disk('public')->url($this->profile_photo)
+            : null;
+    }
+
+    /**
+     * Huruf awal untuk avatar cadangan saat foto belum diunggah.
+     */
+    public function initial(): string
+    {
+        return mb_strtoupper(mb_substr($this->name ?: '?', 0, 1));
     }
 }
