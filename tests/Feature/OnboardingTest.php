@@ -188,7 +188,7 @@ class OnboardingTest extends TestCase
             ->assertSee('data-flash-auto', false);
     }
 
-    public function test_flash_toast_component_marks_error_as_sticky_and_success_as_auto(): void
+public function test_flash_toast_auto_dismisses_success_error_and_validation(): void
     {
         // Komponen diuji langsung supaya tidak bergantung pada plumbing session.
         // Nilai dikirim lewat array data karena parser atribut Blade tidak
@@ -199,25 +199,23 @@ class OnboardingTest extends TestCase
 
         $error = Blade::render('<x-flash-toast :error="$text" />', ['text' => 'Gagal menyimpan']);
         $this->assertStringContainsString('Gagal menyimpan', $error);
-        $this->assertStringContainsString('data-flash', $error);
-        // Error tidak boleh punya penanda auto-dismiss.
-        $this->assertSame(0, preg_match($autoToastOnElement, $error));
+        $this->assertSame(1, preg_match($autoToastOnElement, $error));
 
-        // Bentuk sama dengan output ViewErrorBag::all() yang dikirim layout.
-        // Objek ViewErrorBag sendiri tidak bisa dioper lewat Blade::render(),
-        // jalur aslinya sudah diverifikasi lewat browser.
         $validation = Blade::render('<x-flash-toast :messages="$list" />', [
+            // Bentuk sama dengan output ViewErrorBag::all() yang dikirim layout.
+            // Objek ViewErrorBag sendiri tidak bisa dioper lewat Blade::render(),
+            // jalur aslinya sudah diverifikasi lewat browser.
             'list' => ['partner_name' => ['Nama pasangan wajib diisi.']],
         ]);
         $this->assertStringContainsString('Mohon lengkapi data berikut', $validation);
         $this->assertStringContainsString('Nama pasangan wajib diisi.', $validation);
-        $this->assertSame(0, preg_match($autoToastOnElement, $validation));
+        $this->assertSame(1, preg_match($autoToastOnElement, $validation));
 
         $success = Blade::render('<x-flash-toast :success="$text" />', ['text' => 'Berhasil disimpan']);
         $this->assertStringContainsString('Berhasil disimpan', $success);
-        // Sukses harus punya penanda auto-dismiss.
         $this->assertSame(1, preg_match($autoToastOnElement, $success));
 
+        // Tanpa pesan tidak ada yang dirender sama sekali.
         $empty = Blade::render('<x-flash-toast />');
         $this->assertStringNotContainsString('data-flash', $empty);
     }

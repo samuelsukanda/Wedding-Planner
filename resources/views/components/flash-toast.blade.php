@@ -40,7 +40,8 @@
     </style>
 
     <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-2rem)] max-w-xl space-y-2">
-        {{-- Sukses: toast hilang sendiri, karena tidak ada yang perlu diperbaiki user. --}}
+        {{-- Semua jenis pesan hilang sendiri setelah 4 detik, dan tetap bisa
+             ditutup manual lewat tombol ×. --}}
         @if ($success)
             <div data-flash data-flash-auto style="animation: flash-toast-in 300ms ease-out both;"
                 class="flex items-start gap-3 rounded-2xl border border-[#A3B7A6]/60 bg-[#F1F5F0] px-4 py-3.5 text-sm text-[#5F6F5B] shadow-lg shadow-[#5F6F5B]/10">
@@ -53,10 +54,8 @@
             </div>
         @endif
 
-        {{-- Error & validasi: blok sticky, tidak hilang sendiri supaya user sempat membaca
-             dan memperbaiki isiannya. --}}
         @if ($error)
-            <div data-flash style="animation: flash-toast-in 300ms ease-out both;"
+            <div data-flash data-flash-auto style="animation: flash-toast-in 300ms ease-out both;"
                 class="flex items-start gap-3 rounded-2xl border border-[#D8A7B1]/70 bg-[#FBF2F4] px-4 py-3.5 text-sm text-[#5F6F5B] shadow-lg shadow-[#D8A7B1]/15">
                 <i class="fa-solid fa-circle-exclamation mt-0.5 text-[#D8A7B1]"></i>
                 <span class="flex-1">{{ $error }}</span>
@@ -68,7 +67,7 @@
         @endif
 
         @if (count($errorList))
-            <div data-flash style="animation: flash-toast-in 300ms ease-out both;"
+            <div data-flash data-flash-auto style="animation: flash-toast-in 300ms ease-out both;"
                 class="rounded-2xl border border-[#D8A7B1]/70 bg-[#FBF2F4] px-4 py-3.5 text-sm text-[#5F6F5B] shadow-lg shadow-[#D8A7B1]/15">
                 <div class="flex items-start gap-3">
                     <i class="fa-solid fa-circle-exclamation mt-0.5 text-[#D8A7B1]"></i>
@@ -98,7 +97,8 @@
                 });
             });
 
-            // Hanya pesan sukses yang hilang sendiri, supaya user sempat membaca.
+            // Semua pesan (sukses, error, validasi) hilang sendiri, dan tombol
+            // × tetap bisa menutup lebih cepat.
             document.querySelectorAll('[data-flash-auto]').forEach(function(node) {
                 window.setTimeout(function() {
                     node.style.transition = 'opacity 250ms ease, transform 250ms ease';
