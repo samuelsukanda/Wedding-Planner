@@ -13,7 +13,11 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="shortcut icon" href="{{ asset('img/icon.jpg') }}" type="image/x-icon">
+    {{-- Flatpickr dipakai di langkah tanggal agar konsisten dengan form lain. --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     @vite(['resources/css/app.css'])
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -86,9 +90,7 @@
             margin-bottom: 24px;
         }
 
-        input[type="text"],
-        input[type="date"],
-        input[type="number"] {
+        .field {
             width: 100%;
             padding: 14px 16px;
             border: 1.5px solid #d7d2c9;
@@ -97,17 +99,40 @@
             font-family: 'Outfit', sans-serif;
             color: #2D372E;
             background: #ffffff;
-            transition: all 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
             outline: none;
         }
 
-        input:focus {
+        .field:focus {
             border-color: #D8A7B1;
             box-shadow: 0 0 0 3px rgba(216, 167, 177, 0.18);
         }
 
-        input::placeholder {
+        .field.is-invalid {
+            border-color: #D8A7B1;
+            background: #FBF2F4;
+        }
+
+        .field::placeholder {
             color: #B6ADA3;
+        }
+
+        .field[readonly] {
+            background: #FAF3F5;
+            color: #6B7280;
+        }
+
+        .inline-error {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 1px solid #D8A7B1;
+            background: #FBF2F4;
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #C2757F;
         }
 
         .summary {
@@ -161,12 +186,13 @@
             color: #ffffff;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background: linear-gradient(135deg, #C48D9A, #B87C89);
         }
 
         .btn-primary:disabled {
             background: #E3C8CF;
+            color: #ffffff;
             cursor: not-allowed;
         }
 
@@ -185,131 +211,220 @@
             grid-column: 1 / -1;
         }
 
-        .error {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 13px;
-            color: #dc2626;
-            margin-bottom: 18px;
+        [x-cloak] {
+            display: none !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .dot { transition: none; }
         }
     </style>
 </head>
 
 <body>
-    <div class="dots" aria-label="Progres">
-        @for ($i = 1; $i <= 4; $i++)
-            @if ($step >= 5)
-                <span class="dot is-done"></span>
-            @elseif ($step === $i)
-                <span class="dot is-active"></span>
-            @elseif ($step > $i)
-                <span class="dot is-done"></span>
-            @else
-                <span class="dot"></span>
-            @endif
-        @endfor
+    {{-- Semua langkah dirender sekali di DOM. Perpindahan Lanjut/Kembali hanya
+         mengubah state Alpine, tidak ada request ke server sama sekali. --}}
+    @php
+        $saved = json_decode(session('onboarding_draft', ''), true) ?: [];
+    @endphp
+
+    <div x-data="wizard()" x-init="restore()" x-cloak>
+        <div class="dots" aria-label="Progres">
+            <template x-for="i in 4" :key="i">
+                <span class="dot" :class="{ 'is-active': step === i, 'is-done': step > i || step >= 5 }"></span>
+            </template>
+        </div>
+
+        <div class="wizard-card">
+            <x-flash-toast :error="$errors->first()" />
+
+            {{-- ========== LANGKAH 1 ========== --}}
+            <section x-show="step === 1">
+                <div class="step-emoji">👋</div>
+                <h1>Siapa nama kamu?</h1>
+                <p class="subtitle">Kami akan menyimpanmu dengan nama ini.</p>
+                <input type="text" class="field" :class="{ 'is-invalid': errors.user_name }" x-model="form.user_name"
+                    readonly aria-label="Nama kamu">
+                <template x-if="errors.user_name">
+                    <p class="inline-error"><i class="fa-solid fa-circle-exclamation"></i><span x-text="errors.user_name"></span></p>
+                </template>
+                <div class="actions">
+                    <button type="button" class="btn btn-primary btn-block" @click="next(1)">Lanjut</button>
+                </div>
+            </section>
+
+            {{-- ========== LANGKAH 2 ========== --}}
+            <section x-show="step === 2">
+                <div class="step-emoji">💑</div>
+                <h1>Siapa nama pasanganmu?</h1>
+                <p class="subtitle">Kalian akan merencanakan bersama.</p>
+                <input type="text" class="field" :class="{ 'is-invalid': errors.partner_name }" x-model="form.partner_name"
+                    placeholder="Contoh: Nabila" x-ref="partner" @keydown.enter.prevent="next(2)">
+                <template x-if="errors.partner_name">
+                    <p class="inline-error"><i class="fa-solid fa-circle-exclamation"></i><span x-text="errors.partner_name"></span></p>
+                </template>
+                <div class="actions">
+                    <button type="button" class="btn btn-secondary" @click="step = 1">Kembali</button>
+                    <button type="button" class="btn btn-primary" @click="next(2)">Lanjut</button>
+                </div>
+            </section>
+
+            {{-- ========== LANGKAH 3 ========== --}}
+            <section x-show="step === 3">
+                <div class="step-emoji">💍</div>
+                <h1>Kapan kalian menikah?</h1>
+                <p class="subtitle">Kami akan menghitung mundur untuk kalian.</p>
+                <input type="text" class="field datepicker-input" :class="{ 'is-invalid': errors.wedding_date }"
+                    x-model="form.wedding_date" placeholder="dd/mm/yyyy" data-date>
+                <template x-if="errors.wedding_date">
+                    <p class="inline-error"><i class="fa-solid fa-circle-exclamation"></i><span x-text="errors.wedding_date"></span></p>
+                </template>
+                <div class="actions">
+                    <button type="button" class="btn btn-secondary" @click="step = 2">Kembali</button>
+                    <button type="button" class="btn btn-primary" @click="next(3)">Lanjut</button>
+                </div>
+            </section>
+
+            {{-- ========== LANGKAH 4 ========== --}}
+            <section x-show="step === 4">
+                <div class="step-emoji">💰</div>
+                <h1>Berapa target anggaran pernikahan kalian?</h1>
+                <p class="subtitle">Bisa diubah kapan saja nanti.</p>
+                <input type="text" inputmode="numeric" class="field" :class="{ 'is-invalid': errors.total_budget }"
+                    x-model="form.total_budget" placeholder="Rp 100.000.000" @input="formatBudget"
+                    @keydown.enter.prevent="next(4)">
+                <template x-if="errors.total_budget">
+                    <p class="inline-error"><i class="fa-solid fa-circle-exclamation"></i><span x-text="errors.total_budget"></span></p>
+                </template>
+                <div class="actions">
+                    <button type="button" class="btn btn-secondary" @click="step = 3">Kembali</button>
+                    <button type="button" class="btn btn-primary" @click="next(4)">Lanjut</button>
+                </div>
+            </section>
+
+            {{-- ========== LANGKAH 5 (konfirmasi) ========== --}}
+            <section x-show="step === 5">
+                <div class="step-emoji">🎉</div>
+                <h1>Siap memulai perjalanan!</h1>
+                <p class="subtitle">Workspace wedding kalian akan dibuat dengan template default. Semua bisa diedit
+                    nanti.</p>
+                <div class="summary">
+                    <div class="summary-row">
+                        <span class="summary-label">Pasangan</span>
+                        <span class="summary-value" x-text="`${form.user_name} & ${form.partner_name}`"></span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Tanggal</span>
+                        <span class="summary-value" x-text="formattedDate"></span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Budget</span>
+                        <span class="summary-value" x-text="`Rp ${form.total_budget}`"></span>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('onboarding.finish') }}">
+                    @csrf
+                    <input type="hidden" name="user_name" :value="form.user_name">
+                    <input type="hidden" name="partner_name" :value="form.partner_name">
+                    <input type="hidden" name="wedding_date" :value="form.wedding_date">
+                    <input type="hidden" name="total_budget" :value="numericBudget">
+                    <div class="actions">
+                        <button type="button" class="btn btn-secondary" @click="step = 4">Kembali</button>
+                        <button type="submit" class="btn btn-primary">
+                            Mulai Perencanaan <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
     </div>
 
-    <div class="wizard-card">
-        @if ($errors->any())
-            <div class="error">{{ $errors->first() }}</div>
-        @endif
+    <script>
+        const STORAGE_KEY = 'weddingPlanner.onboardingDraft';
 
-        @if ($step === 1)
-            <div class="step-emoji">👋</div>
-            <h1>Siapa nama kamu?</h1>
-            <p class="subtitle">Kami akan menyimpanmu dengan nama ini.</p>
-            <form method="POST" action="{{ route('onboarding.store') }}">
-                @csrf
-                <input type="text" name="user_name" id="user_name" readonly required
-                    value="{{ $data['user_name'] ?? auth()->user()->name }}"
-                    style="background:#F5F3F0; color:#6B7280;">
-                <div class="actions">
-                    <button type="submit" class="btn btn-primary btn-block">Lanjut</button>
-                </div>
-            </form>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('wizard', () => ({
+                step: 1,
+                errors: {},
+                form: {
+                    user_name: @js(auth()->user()->name),
+                    partner_name: '',
+                    wedding_date: '',
+                    total_budget: '',
+                },
 
-        @elseif ($step === 2)
-            <div class="step-emoji">💑</div>
-            <h1>Siapa nama pasanganmu?</h1>
-            <p class="subtitle">Kalian akan merencanakan bersama.</p>
-            <form method="POST" action="{{ route('onboarding.store') }}">
-                @csrf
-                <input type="text" name="partner_name" placeholder="Contoh: Aulia" required autofocus
-                    value="{{ $data['partner_name'] ?? '' }}">
-                <div class="actions">
-                    <button type="submit" name="direction" value="back" class="btn btn-secondary"
-                        formnovalidate>Kembali</button>
-                    <button type="submit" class="btn btn-primary">Lanjut</button>
-                </div>
-            </form>
+                restore() {
+                    try {
+                        const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}');
+                        if (saved.form) Object.assign(this.form, saved.form);
+                        if (saved.step) this.step = saved.step;
+                    } catch (error) {
+                        /* draft rusak, abaikan saja */
+                    }
+                    this.initDatepicker();
+                },
 
-        @elseif ($step === 3)
-            <div class="step-emoji">💍</div>
-            <h1>Kapan kalian menikah?</h1>
-            <p class="subtitle">Kami akan menghitung mundur untuk kalian.</p>
-            <form method="POST" action="{{ route('onboarding.store') }}">
-                @csrf
-                <input type="date" name="wedding_date" required autofocus
-                    value="{{ $data['wedding_date'] ?? '' }}">
-                <div class="actions">
-                    <button type="submit" name="direction" value="back" class="btn btn-secondary"
-                        formnovalidate>Kembali</button>
-                    <button type="submit" class="btn btn-primary">Lanjut</button>
-                </div>
-            </form>
+                persist() {
+                    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ step: this.step, form: this.form }));
+                },
 
-        @elseif ($step === 4)
-            <div class="step-emoji">💰</div>
-            <h1>Berapa target anggaran pernikahan kalian?</h1>
-            <p class="subtitle">Bisa diubah kapan saja nanti.</p>
-            <form method="POST" action="{{ route('onboarding.store') }}">
-                @csrf
-                <input type="number" name="total_budget" min="0" step="100000" required autofocus
-                    placeholder="Rp 100.000.000" value="{{ $data['total_budget'] ?? '' }}">
-                <div class="actions">
-                    <button type="submit" name="direction" value="back" class="btn btn-secondary"
-                        formnovalidate>Kembali</button>
-                    <button type="submit" class="btn btn-primary">Lanjut</button>
-                </div>
-            </form>
+                initDatepicker() {
+                    const el = this.$root.querySelector('[data-date]');
+                    if (!el || el._flatpickr || !window.flatpickr) return;
+                    el._flatpickr = window.flatpickr(el, {
+                        dateFormat: 'Y-m-d',
+                        allowInput: true,
+                        onChange: () => this.persist(),
+                    });
+                },
 
-        @else
-            <div class="step-emoji">🎉</div>
-            <h1>Siap memulai perjalanan!</h1>
-            <p class="subtitle">Workspace wedding kalian akan dibuat dengan template default. Semua bisa diedit
-                nanti.</p>
-            <div class="summary">
-                <div class="summary-row">
-                    <span class="summary-label">Pasangan</span>
-                    <span class="summary-value">{{ $data['user_name'] ?? auth()->user()->name }} &amp;
-                        {{ $data['partner_name'] ?? '' }}</span>
-                </div>
-                <div class="summary-row">
-                    <span class="summary-label">Tanggal</span>
-                    <span class="summary-value">
-                        {{ \Carbon\Carbon::parse($data['wedding_date'])->format('j F Y') }}</span>
-                </div>
-                <div class="summary-row">
-                    <span class="summary-label">Budget</span>
-                    <span class="summary-value">Rp {{ number_format((float) ($data['total_budget'] ?? 0), 0, ',', '.') }}
-                    </span>
-                </div>
-            </div>
-            <form method="POST" action="{{ route('onboarding.finish') }}">
-                @csrf
-                <div class="actions">
-                    <button type="submit" name="direction" value="back" class="btn btn-secondary"
-                        formnovalidate>Kembali</button>
-                    <button type="submit" class="btn btn-primary">
-                        Mulai Perencanaan <i class="fa-solid fa-circle-notch fa-spin"></i>
-                    </button>
-                </div>
-            </form>
-        @endif
-    </div>
+                // Validasi per langkah di browser supaya tidak ada request sia-sia.
+                next(current) {
+                    this.errors = {};
+
+                    if (current === 2 && !this.form.partner_name.trim()) {
+                        this.errors.partner_name = 'Nama pasangan wajib diisi.';
+                    }
+
+                    if (current === 3 && !this.form.wedding_date) {
+                        this.errors.wedding_date = 'Tanggal pernikahan wajib diisi.';
+                    }
+
+                    if (current === 4) {
+                        if (!this.numericBudget) {
+                            this.errors.total_budget = 'Target anggaran wajib diisi.';
+                        } else if (this.numericBudget < 1) {
+                            this.errors.total_budget = 'Target anggaran harus lebih dari 0.';
+                        }
+                    }
+
+                    if (Object.keys(this.errors).length) return;
+
+                    this.step = current + 1;
+                    this.persist();
+                    this.$nextTick(() => this.initDatepicker());
+                },
+
+                get numericBudget() {
+                    return Number(String(this.form.total_budget).replace(/\D/g, '')) || 0;
+                },
+
+                formatBudget(event) {
+                    const digits = String(event.target.value).replace(/\D/g, '');
+                    this.form.total_budget = digits ? Number(digits).toLocaleString('id-ID') : '';
+                },
+
+                get formattedDate() {
+                    if (!this.form.wedding_date) return '';
+                    const date = new Date(this.form.wedding_date);
+                    return Number.isNaN(date.getTime())
+                        ? this.form.wedding_date
+                        : date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                },
+            }));
+        });
+    </script>
 </body>
 
 </html>

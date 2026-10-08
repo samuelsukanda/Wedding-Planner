@@ -260,12 +260,7 @@
         <h1>Wedding Planner</h1>
         <p class="subtitle">Masuk untuk mengelola acara pernikahan</p>
 
-        @if ($errors->any())
-            <div class="error">
-                <i class="fa-solid fa-circle-exclamation" style="margin-top:2px;"></i>
-                <span>{{ $errors->first() }}</span>
-            </div>
-        @endif
+        <x-flash-toast :error="$errors->first()" />
 
         <div class="tabs" role="tablist">
             <button type="button" class="tab-btn" role="tab" @click="tab = 'login'"

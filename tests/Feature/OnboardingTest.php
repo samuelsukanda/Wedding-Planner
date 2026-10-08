@@ -5,25 +5,33 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\Wedding;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Blade;
 use Tests\TestCase;
 
 class OnboardingTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const FINISH_PAYLOAD = [
+        'user_name' => 'Nabila',
+        'partner_name' => 'Nabila',
+        'wedding_date' => '2027-10-07',
+        'total_budget' => 100000000,
+    ];
+
     public function test_registration_creates_user_and_redirects_to_onboarding(): void
     {
         $response = $this->post('/register', [
-            'name' => 'Samuel Sukanda',
-            'email' => 'samuel@example.com',
+            'name' => 'Nabila',
+            'email' => 'nabila@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ]);
 
         $response->assertRedirect(route('onboarding.index'));
         $this->assertDatabaseHas('users', [
-            'email' => 'samuel@example.com',
-            'name' => 'Samuel Sukanda',
+            'email' => 'nabila@example.com',
+            'name' => 'Nabila',
             'is_superadmin' => false,
             'wedding_id' => null,
         ]);
@@ -31,81 +39,89 @@ class OnboardingTest extends TestCase
 
     public function test_registration_rejects_duplicate_email(): void
     {
-        User::factory()->create(['email' => 'samuel@example.com']);
+        User::factory()->create(['email' => 'nabila@example.com']);
 
         $this->post('/register', [
             'name' => 'Other',
-            'email' => 'samuel@example.com',
+            'email' => 'nabila@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ])->assertSessionHasErrors('email');
 
-        $this->assertSame(1, User::where('email', 'samuel@example.com')->count());
+        $this->assertSame(1, User::where('email', 'nabila@example.com')->count());
     }
 
-    public function test_wizard_advances_through_steps_and_creates_workspace(): void
+    public function test_onboarding_page_renders_all_five_steps_in_one_document(): void
     {
-        $user = User::factory()->create(['name' => 'Samuel Sukanda']);
+        $user = User::factory()->create(['name' => 'Nabila']);
 
-        $this->actingAs($user)->get('/onboarding')->assertOk();
-
-        $this->actingAs($user)->post('/onboarding', ['user_name' => 'Samuel Sukanda'])
-            ->assertRedirect(route('onboarding.index'));
-
-        $this->actingAs($user)->post('/onboarding', ['partner_name' => 'Aulia'])
-            ->assertRedirect(route('onboarding.index'));
-
-        $this->actingAs($user)->post('/onboarding', ['wedding_date' => '2027-10-07'])
-            ->assertRedirect(route('onboarding.index'));
-
-        $this->actingAs($user)->post('/onboarding', ['total_budget' => 100000000])
-            ->assertRedirect(route('onboarding.index'));
-
+        // Kelima langkah harus ada sekaligus supaya perpindahan hanya client-side.
         $this->actingAs($user)->get('/onboarding')
             ->assertOk()
+            ->assertSee('Siapa nama kamu?')
+            ->assertSee('Siapa nama pasanganmu?')
+            ->assertSee('Kapan kalian menikah?')
+            ->assertSee('target anggaran pernikahan kalian?')
             ->assertSee('Siap memulai perjalanan!')
-            ->assertSee('Aulia');
+            ->assertSee('Contoh: Nabila');
+    }
 
-        $this->actingAs($user)->post('/onboarding/finish')
+    public function test_finish_creates_wedding_and_seeds_checklist_template(): void
+    {
+        $user = User::factory()->create(['name' => 'Nabila']);
+
+        $this->actingAs($user)->post('/onboarding/finish', self::FINISH_PAYLOAD)
             ->assertRedirect(route('dashboard'));
 
         $wedding = Wedding::first();
         $this->assertNotNull($wedding);
-        $this->assertSame('Samuel Sukanda', $wedding->groom_name);
-        $this->assertSame('Aulia', $wedding->bride_name);
+        $this->assertSame('Nabila', $wedding->groom_name);
+        $this->assertSame('Nabila', $wedding->bride_name);
         $this->assertSame('2027-10-07', $wedding->wedding_date->toDateString());
         $this->assertSame('100000000.00', $wedding->total_budget);
-
-        // Template checklist ikut dibuat supaya workspace tidak kosong.
         $this->assertSame(12, $wedding->checklists()->count());
         $this->assertSame($wedding->id, $user->fresh()->wedding_id);
     }
 
-    public function test_wizard_progress_survives_refresh(): void
+    public function test_finish_flashes_success_toast(): void
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)->post('/onboarding', ['user_name' => 'Samuel']);
-        $this->actingAs($user)->post('/onboarding', ['partner_name' => 'Aulia']);
-
-        $this->actingAs($user)->get('/onboarding')
-            ->assertOk()
-            ->assertSee('Kapan kalian menikah?');
+        $this->actingAs($user)->post('/onboarding/finish', self::FINISH_PAYLOAD)
+            ->assertSessionHas('success');
     }
 
-    public function test_back_button_returns_to_previous_step(): void
+    public function test_finish_requires_every_field(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['wedding_id' => null]);
 
-        $this->actingAs($user)->post('/onboarding', ['user_name' => 'Samuel']);
-        $this->actingAs($user)->post('/onboarding', ['partner_name' => 'Aulia']);
+        $this->actingAs($user)->post('/onboarding/finish', [])
+            ->assertSessionHasErrors(['user_name', 'partner_name', 'wedding_date', 'total_budget']);
 
-        $this->actingAs($user)->post('/onboarding', ['direction' => 'back'])
-            ->assertRedirect(route('onboarding.index'));
+        $this->assertSame(0, Wedding::count());
+    }
 
-        $this->actingAs($user)->get('/onboarding')
-            ->assertOk()
-            ->assertSee('Siapa nama pasanganmu?');
+    public function test_finish_rejects_zero_budget(): void
+    {
+        $user = User::factory()->create(['wedding_id' => null]);
+
+        $this->actingAs($user)->post('/onboarding/finish', array_merge(self::FINISH_PAYLOAD, ['total_budget' => 0]))
+            ->assertSessionHasErrors('total_budget');
+
+        $this->assertSame(0, Wedding::count());
+    }
+
+    public function test_step_progression_routes_are_gone(): void
+    {
+        $user = User::factory()->create(['wedding_id' => null]);
+
+        // Pergantian langkah sekarang client-side, jadi route POST-nya dihapus.
+        // /onboarding masih ada sebagai GET, jadi POST ke sana dijawab 405,
+        // sedangkan /onboarding/back tidak ada sama sekali.
+        $this->actingAs($user)->post('/onboarding', ['partner_name' => 'Nabila'])
+            ->assertStatus(405);
+        $this->actingAs($user)->post('/onboarding/back')
+            ->assertNotFound();
     }
 
     public function test_user_without_wedding_is_redirected_to_onboarding(): void
@@ -118,8 +134,8 @@ class OnboardingTest extends TestCase
     public function test_user_with_wedding_is_not_blocked(): void
     {
         $wedding = Wedding::create([
-            'groom_name' => 'Samuel',
-            'bride_name' => 'Aulia',
+            'groom_name' => 'Nabila',
+            'bride_name' => 'Nabila',
             'wedding_date' => '2027-10-07',
             'total_budget' => 100000000,
         ]);
@@ -131,27 +147,18 @@ class OnboardingTest extends TestCase
     public function test_finished_onboarding_cannot_be_reopened(): void
     {
         $wedding = Wedding::create([
-            'groom_name' => 'Samuel',
-            'bride_name' => 'Aulia',
+            'groom_name' => 'Nabila',
+            'bride_name' => 'Nabila',
             'wedding_date' => '2027-10-07',
             'total_budget' => 100000000,
         ]);
         $user = User::factory()->create(['wedding_id' => $wedding->id]);
 
         $this->actingAs($user)->get('/onboarding')->assertRedirect(route('dashboard'));
-    }
+        $this->actingAs($user)->post('/onboarding/finish', self::FINISH_PAYLOAD)
+            ->assertRedirect(route('dashboard'));
 
-    public function test_finish_requires_partner_name(): void
-    {
-        $user = User::factory()->create(['wedding_id' => null]);
-
-        $this->actingAs($user)->withSession(['onboarding' => [
-            'user_name' => 'Samuel',
-            'wedding_date' => '2027-10-07',
-            'total_budget' => 100000000,
-        ]])->post('/onboarding/finish')->assertSessionHasErrors('partner_name');
-
-        $this->assertSame(0, Wedding::count());
+        $this->assertSame(1, Wedding::count());
     }
 
     public function test_google_login_shows_message_when_not_configured(): void
@@ -161,5 +168,57 @@ class OnboardingTest extends TestCase
         $this->get('/auth/google/redirect')
             ->assertRedirect(route('login'))
             ->assertSessionHasErrors('email');
+    }
+
+    public function test_flash_toast_renders_success_toast_on_dashboard(): void
+    {
+        $wedding = Wedding::create([
+            'groom_name' => 'Nabila',
+            'bride_name' => 'Nabila',
+            'wedding_date' => '2027-10-07',
+            'total_budget' => 100000000,
+        ]);
+        $user = User::factory()->create(['wedding_id' => $wedding->id]);
+
+        $this->actingAs($user)
+            ->withSession(['success' => 'Data berhasil disimpan'])
+            ->get('/')
+            ->assertOk()
+            ->assertSee('Data berhasil disimpan')
+            ->assertSee('data-flash-auto', false);
+    }
+
+    public function test_flash_toast_component_marks_error_as_sticky_and_success_as_auto(): void
+    {
+        // Komponen diuji langsung supaya tidak bergantung pada plumbing session.
+        // Nilai dikirim lewat array data karena parser atribut Blade tidak
+        // menangani spasi di dalam binding atribut.
+        // Pencocokan memakai regex pada tag pembuka, bukan substring mentah,
+        // karena selector di dalam <script> juga memuat nama atribut itu.
+        $autoToastOnElement = '/<div[^>]*\bdata-flash-auto\b/';
+
+        $error = Blade::render('<x-flash-toast :error="$text" />', ['text' => 'Gagal menyimpan']);
+        $this->assertStringContainsString('Gagal menyimpan', $error);
+        $this->assertStringContainsString('data-flash', $error);
+        // Error tidak boleh punya penanda auto-dismiss.
+        $this->assertSame(0, preg_match($autoToastOnElement, $error));
+
+        // Bentuk sama dengan output ViewErrorBag::all() yang dikirim layout.
+        // Objek ViewErrorBag sendiri tidak bisa dioper lewat Blade::render(),
+        // jalur aslinya sudah diverifikasi lewat browser.
+        $validation = Blade::render('<x-flash-toast :messages="$list" />', [
+            'list' => ['partner_name' => ['Nama pasangan wajib diisi.']],
+        ]);
+        $this->assertStringContainsString('Mohon lengkapi data berikut', $validation);
+        $this->assertStringContainsString('Nama pasangan wajib diisi.', $validation);
+        $this->assertSame(0, preg_match($autoToastOnElement, $validation));
+
+        $success = Blade::render('<x-flash-toast :success="$text" />', ['text' => 'Berhasil disimpan']);
+        $this->assertStringContainsString('Berhasil disimpan', $success);
+        // Sukses harus punya penanda auto-dismiss.
+        $this->assertSame(1, preg_match($autoToastOnElement, $success));
+
+        $empty = Blade::render('<x-flash-toast />');
+        $this->assertStringNotContainsString('data-flash', $empty);
     }
 }

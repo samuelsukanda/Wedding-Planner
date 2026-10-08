@@ -32,11 +32,11 @@ Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->n
 Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
 
 // ========== ONBOARDING (wajib login, belum punya data pernikahan) ==========
+// Seluruh langkah wizard berjalan di client (Alpine), jadi hanya ada dua
+// route: buka halaman wizard dan simpan hasil akhirnya.
 Route::middleware('auth')->group(function () {
     Route::get('onboarding', [OnboardingController::class, 'index'])->name('onboarding.index');
-    Route::post('onboarding', [OnboardingController::class, 'store'])->name('onboarding.store');
     Route::post('onboarding/finish', [OnboardingController::class, 'finish'])->name('onboarding.finish');
-    Route::post('onboarding/back', [OnboardingController::class, 'back'])->name('onboarding.back');
 });
 
 // ========== SEMUA HALAMAN UTAMA (wajib login) ==========

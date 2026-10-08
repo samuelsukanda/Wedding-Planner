@@ -596,49 +596,8 @@
             </div>
         </header>
 
-        <!-- Flash Messages -->
-        @if (session('success'))
-            <div
-                class="mx-4 sm:mx-6 mt-4 p-4 rounded-xl bg-[#A3B7A6]/20 border border-[#A3B7A6]/50 text-[#5F6F5B] text-sm flex items-center justify-between shadow-xs">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-circle-check text-[#D8A7B1] text-lg"></i>
-                    <span>{{ session('success') }}</span>
-                </div>
-                <button onclick="this.parentElement.remove()"
-                    class="text-[#5F6F5B] hover:opacity-80 p-1 cursor-pointer">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div
-                class="mx-4 sm:mx-6 mt-4 p-4 rounded-xl bg-[#D8A7B1]/25 border border-[#D8A7B1]/60 text-[#5F6F5B] text-sm flex items-center justify-between shadow-xs">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-circle-exclamation text-[#D8A7B1] text-lg"></i>
-                    <span>{{ session('error') }}</span>
-                </div>
-                <button onclick="this.parentElement.remove()"
-                    class="text-[#5F6F5B] hover:opacity-80 p-1 cursor-pointer">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div
-                class="mx-4 sm:mx-6 mt-4 p-4 rounded-xl bg-[#D8A7B1]/25 border border-[#D8A7B1]/60 text-[#5F6F5B] text-sm shadow-xs">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fa-solid fa-circle-exclamation text-[#D8A7B1] text-lg"></i>
-                    <span class="font-semibold">Mohon lengkapi data berikut:</span>
-                </div>
-                <ul class="list-disc list-inside space-y-0.5 ml-1">
-                    @foreach ($errors->all() as $err)
-                        <li class="text-xs text-[#5F6F5B]/90">{{ $err }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+        <!-- Flash Messages (sukses = toast, error & validasi = blok sticky) -->
+        <x-flash-toast :success="session('success')" :error="session('error')" :messages="$errors" />
 
         <!-- Main Yield View -->
         <div id="page-content" class="p-4 sm:p-6 md:p-8 space-y-6 flex-1">

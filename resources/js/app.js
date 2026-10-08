@@ -58,7 +58,20 @@ document.addEventListener('pointerover', function(event) {
     if (route && route !== '/') fetchPage(route).catch(() => {});
 });
 
+// Submit form menghasilkan dua visit pada Turbo: visit POST-nya sendiri dan
+// visit lanjutan ke tujuan redirect. Keduanya harus dibiarkan Turbo tangani,
+// kalau tidak halaman ter-fetch dua kali dan flash sukses/error habis dipakai
+// pada fetch pertama sehingga toast tidak pernah tampil.
+let skipNextVisitInterception = false;
+
 document.addEventListener('turbo:before-visit', function(event) {
+    if (event.detail.formSubmission || event.detail.isFormSubmission) return;
+
+    if (skipNextVisitInterception) {
+        skipNextVisitInterception = false;
+        return;
+    }
+
     const route = routeFor(event.detail.url);
     if (!route || route === '/' || event.detail.url.startsWith('http') && !event.detail.url.startsWith(window.location.origin)) {
         return;
@@ -96,7 +109,11 @@ async function visitWithoutUrl(route) {
 }
 
 document.addEventListener('submit', function(event) {
-    if (event.target.method.toLowerCase() !== 'get') pageCache.clear();
+    if (event.target.method.toLowerCase() !== 'get') {
+        pageCache.clear();
+        skipNextVisitInterception = true;
+    }
+
     if (event.target.matches('form[action*="/logout"]')) {
         clearLastRoute();
     }
