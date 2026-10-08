@@ -39,8 +39,7 @@
 
                     <div class="mt-4 flex flex-wrap items-center gap-3">
                         {{-- Satu form dipakai oleh tombol pena dan tombol "Ganti Foto". --}}
-                        <form method="POST" action="{{ route('profile.photo.update') }}" enctype="multipart/form-data"
-                            data-turbo="false">
+                        <form method="POST" action="{{ route('profile.photo.update') }}" enctype="multipart/form-data">
                             @csrf
                             <input type="file" name="photo" id="photo-input" accept="image/*" class="hidden">
                             <button type="button" data-photo-trigger
@@ -50,8 +49,7 @@
                         </form>
 
                         @if ($me->profile_photo)
-                            <form method="POST" action="{{ route('profile.photo.destroy') }}" data-turbo="false"
-                                data-confirm-photo>
+                            <form method="POST" action="{{ route('profile.photo.destroy') }}" data-confirm-photo>
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
@@ -247,13 +245,17 @@
                     button.addEventListener('click', function() { input.click(); });
                 });
                 input.addEventListener('change', function() {
-                    if (input.files && input.files.length) input.form.submit();
+                    if (input.files && input.files.length) input.form.requestSubmit();
                 });
             }
 
             // Konfirmasi hapus foto memakai SweetAlert2, bukan confirm() bawaan browser.
             document.querySelectorAll('[data-confirm-photo]').forEach(function(form) {
                 form.addEventListener('submit', function(event) {
+                    // requestSubmit() setelah user menekan konfirmasi akan
+                    // melewati prompt kedua ini, lalu Turbo yang mengirim form.
+                    if (form.dataset.photoConfirmed === '1') return;
+
                     event.preventDefault();
                     Swal.fire({
                         title: 'Hapus Foto Profil?',
@@ -265,7 +267,10 @@
                         cancelButtonText: 'Batal',
                         reverseButtons: true,
                     }).then(function(result) {
-                        if (result.isConfirmed) form.submit();
+                        if (result.isConfirmed) {
+                            form.dataset.photoConfirmed = '1';
+                            form.requestSubmit();
+                        }
                     });
                 });
             });

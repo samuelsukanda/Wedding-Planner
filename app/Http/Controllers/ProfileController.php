@@ -26,7 +26,8 @@ class ProfileController extends Controller
             'profile_photo' => $request->file('photo')->store('avatars', 'public'),
         ])->save();
 
-        return back()->with('success', 'Foto profil berhasil diperbarui.');
+        return redirect()->route('admin.index')
+            ->with('success', 'Foto profil berhasil diperbarui.');
     }
 
     public function destroyPhoto(Request $request): RedirectResponse
@@ -37,7 +38,8 @@ class ProfileController extends Controller
 
         $user->forceFill(['profile_photo' => null])->save();
 
-        return back()->with('success', 'Foto profil berhasil dihapus.');
+        return redirect()->route('admin.index')
+            ->with('success', 'Foto profil berhasil dihapus.');
     }
 
     private function deletePhoto($user): void

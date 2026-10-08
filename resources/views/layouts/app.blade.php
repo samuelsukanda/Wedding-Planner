@@ -31,6 +31,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+    <script>
+        // Dipasang sebelum <body> dirender agar sidebar yang sebelumnya ciut
+        // tidak sempat melebar lalu menciut lagi saat Alpine mulai.
+        if (localStorage.getItem('wp.sidebarCollapsed') === '1') {
+            document.documentElement.classList.add('sidebar-collapsed');
+        }
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -176,25 +184,57 @@
            .sidebar-label, isi <nav> (span + header section), dan avatar,
            supaya tiap menu tidak perlu diubah satu per satu. */
         @media (min-width: 768px) {
+            /* Dipakai sebelum Alpine selesai hydrate, termasuk setelah Turbo
+               form submit. Ini mencegah lebar w-64 terlihat sesaat. */
+            html.sidebar-collapsed .sidebar {
+                width: 4rem !important;
+                transition-property: transform;
+            }
+
             .sidebar.is-collapsed .sidebar-label,
             .sidebar.is-collapsed nav span,
-            .sidebar.is-collapsed .nav-section {
+            .sidebar.is-collapsed .nav-section,
+            html.sidebar-collapsed .sidebar .sidebar-label,
+            html.sidebar-collapsed .sidebar nav span,
+            html.sidebar-collapsed .sidebar .nav-section {
                 display: none;
             }
 
-            .sidebar.is-collapsed nav a {
+            .sidebar.is-collapsed nav a,
+            html.sidebar-collapsed .sidebar nav a {
                 justify-content: center;
                 padding-left: 0.5rem;
                 padding-right: 0.5rem;
             }
 
-            .sidebar.is-collapsed .shrink-0.border-t {
+            .sidebar.is-collapsed .shrink-0.border-t,
+            html.sidebar-collapsed .sidebar .shrink-0.border-t {
                 padding-left: 0.5rem;
                 padding-right: 0.5rem;
             }
 
-            .sidebar.is-collapsed .shrink-0.border-t form {
-                display: none;
+            .sidebar.is-collapsed > div:first-of-type,
+            html.sidebar-collapsed .sidebar > div:first-of-type {
+                justify-content: center;
+            }
+
+            .sidebar.is-collapsed > div:first-of-type a,
+            html.sidebar-collapsed .sidebar > div:first-of-type a {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .sidebar.is-collapsed .shrink-0.border-t > div,
+            html.sidebar-collapsed .sidebar .shrink-0.border-t > div {
+                flex-direction: column;
+                justify-content: center;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+
+            .sidebar.is-collapsed .shrink-0.border-t form,
+            html.sidebar-collapsed .sidebar .shrink-0.border-t form {
+                display: flex;
             }
         }
     </style>
@@ -286,9 +326,8 @@
 </head>
 
 <body class="h-full flex flex-col md:flex-row antialiased selection:bg-[#D8A7B1] selection:text-white"
-    x-data="{ sidebarOpen: false, sidebarCollapsed: false }"
-    x-init="sidebarCollapsed = localStorage.getItem('wp.sidebarCollapsed') === '1'"
-    @sidebar-collapsed.window="sidebarCollapsed = $event.detail; localStorage.setItem('wp.sidebarCollapsed', $event.detail ? '1' : '0')">
+    x-data="{ sidebarOpen: false, sidebarCollapsed: localStorage.getItem('wp.sidebarCollapsed') === '1' }"
+    @sidebar-collapsed.window="sidebarCollapsed = $event.detail; localStorage.setItem('wp.sidebarCollapsed', $event.detail ? '1' : '0'); document.documentElement.classList.toggle('sidebar-collapsed', $event.detail)">
 
     <!-- Mobile Header -->
     <header
