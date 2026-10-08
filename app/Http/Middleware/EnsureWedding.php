@@ -12,8 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
  * - Superadmin tanpa wedding: hanya boleh di area admin (menu Admin Panel &
  *   Master Data). Semua modul aplikasi di-redirect ke /admin/users supaya
  *   tidak error 500, karena Wedding::current() akan null.
- * - User biasa tanpa wedding: diarahkan ke halaman Profile yang menampilkan
- *   empty state "Akun belum dipasangkan".
+ * - User biasa tanpa wedding: user baru dari halaman daftar diarahkan ke wizard
+ *   onboarding (/onboarding) sampai data Pernikahan dibuat. Akun lama yang
+ *   belum dipasangkan masih bisa membuka halaman Profile sebagai fallback.
  */
 class EnsureWedding
 {
@@ -40,14 +41,12 @@ class EnsureWedding
         }
 
         if (! $user->wedding_id) {
-            if ($request->routeIs('admin.index') || $request->routeIs('logout')) {
+            // User baru / belum dipasangkan diarahkan ke wizard onboarding.
+            if ($request->routeIs('onboarding.*', 'admin.index', 'logout')) {
                 return $next($request);
             }
 
-            return redirect()->route('admin.index')->with(
-                'error',
-                'Akun ini belum terhubung ke data pernikahan. Hubungi superadmin untuk dipasangkan.'
-            );
+            return redirect()->route('onboarding.index');
         }
 
         return $next($request);

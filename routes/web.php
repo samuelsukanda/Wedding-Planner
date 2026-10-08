@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\BudgetController;
@@ -19,6 +22,22 @@ use App\Http\Controllers\AdminPanelController;
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+// ========== REGISTRASI ==========
+Route::get('register', [RegisterController::class, 'showRegisterForm'])->name('register');
+Route::post('register', [RegisterController::class, 'register']);
+
+// ========== LOGIN VIA GOOGLE ==========
+Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google.redirect');
+Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
+
+// ========== ONBOARDING (wajib login, belum punya data pernikahan) ==========
+Route::middleware('auth')->group(function () {
+    Route::get('onboarding', [OnboardingController::class, 'index'])->name('onboarding.index');
+    Route::post('onboarding', [OnboardingController::class, 'store'])->name('onboarding.store');
+    Route::post('onboarding/finish', [OnboardingController::class, 'finish'])->name('onboarding.finish');
+    Route::post('onboarding/back', [OnboardingController::class, 'back'])->name('onboarding.back');
+});
 
 // ========== SEMUA HALAMAN UTAMA (wajib login) ==========
 Route::middleware('auth')->group(function () {
