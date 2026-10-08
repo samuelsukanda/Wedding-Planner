@@ -16,11 +16,11 @@
     @vite(['resources/css/app.css'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        /* Reset global (margin/padding/box-sizing) sengaja TIDAK ditulis di
+           sini. Preflight Tailwind sudah melakukannya, dan CSS tanpa @layer
+           di halaman ini mengalahkan utility Tailwind karena aturan cascade:
+           gaya tanpa layer selalu menang atas gaya berlapis. Akibatnya padding
+           pada komponen toast hilang dan alert jadi tidak proporsi. */
 
         body {
             font-family: 'Outfit', sans-serif;

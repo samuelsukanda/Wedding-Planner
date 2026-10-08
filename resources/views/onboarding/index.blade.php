@@ -19,11 +19,9 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        /* Reset global sengaja tidak diulang: preflight Tailwind sudah
+           melakukannya, dan CSS tanpa @layer di sini mengalahkan utility
+           Tailwind sehingga padding komponen toast hilang. */
 
         body {
             font-family: 'Outfit', sans-serif;
@@ -59,14 +57,40 @@
             background: #D8A7B1;
         }
 
+        /* Lebar tetap di semua langkah. Tanpa ini kartu ikut menyusut mengikuti
+           isi tiap langkah, jadi ukurannya terlihat berubah-ubah. */
+        .wizard-shell {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .wizard-card {
             background: #ffffff;
             border-radius: 24px;
             padding: 40px 38px;
-            max-width: 520px;
             width: 100%;
+            /* Tinggi minimum mengikuti langkah paling tinggi (ringkasan),
+               supaya kartu tidak meloncat saat berpindah langkah. */
+            min-height: 470px;
+            display: flex;
+            flex-direction: column;
             border: 1px solid #e5e0d8;
             box-shadow: 0 8px 32px rgba(95, 111, 91, 0.08);
+        }
+
+        /* Isi langkah mengisi tinggi kartu, tombol tetap rata bawah. */
+        .wizard-card>section {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .wizard-card .actions {
+            margin-top: auto;
+            padding-top: 22px;
         }
 
         .step-emoji {
@@ -163,7 +187,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 22px;
         }
 
         .btn {
@@ -228,7 +251,7 @@
         $saved = json_decode(session('onboarding_draft', ''), true) ?: [];
     @endphp
 
-    <div x-data="wizard()" x-init="restore()" x-cloak>
+    <div class="wizard-shell" x-data="wizard()" x-init="restore()" x-cloak>
         <div class="dots" aria-label="Progres">
             <template x-for="i in 4" :key="i">
                 <span class="dot" :class="{ 'is-active': step === i, 'is-done': step > i || step >= 5 }"></span>
@@ -323,7 +346,8 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('onboarding.finish') }}">
+                <form method="POST" action="{{ route('onboarding.finish') }}"
+                    onsubmit="sessionStorage.removeItem(STORAGE_KEY)">
                     @csrf
                     <input type="hidden" name="user_name" :value="form.user_name">
                     <input type="hidden" name="partner_name" :value="form.partner_name">
@@ -341,7 +365,9 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'weddingPlanner.onboardingDraft';
+        // Kuncinya per-user: kalau global, draft user sebelumnya akan muncul
+        // lagi saat akun lain daftar.
+        const STORAGE_KEY = 'weddingPlanner.onboardingDraft.@js(auth()->id())';
 
         document.addEventListener('alpine:init', () => {
             Alpine.data('wizard', () => ({
