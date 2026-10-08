@@ -182,8 +182,7 @@
                 display: none;
             }
 
-            .sidebar.is-collapsed nav a,
-            .sidebar.is-collapsed .border-t a {
+            .sidebar.is-collapsed nav a {
                 justify-content: center;
                 padding-left: 0.5rem;
                 padding-right: 0.5rem;
@@ -449,13 +448,9 @@
         </nav>
 
         {{-- Footer sidebar: DI LUAR <nav> scrollable, jadi kartu user dan
-             tombol Keluar selalu menempel di bawah dan tidak ikut bergeser. --}}
+             tombol Keluar selalu menempel di bawah dan tidak ikut bergeser.
+             Menu Profile tetap memakai link yang sudah ada di <nav>. --}}
         <div class="shrink-0 border-t border-[#B6ADA3]/30 bg-white">
-            <a href="{{ route('profile') }}"
-                class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-all hover:bg-[#FAF7F2] {{ request()->routeIs('profile') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold' : 'text-[#5F6F5B]/80' }}">
-                <i class="fa-solid fa-user w-5 text-center text-[#D8A7B1]"></i>
-                <span class="sidebar-label">Profile</span>
-            </a>
 
             <div class="flex items-center gap-3 px-4 py-3 border-t border-[#B6ADA3]/25">
                 @if (auth()->user()?->avatarUrl())

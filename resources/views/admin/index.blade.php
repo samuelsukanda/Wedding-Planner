@@ -13,6 +13,62 @@
             </div>
         </div>
 
+        <!-- ================= FOTO PROFIL ================= -->
+        <div class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-6">
+                <div class="relative shrink-0">
+                    @if ($me->avatarUrl())
+                        <img src="{{ $me->avatarUrl() }}" alt="Foto {{ $me->name }}"
+                            class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-[#D8A7B1]/50">
+                    @else
+                        <div
+                            class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#A855A0] text-white flex items-center justify-center text-3xl font-bold">
+                            {{ $me->initial() }}
+                        </div>
+                    @endif
+
+                    <button type="button" data-photo-trigger aria-label="Ganti foto"
+                        class="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-[#D8A7B1] text-white shadow-md flex items-center justify-center hover:bg-[#C2757F] transition cursor-pointer">
+                        <i class="fa-solid fa-pen text-[10px]"></i>
+                    </button>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                    <h3 class="text-lg font-bold text-[#5F6F5B]">{{ $me->name }}</h3>
+                    <p class="text-sm text-[#B6ADA3] break-all">{{ $me->email }}</p>
+
+                    <div class="mt-4 flex flex-wrap items-center gap-3">
+                        {{-- Satu form dipakai oleh tombol pena dan tombol "Ganti Foto". --}}
+                        <form method="POST" action="{{ route('profile.photo.update') }}" enctype="multipart/form-data"
+                            data-turbo="false">
+                            @csrf
+                            <input type="file" name="photo" id="photo-input" accept="image/*" class="hidden">
+                            <button type="button" data-photo-trigger
+                                class="px-4 py-2 rounded-xl border border-[#D8A7B1]/60 text-[#C2757F] text-sm font-medium hover:bg-[#D8A7B1]/10 transition cursor-pointer">
+                                Ganti Foto
+                            </button>
+                        </form>
+
+                        @if ($me->profile_photo)
+                            <form method="POST" action="{{ route('profile.photo.destroy') }}" data-turbo="false"
+                                data-confirm-photo>
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="px-4 py-2 rounded-xl border border-[#C2757F]/60 text-[#C2757F] text-sm font-medium hover:bg-[#C2757F]/10 transition cursor-pointer">
+                                    Hapus Foto
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+
+                    @error('photo')
+                        <p class="mt-4 text-sm text-[#C2757F]">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
+
         <!-- ================= INFORMASI ACARA PERNIKAHAN ================= -->
         @if ($wedding)
             <div class="space-y-6">
@@ -180,3 +236,39 @@
         @endif
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        (function() {
+            // Satu input file dipakai bersama oleh tombol pena dan "Ganti Foto".
+            const input = document.getElementById('photo-input');
+            if (input) {
+                document.querySelectorAll('[data-photo-trigger]').forEach(function(button) {
+                    button.addEventListener('click', function() { input.click(); });
+                });
+                input.addEventListener('change', function() {
+                    if (input.files && input.files.length) input.form.submit();
+                });
+            }
+
+            // Konfirmasi hapus foto memakai SweetAlert2, bukan confirm() bawaan browser.
+            document.querySelectorAll('[data-confirm-photo]').forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    Swal.fire({
+                        title: 'Hapus Foto Profil?',
+                        text: 'Foto akan dihapus dan avatar kembali ke huruf awal.',
+                        icon: 'warning',
+                        iconColor: '#D8A7B1',
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="fa-solid fa-trash mr-1"></i> Ya, Hapus',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true,
+                    }).then(function(result) {
+                        if (result.isConfirmed) form.submit();
+                    });
+                });
+            });
+        })();
+    </script>
+@endpush

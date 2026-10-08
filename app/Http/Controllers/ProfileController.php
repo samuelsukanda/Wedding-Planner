@@ -5,17 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    public function show(Request $request): View
-    {
-        return view('profile', [
-            'user' => $request->user(),
-        ]);
-    }
-
     /**
      * Ganti foto profil. File lama dihapus supaya folder upload tidak
      * menumpuk file yang sudah tidak terpakai.

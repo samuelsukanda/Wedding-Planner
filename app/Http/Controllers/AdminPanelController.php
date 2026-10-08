@@ -18,7 +18,10 @@ class AdminPanelController extends Controller
         // weddings, dan view sudah menampilkan empty state kalau null.
         $wedding = Wedding::current();
 
-        return view('admin.index', compact('wedding'));
+        return view('admin.index', [
+            'wedding' => $wedding,
+            'me' => auth()->user(),
+        ]);
     }
 
     public function masterData(Request $request)
