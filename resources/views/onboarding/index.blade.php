@@ -18,6 +18,7 @@
     @vite(['resources/css/app.css'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
     <style>
         /* Reset global sengaja tidak diulang: preflight Tailwind sudah
            melakukannya, dan CSS tanpa @layer di sini mengalahkan utility
@@ -72,25 +73,8 @@
             border-radius: 24px;
             padding: 40px 38px;
             width: 100%;
-            /* Tinggi minimum mengikuti langkah paling tinggi (ringkasan),
-               supaya kartu tidak meloncat saat berpindah langkah. */
-            min-height: 470px;
-            display: flex;
-            flex-direction: column;
             border: 1px solid #e5e0d8;
             box-shadow: 0 8px 32px rgba(95, 111, 91, 0.08);
-        }
-
-        /* Isi langkah mengisi tinggi kartu, tombol tetap rata bawah. */
-        .wizard-card>section {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .wizard-card .actions {
-            margin-top: auto;
-            padding-top: 22px;
         }
 
         .step-emoji {
@@ -146,19 +130,6 @@
             color: #6B7280;
         }
 
-        .inline-error {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 10px;
-            border-radius: 10px;
-            border: 1px solid #D8A7B1;
-            background: #FBF2F4;
-            padding: 10px 12px;
-            font-size: 13px;
-            color: #C2757F;
-        }
-
         .summary {
             background: #FAF3F5;
             border-radius: 14px;
@@ -187,6 +158,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
+            margin-top: 22px;
         }
 
         .btn {
@@ -268,9 +240,6 @@
                 <p class="subtitle">Kami akan menyimpanmu dengan nama ini.</p>
                 <input type="text" class="field" :class="{ 'is-invalid': errors.user_name }" x-model="form.user_name"
                     readonly aria-label="Nama kamu">
-                <template x-if="errors.user_name">
-                    <p class="inline-error"><i class="fa-solid fa-circle-exclamation"></i><span x-text="errors.user_name"></span></p>
-                </template>
                 <div class="actions">
                     <button type="button" class="btn btn-primary btn-block" @click="next(1)">Lanjut</button>
                 </div>
@@ -283,9 +252,6 @@
                 <p class="subtitle">Kalian akan merencanakan bersama.</p>
                 <input type="text" class="field" :class="{ 'is-invalid': errors.partner_name }" x-model="form.partner_name"
                     placeholder="Contoh: Nabila" x-ref="partner" @keydown.enter.prevent="next(2)">
-                <template x-if="errors.partner_name">
-                    <p class="inline-error"><i class="fa-solid fa-circle-exclamation"></i><span x-text="errors.partner_name"></span></p>
-                </template>
                 <div class="actions">
                     <button type="button" class="btn btn-secondary" @click="step = 1">Kembali</button>
                     <button type="button" class="btn btn-primary" @click="next(2)">Lanjut</button>
@@ -298,10 +264,7 @@
                 <h1>Kapan kalian menikah?</h1>
                 <p class="subtitle">Kami akan menghitung mundur untuk kalian.</p>
                 <input type="text" class="field datepicker-input" :class="{ 'is-invalid': errors.wedding_date }"
-                    x-model="form.wedding_date" placeholder="dd/mm/yyyy" data-date>
-                <template x-if="errors.wedding_date">
-                    <p class="inline-error"><i class="fa-solid fa-circle-exclamation"></i><span x-text="errors.wedding_date"></span></p>
-                </template>
+                    x-model="form.wedding_date" placeholder="Contoh: 9 Oktober 2026" data-date>
                 <div class="actions">
                     <button type="button" class="btn btn-secondary" @click="step = 2">Kembali</button>
                     <button type="button" class="btn btn-primary" @click="next(3)">Lanjut</button>
@@ -316,9 +279,6 @@
                 <input type="text" inputmode="numeric" class="field" :class="{ 'is-invalid': errors.total_budget }"
                     x-model="form.total_budget" placeholder="Rp 100.000.000" @input="formatBudget"
                     @keydown.enter.prevent="next(4)">
-                <template x-if="errors.total_budget">
-                    <p class="inline-error"><i class="fa-solid fa-circle-exclamation"></i><span x-text="errors.total_budget"></span></p>
-                </template>
                 <div class="actions">
                     <button type="button" class="btn btn-secondary" @click="step = 3">Kembali</button>
                     <button type="button" class="btn btn-primary" @click="next(4)">Lanjut</button>
@@ -342,7 +302,7 @@
                     </div>
                     <div class="summary-row">
                         <span class="summary-label">Budget</span>
-                        <span class="summary-value" x-text="`Rp ${form.total_budget}`"></span>
+                        <span class="summary-value" x-text="form.total_budget"></span>
                     </div>
                 </div>
 
@@ -368,6 +328,36 @@
         // Kuncinya per-user: kalau global, draft user sebelumnya akan muncul
         // lagi saat akun lain daftar.
         const STORAGE_KEY = 'weddingPlanner.onboardingDraft.@js(auth()->id())';
+
+        // Toast validasi client-side. Gaya dan timer auto-hilangnya sama
+        // dengan komponen <x-flash-toast /> supaya konsisten di semua halaman.
+        function showWizardToast(message) {
+            let host = document.getElementById('wizard-toast-host');
+            if (!host) {
+                host = document.createElement('div');
+                host.id = 'wizard-toast-host';
+                host.className = 'fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-2rem)] max-w-xl';
+                document.body.appendChild(host);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'flex items-start gap-3 rounded-2xl border border-[#D8A7B1]/70 bg-[#FBF2F4] px-4 py-3.5 text-sm text-[#5F6F5B] shadow-lg shadow-[#D8A7B1]/15';
+            toast.innerHTML = '<i class="fa-solid fa-circle-exclamation mt-0.5 text-[#D8A7B1]"></i>'
+                + '<span class="flex-1"></span>'
+                + '<button type="button" class="cursor-pointer text-[#5F6F5B]/70 transition hover:text-[#5F6F5B]"><i class="fa-solid fa-xmark"></i></button>';
+            toast.querySelector('span').textContent = message;
+            host.appendChild(toast);
+
+            const dismiss = () => {
+                toast.style.transition = 'opacity 250ms ease, transform 250ms ease';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-16px)';
+                window.setTimeout(() => toast.remove(), 260);
+            };
+
+            toast.querySelector('button').addEventListener('click', dismiss);
+            window.setTimeout(dismiss, 4000);
+        }
 
         document.addEventListener('alpine:init', () => {
             Alpine.data('wizard', () => ({
@@ -399,10 +389,23 @@
                     const el = this.$root.querySelector('[data-date]');
                     if (!el || el._flatpickr || !window.flatpickr) return;
                     el._flatpickr = window.flatpickr(el, {
+                        // Nilai tetap Y-m-d agar aman dikirim ke server,
+                        // altFormat yang menentukan yang dilihat user.
                         dateFormat: 'Y-m-d',
+                        altFormat: 'j F Y',
+                        altInput: true,
+                        // Tanpa ini flatpickr tetap menulis nama bulan
+                        // dalam bahasa Inggris ("October").
+                        locale: 'id',
                         allowInput: true,
                         onChange: () => this.persist(),
                     });
+
+                    // altInput adalah input terpisah dari aslinya (aslinya jadi
+                    // type=hidden). Penanda ini dipakai agar mudah ditarget.
+                    if (el._flatpickr.altInput) {
+                        el._flatpickr.altInput.setAttribute('data-date-display', '');
+                    }
                 },
 
                 // Validasi per langkah di browser supaya tidak ada request sia-sia.
@@ -425,7 +428,10 @@
                         }
                     }
 
-                    if (Object.keys(this.errors).length) return;
+                    if (Object.keys(this.errors).length) {
+                        showWizardToast(Object.values(this.errors)[0]);
+                        return;
+                    }
 
                     this.step = current + 1;
                     this.persist();
@@ -436,9 +442,11 @@
                     return Number(String(this.form.total_budget).replace(/\D/g, '')) || 0;
                 },
 
+                // Angka diketik jadi beruang; prefiks "Rp" sengaja tidak ikut
+                // dihapus supaya tetap terlihat saat user mengetik.
                 formatBudget(event) {
                     const digits = String(event.target.value).replace(/\D/g, '');
-                    this.form.total_budget = digits ? Number(digits).toLocaleString('id-ID') : '';
+                    this.form.total_budget = digits ? `Rp ${Number(digits).toLocaleString('id-ID')}` : '';
                 },
 
                 get formattedDate() {
@@ -446,7 +454,7 @@
                     const date = new Date(this.form.wedding_date);
                     return Number.isNaN(date.getTime())
                         ? this.form.wedding_date
-                        : date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                        : date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
                 },
             }));
         });
