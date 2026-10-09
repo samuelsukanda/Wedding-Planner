@@ -30,7 +30,11 @@
                         <div class="text-2xl sm:text-3xl font-extrabold text-white">{{ $daysLeft }} Hari</div>
                         <div class="text-xs text-white/90 font-medium">Menuju Hari H Pernikahan</div>
                         @if ($wedding->location)
-                            <div class="text-[11px] text-white/80 mt-0.5">{{ $wedding->location }}</div>
+                            {{-- Ikon map hanya tampil kalau lokasivenue diisi. --}}
+                            <div class="flex items-center gap-1 text-[11px] text-white/80 mt-0.5">
+                                <i class="fa-solid fa-location-dot text-[#D8A7B1] shrink-0"></i>
+                                <span class="truncate">{{ $wedding->location }}</span>
+                            </div>
                         @endif
                     </div>
                 </div>
