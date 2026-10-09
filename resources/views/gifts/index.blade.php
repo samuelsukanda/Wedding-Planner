@@ -149,7 +149,7 @@
                     <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                             class="fa-solid fa-xmark"></i></button>
                 </div>
-                <form :action="editMode ? '/gifts/' + currentItem.id : '{{ route('gifts.store') }}'" method="POST"
+                <form :action="editMode ? '{{ url('gifts') }}/' + currentItem.id : '{{ route('gifts.store') }}'"" method="POST"
                     class="space-y-4">
                     @csrf
                     <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>

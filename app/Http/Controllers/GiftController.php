@@ -32,23 +32,47 @@ class GiftController extends Controller
         return view('gifts.index', compact('wedding', 'gifts', 'giftTypes', 'totalCash', 'totalGoodsCount', 'thankYouSentCount'));
     }
 
-    public function store(Request $request)
+public function store(Request $request)
     {
         $wedding = Wedding::current();
+
+        $wedding->gifts()->create($this->validatedGift($request));
+
+        return redirect()->route('gifts.index')->with('success', 'Catatan hadiah berhasil disimpan!');
+    }
+
+    public function update(Request $request, Gift $gift)
+    {
+        $this->ensureOwned($gift);
+
+        $gift->update($this->validatedGift($request));
+
+        return redirect()->route('gifts.index')->with('success', 'Catatan hadiah berhasil diperbarui!');
+    }
+
+    /**
+     * Validasi + normalisasi data gift.
+     *
+     * Kolom gift_type & nominal di DB NOT NULL. Field kosong/null akan
+     * membuat INSERT/UPDATE gagal ("Column 'nominal' cannot be null"), jadi
+     * dinormalkan ke nilai default yang valid lebih dulu.
+     */
+    private function validatedGift(Request $request): array
+    {
         $validated = $request->validate([
             'giver_name' => 'required|string|max:255',
-            'gift_type' => 'required|string',
+            // Tidak wajib: kolom DB punya default 'Cash' dan dinormalkan di
+            // bawah. Kalau dipaksa required, user yang hanya mengisi nama
+            // gagal dengan pesan validasi generic.
+            'gift_type' => 'nullable|string',
             'nominal' => 'nullable|numeric|min:0',
             'description' => 'nullable|string',
             'is_thank_you_sent' => 'nullable|boolean',
         ]);
 
-        // Kolom gift_type & nominal di DB NOT NULL. Field kosong|null akan
-        // membuat INSERT gagal ("Column 'nominal' cannot be null"), jadi
-        // dinormalkan ke nilai default yang valid sebelum create.
         $giftTypes = DropdownOption::getOptions('gift_type', ['Cash', 'Barang']);
 
-        $validated['gift_type'] = in_array($validated['gift_type'], $giftTypes, true)
+        $validated['gift_type'] = in_array($validated['gift_type'] ?? null, $giftTypes, true)
             ? $validated['gift_type']
             : ($giftTypes[0] ?? 'Cash');
 
@@ -58,13 +82,23 @@ class GiftController extends Controller
         // has() selalu true. boolean() membaca nilai terakhir dengan benar.
         $validated['is_thank_you_sent'] = $request->boolean('is_thank_you_sent');
 
-        $wedding->gifts()->create($validated);
+        return $validated;
+    }
 
-        return redirect()->route('gifts.index')->with('success', 'Catatan hadiah berhasil disimpan!');
+    /**
+     * Cegah user menyentuh data gift milik weddings lain.
+     */
+    private function ensureOwned(Gift $gift): void
+    {
+        if ($gift->wedding_id !== Wedding::current()?->id) {
+            abort(404);
+        }
     }
 
     public function toggleThankYou(Gift $gift)
     {
+        $this->ensureOwned($gift);
+
         $gift->is_thank_you_sent = !$gift->is_thank_you_sent;
         $gift->save();
 
@@ -73,6 +107,8 @@ class GiftController extends Controller
 
     public function destroy(Gift $gift)
     {
+        $this->ensureOwned($gift);
+
         $gift->delete();
         return redirect()->route('gifts.index')->with('success', 'Catatan hadiah dihapus!');
     }
