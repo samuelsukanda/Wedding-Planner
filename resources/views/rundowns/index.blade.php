@@ -3,7 +3,21 @@
 @section('title', 'Inspirasi & Jadwal - Event Rundown')
 
 @section('content')
-    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {} }">
+    <div class="space-y-6" x-data="{
+        modalOpen: false,
+        editMode: false,
+        currentItem: {},
+        openEdit(item) {
+            const [startTime, endTime] = (item.time || '').split(' - ');
+            this.currentItem = {
+                ...item,
+                start_time: (startTime || '').replace('.', ':'),
+                end_time: (endTime || '').replace('.', ':')
+            };
+            this.modalOpen = true;
+            this.editMode = true;
+        }
+    }">
         <div class="no-print flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold font-serif-title">Event Rundown</h1>
@@ -69,8 +83,9 @@
                         </div>
 
                         <div class="no-print flex items-center gap-2 self-end md:self-center">
-                            <button @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($rd) }}"
-                                title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                            <button @click="openEdit(JSON.parse($el.dataset.rundown))"
+                                data-rundown="{{ json_encode($rd) }}" title="Edit"
+                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                                     class="fa-solid fa-pen-to-square"></i></button>
                             <form id="del-rundown-{{ $rd->id }}" action="{{ route('rundowns.destroy', $rd->id) }}"
                                 method="POST">
@@ -106,14 +121,13 @@
                     <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Waktu (Jam) *</label>
-                            <input type="text" name="time" x-model="currentItem.time" required
-                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"
-                                placeholder="09.00 - 10.30">
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Waktu Mulai *</label>
+                            <input type="time" name="start_time" x-model="currentItem.start_time" required
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Urutan (Sort Order)</label>
-                            <input type="number" name="sort_order" x-model="currentItem.sort_order"
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Waktu Selesai *</label>
+                            <input type="time" name="end_time" x-model="currentItem.end_time" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>

@@ -18,7 +18,6 @@ class RundownEvent extends Model
         'pic',
         'location',
         'notes',
-        'sort_order',
     ];
 
     public function wedding()

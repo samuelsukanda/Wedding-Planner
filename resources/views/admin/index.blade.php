@@ -140,9 +140,9 @@
                                         (Rp)
                                         *
                                     </label>
-                                    <input type="number" name="total_budget"
-                                        value="{{ old('total_budget', (int) $wedding->total_budget) }}" required
-                                        min="0" placeholder="150000000"
+                                    <input type="text" name="total_budget" inputmode="numeric" required
+                                        value="Rp {{ number_format((int) preg_replace('/\\D/', '', old('total_budget', $wedding->total_budget)), 0, ',', '.') }}"
+                                        placeholder="Rp 1.000.000.000" data-budget-input
                                         class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-bold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
                                 </div>
                             </div>
@@ -286,6 +286,17 @@
                     });
                 });
             });
+
+            const budgetInput = document.querySelector('[data-budget-input]');
+            if (budgetInput) {
+                const formatBudget = function() {
+                    const digits = budgetInput.value.replace(/\D/g, '');
+                    budgetInput.value = digits ? `Rp ${Number(digits).toLocaleString('id-ID')}` : '';
+                };
+
+                budgetInput.addEventListener('input', formatBudget);
+                formatBudget();
+            }
         })();
     </script>
 @endpush

@@ -49,6 +49,10 @@ class AdminPanelController extends Controller
 
     public function updateWedding(Request $request, Wedding $wedding)
     {
+        $request->merge([
+            'total_budget' => preg_replace('/\\D/', '', (string) $request->input('total_budget')),
+        ]);
+
         // Pengguna hanya boleh mengubah wedding miliknya sendiri.
         abort_unless(
             $request->user()?->wedding_id === $wedding->id,
