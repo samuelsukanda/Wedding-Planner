@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
@@ -55,8 +57,17 @@ class GoogleAuthController extends Controller
                 'name' => $googleUser->getName() ?: Str::before($email, '@'),
                 'email' => $email,
                 'password' => Hash::make(Str::random(40)),
+                'auth_provider' => 'google',
             ]);
         }
+
+        // Akun yang awalnya daftar via email pun ikut ditandai Google, supaya
+        // badge selalu mencerminkan cara login terakhir.
+        if (! $user->isGoogle()) {
+            $user->forceFill(['auth_provider' => 'google'])->save();
+        }
+
+        $this->importGooglePhoto($user, $googleUser);
 
         Auth::login($user, remember: true);
         $request->session()->regenerate();
@@ -71,5 +82,61 @@ class GoogleAuthController extends Controller
         }
 
         return redirect()->intended(route('dashboard'));
+    }
+
+    /**
+     * Salin foto profil Google ke storage lokal supaya tampil di sidebar dan
+     * halaman Profile tanpa bergantung pada URL Google.
+     *
+     * Semua kegagalan ditelan: foto Google yang hilang atau berubah URLnya
+     * tidak boleh membuat login gagal.
+     */
+    private function importGooglePhoto(User $user, $googleUser): void
+    {
+        // Foto yang sudah diunggah user manual tidak ditimpa.
+        if ($user->profile_photo) {
+            return;
+        }
+
+        $url = $googleUser->getAvatar();
+
+        if (! $url) {
+            return;
+        }
+
+        try {
+            $response = Http::timeout(10)->get($url);
+
+            if (! $response->successful()) {
+                return;
+            }
+
+            $contentType = (string) $response->header('Content-Type');
+
+            // Jaga agar halaman error HTML tidak tersimpan sebagai gambar.
+            if (! str_starts_with($contentType, 'image/')) {
+                return;
+            }
+
+            $content = $response->body();
+
+            if (strlen($content) > 2 * 1024 * 1024) {
+                return;
+            }
+
+            $extension = match (true) {
+                str_contains($contentType, 'png') => 'png',
+                str_contains($contentType, 'webp') => 'webp',
+                default => 'jpg',
+            };
+
+            $path = 'avatars/' . $user->id . '-' . time() . '.' . $extension;
+
+            Storage::disk('public')->put($path, $content);
+
+            $user->forceFill(['profile_photo' => $path])->save();
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
     }
 }

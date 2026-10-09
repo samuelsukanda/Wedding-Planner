@@ -34,7 +34,19 @@
                 </div>
 
                 <div class="min-w-0 flex-1">
-                    <h3 class="text-lg font-bold text-[#5F6F5B]">{{ $me->name }}</h3>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h3 class="text-lg font-bold text-[#5F6F5B]">{{ $me->name }}</h3>
+
+                        {{-- Badge hanya untuk akun yang masuk lewat Google.
+                             Akun daftar email tidak menampilkan apa pun. --}}
+                        @if ($me->isGoogle())
+                            <span
+                                class="inline-flex items-center gap-1.5 rounded-full border border-[#D8A7B1]/60 bg-[#D8A7B1]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#C2757F]">
+                                <i class="fa-brands fa-google"></i>
+                                Login dengan Google
+                            </span>
+                        @endif
+                    </div>
                     <p class="text-sm text-[#B6ADA3] break-all">{{ $me->email }}</p>
 
                     <div class="mt-4 flex flex-wrap items-center gap-3">

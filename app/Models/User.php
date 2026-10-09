@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['name', 'email', 'password', 'wedding_id', 'is_superadmin', 'profile_photo'])]
+#[Fillable(['name', 'email', 'password', 'wedding_id', 'is_superadmin', 'profile_photo', 'auth_provider'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -43,6 +43,15 @@ class User extends Authenticatable
         return $this->profile_photo
             ? Storage::disk('public')->url($this->profile_photo)
             : null;
+    }
+
+    /**
+     * True kalau akun ini pernah/terakhir masuk lewat Google OAuth.
+     * Akun daftar email tidak punya badge, jadi pemanggil cukup mengecek ini.
+     */
+    public function isGoogle(): bool
+    {
+        return $this->auth_provider === 'google';
     }
 
     /**
