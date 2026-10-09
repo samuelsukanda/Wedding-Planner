@@ -13,6 +13,7 @@ class RundownEvent extends Model
 
     protected $fillable = [
         'wedding_id',
+        'proposal_event_id',
         'time',
         'activity',
         'pic',

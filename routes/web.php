@@ -16,6 +16,7 @@ use App\Http\Controllers\RundownController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SavingsController;
+use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\GiftController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AdminPanelController;
@@ -94,6 +95,24 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::delete('savings/{savingsGoal}', [SavingsController::class, 'destroy'])->name('savings.destroy');
     Route::post('savings/{savingsGoal}/transactions', [SavingsController::class, 'storeTransaction'])->name('savings.transactions.store');
     Route::delete('savings/{savingsGoal}/transactions/{transaction}', [SavingsController::class, 'destroyTransaction'])->name('savings.transactions.destroy');
+
+    // Module 13 - Lamaran
+    Route::get('proposals', [ProposalController::class, 'index'])->name('proposals.index');
+    Route::put('proposals/event', [ProposalController::class, 'updateEvent'])->name('proposals.event.update');
+
+    Route::post('proposals/checklists', [ProposalController::class, 'storeChecklist'])->name('proposals.checklists.store');
+    Route::put('proposals/checklists/{checklist}', [ProposalController::class, 'updateChecklist'])->name('proposals.checklists.update');
+    Route::delete('proposals/checklists/{checklist}', [ProposalController::class, 'destroyChecklist'])->name('proposals.checklists.destroy');
+
+    Route::post('proposals/guests', [ProposalController::class, 'storeGuest'])->name('proposals.guests.store');
+    Route::put('proposals/guests/{guest}', [ProposalController::class, 'updateGuest'])->name('proposals.guests.update');
+    Route::delete('proposals/guests/{guest}', [ProposalController::class, 'destroyGuest'])->name('proposals.guests.destroy');
+
+    Route::post('proposals/budgets', [ProposalController::class, 'storeBudget'])->name('proposals.budgets.store');
+    Route::put('proposals/budgets/{budget}', [ProposalController::class, 'updateBudget'])->name('proposals.budgets.update');
+    Route::delete('proposals/budgets/{budget}', [ProposalController::class, 'destroyBudget'])->name('proposals.budgets.destroy');
+
+    Route::post('proposals/vendors/{vendor}/toggle', [ProposalController::class, 'toggleVendor'])->name('proposals.vendors.toggle');
 
     // Module 10 - Gift Management
     Route::resource('gifts', GiftController::class)->except(['create', 'edit', 'show']);

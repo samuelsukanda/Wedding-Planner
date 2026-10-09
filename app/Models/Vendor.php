@@ -13,6 +13,7 @@ class Vendor extends Model
 
     protected $fillable = [
         'wedding_id',
+        'proposal_event_id',
         'name',
         'category',
         'contact',

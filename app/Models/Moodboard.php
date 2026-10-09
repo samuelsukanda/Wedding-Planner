@@ -13,6 +13,7 @@ class Moodboard extends Model
 
     protected $fillable = [
         'wedding_id',
+        'proposal_event_id',
         'category',
         'title',
         'image',

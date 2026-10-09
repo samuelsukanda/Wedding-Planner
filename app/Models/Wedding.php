@@ -125,4 +125,27 @@ class Wedding extends Model
     {
         return $this->hasMany(SavingsTransaction::class);
     }
+
+    /**
+     * Module 13 - Lamaran. Satu acara lamaran per wedding.
+     */
+    public function proposalEvent()
+    {
+        return $this->hasOne(ProposalEvent::class);
+    }
+
+    public function proposalChecklists()
+    {
+        return $this->hasMany(ProposalChecklist::class);
+    }
+
+    public function proposalGuests()
+    {
+        return $this->hasMany(ProposalGuest::class);
+    }
+
+    public function proposalBudgets()
+    {
+        return $this->hasMany(ProposalBudget::class);
+    }
 }
