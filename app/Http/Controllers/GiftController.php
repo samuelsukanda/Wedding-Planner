@@ -43,7 +43,20 @@ class GiftController extends Controller
             'is_thank_you_sent' => 'nullable|boolean',
         ]);
 
-        $validated['is_thank_you_sent'] = $request->has('is_thank_you_sent');
+        // Kolom gift_type & nominal di DB NOT NULL. Field kosong|null akan
+        // membuat INSERT gagal ("Column 'nominal' cannot be null"), jadi
+        // dinormalkan ke nilai default yang valid sebelum create.
+        $giftTypes = DropdownOption::getOptions('gift_type', ['Cash', 'Barang']);
+
+        $validated['gift_type'] = in_array($validated['gift_type'], $giftTypes, true)
+            ? $validated['gift_type']
+            : ($giftTypes[0] ?? 'Cash');
+
+        $validated['nominal'] = $validated['nominal'] ?? 0;
+
+        // Form selalu mengirim hidden value="0" plus checkbox "1", jadi
+        // has() selalu true. boolean() membaca nilai terakhir dengan benar.
+        $validated['is_thank_you_sent'] = $request->boolean('is_thank_you_sent');
 
         $wedding->gifts()->create($validated);
 

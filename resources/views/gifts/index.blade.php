@@ -3,7 +3,11 @@
 @section('title', 'Keuangan & Dokumen - Wedding Gifts')
 
 @section('content')
-    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {} }">
+    {{-- currentItem harus punya default gift_type. Kalau kosong, <select required>
+         memblokir submit native sebelum request sampai server, jadi user yang
+         hanya mengisi nama pemberi tetap gagal simpan. --}}
+    <div class="space-y-6"
+        x-data="{ modalOpen: false, editMode: false, currentItem: { gift_type: @js(collect($giftTypes)->first()), is_thank_you_sent: 0 } }">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold font-serif-title">Wedding Gifts & Souvenir</h1>
@@ -13,7 +17,7 @@
                     class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm flex items-center justify-center gap-2 shadow-xs font-semibold w-full md:w-auto">
                     <i class="fa-solid fa-file-excel text-[#D8A7B1]"></i> Export Excel
                 </a>
-                <button @click="modalOpen = true; editMode = false; currentItem = {}"
+                <button @click="modalOpen = true; editMode = false; currentItem = { gift_type: @js(collect($giftTypes)->first()), is_thank_you_sent: 0 }"
                     class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
                     <i class="fa-solid fa-plus"></i> Catat Hadiah Baru
                 </button>
