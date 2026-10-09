@@ -450,6 +450,12 @@
                 <span>Payment Tracker</span>
             </a>
 
+            <a href="{{ route('savings.index') }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('savings.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                <i class="fa-solid fa-piggy-bank w-5 text-center text-[#D8A7B1]"></i>
+                <span>Tabungan Pernikahan</span>
+            </a>
+
             <a href="{{ route('gifts.index') }}"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('gifts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                 <i class="fa-solid fa-gift w-5 text-center text-[#D8A7B1]"></i>

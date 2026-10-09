@@ -111,4 +111,18 @@ class Wedding extends Model
     {
         return $this->hasMany(Notification::class);
     }
+
+    /**
+     * Module 12 - Tabungan Pernikahan. Satu wedding bisa punya lebih dari satu
+     * target tabungan (PRD Business Rule 1).
+     */
+    public function savingsGoals()
+    {
+        return $this->hasMany(SavingsGoal::class);
+    }
+
+    public function savingsTransactions()
+    {
+        return $this->hasMany(SavingsTransaction::class);
+    }
 }

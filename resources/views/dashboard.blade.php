@@ -43,6 +43,40 @@
 
         <!-- Widgets Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+            <!-- Progress Tabungan (PRD section 17: Tabungan → Dashboard) -->
+            <div class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
+                        <i class="fa-solid fa-piggy-bank text-[#D8A7B1]"></i> Progress Tabungan
+                    </div>
+                    <a href="{{ route('savings.index') }}"
+                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#D8A7B1]/20 text-[#C2757F] border border-[#D8A7B1]/40 hover:bg-[#D8A7B1]/30 transition">
+                        Kelola →
+                    </a>
+                </div>
+
+                @if ($savingsGoals->isEmpty())
+                    <p class="text-sm text-[#B6ADA3]">Belum ada target tabungan.</p>
+                @else
+                    <div>
+                        <div class="flex justify-between text-xs text-[#5F6F5B]/80 mb-2">
+                            <span>Saldo Rp {{ number_format($savingsBalance, 0, ',', '.') }}</span>
+                            <span>Target Rp {{ number_format($savingsTarget, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="w-full h-3 bg-[#FAF7F2] rounded-full overflow-hidden p-0.5 border border-[#B6ADA3]/30">
+                            <div class="h-full bg-gradient-to-r from-[#D8A7B1] to-[#A3B7A6] rounded-full transition-all duration-500"
+                                style="width: {{ min(100, $savingsTarget > 0 ? round($savingsBalance / $savingsTarget * 100) : 0) }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-[#B6ADA3]/25 text-xs flex justify-between items-center">
+                        <span class="text-[#5F6F5B]/80">Estimasi kekurangan</span>
+                        <span class="font-bold {{ $savingsShortfall > 0 ? 'text-[#C2757F]' : 'text-[#A3B7A6]' }}">
+                            Rp {{ number_format($savingsShortfall, 0, ',', '.') }}
+                        </span>
+                    </div>
+                @endif
+            </div>
+
             <!-- Progress Persiapan Widget -->
             <div class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
                 <div class="flex items-center justify-between mb-4">

@@ -15,6 +15,7 @@ use App\Http\Controllers\MoodboardController;
 use App\Http\Controllers\RundownController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SavingsController;
 use App\Http\Controllers\GiftController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AdminPanelController;
@@ -85,6 +86,14 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
 
     // Module 9 - Payment Tracker
     Route::resource('payments', PaymentController::class)->except(['create', 'edit', 'show']);
+
+    // Module 12 - Tabungan Pernikahan
+    Route::get('savings', [SavingsController::class, 'index'])->name('savings.index');
+    Route::post('savings', [SavingsController::class, 'store'])->name('savings.store');
+    Route::put('savings/{savingsGoal}', [SavingsController::class, 'update'])->name('savings.update');
+    Route::delete('savings/{savingsGoal}', [SavingsController::class, 'destroy'])->name('savings.destroy');
+    Route::post('savings/{savingsGoal}/transactions', [SavingsController::class, 'storeTransaction'])->name('savings.transactions.store');
+    Route::delete('savings/{savingsGoal}/transactions/{transaction}', [SavingsController::class, 'destroyTransaction'])->name('savings.transactions.destroy');
 
     // Module 10 - Gift Management
     Route::resource('gifts', GiftController::class)->except(['create', 'edit', 'show']);

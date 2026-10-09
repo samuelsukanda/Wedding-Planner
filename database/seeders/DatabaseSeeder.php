@@ -65,6 +65,16 @@ class DatabaseSeeder extends Seeder
             'checklist_status' => ['Status Checklist', [
                 ['Todo', null], ['Progress', null], ['Done', null],
             ]],
+            // Module 12 - Tabungan Pernikahan
+            'savings_status' => ['Status Tabungan', [
+                ['Aktif', null], ['Tercapai', null], ['Ditunda', null],
+            ]],
+            'savings_frequency' => ['Frekuensi Setoran', [
+                ['Mingguan', null], ['Bulanan', null], ['Tahunan', null],
+            ]],
+            'savings_transaction_type' => ['Jenis Transaksi Tabungan', [
+                ['setoran', 'Setoran'], ['penarikan', 'Penarikan'],
+            ]],
             'budget_category' => ['Kategori Budget', [
                 ['Venue', null], ['Catering', null], ['Dekorasi', null], ['Fotografer', null],
                 ['Videografer', null], ['MUA', null], ['Busana', null], ['Souvenir', null],

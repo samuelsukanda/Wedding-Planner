@@ -82,6 +82,12 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // PRD section 17: widget progress tabungan di dashboard.
+        $savingsGoals = $wedding->savingsGoals()->get();
+        $savingsTarget = (float) $savingsGoals->sum('target_amount');
+        $savingsBalance = (float) $savingsGoals->sum('current_balance');
+        $savingsShortfall = max(0, $savingsTarget - $savingsBalance);
+
         return view('dashboard', compact(
             'wedding',
             'daysLeft',
@@ -96,7 +102,11 @@ class DashboardController extends Controller
             'totalGuests',
             'vendorsPaid',
             'vendorsUnpaid',
-            'upcomingChecklists'
+            'upcomingChecklists',
+            'savingsGoals',
+            'savingsTarget',
+            'savingsBalance',
+            'savingsShortfall'
         ));
     }
 }
