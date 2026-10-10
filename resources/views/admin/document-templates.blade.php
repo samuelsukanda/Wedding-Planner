@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="text-[10px] text-[#B6ADA3] mt-3">
-                        {{ count($template->items ?? []) }} dokumen · dipakai {{ $template->requirements_count }} pasangan
+                        {{ count($template->items ?? []) }} dokumen · dipakai {{ $usage[$template->id] ?? 0 }} pasangan
                     </div>
 
                     <ul class="mt-3 space-y-1 max-h-40 overflow-y-auto">

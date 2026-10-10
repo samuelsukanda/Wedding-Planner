@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DocumentRequirement;
 use App\Models\DocumentTemplate;
 use Illuminate\Http\Request;
 
@@ -15,9 +16,19 @@ class DocumentTemplateController extends Controller
 {
     public function index()
     {
-        $templates = DocumentTemplate::withCount('requirements')->orderBy('sort_order')->get();
+        // Jumlah pasangan yang memakai template ini dihitung lewat
+        // DocumentRequirement, bukan relasi, karena relasi tidak ada.
+        $usage = DocumentRequirement::whereNotNull('document_template_id')
+            ->selectRaw('document_template_id, count(distinct wedding_id) as total')
+            ->groupBy('document_template_id')
+            ->pluck('total', 'document_template_id');
 
-        return view('admin.document-templates', compact('templates'));
+        $templates = DocumentTemplate::orderBy('sort_order')->get();
+
+        return view('admin.document-templates', [
+            'templates' => $templates,
+            'usage' => $usage,
+        ]);
     }
 
     public function store(Request $request)
