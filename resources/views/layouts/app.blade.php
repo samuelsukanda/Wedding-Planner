@@ -266,6 +266,22 @@
             });
         }
 
+        // Helper format input uang & telepon untuk form modal semua modul.
+        // Model Alpine menyimpan angka polos; tampilan input diformat ulang
+        // lewat binding :value sehingga kursor tidak lompat saat mengetik.
+        window.wpDigits = function(value) {
+            return String(value ?? '').replace(/\D/g, '');
+        };
+
+        window.wpMoney = function(value) {
+            const digits = window.wpDigits(value);
+            return digits ? 'Rp ' + Number(digits).toLocaleString('id-ID') : '';
+        };
+
+        window.wpPhone = function(value) {
+            return window.wpDigits(value).replace(/(\d{4})(?=\d)/g, '$1-');
+        };
+
         // Simpan & restore posisi scroll sidebar (agar tidak kembali ke atas)
         // Pakai turbo:load, bukan DOMContentLoaded: DOMContentLoaded hanya
         // terjadi sekali, sedangkan Turbo mengganti <body> tiap perpindahan menu.
@@ -402,12 +418,6 @@
                 <span>Checklist</span>
             </a>
 
-            <a href="{{ route('budgets.index') }}"
-                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('budgets.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                <i class="fa-solid fa-wallet w-5 text-center text-[#D8A7B1]"></i>
-                <span>Budget Planner</span>
-            </a>
-
             <a href="{{ route('vendors.index') }}"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('vendors.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                 <i class="fa-solid fa-store w-5 text-center text-[#D8A7B1]"></i>
@@ -438,6 +448,12 @@
             <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Keuangan & Dokumen
             </div>
 
+            <a href="{{ route('budgets.index') }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('budgets.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                <i class="fa-solid fa-wallet w-5 text-center text-[#D8A7B1]"></i>
+                <span>Budget Planner</span>
+            </a>
+
             <a href="{{ route('contracts.index') }}"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('contracts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                 <i class="fa-solid fa-file-contract w-5 text-center text-[#D8A7B1]"></i>
@@ -460,6 +476,12 @@
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('proposals.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                 <i class="fa-solid fa-ring w-5 text-center text-[#D8A7B1]"></i>
                 <span>Lamaran</span>
+            </a>
+
+            <a href="{{ route('souvenirs.index') }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('souvenirs.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                <i class="fa-solid fa-gift w-5 text-center text-[#D8A7B1]"></i>
+                <span>Daftar Seserahan</span>
             </a>
 
             <a href="{{ route('gifts.index') }}"

@@ -148,4 +148,12 @@ class Wedding extends Model
     {
         return $this->hasMany(ProposalBudget::class);
     }
+
+    /**
+     * Module 14 - Seserahan.
+     */
+    public function souvenirs()
+    {
+        return $this->hasMany(Souvenir::class);
+    }
 }

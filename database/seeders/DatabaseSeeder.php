@@ -75,6 +75,10 @@ class DatabaseSeeder extends Seeder
             'savings_transaction_type' => ['Jenis Transaksi Tabungan', [
                 ['setoran', 'Setoran'], ['penarikan', 'Penarikan'],
             ]],
+            // Module 14 - Seserahan
+            'souvenir_status' => ['Status Seserahan', [
+                ['Belum Dipilih', null], ['Sedang Dipilih', null], ['Diterima', null],
+            ]],
             'budget_category' => ['Kategori Budget', [
                 ['Venue', null], ['Catering', null], ['Dekorasi', null], ['Fotografer', null],
                 ['Videografer', null], ['MUA', null], ['Busana', null], ['Souvenir', null],

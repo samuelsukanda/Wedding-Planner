@@ -10,11 +10,11 @@ class Budget extends Model
 {
     use HasFactory;
     use ScopedToWedding;
-    use ScopedToWedding;
 
     protected $fillable = [
         'wedding_id',
         'vendor_id',
+        'souvenir_id',
         'category',
         'item_name',
         'planned_budget',
@@ -36,5 +36,13 @@ class Budget extends Model
     public function vendor()
     {
         return $this->belongsTo(Vendor::class);
+    }
+
+    /**
+     * Terisi hanya untuk baris yang auto-post dari modul Seserahan.
+     */
+    public function souvenir()
+    {
+        return $this->belongsTo(Souvenir::class);
     }
 }

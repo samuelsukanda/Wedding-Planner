@@ -17,6 +17,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SavingsController;
 use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\SouvenirController;
 use App\Http\Controllers\GiftController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AdminPanelController;
@@ -113,6 +114,12 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::delete('proposals/budgets/{budget}', [ProposalController::class, 'destroyBudget'])->name('proposals.budgets.destroy');
 
     Route::post('proposals/vendors/{vendor}/toggle', [ProposalController::class, 'toggleVendor'])->name('proposals.vendors.toggle');
+
+    // Module 14 - Seserahan
+    Route::get('souvenirs', [SouvenirController::class, 'index'])->name('souvenirs.index');
+    Route::post('souvenirs', [SouvenirController::class, 'store'])->name('souvenirs.store');
+    Route::put('souvenirs/{souvenir}', [SouvenirController::class, 'update'])->name('souvenirs.update');
+    Route::delete('souvenirs/{souvenir}', [SouvenirController::class, 'destroy'])->name('souvenirs.destroy');
 
     // Module 10 - Gift Management
     Route::resource('gifts', GiftController::class)->except(['create', 'edit', 'show']);
