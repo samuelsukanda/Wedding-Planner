@@ -23,11 +23,6 @@ window.tableFilter = function (config = {}) {
 
         rows: config.rows ?? [],
         fields: config.fields ?? [],
-        fieldNames: config.fieldNames ?? {},
-
-        init() {
-            this.$watch('filters', () => this.syncQueryString(), { deep: true });
-        },
 
         /**
          * Satu baris tampil bila setiap filter yang terisi cocok dengan
@@ -62,25 +57,6 @@ window.tableFilter = function (config = {}) {
             this.fields.forEach((field) => {
                 this.filters[field] = '';
             });
-        },
-
-        /**
-         * Filter ditulis ke query string supaya status bisa dibagikan dan
-         * tetap ada saat tombol back Turbo ditekan. replaceState dipakai supaya
-         * tiap ketikan tidak menambah history entry.
-         */
-        syncQueryString() {
-            const params = new URLSearchParams();
-
-            this.fields.forEach((field) => {
-                const value = (this.filters[field] ?? '').toString().trim();
-                if (value) params.set(this.fieldNames[field] ?? field, value);
-            });
-
-            const query = params.toString();
-            const url = query ? `${window.location.pathname}?${query}` : window.location.pathname;
-
-            window.history.replaceState(window.history.state, '', url);
         },
     };
 };

@@ -85,8 +85,8 @@ class LastRouteRedirectTest extends TestCase
     }
 
     /**
-     * Query string ikut dipertahankan supaya filter yang sedang aktif tidak
-     * hilang saat refresh.
+     * Cookie lastRoute boleh membawa query string (mis. dari navigasi lama),
+     * dan harus diteruskan apa adanya.
      */
     public function test_query_string_is_kept(): void
     {

@@ -5,7 +5,8 @@
 @section('content')
     <div class="space-y-6" x-data="tableFilter({
             fields: ['search', 'category', 'status'],
-            initial: { search: @js(request('search')), category: @js(request('category')), status: @js(request('status')) },
+            // Filter tidak disimpan di query string supaya URL tetap bersih.
+            initial: { search: '', category: '', status: '' },
             rows: {{ Js::from($vendors->map(fn ($v) => [
                 'name' => $v->name,
                 'category' => $v->category,
