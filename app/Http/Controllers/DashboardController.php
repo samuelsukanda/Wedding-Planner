@@ -10,6 +10,7 @@ use App\Models\Vendor;
 use App\Models\Guest;
 use App\Models\VendorPayment;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Route;
 
 class DashboardController extends Controller
 {
@@ -44,9 +45,28 @@ class DashboardController extends Controller
         // sebelum Dashboard sempat dirender (tidak ada flash Dashboard).
         $lastRoute = rawurldecode((string) $request->cookie('weddingPlannerLastRoute', ''));
         $path = parse_url($lastRoute, PHP_URL_PATH) ?: '';
-        $knownMenu = preg_match('#^/(checklists|budgets|vendors|guests|moodboards|rundowns|contracts|payments|gifts|reports|admin)(?:/|$)#', $path);
 
-        if ($knownMenu) {
+        // Whitelist diambil dari daftar route yang memang halaman daftar
+        // milik pasangan. Sumbernya route itu sendiri, bukan daftar manual:
+        // modul baru (Tabungan, Lamaran, Seserahan, Persyaratan Nikah) ikut
+        // otomatis begitu routenya ada, dan tidak ada yang bisa luput
+        // sehingga refresh diam-diam jatuh ke Dashboard.
+        //
+        // Area admin dan onboarding dikecualikan: keduanya punya aturan
+        // sendiri di EnsureWedding, dan ikut dialihkan dari sini membuat
+        // login superadmin bermasalah.
+        $listPages = collect(Route::getRoutes())
+            ->filter(fn ($route) => in_array('GET', $route->methods(), true) && str_ends_with($route->getName() ?? '', '.index'))
+            ->map(fn ($route) => '/' . ltrim($route->uri(), '/'))
+            ->reject(fn (string $uri) => $uri === '/' || $uri === '/onboarding' || str_starts_with($uri, '/admin'))
+            ->unique();
+
+        // Perbandingan pakai string, bukan regex: nama path sudah coming dari
+        // route yang sah, dan '='+'/'+"$" cukup untuk menolak /guests-extra
+        // sekaligus menerima /guests/123.
+        $matchesMenu = $listPages->contains(fn (string $uri) => $path === $uri || str_starts_with($path, $uri . '/'));
+
+        if ($matchesMenu) {
             return redirect()->to($lastRoute);
         }
 
