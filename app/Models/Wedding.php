@@ -156,4 +156,12 @@ class Wedding extends Model
     {
         return $this->hasMany(Souvenir::class);
     }
+
+    /**
+     * Module 15 - Persyaratan Nikah.
+     */
+    public function documentRequirements()
+    {
+        return $this->hasMany(DocumentRequirement::class);
+    }
 }

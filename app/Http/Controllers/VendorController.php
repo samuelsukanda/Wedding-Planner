@@ -44,6 +44,7 @@ class VendorController extends Controller
     public function store(Request $request)
     {
         $wedding = Wedding::current();
+        $this->normalizeDigitInputs($request, ['contact', 'price']);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|string',
@@ -66,6 +67,7 @@ class VendorController extends Controller
 
     public function update(Request $request, Vendor $vendor)
     {
+        $this->normalizeDigitInputs($request, ['contact', 'price']);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|string',

@@ -54,6 +54,7 @@ class SavingsController extends Controller
     public function store(Request $request)
     {
         $wedding = Wedding::current();
+        $this->normalizeDigitInputs($request, ['target_amount', 'initial_balance', 'periodic_amount']);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -80,6 +81,8 @@ class SavingsController extends Controller
 
     public function update(Request $request, SavingsGoal $savingsGoal)
     {
+        $this->normalizeDigitInputs($request, ['target_amount', 'initial_balance', 'periodic_amount']);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'target_amount' => 'required|numeric|min:1',

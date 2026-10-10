@@ -55,6 +55,7 @@ class BudgetController extends Controller
     public function store(Request $request)
     {
         $wedding = Wedding::current();
+        $this->normalizeDigitInputs($request, ['planned_budget', 'actual_cost']);
         $validated = $request->validate([
             'category' => 'required|string',
             'item_name' => 'required|string|max:255',
@@ -71,6 +72,7 @@ class BudgetController extends Controller
 
     public function update(Request $request, Budget $budget)
     {
+        $this->normalizeDigitInputs($request, ['planned_budget', 'actual_cost']);
         $validated = $request->validate([
             'category' => 'required|string',
             'item_name' => 'required|string|max:255',

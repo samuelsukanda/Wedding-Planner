@@ -24,6 +24,7 @@ class ContractController extends Controller
     public function store(Request $request)
     {
         $wedding = Wedding::current();
+        $this->normalizeDigitInputs($request, ['nominal', 'dp_amount', 'final_amount']);
         $validated = $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
             'contract_number' => 'required|string|max:255',
@@ -42,6 +43,7 @@ class ContractController extends Controller
 
     public function update(Request $request, VendorContract $contract)
     {
+        $this->normalizeDigitInputs($request, ['nominal', 'dp_amount', 'final_amount']);
         $validated = $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
             'contract_number' => 'required|string|max:255',

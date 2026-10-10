@@ -24,6 +24,7 @@ class PaymentController extends Controller
     public function store(Request $request)
     {
         $wedding = Wedding::current();
+        $this->normalizeDigitInputs($request, ['nominal']);
         $validated = $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
             'nominal' => 'required|numeric|min:0',
@@ -41,6 +42,7 @@ class PaymentController extends Controller
 
     public function update(Request $request, VendorPayment $payment)
     {
+        $this->normalizeDigitInputs($request, ['nominal']);
         $validated = $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
             'nominal' => 'required|numeric|min:0',

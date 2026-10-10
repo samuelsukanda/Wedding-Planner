@@ -484,6 +484,12 @@
                 <span>Daftar Seserahan</span>
             </a>
 
+            <a href="{{ route('documents.index') }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('documents.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                <i class="fa-solid fa-file-circle-check w-5 text-center text-[#D8A7B1]"></i>
+                <span>Persyaratan Nikah</span>
+            </a>
+
             <a href="{{ route('gifts.index') }}"
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('gifts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                 <i class="fa-solid fa-gift w-5 text-center text-[#D8A7B1]"></i>
@@ -520,6 +526,12 @@
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.users.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                 <i class="fa-solid fa-users-gear w-5 text-center text-[#D8A7B1]"></i>
                 <span>Admin Panel</span>
+            </a>
+
+            <a href="{{ route('admin.document-templates.index') }}"
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.document-templates.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                <i class="fa-solid fa-file-lines w-5 text-center text-[#D8A7B1]"></i>
+                <span>Template Dokumen</span>
             </a>
             @endif
         </nav>

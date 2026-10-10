@@ -77,22 +77,21 @@
                                     </span>
                                 </td>
                                 <td class="p-4 text-right">
-                                     <div class="flex items-center justify-end gap-2">
-                                         <button
-                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($p) }}"
-                                             title="Edit"
-                                             class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                                                 class="fa-solid fa-pen-to-square"></i></button>
-                                         <form id="del-payment-{{ $p->id }}" action="{{ route('payments.destroy', $p->id) }}" method="POST">
-                                             @csrf
-                                             @method('DELETE')
-                                             <button type="button"
-                                                 title="Hapus"
-                                                 onclick="confirmDelete('del-payment-{{ $p->id }}', '{{ addslashes($p->vendor_name) }}')"
-                                                 class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                                                     class="fa-solid fa-trash"></i></button>
-                                         </form>
-                                     </div>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button
+                                            @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($p) }}"
+                                            title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                                class="fa-solid fa-pen-to-square"></i></button>
+                                        <form id="del-payment-{{ $p->id }}"
+                                            action="{{ route('payments.destroy', $p->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" title="Hapus"
+                                                onclick="confirmDelete('del-payment-{{ $p->id }}', '{{ addslashes($p->vendor_name) }}')"
+                                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                                    class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -125,7 +124,7 @@
                         <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Vendor *</label>
                         <select name="vendor_id" x-model="currentItem.vendor_id" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
-                            <option value="">Pilih Vendor</option>
+                            <option value="">-- Pilih Vendor --</option>
                             @foreach ($vendors as $v)
                                 <option value="{{ $v->id }}">{{ $v->name }} ({{ $v->category }})</option>
                             @endforeach
@@ -134,7 +133,9 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal (Rp) *</label>
-                            <input type="number" name="nominal" x-model="currentItem.nominal" required
+                            <input type="text" name="nominal" inputmode="numeric" required
+                                :value="wpMoney(currentItem.nominal)"
+                                @input="currentItem.nominal = wpDigits($event.target.value)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>

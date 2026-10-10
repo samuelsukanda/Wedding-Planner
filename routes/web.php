@@ -18,6 +18,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SavingsController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\SouvenirController;
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\DocumentTemplateController;
 use App\Http\Controllers\GiftController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AdminPanelController;
@@ -121,6 +123,14 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::put('souvenirs/{souvenir}', [SouvenirController::class, 'update'])->name('souvenirs.update');
     Route::delete('souvenirs/{souvenir}', [SouvenirController::class, 'destroy'])->name('souvenirs.destroy');
 
+    // Module 15 - Persyaratan Nikah
+    Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
+    Route::post('documents', [DocumentController::class, 'store'])->name('documents.store');
+    Route::put('documents/{requirement}', [DocumentController::class, 'update'])->name('documents.update');
+    Route::delete('documents/{requirement}', [DocumentController::class, 'destroy'])->name('documents.destroy');
+    Route::get('documents/{requirement}/history', [DocumentController::class, 'history'])->name('documents.history');
+    Route::post('documents/templates/{template}', [DocumentController::class, 'applyTemplate'])->name('documents.templates.apply');
+
     // Module 10 - Gift Management
     Route::resource('gifts', GiftController::class)->except(['create', 'edit', 'show']);
     Route::post('gifts/{gift}/toggle-thank-you', [GiftController::class, 'toggleThankYou'])->name('gifts.toggle-thank-you');
@@ -147,5 +157,11 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
         Route::post('admin/users', [AdminPanelController::class, 'storeUser'])->name('admin.users.store');
         Route::put('admin/users/{user}', [AdminPanelController::class, 'updateUser'])->name('admin.users.update');
         Route::delete('admin/users/{user}', [AdminPanelController::class, 'destroyUser'])->name('admin.users.destroy');
+
+        // Module 15 - Template Persyaratan Nikah (dikelola superadmin).
+        Route::get('admin/document-templates', [DocumentTemplateController::class, 'index'])->name('admin.document-templates.index');
+        Route::post('admin/document-templates', [DocumentTemplateController::class, 'store'])->name('admin.document-templates.store');
+        Route::put('admin/document-templates/{template}', [DocumentTemplateController::class, 'update'])->name('admin.document-templates.update');
+        Route::delete('admin/document-templates/{template}', [DocumentTemplateController::class, 'destroy'])->name('admin.document-templates.destroy');
     });
 });

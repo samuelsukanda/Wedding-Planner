@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Perencanaan - Budget Planner')
+@section('title', 'Keuangan & Dokumen - Budget Planner')
 
 @section('content')
     <style>
@@ -134,7 +134,7 @@
                                 </td>
                                 <td class="p-4 font-medium text-[#5F6F5B]">{{ $b->item_name }}</td>
                                 <td class="p-4 text-xs text-[#5F6F5B]/80">
-                                    @if($b->vendor)
+                                    @if ($b->vendor)
                                         <span class="font-medium">{{ $b->vendor->name }}</span>
                                     @else
                                         <span class="text-[#B6ADA3]">—</span>
@@ -230,12 +230,16 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Planned Budget (Rp) *</label>
-                            <input type="number" name="planned_budget" x-model="currentItem.planned_budget" required
+                            <input type="text" name="planned_budget" inputmode="numeric" required
+                                :value="wpMoney(currentItem.planned_budget)"
+                                @input="currentItem.planned_budget = wpDigits($event.target.value)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Actual Cost (Rp) *</label>
-                            <input type="number" name="actual_cost" x-model="currentItem.actual_cost" required
+                            <input type="text" name="actual_cost" inputmode="numeric" required
+                                :value="wpMoney(currentItem.actual_cost)"
+                                @input="currentItem.actual_cost = wpDigits($event.target.value)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>
@@ -285,33 +289,33 @@
                 // Pie Chart — Soft Romantic Palette (#D8A7B1, #A3B7A6, #5F6F5B, #B6ADA3)
                 const pieCtx = canvas.getContext('2d');
                 window.__budgetPieChart = new Chart(pieCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: actualValues,
-                        backgroundColor: [
-                            '#D8A7B1', '#A3B7A6', '#5F6F5B', '#B6ADA3', '#C4919B',
-                            '#8EA391', '#4D5C4A', '#D0C6BC', '#E2BDC4', '#788C75'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                font: {
-                                    size: 11
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: actualValues,
+                            backgroundColor: [
+                                '#D8A7B1', '#A3B7A6', '#5F6F5B', '#B6ADA3', '#C4919B',
+                                '#8EA391', '#4D5C4A', '#D0C6BC', '#E2BDC4', '#788C75'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    font: {
+                                        size: 11
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
 
                 // Bar Chart — Soft Romantic Palette
                 const barCanvas = document.getElementById('budgetBarChart');
@@ -321,48 +325,48 @@
                         window.__budgetBarChart = null;
                     }
                     window.__budgetBarChart = new Chart(barCanvas.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                            label: 'Planned',
-                            data: plannedValues,
-                            backgroundColor: '#A3B7A6'
-                        },
-                        {
-                            label: 'Actual',
-                            data: actualValues,
-                            backgroundColor: '#D8A7B1'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            ticks: {
-                                font: {
-                                    size: 10
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                    label: 'Planned',
+                                    data: plannedValues,
+                                    backgroundColor: '#A3B7A6'
+                                },
+                                {
+                                    label: 'Actual',
+                                    data: actualValues,
+                                    backgroundColor: '#D8A7B1'
                                 }
-                            },
-                            grid: {
-                                display: false
-                            }
+                            ]
                         },
-                        y: {
-                            ticks: {
-                                font: {
-                                    size: 10
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    ticks: {
+                                        font: {
+                                            size: 10
+                                        }
+                                    },
+                                    grid: {
+                                        display: false
+                                    }
+                                },
+                                y: {
+                                    ticks: {
+                                        font: {
+                                            size: 10
+                                        }
+                                    },
+                                    grid: {
+                                        color: 'rgba(182, 173, 163, 0.2)'
+                                    }
                                 }
-                            },
-                            grid: {
-                                color: 'rgba(182, 173, 163, 0.2)'
                             }
                         }
-                    }
-                }
-                });
+                    });
                 }
             });
         }

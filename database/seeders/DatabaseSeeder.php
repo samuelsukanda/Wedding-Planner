@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\DocumentTemplate;
 use App\Models\DropdownOption;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -25,6 +26,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->seedSuperadmin();
         $this->seedDropdownMaster();
+
+        // Template Persyaratan Nikah (Module 15).
+        $this->call(DocumentTemplateSeeder::class);
     }
 
     /**
@@ -78,6 +82,10 @@ class DatabaseSeeder extends Seeder
             // Module 14 - Seserahan
             'souvenir_status' => ['Status Seserahan', [
                 ['Belum Dipilih', null], ['Sedang Dipilih', null], ['Diterima', null],
+            ]],
+            // Module 15 - Persyaratan Nikah
+            'document_status' => ['Status Dokumen', [
+                ['Belum Lengkap', null], ['Diproses', null], ['Lengkap', null],
             ]],
             'budget_category' => ['Kategori Budget', [
                 ['Venue', null], ['Catering', null], ['Dekorasi', null], ['Fotografer', null],

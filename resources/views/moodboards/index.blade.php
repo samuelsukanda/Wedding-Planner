@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Inspirasi & Jadwal - Moodboard')
+@section('title', 'Inspirasi - Moodboard')
 
 @section('content')
     <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {} }">
@@ -36,14 +36,15 @@
                     class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden flex flex-col hover:border-[#D8A7B1] transition-all group">
                     <!-- Visual Card Header -->
                     <div
-                        class="relative h-44 sm:h-48 flex items-center justify-center overflow-hidden @if(!$mb->link_preview) bg-gradient-to-tr from-[#D8A7B1]/20 via-[#FAF7F2] to-[#A3B7A6]/20 @endif">
-                        @if($mb->link_preview)
+                        class="relative h-44 sm:h-48 flex items-center justify-center overflow-hidden @if (!$mb->link_preview) bg-gradient-to-tr from-[#D8A7B1]/20 via-[#FAF7F2] to-[#A3B7A6]/20 @endif">
+                        @if ($mb->link_preview)
                             <img src="{{ $mb->link_preview }}" alt="{{ $mb->title }}" class="w-full h-full object-cover"
                                 onerror="this.closest('.relative').classList.add('bg-gradient-to-tr', 'from-[#D8A7B1]/20', 'via-[#FAF7F2]', 'to-[#A3B7A6]/20'); this.remove();">
                         @else
                             <div class="text-center p-6 space-y-2">
                                 <i class="fa-solid fa-wand-magic-sparkles text-[#D8A7B1] text-3xl"></i>
-                                <div class="text-xs text-[#5F6F5B] font-semibold tracking-wide uppercase">{{ $mb->category }}
+                                <div class="text-xs text-[#5F6F5B] font-semibold tracking-wide uppercase">
+                                    {{ $mb->category }}
                                 </div>
                             </div>
                         @endif
@@ -72,15 +73,14 @@
                             <span>{{ $mb->created_at->format('d M Y') }}</span>
                             <div class="flex items-center gap-2">
                                 <button @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($mb) }}"
-                                    title="Edit"
-                                    class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                    title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <form id="del-mb-{{ $mb->id }}" action="{{ route('moodboards.destroy', $mb->id) }}" method="POST">
+                                <form id="del-mb-{{ $mb->id }}" action="{{ route('moodboards.destroy', $mb->id) }}"
+                                    method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button"
-                                        title="Hapus"
+                                    <button type="button" title="Hapus"
                                         onclick="confirmDelete('del-mb-{{ $mb->id }}', '{{ addslashes($mb->title) }}')"
                                         class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
                                         <i class="fa-solid fa-trash"></i>
@@ -109,7 +109,8 @@
                     <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                             class="fa-solid fa-xmark"></i></button>
                 </div>
-                <form :action="editMode ? '/moodboards/' + currentItem.id : '{{ route('moodboards.store') }}'" method="POST" class="space-y-4">
+                <form :action="editMode ? '/moodboards/' + currentItem.id : '{{ route('moodboards.store') }}'"
+                    method="POST" class="space-y-4">
                     @csrf
                     <template x-if="editMode">
                         <input type="hidden" name="_method" value="PUT">
@@ -124,6 +125,7 @@
                         <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori *</label>
                         <select name="category" x-model="currentItem.category" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                            <option value="">-- Pilih Kategori --</option>
                             @foreach ($categories as $cat)
                                 <option value="{{ $cat }}">{{ $cat }}</option>
                             @endforeach

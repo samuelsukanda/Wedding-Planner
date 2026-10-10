@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Inspirasi & Jadwal - Event Rundown')
+@section('title', 'Perencanaan - Event Rundown')
 
 @section('content')
     <div class="space-y-6" x-data="{
@@ -83,9 +83,8 @@
                         </div>
 
                         <div class="no-print flex items-center gap-2 self-end md:self-center">
-                            <button @click="openEdit(JSON.parse($el.dataset.rundown))"
-                                data-rundown="{{ json_encode($rd) }}" title="Edit"
-                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                            <button @click="openEdit(JSON.parse($el.dataset.rundown))" data-rundown="{{ json_encode($rd) }}"
+                                title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                                     class="fa-solid fa-pen-to-square"></i></button>
                             <form id="del-rundown-{{ $rd->id }}" action="{{ route('rundowns.destroy', $rd->id) }}"
                                 method="POST">

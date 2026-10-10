@@ -140,8 +140,7 @@
                                     <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($chk) }}"
-                                            title="Edit"
-                                            class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                            title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                         <form action="{{ route('checklists.duplicate', $chk->id) }}" method="POST">
@@ -152,11 +151,11 @@
                                                 <i class="fa-solid fa-copy"></i>
                                             </button>
                                         </form>
-                                        <form id="del-chk-{{ $chk->id }}" action="{{ route('checklists.destroy', $chk->id) }}" method="POST">
+                                        <form id="del-chk-{{ $chk->id }}"
+                                            action="{{ route('checklists.destroy', $chk->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button"
-                                                title="Hapus"
+                                            <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-chk-{{ $chk->id }}', '{{ addslashes($chk->title) }}')"
                                                 class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
                                                 <i class="fa-solid fa-trash"></i>
@@ -207,6 +206,7 @@
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori *</label>
                             <select name="category" x-model="currentItem.category" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                                <option value="">-- Pilih Kategori --</option>
                                 @foreach ($categories as $cat)
                                     <option value="{{ $cat }}">{{ $cat }}</option>
                                 @endforeach
