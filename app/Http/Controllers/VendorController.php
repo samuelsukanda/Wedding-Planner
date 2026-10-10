@@ -13,21 +13,10 @@ class VendorController extends Controller
     public function index(Request $request)
     {
         $wedding = Wedding::current();
-        $query = $wedding->vendors();
 
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('booking_status', $request->status);
-        }
-
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        $vendors = $query->with('packageItems')->latest()->get();
+        // Filter dipindah ke Alpine (tableFilter) supaya tidak ada reload
+        // halaman. Semua data dikirim sekali, penyaringan terjadi di client.
+        $vendors = $wedding->vendors()->with('packageItems')->latest()->get();
 
         $categories = DropdownOption::getOptions('vendor_category', [
             'Venue', 'Catering', 'Dekorasi', 'Wedding Organizer', 'MUA',

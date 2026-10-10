@@ -6,7 +6,10 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            // table-filter.js jadi entry terpisah supaya tag @vite-nya bisa diletakkan
+// sebelum Alpine di layout. Alpine start() langsung setelah dievaluasi,
+// sehingga helper x-data harus sudah ada di window sebelum itu.
+input: ['resources/css/app.css', 'resources/js/table-filter.js', 'resources/js/app.js'],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {

@@ -13,21 +13,10 @@ class GuestController extends Controller
     public function index(Request $request)
     {
         $wedding = Wedding::current();
-        $query = $wedding->guests();
 
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('attendance_status', $request->status);
-        }
-
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        $guests = $query->latest()->get();
+        // Filter dipindah ke Alpine (tableFilter) supaya tidak ada reload
+        // halaman. Semua data dikirim sekali, penyaringan terjadi di client.
+        $guests = $wedding->guests()->latest()->get();
 
         $categories = DropdownOption::getOptions('guest_category', ['Family', 'Friend', 'Office', 'VIP', 'Neighbor']);
         $statuses = DropdownOption::getOptions('guest_status', ['Pending', 'Attend', 'Decline']);

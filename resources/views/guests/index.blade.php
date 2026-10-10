@@ -3,18 +3,31 @@
 @section('title', 'Perencanaan - Guest Management')
 
 @section('content')
-    <div class="space-y-6" x-data="{
-        modalOpen: false,
-        editMode: false,
-        currentItem: {},
-        titles: {{ json_encode($guestTitles) }},
-        paxMap: {{ json_encode($categoryPax) }},
-        autoFillPax() {
-            if (!this.editMode && this.currentItem.category && this.paxMap[this.currentItem.category]) {
-                this.currentItem.guest_count = this.paxMap[this.currentItem.category];
+    <div class="space-y-6" x-data="tableFilter({
+        fields: ['search', 'category', 'status'],
+        initial: { search: @js(request('search')), category: @js(request('category')), status: @js(request('status')) },
+        rows: {{ Js::from(
+            $guests->map(
+                fn($g) => [
+                    'name' => ($g->title ? $g->title . ' ' : '') . $g->name,
+                    'category' => $g->category,
+                    'status' => $g->attendance_status,
+                ],
+            ),
+        ) }},
+        extra: {
+            modalOpen: false,
+            editMode: false,
+            currentItem: {},
+            titles: {{ json_encode($guestTitles) }},
+            paxMap: {{ json_encode($categoryPax) }},
+            autoFillPax() {
+                if (!this.editMode && this.currentItem.category && this.paxMap[this.currentItem.category]) {
+                    this.currentItem.guest_count = this.paxMap[this.currentItem.category];
+                }
             }
         }
-    }">
+    })">
         <!-- Top Bar -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -67,37 +80,36 @@
         </div>
 
         <!-- Search & Filter Bar -->
-        <form method="GET" action="{{ route('guests.index') }}"
+        <div
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
             <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama tamu..."
+                <input type="text" x-model="filters.search" placeholder="Cari nama tamu..."
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
                 <div class="grid grid-cols-2 gap-3 md:flex md:items-center md:gap-3">
-                    <select name="category" onchange="this.form.submit()"
+                    <select x-model="filters.category"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Kategori</option>
                         @foreach ($categories as $cat)
-                            <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
-                                {{ $cat }}
-                            </option>
+                            <option value="{{ $cat }}">{{ $cat }}</option>
                         @endforeach
                     </select>
-                    <select name="status" onchange="this.form.submit()"
+                    <select x-model="filters.status"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Kehadiran</option>
                         @foreach ($statuses as $st)
-                            <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
-                                {{ $st }}
-                            </option>
+                            <option value="{{ $st }}">{{ $st }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
-            @if (request()->anyFilled(['search', 'category', 'status']))
-                <a href="{{ route('guests.index') }}"
-                    class="text-xs text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline">Reset Filter</a>
-            @endif
-        </form>
+            <div class="flex items-center gap-3 shrink-0">
+                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#B6ADA3] whitespace-nowrap">
+                    <span x-text="visibleCount()"></span>/<span x-text="rows.length"></span> tamu
+                </span>
+                <button x-show="hasActiveFilter()" x-cloak @click="reset()" type="button"
+                    class="text-xs text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline cursor-pointer whitespace-nowrap">Reset</button>
+            </div>
+        </div>
 
         <!-- Guest List Table -->
         <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden">
@@ -112,11 +124,13 @@
                             <th class="p-4">Jumlah Pax</th>
                             <th class="p-4">Kontak / Telepon</th>
                             <th class="p-4">Alamat</th>
-                            <th class="p-4 text-right">Aksi</th>                        </tr>
+                            <th class="p-4 text-right">Aksi</th>
+                        </tr>
                     </thead>
                     <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
-                        @forelse($guests as $g)
-                            <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                        @forelse($guests as $i => $g)
+                            <tr x-show="visible(rows[{{ $i }}])" x-cloak
+                                class="hover:bg-[#FAF7F2]/60 transition-colors">
                                 <td class="p-4 font-semibold text-[#5F6F5B]">
                                     {{ $g->title ? $g->title . ' ' : '' }}{{ $g->name }}</td>
                                 <td class="p-4">
@@ -155,7 +169,7 @@
                                 <td class="p-4 text-xs text-[#5F6F5B]/80 max-w-xs truncate">{{ $g->address ?? '—' }}</td>
                                 <td class="p-4 text-right">
                                     <div class="flex items-center justify-end gap-1">
-                                        @if($g->phone)
+                                        @if ($g->phone)
                                             <a href="{{ route('guests.wa', $g->id) }}" target="_blank" title="Kirim WA"
                                                 class="p-2 text-[#B6ADA3] hover:text-green-600 cursor-pointer">
                                                 <i class="fa-brands fa-whatsapp"></i>
@@ -183,6 +197,11 @@
                                 </td>
                             </tr>
                         @endforelse
+                        <tr x-show="hasActiveFilter() && visibleCount() === 0" x-cloak>
+                            <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">
+                                Tidak ada tamu yang cocok dengan filter.
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -242,8 +261,8 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Telepon / WA</label>
-                            <input type="text" name="phone" inputmode="numeric" :value="currentItem.phone"
-                                @input="currentItem.phone = wpDigits($event.target.value)"
+                            <input type="text" name="phone" inputmode="numeric" :value="wpPhone(currentItem.phone)"
+                                @input="currentItem.phone = wpDigits($event.target.value); $event.target.value = wpPhone(currentItem.contact)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>

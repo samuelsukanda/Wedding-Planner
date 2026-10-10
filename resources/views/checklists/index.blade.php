@@ -3,7 +3,20 @@
 @section('title', 'Perencanaan - Checklist')
 
 @section('content')
-    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {} }">
+    <div class="space-y-6" x-data="tableFilter({
+            fields: ['search', 'status', 'priority'],
+            initial: { search: @js(request('search')), status: @js(request('status')), priority: @js(request('priority')) },
+            rows: {{ Js::from($checklists->map(fn ($c) => [
+                'search' => $c->title,
+                'status' => $c->status,
+                'priority' => $c->priority,
+            ])) }},
+            extra: {
+                modalOpen: false,
+                editMode: false,
+                currentItem: {}
+            }
+        })">
         <!-- Top Bar -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -48,38 +61,39 @@
         </div>
 
         <!-- Filter & Search Bar -->
-        <form method="GET" action="{{ route('checklists.index') }}"
+        <div
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
             <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama checklist..."
+                <input type="text" x-model="filters.search" placeholder="Cari nama checklist..."
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
 
                 <div class="grid grid-cols-2 gap-3 md:flex md:items-center md:gap-3">
-                    <select name="status" onchange="this.form.submit()"
+                    <select x-model="filters.status"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Status</option>
                         @foreach ($statuses as $st)
-                            <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
-                                {{ $st }}</option>
+                            <option value="{{ $st }}">{{ $st }}</option>
                         @endforeach
                     </select>
 
-                    <select name="priority" onchange="this.form.submit()"
+                    <select x-model="filters.priority"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Prioritas</option>
                         @foreach ($priorities as $pr)
-                            <option value="{{ $pr }}" {{ request('priority') == $pr ? 'selected' : '' }}>
-                                {{ $pr }} Priority</option>
+                            <option value="{{ $pr }}">{{ $pr }} Priority</option>
                         @endforeach
                     </select>
                 </div>
             </div>
 
-            @if (request()->anyFilled(['search', 'status', 'priority']))
-                <a href="{{ route('checklists.index') }}"
-                    class="text-xs text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline">Reset Filter</a>
-            @endif
-        </form>
+            <div class="flex items-center gap-3 shrink-0">
+                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#B6ADA3] whitespace-nowrap">
+                    <span x-text="visibleCount()"></span>/<span x-text="rows.length"></span> item
+                </span>
+                <button x-show="hasActiveFilter()" x-cloak @click="reset()" type="button"
+                    class="text-xs text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline cursor-pointer whitespace-nowrap">Reset</button>
+            </div>
+        </div>
 
         <!-- Checklist Table -->
         <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden">
@@ -97,8 +111,9 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
-                        @forelse($checklists as $chk)
-                            <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                        @forelse($checklists as $i => $chk)
+                            <tr x-show="visible(rows[{{ $i }}])" x-cloak
+                                class="hover:bg-[#FAF7F2]/60 transition-colors">
                                 <td class="p-4 text-center">
                                     <form action="{{ route('checklists.toggle', $chk->id) }}" method="POST">
                                         @csrf
@@ -170,6 +185,11 @@
                                     checklist.</td>
                             </tr>
                         @endforelse
+                        <tr x-show="hasActiveFilter() && visibleCount() === 0" x-cloak>
+                            <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">
+                                Tidak ada item yang cocok dengan filter.
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -227,7 +247,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tenggat Waktu</label>
-                            <input type="text" name="deadline" x-model="currentItem.deadline"
+                            <input type="text" name="deadline" x-model="currentItem.deadline" placeholder="DD-MM-YYYY"
                                 class="datepicker w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
 

@@ -22,7 +22,11 @@
     <!-- FontAwesome Icons & Chart.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Alpine.js -->
+    <!-- Helper filter tabel. Entry Vite sendiri (bukan digabung dengan app.js)
+         supaya tagnya bisa diletakkan sebelum Alpine: Alpine start() begitu
+         dievaluasi, jadi x-data="tableFilter(...)" hanya resolve kalau
+         window.tableFilter sudah ada. -->
+    @vite(['resources/js/table-filter.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">

@@ -3,7 +3,22 @@
 @section('title', 'Perencanaan - Vendor Management')
 
 @section('content')
-    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {}, detailModalOpen: false, detailVendor: null }">
+    <div class="space-y-6" x-data="tableFilter({
+            fields: ['search', 'category', 'status'],
+            initial: { search: @js(request('search')), category: @js(request('category')), status: @js(request('status')) },
+            rows: {{ Js::from($vendors->map(fn ($v) => [
+                'name' => $v->name,
+                'category' => $v->category,
+                'status' => $v->booking_status,
+            ])) }},
+            extra: {
+                modalOpen: false,
+                editMode: false,
+                currentItem: {},
+                detailModalOpen: false,
+                detailVendor: null
+            }
+        })">
         <!-- Top Bar -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -16,40 +31,42 @@
         </div>
 
         <!-- Filter Bar -->
-        <form method="GET" action="{{ route('vendors.index') }}"
+        <div
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
             <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama vendor..."
+                <input type="text" x-model="filters.search" placeholder="Cari nama vendor..."
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
                 <div class="grid grid-cols-2 gap-3 md:flex md:items-center md:gap-3">
-                    <select name="category" onchange="this.form.submit()"
+                    <select x-model="filters.category"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Kategori Vendor</option>
                         @foreach ($categories as $cat)
-                            <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
-                                {{ $cat }}</option>
+                            <option value="{{ $cat }}">{{ $cat }}</option>
                         @endforeach
                     </select>
-                    <select name="status" onchange="this.form.submit()"
+                    <select x-model="filters.status"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Status Booking</option>
                         @foreach ($statuses as $st)
-                            <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
-                                {{ $st }}</option>
+                            <option value="{{ $st }}">{{ $st }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
-            @if (request()->anyFilled(['search', 'category', 'status']))
-                <a href="{{ route('vendors.index') }}"
-                    class="text-xs text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline">Reset Filter</a>
-            @endif
-        </form>
+            <div class="flex items-center gap-3 shrink-0">
+                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#B6ADA3] whitespace-nowrap">
+                    <span x-text="visibleCount()"></span>/<span x-text="rows.length"></span> vendor
+                </span>
+                <button x-show="hasActiveFilter()" x-cloak @click="reset()" type="button"
+                    class="text-xs text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline cursor-pointer whitespace-nowrap">Reset</button>
+            </div>
+        </div>
 
         <!-- Vendor Cards Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            @forelse($vendors as $v)
-                <div @click="detailVendor = {{ json_encode($v) }}; detailModalOpen = true"
+            @forelse($vendors as $i => $v)
+                <div x-show="visible(rows[{{ $i }}])" x-cloak
+                    @click="detailVendor = {{ json_encode($v) }}; detailModalOpen = true"
                     class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs p-5 flex flex-col justify-between hover:border-[#D8A7B1] hover:shadow-md cursor-pointer transition-all space-y-4 group">
                     <div>
                         <div class="flex items-start justify-between gap-3 mb-3">
@@ -145,6 +162,10 @@
                     Belum ada data vendor ditemukan.
                 </div>
             @endforelse
+            <div x-show="hasActiveFilter() && visibleCount() === 0" x-cloak
+                class="col-span-full text-center py-12 bg-white rounded-2xl text-[#B6ADA3] text-sm border border-[#B6ADA3]/35">
+                Tidak ada vendor yang cocok dengan filter.
+            </div>
         </div>
 
         <!-- Modal Form (Tambah / Edit Vendor) -->
@@ -191,14 +212,16 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nomor Kontak / WA</label>
-                            <input type="text" name="contact" inputmode="numeric" :value="wpPhone(currentItem.contact)"
-                                @input="currentItem.contact = wpDigits($event.target.value)"
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Telepon / WA</label>
+                            <input type="text" name="contact" inputmode="numeric"
+                                :value="wpPhone(currentItem.contact)"
+                                @input="currentItem.contact = wpDigits($event.target.value); $event.target.value = wpPhone(currentItem.contact)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Harga Paket (Rp) *</label>
-                            <input type="text" name="price" inputmode="numeric" required :value="wpMoney(currentItem.price)"
+                            <input type="text" name="price" inputmode="numeric" required placeholder="Rp"
+                                :value="wpMoney(currentItem.price)"
                                 @input="currentItem.price = wpDigits($event.target.value)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>

@@ -12,25 +12,10 @@ class ChecklistController extends Controller
     public function index(Request $request)
     {
         $wedding = Wedding::current();
-        $query = $wedding->checklists();
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('priority')) {
-            $query->where('priority', $request->priority);
-        }
-
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
-        }
-
-        $checklists = $query->orderBy('deadline', 'asc')->get();
+        // Filter dipindah ke Alpine (tableFilter) supaya tidak ada reload
+        // halaman. Semua data dikirim sekali, penyaringan terjadi di client.
+        $checklists = $wedding->checklists()->orderBy('deadline', 'asc')->get();
 
         $categories = DropdownOption::getOptions('checklist_category', ['General', 'Venue', 'Catering', 'Dekorasi', 'Fotografer', 'MUA', 'Undangan', 'Souvenir', 'Acara']);
         $priorities = DropdownOption::getOptions('checklist_priority', ['High', 'Medium', 'Low']);
