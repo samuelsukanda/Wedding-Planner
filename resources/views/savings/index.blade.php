@@ -7,6 +7,13 @@
         modalOpen: false,
         editMode: false,
         txOpen: false,
+        // Input tanggal di dalam modal baru ada di DOM setelah modal dibuka,
+        // sedangkan turbo:load sudah lewat. Watcher ini memanggil init dari
+        // luar supaya field tanggal di kedua modal ikut dipoles.
+        init() {
+            this.$watch('modalOpen', () => window.initDatepickersSoon());
+            this.$watch('txOpen', () => window.initDatepickersSoon());
+        },
         currentItem: { frequency: null, status: 'Aktif' },
         selectedGoal: null,
         selectedGoalId: null,
@@ -261,29 +268,29 @@
                     <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Target *</label>
+                        <label class="form-label">Nama Target *</label>
                         <input type="text" name="name" x-model="currentItem.name" required
                             placeholder="Contoh: Dana Venue & Catering"
-                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                            class="form-input">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Target Nominal (Rp) *</label>
+                            <label class="form-label">Target Nominal (Rp) *</label>
                             <input type="text" name="target_amount" inputmode="numeric" required
                                 :value="wpMoney(currentItem.target_amount)"
                                 @input="currentItem.target_amount = wpDigits($event.target.value)"
-                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm font-semibold text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                                class="form-input form-input-number">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Saldo Awal (Rp)</label>
+                            <label class="form-label">Saldo Awal (Rp)</label>
                             <input type="text" name="initial_balance" inputmode="numeric"
                                 :value="wpMoney(currentItem.initial_balance)"
                                 @input="currentItem.initial_balance = wpDigits($event.target.value)"
                                 :disabled="editMode && currentItem.transactions_count > 0"
                                 :title="editMode && currentItem.transactions_count > 0 ? 'Terkunci karena sudah ada transaksi' :
                                     ''"
-                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm font-semibold text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none disabled:opacity-60">
+                                class="form-input form-input-number disabled:opacity-60">
                             <p x-show="editMode && currentItem.transactions_count > 0"
                                 class="text-[10px] text-[#C2757F] mt-1">
                                 Terkunci karena sudah ada transaksi.
@@ -293,17 +300,17 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal Setoran / Periode
+                            <label class="form-label">Nominal Setoran / Periode
                                 (Rp)</label>
                             <input type="text" name="periodic_amount" inputmode="numeric"
                                 :value="wpMoney(currentItem.periodic_amount)"
                                 @input="currentItem.periodic_amount = wpDigits($event.target.value)"
-                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                                class="form-input">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Frekuensi</label>
+                            <label class="form-label">Frekuensi</label>
                             <select name="frequency" x-model="currentItem.frequency"
-                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                                class="form-input">
                                 <option value="">—</option>
                                 @foreach ($frequencies as $freq)
                                     <option value="{{ $freq }}">{{ $freq }}</option>
@@ -314,14 +321,14 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Target Tanggal</label>
+                            <label class="form-label">Target Tanggal</label>
                             <input type="text" name="target_date" x-model="currentItem.target_date"
-                                class="datepicker w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                                class="form-input datepicker">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status</label>
+                            <label class="form-label">Status</label>
                             <select name="status" x-model="currentItem.status"
-                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                                class="form-input">
                                 @foreach ($statuses as $st)
                                     <option value="{{ $st }}">{{ $st }}</option>
                                 @endforeach
@@ -330,9 +337,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan</label>
+                        <label class="form-label">Catatan</label>
                         <textarea name="notes" x-model="currentItem.notes" rows="2" placeholder="Contoh: Tabungan khusus DP gedung"
-                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none resize-none"></textarea>
+                            class="form-input resize-none"></textarea>
                     </div>
 
                     @error('target_amount')
@@ -380,30 +387,30 @@
                     @csrf
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Jenis Transaksi *</label>
+                        <label class="form-label">Jenis Transaksi *</label>
                         <select name="type" x-model="txType" required
-                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                            class="form-input">
                             <option value="setoran">Setoran</option>
                             <option value="penarikan">Penarikan</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal (Rp) *</label>
+                        <label class="form-label">Nominal (Rp) *</label>
                         <input type="number" name="amount" x-model="txAmount" required min="1" step="1"
-                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm font-bold text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                            class="form-input form-input-number">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Setoran *</label>
+                        <label class="form-label">Tanggal Setoran *</label>
                         <input type="date" name="transaction_date" x-model="txDate" required
-                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                                class="form-input datepicker">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan</label>
+                        <label class="form-label">Catatan</label>
                         <input type="text" name="notes" x-model="txNotes"
-                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                            class="form-input">
                     </div>
 
                     @error('amount')

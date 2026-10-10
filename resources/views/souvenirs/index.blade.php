@@ -5,6 +5,12 @@
 @section('content')
     <div class="space-y-6" x-data="{
         modalOpen: false,
+        // Input tanggal di dalam modal baru ada di DOM setelah modal
+        // dibuka, sementara turbo:load sudah lewat. Watcher memanggil init
+        // dari luar supaya field tanggal ikut dipoles.
+        init() {
+            this.$watch('modalOpen', () => window.initDatepickersSoon());
+        },
         editMode: false,
         currentItem: { status: 'Belum Dipilih', planned_price: '', actual_cost: '' },
     }">
@@ -153,17 +159,17 @@
                     <template x-if="currentItem && currentItem.id"><input type="hidden" name="_method" value="PUT"></template>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Nama Item <span class="text-[#C2757F]">*</span></label>
+                        <label class="form-label">Nama Item <span class="text-[#C2757F]">*</span></label>
                         <input type="text" name="name" x-model="currentItem.name" required
                             placeholder="mis. Mug Keramik Custom"
-                            class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                            class="form-input">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Vendor</label>
+                            <label class="form-label">Vendor</label>
                             <select name="vendor_id" x-model="currentItem.vendor_id"
-                                class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                                class="form-input">
                                 <option value="">-</option>
                                 @foreach ($wedding->vendors()->orderBy('name')->get() as $v)
                                     <option value="{{ $v->id }}">{{ $v->name }}</option>
@@ -171,9 +177,9 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Status</label>
+                            <label class="form-label">Status</label>
                             <select name="status" x-model="currentItem.status"
-                                class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                                class="form-input">
                                 @foreach ($statuses as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
@@ -183,14 +189,14 @@
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Harga Rencana <span class="text-[#C2757F]">*</span></label>
+                            <label class="form-label">Harga Rencana <span class="text-[#C2757F]">*</span></label>
                             <input type="number" name="planned_price" x-model="currentItem.planned_price" required min="0" step="0.01"
-                                class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                                class="form-input form-input-number">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Harga Beli</label>
+                            <label class="form-label">Harga Beli</label>
                             <input type="number" name="actual_cost" x-model="currentItem.actual_cost" min="0" step="0.01"
-                                class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                                class="form-input form-input-number">
                         </div>
                     </div>
 
@@ -202,27 +208,27 @@
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Link Pembelian</label>
+                            <label class="form-label">Link Pembelian</label>
                             <input type="url" name="link" x-model="currentItem.link" placeholder="https://..."
-                                class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                                class="form-input">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">URL Foto</label>
+                            <label class="form-label">URL Foto</label>
                             <input type="url" name="photo" x-model="currentItem.photo" placeholder="https://...jpg"
-                                class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                                class="form-input">
                         </div>
                     </div>
 
                     <div x-show="currentItem.status === 'Diterima'" x-cloak>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Tanggal Diterima</label>
-                        <input type="date" name="received_date" x-model="currentItem.received_date"
-                            class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                        <label class="form-label">Tanggal Diterima</label>
+                        <input type="text" name="received_date" x-model="currentItem.received_date"
+                                class="form-input datepicker">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Catatan</label>
+                        <label class="form-label">Catatan</label>
                         <textarea name="notes" x-model="currentItem.notes" rows="2"
-                            class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm"></textarea>
+                            class="form-input"></textarea>
                     </div>
 
                     <div class="flex justify-end gap-2 pt-2">

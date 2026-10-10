@@ -3,7 +3,7 @@
 @section('title', 'Keuangan & Dokumen - Payment Tracker')
 
 @section('content')
-    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {} }">
+    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {}, init() { this.$watch('modalOpen', () => window.initDatepickersSoon()); } }">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold font-serif-title">Payment Tracker</h1>
@@ -53,9 +53,9 @@
                                 </td>
                                 <td class="p-4 text-xs text-[#5F6F5B]/80">
                                     <i
-                                        class="fa-solid fa-calendar mr-1 text-[#D8A7B1]"></i>{{ $p->payment_date ? $p->payment_date->format('d M Y') : '—' }}
+                                        class="fa-solid fa-calendar mr-1 text-[#D8A7B1]"></i>{{ $p->payment_date ? $p->payment_date->format('d M Y') : 'â€”' }}
                                 </td>
-                                <td class="p-4 text-xs text-[#5F6F5B]/80">{{ $p->payment_method ?? '—' }}</td>
+                                <td class="p-4 text-xs text-[#5F6F5B]/80">{{ $p->payment_method ?? 'â€”' }}</td>
                                 <td class="p-4 text-xs">
                                     @if ($p->reminder_date)
                                         <span
@@ -64,7 +64,7 @@
                                             {{ $p->reminder_date->format('d M Y') }}
                                         </span>
                                     @else
-                                        —
+                                        â€”
                                     @endif
                                 </td>
                                 <td class="p-4">
@@ -106,7 +106,7 @@
         </div>
 
         <!-- Modal Form -->
-        <div x-show="modalOpen" x-transition.opacity
+        <div x-show="modalOpen" x-transition.opacity x-effect="modalOpen && window.initDatepickersSoon($el)"
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div @click.away="if (!$event.target.closest('.flatpickr-calendar')) modalOpen = false"
                 class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
@@ -151,12 +151,12 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Bayar</label>
-                            <input type="text" name="payment_date" x-model="currentItem.payment_date"
+                            <input type="text" name="payment_date" x-model="currentItem.payment_date" placeholder="DD-MM-YYYY"
                                 class="datepicker w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Reminder</label>
-                            <input type="text" name="reminder_date" x-model="currentItem.reminder_date"
+                            <input type="text" name="reminder_date" x-model="currentItem.reminder_date" placeholder="DD-MM-YYYY"
                                 class="datepicker w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>

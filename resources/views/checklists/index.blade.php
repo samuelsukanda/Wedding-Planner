@@ -15,7 +15,12 @@
             extra: {
                 modalOpen: false,
                 editMode: false,
-                currentItem: {}
+                currentItem: {},
+                // Input tanggal di dalam modal baru ada di DOM setelah modal
+                // dibuka, sementara turbo:load sudah lewat.
+                init() {
+                    this.$watch('modalOpen', () => window.initDatepickersSoon());
+                }
             }
         })">
         <!-- Top Bar -->
@@ -141,7 +146,7 @@
                                     </span>
                                 </td>
                                 <td class="p-4 text-xs text-[#5F6F5B]">
-                                    {{ $chk->deadline ? \Carbon\Carbon::parse($chk->deadline)->format('d M Y') : '—' }}
+                                    {{ $chk->deadline ? \Carbon\Carbon::parse($chk->deadline)->format('d M Y') : 'â€”' }}
                                 </td>
                                 <td class="p-4">
                                     <span
@@ -197,7 +202,7 @@
         </div>
 
         <!-- Modal Form (Tambah / Edit Checklist) -->
-        <div x-show="modalOpen" x-transition.opacity
+        <div x-show="modalOpen" x-transition.opacity x-effect="modalOpen && window.initDatepickersSoon($el)"
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div @click.away="if (!$event.target.closest('.flatpickr-calendar')) modalOpen = false"
                 class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">

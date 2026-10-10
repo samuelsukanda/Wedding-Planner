@@ -1,4 +1,4 @@
-import * as Turbo from '@hotwired/turbo';
+﻿import * as Turbo from '@hotwired/turbo';
 
 const LAST_ROUTE_KEY = 'weddingPlanner.lastRoute';
 const RESTORING_ROUTE_KEY = 'weddingPlanner.restoringRoute';
@@ -155,16 +155,53 @@ document.addEventListener('turbo:load', function(event) {
         window.history.replaceState(window.history.state, '', '/');
     }
 
-    document.querySelectorAll('.datepicker').forEach(function(el) {
+    initDatepickers();
+});
+
+// Input tanggal di dalam modal muncul setelah turbo:load, saat Alpine
+// merender x-show / x-if. Observer MutationNode sempat dicoba tapi
+// flatpickr mengganti input asli dengan altInput, jadi observer melihat
+// node baru tanpa _flatpickr lalu menginisialisasi lagi: itu loop dan
+// bikin halaman macet. Dipakai alpine:initialized, yang hanya sekali
+// jalan; guard el._flatpickr membuat panggilan berulang tetap murah.
+function initDatepickers(root = document) {
+    root.querySelectorAll('.datepicker').forEach(function(el) {
         if (el._flatpickr) return;
         flatpickr(el, {
+            // Nilai ke server tetap ISO (Y-m-d) supaya validasi Laravel
+            // dan kolom tanggal di database tidak berubah.
             dateFormat: 'Y-m-d',
+            // Yang dilihat user: DD-MM-YYYY.
+            altInput: true,
+            altFormat: 'd-m-Y',
             allowInput: true,
             onChange: function() {
                 el.dispatchEvent(new Event('input', { bubbles: true }));
             }
         });
+
+        // altInput membuat input baru; placeholder di sana ikut dipasang
+        // supaya kolom kosong tetap menampilkan format yang diharapkan.
+        if (el._flatpickr.altInput && !el._flatpickr.altInput.placeholder) {
+            el._flatpickr.altInput.placeholder = 'DD-MM-YYYY';
+        }
     });
-});
+}
+
+// Dipakai juga dari view lewat x-effect, karena Alpine merender isi modal
+// setelah turbo:load: saat itu field tanggalnya belum ada di DOM.
+window.initDatepickers = initDatepickers;
+
+// Versi untuk x-effect. Alpine menjalankan x-effect saat nilai masih diroses,
+// sebelum elemen anak selesai dirender, jadi panggilannya harus ditunda satu
+// tick agar querySelectorAll benar-benar menemukan input tanggalnya.
+window.initDatepickersSoon = function (el) {
+    const root = el || document;
+    setTimeout(function() {
+        initDatepickers(root);
+    }, 0);
+};
+
+document.addEventListener('alpine:initialized', initDatepickers);
 
 Turbo.start();

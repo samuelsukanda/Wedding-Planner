@@ -6,6 +6,12 @@
     <div class="space-y-6" x-data="{
         modal: null,
         currentItem: {},
+        // Input tanggal di dalam modal baru ada di DOM setelah modal dibuka,
+        // sementara turbo:load sudah lewat. Watcher memanggil init dari luar
+        // supaya field deadline ikut dipoles.
+        init() {
+            this.$watch('modal', () => window.initDatepickersSoon());
+        }
     }">
 
         {{-- Header --}}
@@ -158,35 +164,35 @@
                     <template x-if="currentItem && currentItem.id"><input type="hidden" name="_method" value="PUT"></template>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Nama Dokumen <span class="text-[#C2757F]">*</span></label>
+                        <label class="form-label">Nama Dokumen <span class="text-[#C2757F]">*</span></label>
                         <input type="text" name="name" x-model="currentItem.name" required
                             placeholder="mis. Akta Lahir Suami"
-                            class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                            class="form-input">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">PIC</label>
+                            <label class="form-label">PIC</label>
                             <input type="text" name="pic_name" x-model="currentItem.pic_name"
-                                class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                                class="form-input">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Kontak</label>
+                            <label class="form-label">Kontak</label>
                             <input type="text" name="phone" x-model="currentItem.phone"
-                                class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                                class="form-input">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Deadline</label>
-                            <input type="date" name="deadline" x-model="currentItem.deadline"
-                                class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                            <label class="form-label">Deadline</label>
+                            <input type="text" name="deadline" x-model="currentItem.deadline"
+                                class="form-input datepicker">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Status</label>
+                            <label class="form-label">Status</label>
                             <select name="status" x-model="currentItem.status"
-                                class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                                class="form-input">
                                 @foreach ($statuses as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
@@ -195,15 +201,15 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">URL File Dokumen</label>
+                        <label class="form-label">URL File Dokumen</label>
                         <input type="url" name="document_file" x-model="currentItem.document_file" placeholder="https://..."
-                            class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
+                            class="form-input">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Catatan</label>
+                        <label class="form-label">Catatan</label>
                         <textarea name="notes" x-model="currentItem.notes" rows="2"
-                            class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm"></textarea>
+                            class="form-input"></textarea>
                     </div>
 
                     <div class="flex justify-end gap-2 pt-2">
