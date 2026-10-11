@@ -393,7 +393,7 @@
                         // Nilai tetap Y-m-d agar aman dikirim ke server,
                         // altFormat yang menentukan yang dilihat user.
                         dateFormat: 'Y-m-d',
-                        altFormat: 'j F Y',
+                        altFormat: 'd-m-Y',
                         altInput: true,
                         // Tanpa ini flatpickr tetap menulis nama bulan
                         // dalam bahasa Inggris ("October").

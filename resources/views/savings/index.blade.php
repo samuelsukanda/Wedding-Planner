@@ -6,13 +6,11 @@
     <div class="space-y-6" x-data="{
         modalOpen: false,
         editMode: false,
-        txOpen: false,
-        // Input tanggal di dalam modal baru ada di DOM setelah modal dibuka,
-        // sedangkan turbo:load sudah lewat. Watcher ini memanggil init dari
-        // luar supaya field tanggal di kedua modal ikut dipoles.
+txOpen: false,
         init() {
-            this.$watch('modalOpen', () => window.initDatepickersSoon());
-            this.$watch('txOpen', () => window.initDatepickersSoon());
+            // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
+            // jadi tampilan flatpickr disegarkan lagi di sini.
+            this.$watch('currentItem', () => window.syncDatepickersSoon());
         },
         currentItem: { frequency: null, status: 'Aktif' },
         selectedGoal: null,
@@ -157,7 +155,18 @@
                                             <i class="fa-solid fa-arrow-right-arrow-left text-[10px]"></i> Transaksi
                                         </button>
                                         <button title="Edit"
-                                            @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($goal) }}"
+                                            @click="modalOpen = true; editMode = true; currentItem = {{ Js::from([
+                                                'id' => $goal->id,
+                                                'name' => $goal->name,
+                                                'target_amount' => $goal->target_amount,
+                                                'initial_balance' => $goal->initial_balance,
+                                                'current_balance' => $goal->current_balance,
+                                                'periodic_amount' => $goal->periodic_amount,
+                                                'frequency' => $goal->frequency,
+                                                'target_date' => $goal->target_date?->format('Y-m-d'),
+                                                'status' => $goal->status,
+                                                'notes' => $goal->notes,
+                                            ]) }}"
                                             class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
@@ -403,7 +412,8 @@
 
                     <div>
                         <label class="form-label">Tanggal Setoran *</label>
-                        <input type="date" name="transaction_date" x-model="txDate" required
+                        <input type="text" name="transaction_date" x-model="txDate" required
+                                placeholder="DD-MM-YYYY"
                                 class="form-input datepicker">
                     </div>
 

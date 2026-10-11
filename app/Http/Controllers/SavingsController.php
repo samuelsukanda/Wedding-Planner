@@ -22,7 +22,7 @@ class SavingsController extends Controller
             ->orderBy('target_date')
             ->get();
 
-        // PRD: Grafik perkembangan tabungan â€” saldo kumulatif per tanggal.
+        // PRD: Grafik perkembangan tabungan — saldo kumulatif per tanggal.
         $allTransactions = $wedding->savingsTransactions()
             ->with('goal')
             ->orderBy('transaction_date')
@@ -173,7 +173,7 @@ class SavingsController extends Controller
     /**
      * PRD Fitur: Pengingat setoran (Business Rule 6).
      *
-     * memakai tabel notifications yang sudah ada â€” tidak menambah tabel baru.
+     * memakai tabel notifications yang sudah ada — tidak menambah tabel baru.
      */
     private function scheduleReminder(SavingsGoal $goal): void
     {

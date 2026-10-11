@@ -1,4 +1,4 @@
-﻿import * as Turbo from '@hotwired/turbo';
+import * as Turbo from '@hotwired/turbo';
 
 const LAST_ROUTE_KEY = 'weddingPlanner.lastRoute';
 const RESTORING_ROUTE_KEY = 'weddingPlanner.restoringRoute';
@@ -159,49 +159,124 @@ document.addEventListener('turbo:load', function(event) {
 });
 
 // Input tanggal di dalam modal muncul setelah turbo:load, saat Alpine
-// merender x-show / x-if. Observer MutationNode sempat dicoba tapi
+// merender x-show / x-if. Observer MutationObserver sempat dicoba tapi
 // flatpickr mengganti input asli dengan altInput, jadi observer melihat
-// node baru tanpa _flatpickr lalu menginisialisasi lagi: itu loop dan
-// bikin halaman macet. Dipakai alpine:initialized, yang hanya sekali
-// jalan; guard el._flatpickr membuat panggilan berulang tetap murah.
-function initDatepickers(root = document) {
-    root.querySelectorAll('.datepicker').forEach(function(el) {
-        if (el._flatpickr) return;
-        flatpickr(el, {
-            // Nilai ke server tetap ISO (Y-m-d) supaya validasi Laravel
-            // dan kolom tanggal di database tidak berubah.
-            dateFormat: 'Y-m-d',
-            // Yang dilihat user: DD-MM-YYYY.
-            altInput: true,
-            altFormat: 'd-m-Y',
-            allowInput: true,
-            onChange: function() {
-                el.dispatchEvent(new Event('input', { bubbles: true }));
-            }
-        });
+// node baru lalu menginisialisasi lagi: itu loop dan bikin halaman macet.
+//
+// Catatan penting: kalau altInput aktif, flatpickr menaruh _flatpickr di
+// altInput, bukan di elemen asli. Karena itu instance disimpan sendiri di
+// el.datepicker, dan els._flatpickr tidak boleh dipakai.
+/**
+ * Daftarkan flatpickr pada sebuah elemen tanggal.
+ */
+function attachDatepicker(el) {
+    if (!el) return;
 
-        // altInput membuat input baru; placeholder di sana ikut dipasang
-        // supaya kolom kosong tetap menampilkan format yang diharapkan.
-        if (el._flatpickr.altInput && !el._flatpickr.altInput.placeholder) {
-            el._flatpickr.altInput.placeholder = 'DD-MM-YYYY';
+    // altInput dibuat dengan cloneNode dari elemen asli, jadi mewarisi class
+    // datepicker. Penanda di bawah hanya ada pada elemen yang kita pasang.
+    if (el.dataset.datepickerAttached || el.classList.contains('flatpickr-input')) {
+        return;
+    }
+
+    el.dataset.datepickerAttached = '1';
+
+    const instance = flatpickr(el, {
+        // Nilai ke server tetap ISO (Y-m-d) supaya validasi Laravel dan kolom
+        // tanggal di database tidak berubah.
+        dateFormat: 'Y-m-d',
+        // Yang dilihat user: DD-MM-YYYY.
+        altInput: true,
+        altFormat: 'd-m-Y',
+        allowInput: true,
+        // altInput ikut disembunyikan kalau elemen aslinya sedang tersembunyi
+        // saat dipasang, jadi type dipaksa setelah pemasangan.
+        onReady: function(selectedDates, dateStr, fp) {
+            if (!fp.altInput) return;
+
+            fp.altInput.type = 'text';
+
+            if (!fp.altInput.placeholder) {
+                fp.altInput.placeholder = 'DD-MM-YYYY';
+            }
+
+            // Nilai bisa sudah terisi oleh x-model sebelum flatpickr dipasang.
+            if (!dateStr && el.value) {
+                fp.setDate(el.value, false);
+            }
+        },
+        onChange: function() {
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    });
+
+    el.datepicker = instance;
+}
+
+function initDatepickers(root = document) {
+    root.querySelectorAll('.datepicker').forEach(attachDatepicker);
+}
+
+/**
+ * Segarkan nilai flatpickr yang sudah terpasang.
+ *
+ * Flatpickr dipasang saat modal dibuka, sebelum Alpine mengisi currentItem.
+ * Akibatnya altInput masih kosong walau input aslinya sudah berisi tanggal.
+ *
+ * setDate() menerima string dan memparsenya mengikuti dateFormat di atas, jadi
+ * tidak ada lagi risiko tanggal salah zona waktu maupun Invalid Date. Nilai
+ * terakhir yang disinkronkan dicatat di dataset supaya pemanggilan ulang tidak
+ * memutar onChange.
+ */
+function syncDatepickers(root = document) {
+    root.querySelectorAll('[data-datepicker-attached]').forEach(function(el) {
+        const fp = el.datepicker;
+        if (!fp || !fp.altInput) return;
+
+        // Flatpickr menyalin type dari elemen asli ke altInput. Kalau dipasang
+        // selagi modal masih tersembunyi, altInput ikut hidden dan tanggalnya
+        // tak pernah terlihat.
+        fp.altInput.type = 'text';
+
+        const wanted = el.value;
+
+        if (el.dataset.syncedValue === wanted) return;
+        el.dataset.syncedValue = wanted;
+
+        if (wanted) {
+            fp.setDate(wanted, true);
+        } else {
+            fp.clear();
         }
     });
 }
 
-// Dipakai juga dari view lewat x-effect, karena Alpine merender isi modal
-// setelah turbo:load: saat itu field tanggalnya belum ada di DOM.
-window.initDatepickers = initDatepickers;
-
-// Versi untuk x-effect. Alpine menjalankan x-effect saat nilai masih diroses,
-// sebelum elemen anak selesai dirender, jadi panggilannya harus ditunda satu
-// tick agar querySelectorAll benar-benar menemukan input tanggalnya.
-window.initDatepickersSoon = function (el) {
-    const root = el || document;
+// Dipakai dari watcher currentItem di view: memasang flatpickr saja tidak
+// cukup karena nilainya baru diisi setelah modal terbuka.
+window.syncDatepickersSoon = function () {
     setTimeout(function() {
-        initDatepickers(root);
+        syncDatepickers(document);
     }, 0);
 };
 
-document.addEventListener('alpine:initialized', initDatepickers);
+// Turbo menyimpan snapshot DOM sebelum pindah halaman. Kalau dibiarkan, markup
+// hasil flatpickr ikut ter-cache: input asli sudah jadi type=hidden dan
+// altInput sudah ada, tapi instance JS-nya hilang saat snapshot dipulihkan.
+// Akibatnya field tanggal kosong dan tidak bisa diklik. Bongkar dulu sebelum
+// di-cache supaya snapshot menyimpan input yang bersih.
+document.addEventListener('turbo:before-cache', function () {
+    document.querySelectorAll('[data-datepicker-attached]').forEach(function (el) {
+        if (el.datepicker) {
+            el.datepicker.destroy();
+            el.datepicker = null;
+        }
+
+        delete el.dataset.datepickerAttached;
+    });
+});
+
+document.addEventListener('alpine:initialized', function () {
+    initDatepickers();
+    syncDatepickers();
+});
 
 Turbo.start();

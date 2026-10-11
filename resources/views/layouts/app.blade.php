@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id" class="h-full">
 
 <head>
@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- Halaman dinamis: jangan pernah tampilkan snapshot basi saat kembali/back. --}}
     <meta name="turbo-cache-control" content="no-cache">
-    <title>@yield('title', 'Wedding Planner') â€” {{ $brandName ?? 'Wedding Planner' }}</title>
+    <title>@yield('title', 'Wedding Planner') — {{ $brandName ?? 'Wedding Planner' }}</title>
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
@@ -80,7 +80,7 @@
         }
 
         /* ============================================================
-           PRINT STYLES â€” targets precise IDs, hides UI chrome
+           PRINT STYLES — targets precise IDs, hides UI chrome
         ============================================================ */
         @media print {
 
@@ -303,7 +303,7 @@
 
         // Simpan & restore posisi scroll halaman Master Data (admin panel).
         // Turbo mengganti <body> tiap perpindahan menu, jadi pemeriksaan
-        // pathname harus di dalam event, bukan di awal IIFE â€” kalau placed
+        // pathname harus di dalam event, bukan di awal IIFE — kalau placed
         // di awal, script ini (di <head>) hanya jalan sekali dan listener
         // scroll tidak pernah terdaftar saat masuk lewat klik menu.
         (function() {

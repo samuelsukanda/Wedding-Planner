@@ -24,6 +24,17 @@ window.tableFilter = function (config = {}) {
         rows: config.rows ?? [],
         fields: config.fields ?? [],
 
+        init() {
+            // Halaman menitipkan init() sendiri lewat `extra`. Karena x-data
+            // dipegang tableFilter, hook halaman harus dipanggil dari sini:
+            // kalau hanya dibiarkan sebagai properti, Alpine tidak
+            // memperlakukannya sebagai lifecycle method dan watcher di
+            // dalamnya tidak pernah terdaftar.
+            if (typeof config.extra?.init === 'function') {
+                config.extra.init.call(this);
+            }
+        },
+
         /**
          * Satu baris tampil bila setiap filter yang terisi cocok dengan
          * nilainya. Pencocokan teks longgar: case-insensitive dan mengabaikan

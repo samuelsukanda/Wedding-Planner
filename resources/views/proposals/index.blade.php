@@ -5,13 +5,12 @@
 @section('content')
     <div class="space-y-6" x-data="{
         tab: '{{ request('tab', 'info') }}',
-        modal: null,
+modal: null,
         currentItem: {},
-        // Input tanggal di dalam modal baru ada di DOM setelah modal dibuka,
-        // sementara turbo:load sudah lewat. Watcher memanggil init dari luar
-        // supaya field tanggal ikut dipoles.
         init() {
-            this.$watch('modal', () => window.initDatepickersSoon());
+            // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
+            // jadi tampilan flatpickr disegarkan lagi di sini.
+            this.$watch('currentItem', () => window.syncDatepickersSoon());
         }
     }">
 
@@ -88,8 +87,8 @@
                             </div>
                             <div>
                                 <label class="form-label">Waktu</label>
-                                <input type="time" name="event_time" value="{{ old('event_time', $event->event_time) }}"
-                                    class="form-input datepicker" placeholder="DD-MM-YYYY">
+<input type="time" name="event_time" value="{{ old('event_time', $event->event_time) }}"
+                                    class="form-input">
                             </div>
                             <div>
                                 <label class="form-label">Lokasi</label>

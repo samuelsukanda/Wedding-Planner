@@ -128,10 +128,10 @@
                                         (Hari H)
                                         *
                                     </label>
-                                    <input type="text" name="wedding_date"
+                                    <input type="text" name="wedding_date" placeholder="DD-MM-YYYY"
                                         value="{{ old('wedding_date', $wedding->wedding_date ? $wedding->wedding_date->format('Y-m-d') : '') }}"
                                         required
-                                        class="datepicker w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
+                                        class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all datepicker">
                                 </div>
 
                                 <div>

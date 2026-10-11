@@ -61,7 +61,7 @@
         @apply text-[#C2757F];
     }
 }
-/* Gradient text â€” Deep Sage */
+/* Gradient text — Deep Sage */
 .romantic-gradient-text {
     background: linear-gradient(135deg, #5F6F5B 0%, #A3B7A6 50%, #5F6F5B 100%);
     -webkit-background-clip: text;
@@ -74,7 +74,7 @@
     -webkit-text-fill-color: transparent;
 }
 
-/* Body default â€” Deep Sage text */
+/* Body default — Deep Sage text */
 body {
     color: #5F6F5B;
     background-color: #FAF7F2;

@@ -4,13 +4,12 @@
 
 @section('content')
     <div class="space-y-6" x-data="{
-        modal: null,
+modal: null,
         currentItem: {},
-        // Input tanggal di dalam modal baru ada di DOM setelah modal dibuka,
-        // sementara turbo:load sudah lewat. Watcher memanggil init dari luar
-        // supaya field deadline ikut dipoles.
         init() {
-            this.$watch('modal', () => window.initDatepickersSoon());
+            // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
+            // jadi tampilan flatpickr disegarkan lagi di sini.
+            this.$watch('currentItem', () => window.syncDatepickersSoon());
         }
     }">
 
