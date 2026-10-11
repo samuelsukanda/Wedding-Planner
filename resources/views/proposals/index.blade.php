@@ -105,8 +105,8 @@ modal: null,
                             <div class="md:col-span-2">
                                 <label class="form-label">Catatan Kebutuhan
                                     Acara</label>
-                                <textarea name="notes" rows="4" placeholder="Kebutuhan khusus acara lamaran..."
-                                    class="form-input datepicker" placeholder="DD-MM-YYYY">{{ old('notes', $event->notes) }}</textarea>
+<textarea name="notes" rows="4" placeholder="Kebutuhan khusus acara lamaran..."
+                                    class="form-input">{{ old('notes', $event->notes) }}</textarea>
                             </div>
                         </div>
                         <div class="mt-4 flex justify-end">

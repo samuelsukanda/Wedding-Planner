@@ -188,6 +188,10 @@ function attachDatepicker(el) {
         altInput: true,
         altFormat: 'd-m-Y',
         allowInput: true,
+        // Satu altInput type=text untuk semua perangkat. Tanpa ini flatpickr
+        // di mobile menyisipkan altInput type=date terpisah, jadi modal
+        // menampilkan dua field tanggal berdampingan.
+        disableMobile: true,
         // altInput ikut disembunyikan kalau elemen aslinya sedang tersembunyi
         // saat dipasang, jadi type dipaksa setelah pemasangan.
         onReady: function(selectedDates, dateStr, fp) {
