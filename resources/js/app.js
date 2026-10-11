@@ -203,6 +203,16 @@ function attachDatepicker(el) {
                 fp.altInput.placeholder = 'DD-MM-YYYY';
             }
 
+            // Di HP, altInput yang readonly tidak memunculkan keyboard virtual
+            // saat diklik. allowInput sengaja tetap true supaya desktop masih
+            // bisa mengetik tanggal. any-pointer menangkap perangkat yang
+            // punya layar sentuh walau pointer utamanya coarse belum aktif.
+            if (window.matchMedia('(pointer: coarse)').matches
+                || window.matchMedia('(any-pointer: coarse)').matches
+                || navigator.maxTouchPoints > 0) {
+                fp.altInput.readOnly = true;
+            }
+
             // Nilai bisa sudah terisi oleh x-model sebelum flatpickr dipasang.
             if (!dateStr && el.value) {
                 fp.setDate(el.value, false);
