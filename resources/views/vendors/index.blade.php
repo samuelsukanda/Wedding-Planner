@@ -223,7 +223,7 @@
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Harga Paket (Rp) *</label>
                             <input type="text" name="price" inputmode="numeric" required placeholder="Rp"
                                 :value="wpMoney(currentItem.price)"
-                                @input="currentItem.price = wpDigits($event.target.value)"
+                                @input="currentItem.price = wpDigits($event.target.value); $event.target.value = currentItem.price"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>

@@ -65,7 +65,7 @@ public function store(Request $request)
             // bawah. Kalau dipaksa required, user yang hanya mengisi nama
             // gagal dengan pesan validasi generic.
             'gift_type' => 'nullable|string',
-            'nominal' => 'nullable|numeric|min:0',
+            'nominal' => $this->moneyRule(false),
             'description' => 'nullable|string',
             'is_thank_you_sent' => 'nullable|boolean',
         ]);

@@ -206,8 +206,8 @@ class ProposalController extends Controller
         $validated = $request->validate([
             'category' => 'required|string|max:255',
             'item_name' => 'required|string|max:255',
-            'planned_budget' => 'required|numeric|min:0',
-            'actual_cost' => 'nullable|numeric|min:0',
+            'planned_budget' => $this->moneyRule(),
+            'actual_cost' => $this->moneyRule(false),
             'vendor_id' => 'nullable|exists:vendors,id',
             'notes' => 'nullable|string',
         ]);
@@ -225,8 +225,8 @@ class ProposalController extends Controller
         $validated = $request->validate([
             'category' => 'required|string|max:255',
             'item_name' => 'required|string|max:255',
-            'planned_budget' => 'required|numeric|min:0',
-            'actual_cost' => 'nullable|numeric|min:0',
+            'planned_budget' => $this->moneyRule(),
+            'actual_cost' => $this->moneyRule(false),
             'vendor_id' => 'nullable|exists:vendors,id',
             'notes' => 'nullable|string',
         ]);

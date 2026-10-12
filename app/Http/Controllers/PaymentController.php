@@ -27,7 +27,7 @@ class PaymentController extends Controller
         $this->normalizeDigitInputs($request, ['nominal']);
         $validated = $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
-            'nominal' => 'required|numeric|min:0',
+            'nominal' => $this->moneyRule(),
             'payment_date' => 'nullable|date',
             'payment_method' => 'nullable|string',
             'status' => 'required|string',
@@ -45,7 +45,7 @@ class PaymentController extends Controller
         $this->normalizeDigitInputs($request, ['nominal']);
         $validated = $request->validate([
             'vendor_id' => 'required|exists:vendors,id',
-            'nominal' => 'required|numeric|min:0',
+            'nominal' => $this->moneyRule(),
             'payment_date' => 'nullable|date',
             'payment_method' => 'nullable|string',
             'status' => 'required|string',

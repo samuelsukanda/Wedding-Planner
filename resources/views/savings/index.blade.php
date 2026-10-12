@@ -288,14 +288,14 @@ txOpen: false,
                             <label class="form-label">Target Nominal (Rp) *</label>
                             <input type="text" name="target_amount" inputmode="numeric" required
                                 :value="wpMoney(currentItem.target_amount)"
-                                @input="currentItem.target_amount = wpDigits($event.target.value)"
+                                @input="currentItem.target_amount = wpDigits($event.target.value); $event.target.value = currentItem.target_amount"
                                 class="form-input form-input-number">
                         </div>
                         <div>
                             <label class="form-label">Saldo Awal (Rp)</label>
                             <input type="text" name="initial_balance" inputmode="numeric"
                                 :value="wpMoney(currentItem.initial_balance)"
-                                @input="currentItem.initial_balance = wpDigits($event.target.value)"
+                                @input="currentItem.initial_balance = wpDigits($event.target.value); $event.target.value = currentItem.initial_balance"
                                 :disabled="editMode && currentItem.transactions_count > 0"
                                 :title="editMode && currentItem.transactions_count > 0 ? 'Terkunci karena sudah ada transaksi' :
                                     ''"
@@ -313,7 +313,7 @@ txOpen: false,
                                 (Rp)</label>
                             <input type="text" name="periodic_amount" inputmode="numeric"
                                 :value="wpMoney(currentItem.periodic_amount)"
-                                @input="currentItem.periodic_amount = wpDigits($event.target.value)"
+                                @input="currentItem.periodic_amount = wpDigits($event.target.value); $event.target.value = currentItem.periodic_amount"
                                 class="form-input">
                         </div>
                         <div>

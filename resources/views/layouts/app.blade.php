@@ -271,8 +271,21 @@
         // Helper format input uang & telepon untuk form modal semua modul.
         // Model Alpine menyimpan angka polos; tampilan input diformat ulang
         // lewat binding :value sehingga kursor tidak lompat saat mengetik.
-        window.wpDigits = function(value) {
-            return String(value ?? '').replace(/\D/g, '');
+        //
+        // Batas digit dipotong di sini, satu-satunya tempat yang dipakai semua
+        // input uang dan telepon di seluruh aplikasi:
+        //   - uang    : kolom decimal(15,2) hanya muat 13 digit bulat, sisa 2
+        //                digit dipakai untuk pecahan. Digit lebih dari itu akan
+        //                ditolak database (SQLSTATE 22003).
+        //   - telepon : 13 digit sudah lebih dari cukup untuk nomor Indonesia
+        //                (kode negara + nomor).
+        window.wpDigitLimit = 13;
+
+        window.wpDigits = function(value, max) {
+            const digits = String(value ?? '').replace(/\D/g, '');
+            const limit = max ?? window.wpDigitLimit;
+
+            return limit ? digits.slice(0, limit) : digits;
         };
 
         window.wpMoney = function(value) {

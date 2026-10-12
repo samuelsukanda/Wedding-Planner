@@ -78,7 +78,7 @@ class SouvenirController extends Controller
             'link' => 'nullable|string|max:255',
             'photo' => 'nullable|string|max:255',
             'planned_price' => ($partial ? 'sometimes' : 'required') . '|numeric|min:0',
-            'actual_cost' => 'nullable|numeric|min:0',
+            'actual_cost' => $this->moneyRule(false),
             'status' => 'nullable|string|max:50',
             'received_date' => 'nullable|date',
             'notes' => 'nullable|string',

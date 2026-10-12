@@ -152,21 +152,21 @@
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal Total *</label>
                             <input type="text" name="nominal" inputmode="numeric" required
                                 :value="wpMoney(currentItem.nominal)"
-                                @input="currentItem.nominal = wpDigits($event.target.value)"
+                                @input="currentItem.nominal = wpDigits($event.target.value); $event.target.value = currentItem.nominal"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">DP *</label>
                             <input type="text" name="dp_amount" inputmode="numeric" required
                                 :value="wpMoney(currentItem.dp_amount)"
-                                @input="currentItem.dp_amount = wpDigits($event.target.value)"
+                                @input="currentItem.dp_amount = wpDigits($event.target.value); $event.target.value = currentItem.dp_amount"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Pelunasan *</label>
                             <input type="text" name="final_amount" inputmode="numeric" required
                                 :value="wpMoney(currentItem.final_amount)"
-                                @input="currentItem.final_amount = wpDigits($event.target.value)"
+                                @input="currentItem.final_amount = wpDigits($event.target.value); $event.target.value = currentItem.final_amount"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>

@@ -65,7 +65,7 @@ class AdminPanelController extends Controller
             'groom_name' => 'required|string|max:255',
             'wedding_date' => 'required|date',
             'location' => 'nullable|string|max:255',
-            'total_budget' => 'required|numeric|min:0',
+            'total_budget' => $this->moneyRule(),
             'notes' => 'nullable|string',
         ]);
 

@@ -59,8 +59,8 @@ class BudgetController extends Controller
         $validated = $request->validate([
             'category' => 'required|string',
             'item_name' => 'required|string|max:255',
-            'planned_budget' => 'required|numeric|min:0',
-            'actual_cost' => 'required|numeric|min:0',
+            'planned_budget' => $this->moneyRule(),
+            'actual_cost' => $this->moneyRule(),
             'vendor_id' => 'nullable|exists:vendors,id',
             'notes' => 'nullable|string',
         ]);
@@ -76,8 +76,8 @@ class BudgetController extends Controller
         $validated = $request->validate([
             'category' => 'required|string',
             'item_name' => 'required|string|max:255',
-            'planned_budget' => 'required|numeric|min:0',
-            'actual_cost' => 'required|numeric|min:0',
+            'planned_budget' => $this->moneyRule(),
+            'actual_cost' => $this->moneyRule(),
             'vendor_id' => 'nullable|exists:vendors,id',
             'notes' => 'nullable|string',
         ]);

@@ -58,9 +58,9 @@ class SavingsController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'target_amount' => 'required|numeric|min:1',
-            'initial_balance' => 'nullable|numeric|min:0',
-            'periodic_amount' => 'nullable|numeric|min:0',
+            'target_amount' => 'required|numeric|min:1|max:' . static::MONEY_MAX,
+            'initial_balance' => $this->moneyRule(false),
+            'periodic_amount' => $this->moneyRule(false),
             'frequency' => 'nullable|string',
             'target_date' => 'nullable|date',
             'status' => 'nullable|string',
@@ -85,9 +85,9 @@ class SavingsController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'target_amount' => 'required|numeric|min:1',
-            'initial_balance' => 'nullable|numeric|min:0',
-            'periodic_amount' => 'nullable|numeric|min:0',
+            'target_amount' => 'required|numeric|min:1|max:' . static::MONEY_MAX,
+            'initial_balance' => $this->moneyRule(false),
+            'periodic_amount' => $this->moneyRule(false),
             'frequency' => 'nullable|string',
             'target_date' => 'nullable|date',
             'status' => 'nullable|string',
@@ -126,7 +126,7 @@ class SavingsController extends Controller
     {
         $validated = $request->validate([
             'type' => 'required|in:' . SavingsGoal::TYPE_SETORAN . ',' . SavingsGoal::TYPE_PENARIKAN,
-            'amount' => 'required|numeric|min:1',
+            'amount' => $this->moneyRule(),
             'transaction_date' => 'required|date',
             'notes' => 'nullable|string',
         ]);

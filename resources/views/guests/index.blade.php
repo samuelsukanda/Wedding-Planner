@@ -263,7 +263,7 @@
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Telepon / WA</label>
                             <input type="text" name="phone" inputmode="numeric" :value="wpPhone(currentItem.phone)"
-                                @input="currentItem.phone = wpDigits($event.target.value); $event.target.value = wpPhone(currentItem.contact)"
+                                @input="currentItem.phone = wpDigits($event.target.value); $event.target.value = wpPhone(currentItem.phone)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
