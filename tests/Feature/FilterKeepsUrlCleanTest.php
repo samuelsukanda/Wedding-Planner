@@ -84,6 +84,52 @@ class FilterKeepsUrlCleanTest extends TestCase
             ->assertSee('Dekorasi Jaya');
     }
 
+    public function test_contract_ignores_query_string_filters(): void
+    {
+        $user = $this->makeUser();
+
+        $vendor = $user->wedding->vendors()->create([
+            'name' => 'Dekorasi Jaya',
+            'category' => 'Dekorasi',
+        ]);
+
+        $user->wedding->vendorContracts()->create([
+            'vendor_id' => $vendor->id,
+            'contract_number' => 'KTR-001',
+            'nominal' => 1000000,
+            'dp_amount' => 300000,
+            'final_amount' => 700000,
+            'status' => 'Signed',
+        ]);
+
+        $this->actingAs($user)
+            ->get('/contracts?search=tidakada&status=Draft')
+            ->assertOk()
+            ->assertSee('KTR-001');
+    }
+
+    public function test_payment_ignores_query_string_filters(): void
+    {
+        $user = $this->makeUser();
+
+        $vendor = $user->wedding->vendors()->create([
+            'name' => 'Dekorasi Jaya',
+            'category' => 'Dekorasi',
+        ]);
+
+        $user->wedding->vendorPayments()->create([
+            'vendor_id' => $vendor->id,
+            'nominal' => 500000,
+            'status' => 'Lunas',
+            'notes' => 'DP professional',
+        ]);
+
+        $this->actingAs($user)
+            ->get('/payments?search=tidakada&status=DP')
+            ->assertOk()
+            ->assertSee('DP professional');
+    }
+
     /**
      * Halaman daftar harus bisa dibuka dengan query string apa pun tanpa
      * error. Ini menangkap kalau ada view yang masih membaca request() untuk
@@ -93,7 +139,7 @@ class FilterKeepsUrlCleanTest extends TestCase
     {
         $user = $this->makeUser();
 
-        foreach (['/guests', '/checklists', '/vendors'] as $path) {
+        foreach (['/guests', '/checklists', '/vendors', '/contracts', '/payments'] as $path) {
             $this->actingAs($user)
                 ->get($path . '?status=Todo&priority=Low&search=' . urlencode('a b'))
                 ->assertOk("Halaman {$path} harus tetap jalan dengan query string.");

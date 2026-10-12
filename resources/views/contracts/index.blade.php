@@ -3,17 +3,25 @@
 @section('title', 'Keuangan & Dokumen - Vendor Contracts')
 
 @section('content')
-    <div class="space-y-6"
-        x-data="{
-            modalOpen: false,
-            editMode: false,
-            currentItem: {},
-            init() {
-                // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
-                // jadi tampilan flatpickr disegarkan lagi di sini.
-                this.$watch('currentItem', () => window.syncDatepickersSoon());
+    <div class="space-y-6" x-data="tableFilter({
+            fields: ['search', 'status'],
+            // Filter tidak disimpan di query string supaya URL tetap bersih.
+            initial: { search: '', status: '' },
+            rows: {{ Js::from($contracts->map(fn ($c) => [
+                'search' => trim($c->contract_number . ' ' . ($c->vendor?->name ?? '')),
+                'status' => $c->status,
+            ])) }},
+            extra: {
+                modalOpen: false,
+                editMode: false,
+                currentItem: {},
+                init() {
+                    // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
+                    // jadi tampilan flatpickr disegarkan lagi di sini.
+                    this.$watch('currentItem', () => window.syncDatepickersSoon());
+                }
             }
-        }">
+        })">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold font-serif-title">Vendor Contract Management</h1>
@@ -22,6 +30,29 @@
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
                 <i class="fa-solid fa-plus"></i> Tambah Kontrak Baru
             </button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div
+            class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
+            <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
+                <input type="text" x-model="filters.search" placeholder="Cari nomor kontrak atau vendor..."
+                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
+                <select x-model="filters.status"
+                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
+                    <option value="">Semua Status Kontrak</option>
+                    @foreach ($statuses as $st)
+                        <option value="{{ $st }}">{{ $st }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#B6ADA3] whitespace-nowrap">
+                    <span x-text="visibleCount()"></span>/<span x-text="rows.length"></span> kontrak
+                </span>
+                <button x-show="hasActiveFilter()" x-cloak @click="reset()" type="button"
+                    class="text-xs text-[#5F6F5B] font-semibold hover:underline cursor-pointer whitespace-nowrap">Reset</button>
+            </div>
         </div>
 
         <!-- Contracts Table -->
@@ -42,8 +73,9 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
-                        @forelse($contracts as $c)
-                            <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                        @forelse($contracts as $i => $c)
+                            <tr x-show="visible(rows[{{ $i }}])" x-cloak
+                                class="hover:bg-[#FAF7F2]/60 transition-colors">
                                 <td class="p-4 font-mono text-xs font-bold text-[#5F6F5B]">{{ $c->contract_number }}</td>
                                 <td class="p-4 font-semibold text-[#5F6F5B]">
                                     {{ $c->vendor->name ?? 'Vendor #' . $c->vendor_id }}</td>
@@ -80,7 +112,7 @@
                             'status' => $c->status,
                             'notes' => $c->notes,
                         ]) }}"
-                                            title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                            title="Edit" class="btn-icon"><i
                                                 class="fa-solid fa-pen-to-square"></i></button>
                                         <form id="del-contract-{{ $c->id }}"
                                             action="{{ route('contracts.destroy', $c->id) }}" method="POST">
@@ -88,7 +120,7 @@
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-contract-{{ $c->id }}', '{{ addslashes($c->contract_name ?? $c->vendor_name) }}')"
-                                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                                class="btn-icon"><i
                                                     class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </div>
@@ -100,6 +132,11 @@
                                     tersimpan.</td>
                             </tr>
                         @endforelse
+                        <tr x-show="hasActiveFilter() && visibleCount() === 0" x-cloak>
+                            <td colspan="8" class="text-center py-10 text-[#B6ADA3] text-sm">
+                                Tidak ada kontrak yang cocok dengan filter.
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

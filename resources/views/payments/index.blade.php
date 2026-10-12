@@ -3,17 +3,25 @@
 @section('title', 'Keuangan & Dokumen - Payment Tracker')
 
 @section('content')
-    <div class="space-y-6"
-        x-data="{
-            modalOpen: false,
-            editMode: false,
-            currentItem: {},
-            init() {
-                // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
-                // jadi tampilan flatpickr disegarkan lagi di sini.
-                this.$watch('currentItem', () => window.syncDatepickersSoon());
+    <div class="space-y-6" x-data="tableFilter({
+            fields: ['search', 'status'],
+            // Filter tidak disimpan di query string supaya URL tetap bersih.
+            initial: { search: '', status: '' },
+            rows: {{ Js::from($payments->map(fn ($p) => [
+                'search' => trim(($p->vendor?->name ?? '') . ' ' . ($p->notes ?? '')),
+                'status' => $p->status,
+            ])) }},
+            extra: {
+                modalOpen: false,
+                editMode: false,
+                currentItem: {},
+                init() {
+                    // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
+                    // jadi tampilan flatpickr disegarkan lagi di sini.
+                    this.$watch('currentItem', () => window.syncDatepickersSoon());
+                }
             }
-        }">
+        })">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold font-serif-title">Payment Tracker</h1>
@@ -38,6 +46,29 @@
             </div>
         </div>
 
+        <!-- Filter Bar -->
+        <div
+            class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
+            <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
+                <input type="text" x-model="filters.search" placeholder="Cari vendor atau catatan..."
+                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
+                <select x-model="filters.status"
+                    class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
+                    <option value="">Semua Status Pembayaran</option>
+                    @foreach ($statuses as $st)
+                        <option value="{{ $st }}">{{ $st }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#B6ADA3] whitespace-nowrap">
+                    <span x-text="visibleCount()"></span>/<span x-text="rows.length"></span> pembayaran
+                </span>
+                <button x-show="hasActiveFilter()" x-cloak @click="reset()" type="button"
+                    class="text-xs text-[#5F6F5B] font-semibold hover:underline cursor-pointer whitespace-nowrap">Reset</button>
+            </div>
+        </div>
+
         <!-- Payments Table -->
         <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden">
             <div class="overflow-x-auto">
@@ -55,8 +86,9 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
-                        @forelse($payments as $p)
-                            <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                        @forelse($payments as $i => $p)
+                            <tr x-show="visible(rows[{{ $i }}])" x-cloak
+                                class="hover:bg-[#FAF7F2]/60 transition-colors">
                                 <td class="p-4 font-semibold text-[#5F6F5B]">
                                     {{ $p->vendor->name ?? 'Vendor #' . $p->vendor_id }}</td>
                                 <td class="p-4 font-bold text-[#5F6F5B]">Rp {{ number_format($p->nominal, 0, ',', '.') }}
@@ -99,7 +131,7 @@
                             'reminder_date' => $p->reminder_date?->format('Y-m-d'),
                             'notes' => $p->notes,
                         ]) }}"
-                                            title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                            title="Edit" class="btn-icon"><i
                                                 class="fa-solid fa-pen-to-square"></i></button>
                                         <form id="del-payment-{{ $p->id }}"
                                             action="{{ route('payments.destroy', $p->id) }}" method="POST">
@@ -107,7 +139,7 @@
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-payment-{{ $p->id }}', '{{ addslashes($p->vendor_name) }}')"
-                                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                                class="btn-icon"><i
                                                     class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </div>
@@ -119,6 +151,11 @@
                                     pembayaran vendor.</td>
                             </tr>
                         @endforelse
+                        <tr x-show="hasActiveFilter() && visibleCount() === 0" x-cloak>
+                            <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">
+                                Tidak ada pembayaran yang cocok dengan filter.
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

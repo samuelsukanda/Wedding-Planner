@@ -84,7 +84,7 @@
 
                         <div class="no-print flex items-center gap-2 self-end md:self-center">
                             <button @click="openEdit(JSON.parse($el.dataset.rundown))" data-rundown="{{ json_encode($rd) }}"
-                                title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                title="Edit" class="btn-icon"><i
                                     class="fa-solid fa-pen-to-square"></i></button>
                             <form id="del-rundown-{{ $rd->id }}" action="{{ route('rundowns.destroy', $rd->id) }}"
                                 method="POST">
@@ -92,7 +92,7 @@
                                 @method('DELETE')
                                 <button type="button" title="Hapus"
                                     onclick="confirmDelete('del-rundown-{{ $rd->id }}', '{{ addslashes($rd->activity) }}')"
-                                    class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                    class="btn-icon"><i
                                         class="fa-solid fa-trash"></i></button>
                             </form>
                         </div>

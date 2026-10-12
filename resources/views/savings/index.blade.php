@@ -146,7 +146,7 @@
                                         <span class="text-[#B6ADA3]">Belum diatur</span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="p-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="txOpen = true; selectedGoalId = {{ $goal->id }}; selectedGoal = @js($goal->only(['id', 'name', 'current_balance', 'target_amount']))"
@@ -167,7 +167,7 @@
                                                 'status' => $goal->status,
                                                 'notes' => $goal->notes,
                                             ]) }}"
-                                            class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                            class="btn-icon">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                         <form id="del-savings-{{ $goal->id }}"
@@ -176,7 +176,7 @@
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-savings-{{ $goal->id }}', '{{ addslashes($goal->name) }}')"
-                                                class="p-2 text-[#B6ADA3] hover:text-[#D8A7B1] cursor-pointer">
+                                                class="btn-icon">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </form>
@@ -240,7 +240,7 @@
                                         @method('DELETE')
                                         <button type="button" title="Hapus"
                                             onclick="confirmDelete('del-txn-{{ $tx->id }}', 'transaksi {{ $tx->isPenarikan() ? 'penarikan' : 'setoran' }} Rp {{ number_format((float) $tx->amount, 0, ',', '.') }}')"
-                                            class="p-2 text-[#B6ADA3] hover:text-[#D8A7B1] cursor-pointer">
+                                            class="btn-icon">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>

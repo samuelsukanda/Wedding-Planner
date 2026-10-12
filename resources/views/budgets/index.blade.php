@@ -152,7 +152,7 @@
                                     <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($b) }}"
-                                            title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                            title="Edit" class="btn-icon">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                         <form id="del-budget-{{ $b->id }}"
@@ -161,7 +161,7 @@
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-budget-{{ $b->id }}', '{{ addslashes($b->item_name) }}')"
-                                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                                class="btn-icon">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </form>

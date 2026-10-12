@@ -73,7 +73,7 @@
                             <span>{{ $mb->created_at->format('d M Y') }}</span>
                             <div class="flex items-center gap-2">
                                 <button @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($mb) }}"
-                                    title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                    title="Edit" class="btn-icon">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                                 <form id="del-mb-{{ $mb->id }}" action="{{ route('moodboards.destroy', $mb->id) }}"
@@ -82,7 +82,7 @@
                                     @method('DELETE')
                                     <button type="button" title="Hapus"
                                         onclick="confirmDelete('del-mb-{{ $mb->id }}', '{{ addslashes($mb->title) }}')"
-                                        class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                        class="btn-icon">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>

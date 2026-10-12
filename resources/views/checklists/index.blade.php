@@ -171,13 +171,13 @@ editMode: false,
                         'status' => $chk->status,
                         'description' => $chk->description,
                     ]) }}"
-                                            title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                            title="Edit" class="btn-icon">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                         <form action="{{ route('checklists.duplicate', $chk->id) }}" method="POST">
                                             @csrf
                                             <button type="submit"
-                                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"
+                                                class="btn-icon"
                                                 title="Duplikasi">
                                                 <i class="fa-solid fa-copy"></i>
                                             </button>
@@ -188,7 +188,7 @@ editMode: false,
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-chk-{{ $chk->id }}', '{{ addslashes($chk->title) }}')"
-                                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                                class="btn-icon">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </form>

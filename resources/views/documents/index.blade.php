@@ -59,22 +59,23 @@ modal: null,
         {{-- Tabel dokumen --}}
         <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="text-left text-[10px] uppercase tracking-wider text-[#B6ADA3] border-b border-[#B6ADA3]/25 bg-[#FAF7F2]">
-                            <th class="py-3 px-4 font-semibold">Dokumen</th>
-                            <th class="py-3 px-4 font-semibold">PIC</th>
-                            <th class="py-3 px-4 font-semibold">Kontak</th>
-                            <th class="py-3 px-4 font-semibold">Deadline</th>
-                            <th class="py-3 px-4 font-semibold">Status</th>
-                            <th class="py-3 px-4 font-semibold text-right">Aksi</th>
+                        <tr
+                            class="bg-[#FAF7F2] text-xs text-[#5F6F5B] uppercase tracking-wider border-b border-[#B6ADA3]/30">
+                            <th class="p-4">Dokumen</th>
+                            <th class="p-4">PIC</th>
+                            <th class="p-4">Kontak</th>
+                            <th class="p-4">Deadline</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
                         @forelse ($requirements as $item)
                             @php $label = $item->statusLabel(); @endphp
-                            <tr class="border-b border-[#B6ADA3]/15 last:border-0 hover:bg-[#FAF7F2]/60">
-                                <td class="py-3 px-4 font-medium text-[#5F6F5B]">
+                            <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                                <td class="p-4 font-medium text-[#5F6F5B]">
                                     {{ $item->name }}
                                     @if ($item->document_file)
                                         <a href="{{ $item->document_file }}" target="_blank" rel="noopener noreferrer"
@@ -83,35 +84,37 @@ modal: null,
                                         </a>
                                     @endif
                                 </td>
-                                <td class="py-3 px-4 text-xs text-[#B6ADA3]">{{ $item->pic_name ?: '-' }}</td>
-                                <td class="py-3 px-4 text-xs text-[#B6ADA3]">{{ $item->phone ?: '-' }}</td>
-                                <td @class(['py-3 px-4 text-xs', 'text-[#C2757F] font-semibold' => $item->isOverdue(), 'text-[#B6ADA3]' => ! $item->isOverdue()])>
+                                <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->pic_name ?: '-' }}</td>
+                                <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->phone ?: '-' }}</td>
+                                <td @class(['p-4 text-xs', 'text-[#C2757F] font-semibold' => $item->isOverdue(), 'text-[#B6ADA3]' => ! $item->isOverdue()])>
                                     {{ $item->deadline?->format('d M Y') ?: '-' }}
                                 </td>
-                                <td class="py-3 px-4">
+                                <td class="p-4">
                                     <span @class([
-                                        'px-2 py-0.5 rounded-full text-[10px] font-semibold',
+                                        'px-2.5 py-1 rounded-full text-xs font-semibold',
                                         'bg-[#5F6F5B]/12 text-[#5F6F5B]' => $label === 'Lengkap',
                                         'bg-[#C2757F]/15 text-[#C2757F]' => $label === 'Terlambat',
                                         'bg-[#B6ADA3]/20 text-[#5F6F5B]' => ! in_array($label, ['Lengkap', 'Terlambat']),
                                     ])>{{ $label }}</span>
                                 </td>
-                                <td class="py-3 px-4 text-right space-x-2 whitespace-nowrap">
-                                    <a href="{{ route('documents.history', $item) }}"
-                                        class="text-[#5F6F5B] hover:text-[#C2757F] text-xs" title="Riwayat">
-                                        <i class="fa-solid fa-clock-rotate-left"></i>
-                                    </a>
-                                    <button @click="modal = 'doc'; currentItem = {{ Js::from($item) }}"
-                                        class="text-[#5F6F5B] hover:text-[#C2757F] text-xs cursor-pointer">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </button>
-                                    <form method="POST" action="{{ route('documents.destroy', $item) }}" class="inline"
-                                        onsubmit="return confirm('Hapus dokumen ini beserta riwayatnya?')">
-                                        @csrf @method('DELETE')
-                                        <button class="text-[#C2757F] hover:text-red-700 text-xs cursor-pointer">
-                                            <i class="fa-solid fa-trash"></i>
+                                <td class="p-4 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="{{ route('documents.history', $item) }}" class="btn-icon" title="Riwayat">
+                                            <i class="fa-solid fa-clock-rotate-left"></i>
+                                        </a>
+                                        <button @click="modal = 'doc'; currentItem = {{ Js::from($item) }}" title="Edit"
+                                            class="btn-icon">
+                                            <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
-                                    </form>
+                                        <form id="del-doc-{{ $item->id }}" method="POST"
+                                            action="{{ route('documents.destroy', $item) }}">
+                                            @csrf @method('DELETE')
+                                            <button type="button" title="Hapus" class="btn-icon"
+                                                onclick="confirmDelete('del-doc-{{ $item->id }}', '{{ addslashes($item->name) }}')">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

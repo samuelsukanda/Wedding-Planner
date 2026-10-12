@@ -141,7 +141,7 @@
                         </div>
                         <div class="flex items-center gap-2" @click.stop>
                             <button @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($v) }}"
-                                title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                title="Edit" class="btn-icon">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                             <form id="del-vendor-{{ $v->id }}" action="{{ route('vendors.destroy', $v->id) }}"
@@ -150,7 +150,7 @@
                                 @method('DELETE')
                                 <button type="button" title="Hapus"
                                     onclick="confirmDelete('del-vendor-{{ $v->id }}', '{{ addslashes($v->name) }}')"
-                                    class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                    class="btn-icon">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </form>

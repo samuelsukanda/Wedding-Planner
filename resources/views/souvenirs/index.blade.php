@@ -50,22 +50,23 @@
         {{-- Tabel --}}
         <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="text-left text-[10px] uppercase tracking-wider text-[#B6ADA3] border-b border-[#B6ADA3]/25 bg-[#FAF7F2]">
-                            <th class="py-3 px-4 font-semibold">Item</th>
-                            <th class="py-3 px-4 font-semibold">Vendor</th>
-                            <th class="py-3 px-4 font-semibold text-right">Rencana</th>
-                            <th class="py-3 px-4 font-semibold text-right">Aktual</th>
-                            <th class="py-3 px-4 font-semibold text-right">Selisih</th>
-                            <th class="py-3 px-4 font-semibold">Status</th>
-                            <th class="py-3 px-4 font-semibold text-right">Aksi</th>
+                        <tr
+                            class="bg-[#FAF7F2] text-xs text-[#5F6F5B] uppercase tracking-wider border-b border-[#B6ADA3]/30">
+                            <th class="p-4">Item</th>
+                            <th class="p-4">Vendor</th>
+                            <th class="p-4 text-right">Rencana</th>
+                            <th class="p-4 text-right">Aktual</th>
+                            <th class="p-4 text-right">Selisih</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
                         @forelse ($souvenirs as $item)
-                            <tr class="border-b border-[#B6ADA3]/15 last:border-0 hover:bg-[#FAF7F2]/60">
-                                <td class="py-3 px-4">
+                            <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                                <td class="p-4">
                                     <div class="flex items-center gap-3">
                                         @if ($item->photo)
                                             <img src="{{ $item->photo }}" alt="{{ $item->name }}"
@@ -86,42 +87,45 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-3 px-4 text-xs text-[#B6ADA3]">{{ $item->vendor?->name ?: '-' }}</td>
-                                <td class="py-3 px-4 text-xs text-right">Rp {{ number_format($item->planned_price, 0, ',', '.') }}</td>
-                                <td class="py-3 px-4 text-xs text-right">Rp {{ number_format($item->actual_cost, 0, ',', '.') }}</td>
+                                <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->vendor?->name ?: '-' }}</td>
+                                <td class="p-4 text-xs text-right">Rp {{ number_format($item->planned_price, 0, ',', '.') }}</td>
+                                <td class="p-4 text-xs text-right">Rp {{ number_format($item->actual_cost, 0, ',', '.') }}</td>
                                 <td @class([
-                                    'py-3 px-4 text-xs text-right font-semibold',
+                                    'p-4 text-xs text-right font-semibold',
                                     'text-[#C2757F]' => $item->variance() < 0,
                                     'text-[#5F6F5B]' => $item->variance() >= 0,
                                 ])>
                                     {{ $item->variance() >= 0 ? '+' : '-' }} Rp {{ number_format(abs($item->variance()), 0, ',', '.') }}
                                 </td>
-                                <td class="py-3 px-4">
+                                <td class="p-4">
                                     @if ($item->isReceived())
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#5F6F5B]/12 text-[#5F6F5B]">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#5F6F5B]/12 text-[#5F6F5B]">
                                             Diterima
                                         </span>
                                         @if ($item->received_date)
                                             <div class="text-[10px] text-[#B6ADA3] mt-0.5">{{ $item->received_date->format('d M Y') }}</div>
                                         @endif
                                     @else
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#B6ADA3]/20 text-[#5F6F5B]">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#B6ADA3]/20 text-[#5F6F5B]">
                                             {{ $item->status }}
                                         </span>
                                     @endif
                                 </td>
-                                <td class="py-3 px-4 text-right space-x-2 whitespace-nowrap">
-                                    <button @click="modalOpen = true; editMode = true; currentItem = {{ Js::from($item) }}"
-                                        class="text-[#5F6F5B] hover:text-[#C2757F] text-xs cursor-pointer">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </button>
-                                    <form method="POST" action="{{ route('souvenirs.destroy', $item) }}" class="inline"
-                                        onsubmit="return confirm('Hapus item seserahan ini beserta pengeluarannya?')">
-                                        @csrf @method('DELETE')
-                                        <button class="text-[#C2757F] hover:text-red-700 text-xs cursor-pointer">
-                                            <i class="fa-solid fa-trash"></i>
+                                <td class="p-4 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button @click="modalOpen = true; editMode = true; currentItem = {{ Js::from($item) }}"
+                                            title="Edit" class="btn-icon">
+                                            <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
-                                    </form>
+                                        <form id="del-souvenir-{{ $item->id }}" method="POST"
+                                            action="{{ route('souvenirs.destroy', $item) }}">
+                                            @csrf @method('DELETE')
+                                            <button type="button" title="Hapus" class="btn-icon"
+                                                onclick="confirmDelete('del-souvenir-{{ $item->id }}', '{{ addslashes($item->name) }}')">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

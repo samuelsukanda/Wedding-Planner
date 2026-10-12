@@ -97,7 +97,7 @@
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($u) }}"
                                             title="Edit"
-                                            class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                            class="btn-icon">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                         <form id="del-user-{{ $u->id }}" action="{{ route('admin.users.destroy', $u->id) }}"
@@ -106,7 +106,7 @@
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-user-{{ $u->id }}', '{{ addslashes($u->name) }}')"
-                                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                                class="btn-icon">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </form>

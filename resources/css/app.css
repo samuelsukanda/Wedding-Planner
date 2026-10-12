@@ -60,6 +60,13 @@
     .form-label-required {
         @apply text-[#C2757F];
     }
+
+    /* Tombol ikon di kolom Aksi. Semua modul memakai kelas yang sama supaya
+       aksi edit/hapus/duplikasi/detail terlihat seragam. Warna abu tua itu
+       keadaan diam, warna tua itu hover. */
+    .btn-icon {
+        @apply p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer;
+    }
 }
 /* Gradient text — Deep Sage */
 .romantic-gradient-text {

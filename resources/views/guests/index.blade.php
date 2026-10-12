@@ -169,10 +169,10 @@
                                 </td>
                                 <td class="p-4 text-xs text-[#5F6F5B]/80 max-w-xs truncate">{{ $g->address ?? '—' }}</td>
                                 <td class="p-4 text-right">
-                                    <div class="flex items-center justify-end gap-1">
+                                    <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($g) }}"
-                                            title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                            title="Edit" class="btn-icon"><i
                                                 class="fa-solid fa-pen-to-square"></i></button>
                                         <form id="del-guest-{{ $g->id }}"
                                             action="{{ route('guests.destroy', $g->id) }}" method="POST">
@@ -180,7 +180,7 @@
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-guest-{{ $g->id }}', '{{ addslashes($g->name) }}')"
-                                                class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                                                class="btn-icon"><i
                                                     class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </div>

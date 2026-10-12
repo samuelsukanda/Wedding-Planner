@@ -128,7 +128,7 @@
                                                 <div class="flex items-center justify-end gap-2">
                                                     <button
                                                         @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($opt) }}"
-                                                        class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"
+                                                        class="btn-icon"
                                                         title="Edit">
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                     </button>
@@ -139,7 +139,7 @@
                                                         @method('DELETE')
                                                         <button type="button" title="Hapus"
                                                             onclick="confirmDelete('del-dropdown-{{ $opt->id }}', '{{ addslashes($opt->option_value) }}')"
-                                                            class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                                            class="btn-icon">
                                                             <i class="fa-solid fa-trash"></i>
                                                         </button>
                                                     </form>

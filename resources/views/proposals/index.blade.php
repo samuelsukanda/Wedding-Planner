@@ -134,34 +134,34 @@ modal: null,
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
+                        <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr
                                     class="text-left text-[10px] uppercase tracking-wider text-[#B6ADA3] border-b border-[#B6ADA3]/25">
-                                    <th class="py-2 font-semibold">Item</th>
-                                    <th class="py-2 font-semibold">Kategori</th>
-                                    <th class="py-2 font-semibold">Deadline</th>
-                                    <th class="py-2 font-semibold">Prioritas</th>
-                                    <th class="py-2 font-semibold">Status</th>
-                                    <th class="py-2 font-semibold text-right">Aksi</th>
+                                    <th class="p-4">Item</th>
+                                    <th class="p-4">Kategori</th>
+                                    <th class="p-4">Deadline</th>
+                                    <th class="p-4">Prioritas</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
                                 @forelse ($checklists as $item)
-                                    <tr class="border-b border-[#B6ADA3]/15 last:border-0">
-                                        <td class="py-2.5 font-medium text-[#5F6F5B]">{{ $item->title }}</td>
-                                        <td class="py-2.5 text-xs text-[#B6ADA3]">{{ $item->category ?: '-' }}</td>
-                                        <td class="py-2.5 text-xs">
+                                    <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                                        <td class="p-4 font-medium text-[#5F6F5B]">{{ $item->title }}</td>
+                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->category ?: '-' }}</td>
+                                        <td class="p-4 text-xs">
                                             <span
                                                 class="{{ $item->isOverdue() ? 'text-[#C2757F] font-semibold' : 'text-[#B6ADA3]' }}">
                                                 {{ $item->deadline?->format('d M Y') ?: '-' }}
                                             </span>
                                         </td>
-                                        <td class="py-2.5 text-xs text-[#B6ADA3]">{{ $item->priority ?: '-' }}</td>
-                                        <td class="py-2.5">
+                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->priority ?: '-' }}</td>
+                                        <td class="p-4">
                                             @php $label = $item->statusLabel(); @endphp
                                             <span @class([
-                                                'px-2 py-0.5 rounded-full text-[10px] font-semibold',
+                                                'px-2.5 py-1 rounded-full text-xs font-semibold',
                                                 'bg-[#5F6F5B]/12 text-[#5F6F5B]' => $label === 'Done',
                                                 'bg-[#C2757F]/15 text-[#C2757F]' => $label === 'Terlambat',
                                                 'bg-[#B6ADA3]/20 text-[#5F6F5B]' => !in_array($label, [
@@ -170,17 +170,19 @@ modal: null,
                                                 ]),
                                             ])>{{ $label }}</span>
                                         </td>
-                                        <td class="py-2.5 text-right space-x-2 whitespace-nowrap">
-                                            <button @click="modal = 'checklist'; currentItem = {{ Js::from($item) }}"
-                                                class="text-[#5F6F5B] hover:text-[#C2757F] text-xs cursor-pointer"><i
-                                                    class="fa-solid fa-pen"></i></button>
-                                            <form method="POST"
-                                                action="{{ route('proposals.checklists.destroy', $item) }}" class="inline"
-                                                onsubmit="return confirm('Hapus item checklist ini?')">
-                                                @csrf @method('DELETE')
-                                                <button class="text-[#C2757F] hover:text-red-700 text-xs cursor-pointer"><i
-                                                        class="fa-solid fa-trash"></i></button>
-                                            </form>
+                                        <td class="p-4 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <button @click="modal = 'checklist'; currentItem = {{ Js::from($item) }}"
+                                                    title="Edit" class="btn-icon"><i
+                                                        class="fa-solid fa-pen-to-square"></i></button>
+                                                <form id="del-pchk-{{ $item->id }}" method="POST"
+                                                    action="{{ route('proposals.checklists.destroy', $item) }}">
+                                                    @csrf @method('DELETE')
+                                                    <button type="button" title="Hapus" class="btn-icon"
+                                                        onclick="confirmDelete('del-pchk-{{ $item->id }}', '{{ addslashes($item->title) }}')"><i
+                                                            class="fa-solid fa-trash"></i></button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -213,47 +215,50 @@ modal: null,
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
+                        <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr
                                     class="text-left text-[10px] uppercase tracking-wider text-[#B6ADA3] border-b border-[#B6ADA3]/25">
-                                    <th class="py-2 font-semibold">Item</th>
-                                    <th class="py-2 font-semibold">Kategori</th>
-                                    <th class="py-2 font-semibold">Vendor</th>
-                                    <th class="py-2 font-semibold text-right">Rencana</th>
-                                    <th class="py-2 font-semibold text-right">Aktual</th>
-                                    <th class="py-2 font-semibold text-right">Selisih</th>
-                                    <th class="py-2 font-semibold text-right">Aksi</th>
+                                    <th class="p-4">Item</th>
+                                    <th class="p-4">Kategori</th>
+                                    <th class="p-4">Vendor</th>
+                                    <th class="p-4 text-right">Rencana</th>
+                                    <th class="p-4 text-right">Aktual</th>
+                                    <th class="p-4 text-right">Selisih</th>
+                                    <th class="p-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
                                 @forelse ($budgets as $item)
-                                    <tr class="border-b border-[#B6ADA3]/15 last:border-0">
-                                        <td class="py-2.5 font-medium text-[#5F6F5B]">{{ $item->item_name }}</td>
-                                        <td class="py-2.5 text-xs text-[#B6ADA3]">{{ $item->category }}</td>
-                                        <td class="py-2.5 text-xs text-[#B6ADA3]">{{ $item->vendor?->name ?: '-' }}</td>
-                                        <td class="py-2.5 text-xs text-right">Rp
+                                    <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                                        <td class="p-4 font-medium text-[#5F6F5B]">{{ $item->item_name }}</td>
+                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->category }}</td>
+                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->vendor?->name ?: '-' }}</td>
+                                        <td class="p-4 text-xs text-right">Rp
                                             {{ number_format($item->planned_budget, 0, ',', '.') }}</td>
-                                        <td class="py-2.5 text-xs text-right">Rp
+                                        <td class="p-4 text-xs text-right">Rp
                                             {{ number_format($item->actual_cost, 0, ',', '.') }}</td>
                                         <td @class([
-                                            'py-2.5 text-xs text-right font-semibold',
+                                            'p-4 text-xs text-right font-semibold',
                                             'text-[#C2757F]' => $item->isOverBudget(),
                                             'text-[#5F6F5B]' => !$item->isOverBudget(),
                                         ])>
                                             {{ $item->variance() >= 0 ? '+' : '-' }} Rp
                                             {{ number_format(abs($item->variance()), 0, ',', '.') }}
                                         </td>
-                                        <td class="py-2.5 text-right space-x-2 whitespace-nowrap">
-                                            <button @click="modal = 'budget'; currentItem = {{ Js::from($item) }}"
-                                                class="text-[#5F6F5B] hover:text-[#C2757F] text-xs cursor-pointer"><i
-                                                    class="fa-solid fa-pen"></i></button>
-                                            <form method="POST" action="{{ route('proposals.budgets.destroy', $item) }}"
-                                                class="inline" onsubmit="return confirm('Hapus budget lamaran ini?')">
-                                                @csrf @method('DELETE')
-                                                <button class="text-[#C2757F] hover:text-red-700 text-xs cursor-pointer"><i
-                                                        class="fa-solid fa-trash"></i></button>
-                                            </form>
+                                        <td class="p-4 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <button @click="modal = 'budget'; currentItem = {{ Js::from($item) }}"
+                                                    title="Edit" class="btn-icon"><i
+                                                        class="fa-solid fa-pen-to-square"></i></button>
+                                                <form id="del-pbud-{{ $item->id }}" method="POST"
+                                                    action="{{ route('proposals.budgets.destroy', $item) }}">
+                                                    @csrf @method('DELETE')
+                                                    <button type="button" title="Hapus" class="btn-icon"
+                                                        onclick="confirmDelete('del-pbud-{{ $item->id }}', '{{ addslashes($item->item_name) }}')"><i
+                                                            class="fa-solid fa-trash"></i></button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -281,30 +286,30 @@ modal: null,
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
+                        <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr
                                     class="text-left text-[10px] uppercase tracking-wider text-[#B6ADA3] border-b border-[#B6ADA3]/25">
-                                    <th class="py-2 font-semibold">Nama</th>
-                                    <th class="py-2 font-semibold">Hubungan</th>
-                                    <th class="py-2 font-semibold">Kategori</th>
-                                    <th class="py-2 font-semibold text-center">Jumlah</th>
-                                    <th class="py-2 font-semibold">Kehadiran</th>
-                                    <th class="py-2 font-semibold text-right">Aksi</th>
+                                    <th class="p-4">Nama</th>
+                                    <th class="p-4">Hubungan</th>
+                                    <th class="p-4">Kategori</th>
+                                    <th class="p-4 text-center">Jumlah</th>
+                                    <th class="p-4">Kehadiran</th>
+                                    <th class="p-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
                                 @forelse ($guests as $item)
-                                    <tr class="border-b border-[#B6ADA3]/15 last:border-0">
-                                        <td class="py-2.5 font-medium text-[#5F6F5B]">
+                                    <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                                        <td class="p-4 font-medium text-[#5F6F5B]">
                                             {{ $item->title ? $item->title . ' ' : '' }}{{ $item->name }}
                                         </td>
-                                        <td class="py-2.5 text-xs text-[#B6ADA3]">{{ $item->relation ?: '-' }}</td>
-                                        <td class="py-2.5 text-xs text-[#B6ADA3]">{{ $item->category ?: '-' }}</td>
-                                        <td class="py-2.5 text-xs text-center">{{ $item->guest_count }}</td>
-                                        <td class="py-2.5">
+                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->relation ?: '-' }}</td>
+                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->category ?: '-' }}</td>
+                                        <td class="p-4 text-xs text-center">{{ $item->guest_count }}</td>
+                                        <td class="p-4">
                                             <span @class([
-                                                'px-2 py-0.5 rounded-full text-[10px] font-semibold',
+                                                'px-2.5 py-1 rounded-full text-xs font-semibold',
                                                 'bg-[#5F6F5B]/12 text-[#5F6F5B]' => $item->attendance_status === 'Attend',
                                                 'bg-[#C2757F]/15 text-[#C2757F]' => $item->attendance_status === 'Decline',
                                                 'bg-[#B6ADA3]/20 text-[#5F6F5B]' =>
@@ -312,16 +317,19 @@ modal: null,
                                                     $item->attendance_status !== 'Decline',
                                             ])>{{ $item->attendance_status }}</span>
                                         </td>
-                                        <td class="py-2.5 text-right space-x-2 whitespace-nowrap">
-                                            <button @click="modal = 'guest'; currentItem = {{ Js::from($item) }}"
-                                                class="text-[#5F6F5B] hover:text-[#C2757F] text-xs cursor-pointer"><i
-                                                    class="fa-solid fa-pen"></i></button>
-                                            <form method="POST" action="{{ route('proposals.guests.destroy', $item) }}"
-                                                class="inline" onsubmit="return confirm('Hapus tamu ini?')">
-                                                @csrf @method('DELETE')
-                                                <button class="text-[#C2757F] hover:text-red-700 text-xs cursor-pointer"><i
-                                                        class="fa-solid fa-trash"></i></button>
-                                            </form>
+                                        <td class="p-4 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <button @click="modal = 'guest'; currentItem = {{ Js::from($item) }}"
+                                                    title="Edit" class="btn-icon"><i
+                                                        class="fa-solid fa-pen-to-square"></i></button>
+                                                <form id="del-pgst-{{ $item->id }}" method="POST"
+                                                    action="{{ route('proposals.guests.destroy', $item) }}">
+                                                    @csrf @method('DELETE')
+                                                    <button type="button" title="Hapus" class="btn-icon"
+                                                        onclick="confirmDelete('del-pgst-{{ $item->id }}', '{{ addslashes($item->name) }}')"><i
+                                                            class="fa-solid fa-trash"></i></button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -396,23 +404,23 @@ modal: null,
                     <p class="text-xs text-[#B6ADA3] mb-4">Rundown lamaran dikelola di modul Rundown. Yang tampil di bawah
                         hanya agenda acara lamaran.</p>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
+                        <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr
                                     class="text-left text-[10px] uppercase tracking-wider text-[#B6ADA3] border-b border-[#B6ADA3]/25">
-                                    <th class="py-2 font-semibold">Waktu</th>
-                                    <th class="py-2 font-semibold">Kegiatan</th>
-                                    <th class="py-2 font-semibold">PIC</th>
-                                    <th class="py-2 font-semibold">Lokasi</th>
+                                    <th class="p-4">Waktu</th>
+                                    <th class="p-4">Kegiatan</th>
+                                    <th class="p-4">PIC</th>
+                                    <th class="p-4">Lokasi</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
                                 @forelse ($rundown as $item)
-                                    <tr class="border-b border-[#B6ADA3]/15 last:border-0">
-                                        <td class="py-2.5 text-xs text-[#5F6F5B] font-semibold">{{ $item->time }}</td>
-                                        <td class="py-2.5 font-medium text-[#5F6F5B]">{{ $item->activity }}</td>
-                                        <td class="py-2.5 text-xs text-[#B6ADA3]">{{ $item->pic ?: '-' }}</td>
-                                        <td class="py-2.5 text-xs text-[#B6ADA3]">{{ $item->location ?: '-' }}</td>
+                                    <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                                        <td class="p-4 text-xs text-[#5F6F5B] font-semibold">{{ $item->time }}</td>
+                                        <td class="p-4 font-medium text-[#5F6F5B]">{{ $item->activity }}</td>
+                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->pic ?: '-' }}</td>
+                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->location ?: '-' }}</td>
                                     </tr>
                                 @empty
                                     <tr>
