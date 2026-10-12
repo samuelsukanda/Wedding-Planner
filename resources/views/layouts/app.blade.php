@@ -315,6 +315,29 @@
             el.value = format(raw.slice(0, window.wpDigitLimit));
         };
 
+        // Blokir huruf di input digit (uang & no HP) tepat di sumbernya.
+        //
+        // Latar: :value="wpMoney(...)" hanya me-render ulang saat model
+        // berubah, jadi huruf yang diketik saat digit tidak berubah tetap
+        // terlihat di kotak. Listener ini mencegatnya sebelum masuk (ketik,
+        // paste, drop) sehingga @input/wpDigits yang sudah ada tidak perlu
+        // diubah. Delegated di document: berlaku untuk semua modal/halaman.
+        document.addEventListener('beforeinput', function (e) {
+            const el = e.target && e.target.closest
+                ? e.target.closest('.form-input-number, input[inputmode="numeric"]')
+                : null;
+            if (!el || el.disabled || el.readOnly) return;
+
+            // Hanya jenis penyisipan teks; penghapusan & navigasi tidak dicegat.
+            // Composition (IME/swipe keyboard HP) dibiarkan lewat dan tetap
+            // dibersihkan oleh @input/wpDigits seperti sekarang.
+            if (e.inputType !== 'insertText'
+                && e.inputType !== 'insertFromPaste'
+                && e.inputType !== 'insertFromDrop') return;
+
+            if (/\D/.test(e.data || '')) e.preventDefault();
+        });
+
         // Batasi input angka (jumlah pax, dan sejenisnya) agar tidak bisa
         // diketik melewati batas. Dipakai lewat @input karena maxlength tidak
         // berlaku untuk <input type="number">.

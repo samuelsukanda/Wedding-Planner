@@ -248,14 +248,35 @@ function attachDatepicker(el) {
                 fp.altInput.placeholder = 'DD-MM-YYYY';
             }
 
-            // Di HP, altInput yang readonly tidak memunculkan keyboard virtual
-            // saat diklik. allowInput sengaja tetap true supaya desktop masih
-            // bisa mengetik tanggal. any-pointer menangkap perangkat yang
-            // punya layar sentuh walau pointer utamanya coarse belum aktif.
-            if (window.matchMedia('(pointer: coarse)').matches
-                || window.matchMedia('(any-pointer: coarse)').matches
-                || navigator.maxTouchPoints > 0) {
-                fp.altInput.readOnly = true;
+            // Input tanggal bisa diketik di semua perangkat, tapi hanya angka:
+            // otomatis berformat DD-MM-YYYY seperti mask no HP. Huruf ditolak
+            // di beforeinput; input handler memotong maksimal 8 digit.
+            // inputMode numeric: HP menampilkan keypad angka, bukan keyboard
+            // penuh. Nilai ke server tetap ISO via dateFormat (tidak berubah).
+            fp.altInput.inputMode = 'numeric';
+
+            if (!fp._wpMask) {
+                fp._wpMask = true;
+
+                fp.altInput.addEventListener('beforeinput', function (e) {
+                    if (e.inputType !== 'insertText'
+                        && e.inputType !== 'insertFromPaste'
+                        && e.inputType !== 'insertFromDrop') return;
+                    if (/\D/.test(e.data || '')) e.preventDefault();
+                });
+
+                fp.altInput.addEventListener('input', function () {
+                    const d = fp.altInput.value.replace(/\D/g, '').slice(0, 8);
+                    const parts = [];
+                    if (d.length > 0) parts.push(d.slice(0, 2));
+                    if (d.length > 2) parts.push(d.slice(2, 4));
+                    if (d.length > 4) parts.push(d.slice(4));
+                    const masked = parts.join('-');
+                    if (fp.altInput.value !== masked) {
+                        fp.altInput.value = masked;
+                        fp.altInput.setSelectionRange(masked.length, masked.length);
+                    }
+                });
             }
 
             // Nilai bisa sudah terisi oleh x-model sebelum flatpickr dipasang.
