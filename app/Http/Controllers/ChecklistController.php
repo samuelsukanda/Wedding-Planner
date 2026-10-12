@@ -72,10 +72,24 @@ class ChecklistController extends Controller
         return redirect()->route('checklists.index')->with('success', 'Checklist berhasil diperbarui!');
     }
 
-    public function toggleStatus(Checklist $checklist)
+    public function toggleStatus(Request $request, Checklist $checklist)
     {
         $checklist->status = $checklist->status === 'Done' ? 'Todo' : 'Done';
         $checklist->save();
+
+        // Dipanggil via fetch dari halaman checklist: jawab JSON supaya tidak
+        // ada navigasi/reload/kedip. Form biasa (tanpa JS) tetap redirect.
+        if ($request->wantsJson()) {
+            $wedding = Wedding::current();
+
+            return response()->json([
+                'status' => $checklist->status,
+                'total' => $wedding->checklists()->count(),
+                'doneCount' => $wedding->checklists()->where('status', 'Done')->count(),
+                'progressCount' => $wedding->checklists()->where('status', 'Progress')->count(),
+                'todoCount' => $wedding->checklists()->where('status', 'Todo')->count(),
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Status checklist diperbarui!');
     }

@@ -138,6 +138,51 @@ document.addEventListener('submit', function(event) {
     }
 });
 
+// Kunci satu-pakai: scroll #main-content yang disimpan saat form di halaman
+// Checklist disubmit, langsung dibuang setelah dibaca supaya tidak terrestore
+// ulang pada navigasi berikutnya.
+const CHECKLIST_SCROLL_KEY = 'weddingPlanner.checklistScroll';
+
+// Simpan scroll sebelum Turbo menangani submit form Checklist (toggle status,
+// edit, duplikasi, hapus). Turbo mengganti <body> saat render hasil redirect
+// sehingga scrollTop #main-content kembali ke 0 — tanpa ini, mencentang item
+// di bagian bawah tabel selalu melempar tampilan kembali ke atas.
+document.addEventListener('submit', function(event) {
+    const form = event.target;
+    if (!form.closest('#page-content')) return;
+
+    // route() Laravel menghasilkan URL absolut (http://host/checklists/...),
+    // jadi action harus di-parse dulu — mencocokkan string mentah dengan
+    // startsWith('/checklists') tidak akan pernah cocok.
+    const action = form.getAttribute('action') || '';
+    const actionPath = new URL(action, window.location.origin).pathname;
+    if (!actionPath.startsWith('/checklists')) return;
+
+    const container = document.querySelector('#main-content');
+    if (container) {
+        sessionStorage.setItem(CHECKLIST_SCROLL_KEY, String(container.scrollTop));
+    }
+});
+
+// Pulihkan scroll setelah hasil redirect selesai dirender. Pemulihan
+// dibungkus requestAnimationFrame karena microtask Alpine (pembuka x-cloak
+// baris tabel) selesai lebih dulu, jadi tinggi tabel sudah final saat
+// scrollTop ditulis dan posisinya tidak terpotong.
+document.addEventListener('turbo:load', function(event) {
+    const saved = sessionStorage.getItem(CHECKLIST_SCROLL_KEY);
+    if (saved === null) return;
+
+    sessionStorage.removeItem(CHECKLIST_SCROLL_KEY);
+
+    const route = routeFor(event.detail?.url || window.location.href);
+    if (!route || !route.startsWith('/checklists')) return;
+
+    requestAnimationFrame(function() {
+        const container = document.querySelector('#main-content');
+        if (container) container.scrollTop = parseInt(saved, 10);
+    });
+});
+
 // Flatpickr milik layout app (halaman form tanggal). Head tidak di-re-execute
 // oleh Turbo, jadi didaftarkan sekali di sini, bukan per-load.
 document.addEventListener('turbo:load', function(event) {

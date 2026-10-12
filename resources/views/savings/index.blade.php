@@ -6,7 +6,7 @@
     <div class="space-y-6" x-data="{
         modalOpen: false,
         editMode: false,
-txOpen: false,
+        txOpen: false,
         init() {
             // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
             // jadi tampilan flatpickr disegarkan lagi di sini.
@@ -279,8 +279,7 @@ txOpen: false,
                     <div>
                         <label class="form-label">Nama Target *</label>
                         <input type="text" name="name" x-model="currentItem.name" required
-                            placeholder="Contoh: Dana Venue & Catering"
-                            class="form-input">
+                            placeholder="Contoh: Dana Venue & Catering" class="form-input">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -318,9 +317,8 @@ txOpen: false,
                         </div>
                         <div>
                             <label class="form-label">Frekuensi</label>
-                            <select name="frequency" x-model="currentItem.frequency"
-                                class="form-input">
-                                <option value="">—</option>
+                            <select name="frequency" x-model="currentItem.frequency" class="form-input">
+                                <option value="">-- Pilih Frekuensi --</option>
                                 @foreach ($frequencies as $freq)
                                     <option value="{{ $freq }}">{{ $freq }}</option>
                                 @endforeach
@@ -336,8 +334,7 @@ txOpen: false,
                         </div>
                         <div>
                             <label class="form-label">Status</label>
-                            <select name="status" x-model="currentItem.status"
-                                class="form-input">
+                            <select name="status" x-model="currentItem.status" class="form-input">
                                 @foreach ($statuses as $st)
                                     <option value="{{ $st }}">{{ $st }}</option>
                                 @endforeach
@@ -397,8 +394,7 @@ txOpen: false,
 
                     <div>
                         <label class="form-label">Jenis Transaksi *</label>
-                        <select name="type" x-model="txType" required
-                            class="form-input">
+                        <select name="type" x-model="txType" required class="form-input">
                             <option value="setoran">Setoran</option>
                             <option value="penarikan">Penarikan</option>
                         </select>
@@ -412,15 +408,13 @@ txOpen: false,
 
                     <div>
                         <label class="form-label">Tanggal Setoran *</label>
-                        <input type="text" name="transaction_date" x-model="txDate" required
-                                placeholder="DD-MM-YYYY"
-                                class="form-input datepicker">
+                        <input type="text" name="transaction_date" x-model="txDate" required placeholder="DD-MM-YYYY"
+                            class="form-input datepicker">
                     </div>
 
                     <div>
                         <label class="form-label">Catatan</label>
-                        <input type="text" name="notes" x-model="txNotes"
-                            class="form-input">
+                        <input type="text" name="notes" x-model="txNotes" class="form-input">
                     </div>
 
                     @error('amount')

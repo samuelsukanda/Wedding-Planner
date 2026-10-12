@@ -39,28 +39,28 @@ editMode: false,
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex items-center justify-between">
                 <div>
                     <div class="text-xs text-[#5F6F5B]">Total Tugas</div>
-                    <div class="text-xl font-bold text-[#5F6F5B]">{{ $total }}</div>
+                    <div class="text-xl font-bold text-[#5F6F5B]" id="cnt-total">{{ $total }}</div>
                 </div>
                 <i class="fa-solid fa-list-check text-[#5F6F5B] text-xl"></i>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex items-center justify-between">
                 <div>
                     <div class="text-xs text-[#5F6F5B]">Selesai (Done)</div>
-                    <div class="text-xl font-bold text-[#5F6F5B]">{{ $doneCount }}</div>
+                    <div class="text-xl font-bold text-[#5F6F5B]" id="cnt-done">{{ $doneCount }}</div>
                 </div>
                 <i class="fa-solid fa-circle-check text-[#5F6F5B] text-xl"></i>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex items-center justify-between">
                 <div>
                     <div class="text-xs text-[#5F6F5B]">Dalam Proses</div>
-                    <div class="text-xl font-bold text-[#5F6F5B]">{{ $progressCount }}</div>
+                    <div class="text-xl font-bold text-[#5F6F5B]" id="cnt-progress">{{ $progressCount }}</div>
                 </div>
                 <i class="fa-solid fa-spinner text-[#D8A7B1] text-xl"></i>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex items-center justify-between">
                 <div>
                     <div class="text-xs text-[#5F6F5B]">Belum Dimulai</div>
-                    <div class="text-xl font-bold text-[#5F6F5B]">{{ $todoCount }}</div>
+                    <div class="text-xl font-bold text-[#5F6F5B]" id="cnt-todo">{{ $todoCount }}</div>
                 </div>
                 <i class="fa-solid fa-hourglass-start text-[#D8A7B1] text-xl"></i>
             </div>
@@ -121,9 +121,11 @@ editMode: false,
                             <tr x-show="visible(rows[{{ $i }}])" x-cloak
                                 class="hover:bg-[#FAF7F2]/60 transition-colors">
                                 <td class="p-4 text-center">
-                                    <form action="{{ route('checklists.toggle', $chk->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="cursor-pointer">
+                                    <button type="button" class="cursor-pointer disabled:opacity-50"
+                                        data-url="{{ route('checklists.toggle', $chk->id) }}"
+                                        @click="window.wpToggleChecklist($el, {{ $i }})"
+                                        :aria-label="'Ubah status checklist'">
+                                        <span data-icon>
                                             @if ($chk->status === 'Done')
                                                 <i class="fa-solid fa-circle-check text-[#5F6F5B] text-lg"></i>
                                             @elseif($chk->status === 'Progress')
@@ -132,10 +134,10 @@ editMode: false,
                                                 <i
                                                     class="fa-regular fa-circle text-[#B6ADA3] text-lg hover:text-[#5F6F5B]"></i>
                                             @endif
-                                        </button>
-                                    </form>
+                                        </span>
+                                    </button>
                                 </td>
-                                <td
+                                <td data-title
                                     class="p-4 font-semibold text-[#5F6F5B] {{ $chk->status === 'Done' ? 'line-through text-[#B6ADA3]' : '' }}">
                                     {{ $chk->title }}
                                 </td>
@@ -294,3 +296,56 @@ editMode: false,
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        // Toggle status checklist tanpa reload: POST via fetch (jawab JSON),
+        // lalu update ikon, coretan judul, counter, dan baris filter Alpine.
+        window.wpToggleChecklist = async function (btn, rowIndex) {
+            const url = btn.dataset.url;
+            const token = document.querySelector('meta[name="csrf-token"]')?.content;
+            btn.disabled = true;
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    credentials: 'same-origin',
+                });
+                if (!res.ok) throw new Error('Toggle gagal: ' + res.status);
+                const d = await res.json();
+
+                btn.querySelector('[data-icon]').innerHTML = d.status === 'Done'
+                    ? '<i class="fa-solid fa-circle-check text-[#5F6F5B] text-lg"></i>'
+                    : '<i class="fa-regular fa-circle text-[#B6ADA3] text-lg hover:text-[#5F6F5B]"></i>';
+
+                const row = btn.closest('tr');
+                const title = row ? row.querySelector('[data-title]') : null;
+                if (title) {
+                    title.classList.toggle('line-through', d.status === 'Done');
+                    title.classList.toggle('text-[#B6ADA3]', d.status === 'Done');
+                }
+
+                const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+                set('cnt-total', d.total);
+                set('cnt-done', d.doneCount);
+                set('cnt-progress', d.progressCount);
+                set('cnt-todo', d.todoCount);
+
+                // Sinkron status ke baris filter Alpine supaya filter tetap benar.
+                const root = btn.closest('[x-data]');
+                if (root && window.Alpine) {
+                    const scope = window.Alpine.$data(root);
+                    if (scope && scope.rows && scope.rows[rowIndex]) scope.rows[rowIndex].status = d.status;
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+            }
+        };
+    </script>
+@endpush

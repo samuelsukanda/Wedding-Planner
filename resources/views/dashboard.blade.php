@@ -166,6 +166,62 @@
                         Tamu &rarr;</a>
                 </div>
             </div>
+
+            <!-- Progress Seserahan -->
+            <div
+                class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
+                        <i class="fa-solid fa-gift text-[#D8A7B1]"></i> Progress Seserahan
+                    </div>
+                    <a href="{{ route('souvenirs.index') }}"
+                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#D8A7B1]/20 text-[#C2757F] border border-[#D8A7B1]/40 hover:bg-[#D8A7B1]/30 transition">
+                        Kelola →
+                    </a>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs text-[#5F6F5B]/80 mb-2">
+                        <span>{{ $souvenirReceived }} dari {{ $souvenirTotal }} diterima</span>
+                        <span>{{ $souvenirPercent }}%</span>
+                    </div>
+                    <div class="w-full h-3 bg-[#FAF7F2] rounded-full overflow-hidden p-0.5 border border-[#B6ADA3]/30">
+                        <div class="h-full bg-gradient-to-r from-[#D8A7B1] to-[#A3B7A6] rounded-full transition-all duration-500"
+                            style="width: {{ $souvenirPercent }}%"></div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-[#B6ADA3]/25 text-xs flex justify-between items-center">
+                    <span class="text-[#5F6F5B]/80">Belum diterima</span>
+                    <span class="font-bold text-[#5F6F5B]">{{ $souvenirTotal - $souvenirReceived }} item</span>
+                </div>
+            </div>
+
+            <!-- Progress Persyaratan Nikah -->
+            <div
+                class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
+                        <i class="fa-solid fa-file-circle-check text-[#D8A7B1]"></i> Progress Persyaratan
+                    </div>
+                    <a href="{{ route('documents.index') }}"
+                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#D8A7B1]/20 text-[#C2757F] border border-[#D8A7B1]/40 hover:bg-[#D8A7B1]/30 transition">
+                        Kelola →
+                    </a>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs text-[#5F6F5B]/80 mb-2">
+                        <span>{{ $documentComplete }} dari {{ $documentTotal }} lengkap</span>
+                        <span>{{ $documentPercent }}%</span>
+                    </div>
+                    <div class="w-full h-3 bg-[#FAF7F2] rounded-full overflow-hidden p-0.5 border border-[#B6ADA3]/30">
+                        <div class="h-full bg-gradient-to-r from-[#D8A7B1] to-[#A3B7A6] rounded-full transition-all duration-500"
+                            style="width: {{ $documentPercent }}%"></div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-[#B6ADA3]/25 text-xs flex justify-between items-center">
+                    <span class="text-[#5F6F5B]/80">Belum lengkap</span>
+                    <span class="font-bold text-[#5F6F5B]">{{ $documentTotal - $documentComplete }} dokumen</span>
+                </div>
+            </div>
         </div>
 
         <!-- Middle Content Grid -->

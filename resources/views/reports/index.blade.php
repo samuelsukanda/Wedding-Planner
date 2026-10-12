@@ -173,5 +173,147 @@
                 @endforeach
             </div>
         </div>
+
+        <!-- Tambahan modul: Tabungan, Lamaran, Seserahan, Persyaratan -->
+        <div class="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6">
+            <!-- Tabungan -->
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-piggy-bank text-[#D8A7B1]"></i> Rekap Tabungan
+                </h3>
+                <div>
+                    <div class="flex justify-between text-xs text-[#5F6F5B] mb-2">
+                        <span>Terkumpul Rp {{ number_format($savingsBalance, 0, ',', '.') }}</span>
+                        <span
+                            class="font-bold text-[#5F6F5B]">{{ $savingsTarget > 0 ? round(($savingsBalance / $savingsTarget) * 100) : 0 }}%</span>
+                    </div>
+                    <div class="h-3 w-full bg-[#FAF7F2] rounded-full overflow-hidden p-0.5 border border-[#B6ADA3]/30">
+                        <div class="h-full rounded-full bg-gradient-to-r from-[#D8A7B1] to-[#A3B7A6] transition-all duration-700"
+                            style="width: {{ $savingsTarget > 0 ? min(100, ($savingsBalance / $savingsTarget) * 100) : 0 }}%">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3 text-center">
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-sm font-bold text-[#5F6F5B]">Rp
+                            {{ number_format($savingsTarget, 0, ',', '.') }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Target</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-sm font-bold text-[#5F6F5B]">Rp
+                            {{ number_format($savingsBalance, 0, ',', '.') }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Terkumpul</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-sm font-bold text-[#5F6F5B]">Rp
+                            {{ number_format($savingsShortfall, 0, ',', '.') }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Kekurangan</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lamaran -->
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-ring text-[#D8A7B1]"></i> Rekap Lamaran
+                </h3>
+                @if ($proposalEvent)
+                    <div class="text-xs text-[#5F6F5B]">
+                        {{ $proposalEvent->event_date ? $proposalEvent->event_date->format('d M Y') : 'Tanggal belum ditentukan' }}
+                        @if ($proposalEvent->location)
+                            &bull; {{ $proposalEvent->location }}
+                        @endif
+                        @if ($proposalEvent->theme)
+                            &bull; {{ $proposalEvent->theme }}
+                        @endif
+                    </div>
+                @else
+                    <div class="text-xs text-[#B6ADA3]">Belum ada data acara lamaran.</div>
+                @endif
+                <div class="grid grid-cols-3 gap-3 text-center">
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-lg font-bold text-[#5F6F5B]">{{ $proposalChecklistDone }}/{{ $proposalChecklistTotal }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Checklist</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-lg font-bold text-[#5F6F5B]">{{ $proposalGuestPax }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Pax ({{ $proposalGuestRows }} undangan)</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-sm font-bold text-[#5F6F5B]">Rp
+                            {{ number_format($proposalBudgetActual, 0, ',', '.') }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Terpakai / Rp
+                            {{ number_format($proposalBudgetPlanned, 0, ',', '.') }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seserahan Progress -->
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-gift text-[#D8A7B1]"></i> Progress Seserahan
+                </h3>
+                <div>
+                    <div class="flex justify-between text-xs text-[#5F6F5B] mb-2">
+                        <span>{{ $souvenirReceived }} dari {{ $souvenirTotal }} item diterima</span>
+                        <span
+                            class="font-bold text-[#5F6F5B]">{{ $souvenirTotal > 0 ? round(($souvenirReceived / $souvenirTotal) * 100) : 0 }}%</span>
+                    </div>
+                    <div class="h-3 w-full bg-[#FAF7F2] rounded-full overflow-hidden p-0.5 border border-[#B6ADA3]/30">
+                        <div class="h-full rounded-full bg-gradient-to-r from-[#D8A7B1] to-[#A3B7A6] transition-all duration-700"
+                            style="width: {{ $souvenirTotal > 0 ? ($souvenirReceived / $souvenirTotal) * 100 : 0 }}%">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3 text-center">
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-lg font-bold text-[#5F6F5B]">{{ $souvenirTotal }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Total Item</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-lg font-bold text-[#5F6F5B]">{{ $souvenirReceived }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Diterima</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-sm font-bold text-[#5F6F5B]">Rp
+                            {{ number_format($souvenirActual, 0, ',', '.') }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Nilai Diterima</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Persyaratan Nikah Progress -->
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-file-circle-check text-[#D8A7B1]"></i> Progress Persyaratan Nikah
+                </h3>
+                <div>
+                    <div class="flex justify-between text-xs text-[#5F6F5B] mb-2">
+                        <span>{{ $documentComplete }} dari {{ $documentTotal }} dokumen lengkap</span>
+                        <span
+                            class="font-bold text-[#5F6F5B]">{{ $documentTotal > 0 ? round(($documentComplete / $documentTotal) * 100) : 0 }}%</span>
+                    </div>
+                    <div class="h-3 w-full bg-[#FAF7F2] rounded-full overflow-hidden p-0.5 border border-[#B6ADA3]/30">
+                        <div class="h-full rounded-full bg-gradient-to-r from-[#D8A7B1] to-[#A3B7A6] transition-all duration-700"
+                            style="width: {{ $documentTotal > 0 ? ($documentComplete / $documentTotal) * 100 : 0 }}%">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3 text-center">
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-lg font-bold text-[#5F6F5B]">{{ $documentTotal }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Total Dokumen</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-lg font-bold text-[#5F6F5B]">{{ $documentComplete }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Lengkap</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
+                        <div class="text-lg font-bold text-[#5F6F5B]">{{ $documentTotal - $documentComplete }}</div>
+                        <div class="text-xs text-[#5F6F5B]">Belum Lengkap</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection

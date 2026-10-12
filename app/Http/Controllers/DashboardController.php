@@ -108,6 +108,15 @@ class DashboardController extends Controller
         $savingsBalance = (float) $savingsGoals->sum('current_balance');
         $savingsShortfall = max(0, $savingsTarget - $savingsBalance);
 
+        // Progress Seserahan (diterima / total) & Persyaratan Nikah (lengkap / total).
+        $souvenirTotal = $wedding->souvenirs()->count();
+        $souvenirReceived = $wedding->souvenirs()->where('status', \App\Models\Souvenir::STATUS_RECEIVED)->count();
+        $souvenirPercent = $souvenirTotal > 0 ? round(($souvenirReceived / $souvenirTotal) * 100) : 0;
+
+        $documentTotal = $wedding->documentRequirements()->count();
+        $documentComplete = $wedding->documentRequirements()->where('status', 'Lengkap')->count();
+        $documentPercent = $documentTotal > 0 ? round(($documentComplete / $documentTotal) * 100) : 0;
+
         return view('dashboard', compact(
             'wedding',
             'daysLeft',
@@ -126,7 +135,13 @@ class DashboardController extends Controller
             'savingsGoals',
             'savingsTarget',
             'savingsBalance',
-            'savingsShortfall'
+            'savingsShortfall',
+            'souvenirTotal',
+            'souvenirReceived',
+            'souvenirPercent',
+            'documentTotal',
+            'documentComplete',
+            'documentPercent'
         ));
     }
 }

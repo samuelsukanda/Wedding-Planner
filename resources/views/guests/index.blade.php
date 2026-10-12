@@ -6,7 +6,7 @@
     <div class="space-y-6" x-data="tableFilter({
         fields: ['search', 'category', 'status'],
         // Filter tidak disimpan di query string supaya URL tetap bersih.
-            initial: { search: '', category: '', status: '' },
+        initial: { search: '', category: '', status: '' },
         rows: {{ Js::from(
             $guests->map(
                 fn($g) => [
@@ -170,12 +170,6 @@
                                 <td class="p-4 text-xs text-[#5F6F5B]/80 max-w-xs truncate">{{ $g->address ?? '—' }}</td>
                                 <td class="p-4 text-right">
                                     <div class="flex items-center justify-end gap-1">
-                                        @if ($g->phone)
-                                            <a href="{{ route('guests.wa', $g->id) }}" target="_blank" title="Kirim WA"
-                                                class="p-2 text-[#B6ADA3] hover:text-green-600 cursor-pointer">
-                                                <i class="fa-brands fa-whatsapp"></i>
-                                            </a>
-                                        @endif
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($g) }}"
                                             title="Edit" class="p-2 text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
