@@ -59,7 +59,7 @@ class GuestController extends Controller
             'address' => 'nullable|string',
             'category' => 'required|string',
             'attendance_status' => 'required|string',
-            'guest_count' => 'required|integer|min:1',
+            'guest_count' => 'required|integer|min:1|max:999',
         ]);
 
         $wedding->guests()->create($validated);
@@ -76,7 +76,7 @@ class GuestController extends Controller
             'address' => 'nullable|string',
             'category' => 'required|string',
             'attendance_status' => 'required|string',
-            'guest_count' => 'required|integer|min:1',
+            'guest_count' => 'required|integer|min:1|max:999',
         ]);
 
         $guest->update($validated);

@@ -315,6 +315,20 @@
             el.value = format(raw.slice(0, window.wpDigitLimit));
         };
 
+        // Batasi input angka (jumlah pax, dan sejenisnya) agar tidak bisa
+        // diketik melewati batas. Dipakai lewat @input karena maxlength tidak
+        // berlaku untuk <input type="number">.
+        window.wpCap = function(el, max) {
+            const value = Number(el.value);
+
+            if (Number.isFinite(value) && value > max) {
+                el.value = max;
+                return max;
+            }
+
+            return el.value;
+        };
+
         // Simpan & restore posisi scroll sidebar (agar tidak kembali ke atas)
         // Pakai turbo:load, bukan DOMContentLoaded: DOMContentLoaded hanya
         // terjadi sekali, sedangkan Turbo mengganti <body> tiap perpindahan menu.
