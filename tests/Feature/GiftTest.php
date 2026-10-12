@@ -95,4 +95,35 @@ class GiftTest extends TestCase
             'giver_name' => 'Milik Orang Lain',
         ]);
     }
+
+    /**
+     * Input nominalGift kini memakai format uang ("Rp 1.500.000") seperti
+     * modul lain, jadi digitsnya harus dibersihkan sebelum validasi numeric.
+     */
+    public function test_gift_nominal_accepts_formatted_money_input(): void
+    {
+        $user = $this->userWithWedding();
+
+        $this->actingAs($user)->post('/gifts', [
+            'giver_name' => 'Bapak Budi',
+            'nominal' => 'Rp 1.500.000',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('gifts', [
+            'giver_name' => 'Bapak Budi',
+            'nominal' => 1500000,
+        ]);
+    }
+
+    public function test_gift_nominal_beyond_column_capacity_is_rejected(): void
+    {
+        $user = $this->userWithWedding();
+
+        $this->actingAs($user)->post('/gifts', [
+            'giver_name' => 'Bapak Budi',
+            'nominal' => 'Rp 1.000.001.111.111.140.000.000',
+        ])->assertSessionHasErrors('nominal');
+
+        $this->assertDatabaseCount('gifts', 0);
+    }
 }

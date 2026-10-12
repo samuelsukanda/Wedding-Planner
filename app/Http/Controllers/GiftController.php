@@ -59,6 +59,11 @@ public function store(Request $request)
      */
     private function validatedGift(Request $request): array
     {
+        // Kolom nominal dikirim terformat ("Rp 1.500.000") seperti input uang
+        // di modul lain, jadi digitsnya harus dibersihkan dulu sebelum
+        // aturan numeric dijalankan.
+        $this->normalizeDigitInputs($request, ['nominal']);
+
         $validated = $request->validate([
             'giver_name' => 'required|string|max:255',
             // Tidak wajib: kolom DB punya default 'Cash' dan dinormalkan di
