@@ -127,7 +127,7 @@
         <!-- Modal Form -->
         <div x-show="modalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
-            <div @click.away="if (!$event.target.closest('.flatpickr-calendar')) modalOpen = false"
+            <div x-outside="modalOpen = false"
                 class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
@@ -154,7 +154,7 @@
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal (Rp) *</label>
                             <input type="text" name="nominal" inputmode="numeric" required
                                 :value="wpMoney(currentItem.nominal)"
-                                @input="currentItem.nominal = wpDigits($event.target.value); $event.target.value = currentItem.nominal"
+                                @input="currentItem.nominal = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>

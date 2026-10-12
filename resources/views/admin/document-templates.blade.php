@@ -75,8 +75,8 @@
 
         {{-- Modal --}}
         <div x-show="modalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-            @click.self="modalOpen = false" @keydown.escape.window="modalOpen = false">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            @keydown.escape.window="modalOpen = false">
+            <div x-outside="modalOpen = false" class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B]" x-text="editMode ? 'Edit Template' : 'Template Baru'"></h3>
                     <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i class="fa-solid fa-xmark"></i></button>

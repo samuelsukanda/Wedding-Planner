@@ -448,9 +448,9 @@ modal: null,
 
         {{-- ================= MODAL: CHECKLIST ================= --}}
         <div x-show="modal === 'checklist'" x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" @click.self="modal = null"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             @keydown.escape.window="modal = null">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div x-outside="modal = null" class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B]"
                         x-text="currentItem?.id ? 'Edit Item Checklist' : 'Tambah Item Checklist'"></h3>
@@ -521,9 +521,9 @@ modal: null,
 
         {{-- ================= MODAL: BUDGET ================= --}}
         <div x-show="modal === 'budget'" x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" @click.self="modal = null"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             @keydown.escape.window="modal = null">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div x-outside="modal = null" class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B]"
                         x-text="currentItem?.id ? 'Edit Budget Lamaran' : 'Tambah Budget Lamaran'"></h3>
@@ -594,9 +594,9 @@ modal: null,
 
         {{-- ================= MODAL: TAMU ================= --}}
         <div x-show="modal === 'guest'" x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" @click.self="modal = null"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             @keydown.escape.window="modal = null">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div x-outside="modal = null" class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B]" x-text="currentItem?.id ? 'Edit Tamu' : 'Tambah Tamu'"></h3>
                     <button @click="modal = null" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i

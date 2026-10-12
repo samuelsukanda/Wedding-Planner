@@ -150,8 +150,8 @@ modal: null,
 
         {{-- Modal: Tambah / Edit dokumen --}}
         <div x-show="modal === 'doc'" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-            @click.self="modal = null" @keydown.escape.window="modal = null">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            @keydown.escape.window="modal = null">
+            <div x-outside="modal = null" class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B]" x-text="currentItem && currentItem.id ? 'Edit Dokumen' : 'Tambah Dokumen'"></h3>
                     <button @click="modal = null" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
@@ -222,8 +222,8 @@ modal: null,
 
         {{-- Modal: pilih template --}}
         <div x-show="modal === 'template'" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-            @click.self="modal = null" @keydown.escape.window="modal = null">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            @keydown.escape.window="modal = null">
+            <div x-outside="modal = null" class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B]">Tambah dari Template</h3>
                     <button @click="modal = null" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i class="fa-solid fa-xmark"></i></button>

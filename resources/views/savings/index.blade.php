@@ -261,7 +261,7 @@ txOpen: false,
         {{-- Modal Target --}}
         <div x-show="modalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
-            <div @click.away="modalOpen = false"
+            <div x-outside="modalOpen = false"
                 class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
@@ -288,14 +288,14 @@ txOpen: false,
                             <label class="form-label">Target Nominal (Rp) *</label>
                             <input type="text" name="target_amount" inputmode="numeric" required
                                 :value="wpMoney(currentItem.target_amount)"
-                                @input="currentItem.target_amount = wpDigits($event.target.value); $event.target.value = currentItem.target_amount"
+                                @input="currentItem.target_amount = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="form-input form-input-number">
                         </div>
                         <div>
                             <label class="form-label">Saldo Awal (Rp)</label>
                             <input type="text" name="initial_balance" inputmode="numeric"
                                 :value="wpMoney(currentItem.initial_balance)"
-                                @input="currentItem.initial_balance = wpDigits($event.target.value); $event.target.value = currentItem.initial_balance"
+                                @input="currentItem.initial_balance = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 :disabled="editMode && currentItem.transactions_count > 0"
                                 :title="editMode && currentItem.transactions_count > 0 ? 'Terkunci karena sudah ada transaksi' :
                                     ''"
@@ -313,7 +313,7 @@ txOpen: false,
                                 (Rp)</label>
                             <input type="text" name="periodic_amount" inputmode="numeric"
                                 :value="wpMoney(currentItem.periodic_amount)"
-                                @input="currentItem.periodic_amount = wpDigits($event.target.value); $event.target.value = currentItem.periodic_amount"
+                                @input="currentItem.periodic_amount = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="form-input">
                         </div>
                         <div>
@@ -375,7 +375,7 @@ txOpen: false,
         {{-- Modal Transaksi --}}
         <div x-show="txOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
-            <div @click.away="txOpen = false"
+            <div x-outside="txOpen = false"
                 class="bg-white w-full max-w-md p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Catat Transaksi</h3>

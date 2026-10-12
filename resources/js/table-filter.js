@@ -71,3 +71,62 @@ window.tableFilter = function (config = {}) {
         },
     };
 };
+
+/**
+ * x-outside: tutup modal hanya kalau klik benar-benar mendarat di luar.
+ *
+ * x-click.away bawaan Alpine terlalu sensitif untuk modal yang berisi
+ * datepicker:
+ *
+ * - Di HP, kalender flatpickr menempel di <body>, jadi tap pertama untuk
+ *   memilih tanggal dianggap "klik di luar" dan modal ikut tertutup.
+ * - Di desktop, menyorot teks lalu menarik mouse ke luar juga memicu
+ *   penutupannya, padahal itu bukan niat menutup.
+ *
+ * Directive ini menutup modal hanya bila pointerdown DAN click sama-sama
+ * terjadi di luar, dan mengabaikan kalender. Tombol X dan Batal tetap bekerja
+ * seperti biasa karena keduanya memanggil aksi secara langsung.
+ *
+ * Daftar directive ini harus ada di file ini, bukan app.js, karena Alpine
+ * baru menjalankan start() setelah helper dimuat — lihat catatan di atas file.
+ */
+document.addEventListener('alpine:init', () => {
+    window.__alpineInitFired = (window.__alpineInitFired || 0) + 1;
+    Alpine.directive('outside', (el, { expression }, { evaluate, cleanup }) => {
+        let downInside = false;
+
+        const isInside = (target) =>
+            !!target
+            && (el.contains(target)
+                || (target.closest && target.closest('.flatpickr-calendar')));
+
+        // Listener duduk di document, bukan di el. Overlay modal adalah induk
+        // dari el, jadi pointerdown di overlay tak akan melewati el dan
+        // penanda downInside akan basi.
+        const onDown = (e) => {
+            downInside = isInside(e.target);
+        };
+
+        const onClose = (e) => {
+            // Modal yang sedang tersembunyi (x-show) tidak boleh merespons
+            // klik. Tanpa guard ini, directive belonging ke modal yang
+            // tertutup ikut menutup modal lain yang kebetulan berbagi state.
+            if (el.offsetWidth < 1 && el.offsetHeight < 1) return;
+
+            // Seret dari dalam ke luar = seleksi teks, bukan menutup modal.
+            if (downInside || isInside(e.target)) return;
+
+            evaluate(expression);
+        };
+
+        document.addEventListener('pointerdown', onDown, true);
+        document.addEventListener('click', onClose, true);
+        document.addEventListener('touchend', onClose, true);
+
+        cleanup(() => {
+            document.removeEventListener('pointerdown', onDown, true);
+            document.removeEventListener('click', onClose, true);
+            document.removeEventListener('touchend', onClose, true);
+        });
+    });
+});

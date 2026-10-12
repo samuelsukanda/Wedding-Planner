@@ -297,6 +297,24 @@
             return window.wpDigits(value).replace(/(\d{4})(?=\d)/g, '$1-');
         };
 
+        // Panggil dari @input setiap kali digit dipotong batas, supaya kotak
+        // input tetap menampilkan formatnya ("Rp 1.212.122.121") alih-alih
+        // angka polos mentah.
+        //
+        // Format sengaja hanya ditulis ulang saat ada digit yang benar-benar
+        // dipotong. Kalau diformat tiap ketikan, kursor meloncat ke akhir
+        // field dan mengetik menjadi ribet — itu sebabnya binding :value dipakai
+        // sebagai pemformat, bukan penulisan langsung.
+        window.wpClamp = function(el, format) {
+            const raw = String(el.value ?? '').replace(/\D/g, '');
+
+            if (raw.length <= window.wpDigitLimit) {
+                return;
+            }
+
+            el.value = format(raw.slice(0, window.wpDigitLimit));
+        };
+
         // Simpan & restore posisi scroll sidebar (agar tidak kembali ke atas)
         // Pakai turbo:load, bukan DOMContentLoaded: DOMContentLoaded hanya
         // terjadi sekali, sedangkan Turbo mengganti <body> tiap perpindahan menu.

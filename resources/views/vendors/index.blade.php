@@ -172,7 +172,7 @@
         <!-- Modal Form (Tambah / Edit Vendor) -->
         <div x-show="modalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
-            <div @click.away="modalOpen = false"
+            <div x-outside="modalOpen = false"
                 class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
@@ -216,14 +216,14 @@
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Telepon / WA</label>
                             <input type="text" name="contact" inputmode="numeric"
                                 :value="wpPhone(currentItem.contact)"
-                                @input="currentItem.contact = wpDigits($event.target.value); $event.target.value = wpPhone(currentItem.contact)"
+                                @input="currentItem.contact = wpDigits($event.target.value); wpClamp($event.target, wpPhone)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Harga Paket (Rp) *</label>
                             <input type="text" name="price" inputmode="numeric" required placeholder="Rp"
                                 :value="wpMoney(currentItem.price)"
-                                @input="currentItem.price = wpDigits($event.target.value); $event.target.value = currentItem.price"
+                                @input="currentItem.price = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>
@@ -267,7 +267,7 @@
         <!-- Modal Detail / Show Vendor -->
         <div x-show="detailModalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
-            <div @click.away="detailModalOpen = false"
+            <div x-outside="detailModalOpen = false"
                 class="bg-white w-full max-w-2xl p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
                 <!-- Modal Header -->
                 <div class="flex items-start justify-between border-b border-[#B6ADA3]/30 pb-4">
