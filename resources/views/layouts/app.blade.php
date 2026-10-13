@@ -322,18 +322,18 @@
         // terlihat di kotak. Listener ini mencegatnya sebelum masuk (ketik,
         // paste, drop) sehingga @input/wpDigits yang sudah ada tidak perlu
         // diubah. Delegated di document: berlaku untuk semua modal/halaman.
-        document.addEventListener('beforeinput', function (e) {
-            const el = e.target && e.target.closest
-                ? e.target.closest('.form-input-number, input[inputmode="numeric"]')
-                : null;
+        document.addEventListener('beforeinput', function(e) {
+            const el = e.target && e.target.closest ?
+                e.target.closest('.form-input-number, input[inputmode="numeric"]') :
+                null;
             if (!el || el.disabled || el.readOnly) return;
 
             // Hanya jenis penyisipan teks; penghapusan & navigasi tidak dicegat.
             // Composition (IME/swipe keyboard HP) dibiarkan lewat dan tetap
             // dibersihkan oleh @input/wpDigits seperti sekarang.
-            if (e.inputType !== 'insertText'
-                && e.inputType !== 'insertFromPaste'
-                && e.inputType !== 'insertFromDrop') return;
+            if (e.inputType !== 'insertText' &&
+                e.inputType !== 'insertFromPaste' &&
+                e.inputType !== 'insertFromDrop') return;
 
             if (/\D/.test(e.data || '')) e.preventDefault();
         });
@@ -457,15 +457,15 @@
         class="sidebar fixed md:relative inset-y-0 left-0 z-50 w-64 md:transition-[width,transform] duration-300 ease-in-out bg-white border-r border-[#B6ADA3]/35 flex flex-col shadow-lg md:shadow-none">
 
         <!-- Logo & Header -->
-        <div class="p-5 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md shrink-0">
-                    <img src="{{ asset('img/logo.png') }}" alt="Logo">
-                </div>
+        <div class="px-3 py-2 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-w-0">
+                <img src="{{ asset('img/logo-nupsera.png') }}" alt="Logo"
+                    class="w-12 h-12 rounded-xl object-cover shrink-0">
                 <div class="sidebar-label min-w-0">
-                    <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight">
+                    <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight truncate">
                         {{ $brandName ?? 'Wedding Planner' }}</h1>
-                    <p class="text-[11px] text-[#5F6F5B] font-bold tracking-wide uppercase">Wedding Planner</p>
+                    <p class="text-[11px] text-[#5F6F5B] font-bold tracking-wide uppercase whitespace-nowrap">Wedding
+                        Planner</p>
                 </div>
             </a>
             <button @click="sidebarOpen = false"
