@@ -252,17 +252,17 @@ class GuestController extends Controller
 
     /**
      * Template bawaan pesan undangan WA. Placeholder yang didukung:
-     * {nama}, {mempelai}, {tanggal}, {waktu}, {tempat}, {link}.
+     * {nama tamu}, {mempelai}, {tanggal}, {waktu}, {tempat}, {link}.
      */
     public function defaultWaTemplate(): string
     {
-        return "Kepada Yth. {nama},\n\n"
-            . "Dengan penuh sukacita, kami mengundang {nama} untuk hadir dan turut merayakan hari bahagia kami dalam acara pernikahan:\n\n"
+        return "Kepada Yth. {nama tamu},\n\n"
+            . "Dengan penuh sukacita, kami mengundang {nama tamu} untuk hadir dan turut merayakan hari bahagia kami dalam acara pernikahan:\n\n"
             . "*{mempelai}*\n\n"
             . "Tanggal: *{tanggal}*\n"
             . "Waktu: *{waktu}*\n"
             . "Tempat: *{tempat}*\n\n"
-            . "Merupakan suatu kebahagiaan dan kehormatan bagi kami apabila {nama} berkenan hadir serta memberikan doa dan ucapan selamat untuk mengiringi langkah baru kami.\n\n"
+            . "Merupakan suatu kebahagiaan dan kehormatan bagi kami apabila {nama tamu} berkenan hadir serta memberikan doa dan ucapan selamat untuk mengiringi langkah baru kami.\n\n"
             . "Informasi lengkap mengenai acara dapat dilihat melalui undangan digital berikut:\n\n"
             . "*{link}*\n\n"
             . "Atas kehadiran, doa, dan perhatian yang diberikan, kami mengucapkan terima kasih.\n\n"
@@ -274,9 +274,12 @@ class GuestController extends Controller
     {
         $namaLengkap = $guest->title ? $guest->title . ' ' . $guest->name : $guest->name;
 
+        // {nama} lama tetap didukung supaya template kustom yang sudah
+        // tersimpan tidak rusak dan tetap ter-render.
         return str_replace(
-            ['{nama}', '{mempelai}', '{tanggal}', '{waktu}', '{tempat}', '{link}'],
+            ['{nama tamu}', '{nama}', '{mempelai}', '{tanggal}', '{waktu}', '{tempat}', '{link}'],
             [
+                $namaLengkap,
                 $namaLengkap,
                 $wedding->groom_first_name . ' & ' . $wedding->bride_first_name,
                 $wedding->wedding_date ? $wedding->wedding_date->format('d F Y') : '—',

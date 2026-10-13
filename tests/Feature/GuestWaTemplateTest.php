@@ -95,4 +95,21 @@ class GuestWaTemplateTest extends TestCase
         $this->assertStringContainsString('Pesan: bawaan', $res->getContent());
         $this->assertStringContainsString('Kepada Yth.', $res->getContent());
     }
+
+    /**
+     * Token baru {nama tamu} dirender jadi nama lengkap tamu, dan token lama
+     * {nama} tetap didukung supaya template kustom yang tersimpan tidak rusak.
+     */
+    public function test_nama_tamu_token_is_rendered_and_legacy_nama_still_works(): void
+    {
+        $user = $this->makeUser('wa4@example.com');
+        $guest = $this->makeGuest($user);
+        $user->wedding->update(['wa_template' => 'Halo {nama tamu}! Alias {nama}.']);
+
+        $res = $this->actingAs($user)->get(route('guests.wa', $guest));
+        $target = $res->headers->get('Location');
+
+        parse_str(parse_url($target, PHP_URL_QUERY), $q);
+        $this->assertSame('Halo Bpk. Budi! Alias Bpk. Budi.', $q['text']);
+    }
 }

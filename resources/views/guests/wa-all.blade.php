@@ -99,18 +99,21 @@
                     @method('PUT')
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Isi Pesan *</label>
+                        <label class="text-xs font-semibold text-[#5F6F5B] mb-1 flex items-center gap-1.5">Isi Pesan *
+                            <i class="fa-solid fa-circle-info text-[#B6ADA3] hover:text-[#5F6F5B] cursor-help"
+                                title="Tulis *teks* diapit bintang untuk huruf tebal (bold) di WhatsApp"></i>
+                        </label>
                         <textarea name="wa_template" id="wa-template-input" rows="12" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">{{ $waTemplate }}</textarea>
                         <p class="text-[11px] text-[#B6ADA3] mt-1">Placeholder:
-                            <code>{nama}</code> <code>{mempelai}</code> <code>{tanggal}</code>
+                            <code>{nama tamu}</code> <code>{mempelai}</code> <code>{tanggal}</code>
                             <code>{waktu}</code> <code>{tempat}</code> <code>{link}</code>
                         </p>
                     </div>
 
                     <div class="flex justify-between items-center gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" id="wa-template-reset"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Kembalikan
+                            class="px-5 py-2 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs font-semibold shadow-xs cursor-pointer">Kembalikan
                             Default</button>
                         <div class="flex gap-3">
                             <button type="button" @click="templateModalOpen = false"
