@@ -1,12 +1,26 @@
 @extends('layouts.app')
 
-@section('title', 'Keuangan & Dokumen - Lamaran')
+@section('title', 'Perencanaan - Lamaran')
 
 @section('content')
     <div class="space-y-6" x-data="{
-        tab: '{{ request('tab', 'info') }}',
+        tab: {{ Js::from(in_array(request('tab'), ['info', 'checklist', 'budget', 'guests', 'vendors'], true) ? request('tab') : 'info') }},
         modal: null,
         currentItem: {},
+        vendors: {{ $pbudVendorsJson }},
+        selectedVendorId: '',
+        get availableVendors() {
+            const cat = this.currentItem.category;
+            return cat && this.vendors[cat] ? this.vendors[cat] : [];
+        },
+        fillFromVendor() {
+            const vendor = this.availableVendors.find(v => v.id == this.selectedVendorId);
+            if (vendor) {
+                this.currentItem.vendor_id = vendor.id;
+                this.currentItem.item_name = vendor.package;
+                this.currentItem.actual_cost = vendor.price;
+            }
+        },
         init() {
             // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
             // jadi tampilan flatpickr disegarkan lagi di sini.
@@ -15,10 +29,10 @@
     }">
 
         {{-- Header --}}
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Lamaran</h1>
-                <p class="text-xs text-[#B6ADA3] mt-1">Kelola seluruh persiapan acara lamaran sebelum hari pernikahan.</p>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Lamaran</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Kelola seluruh persiapan acara lamaran sebelum hari pernikahan.</p>
             </div>
             @if ($event->event_date)
                 <div class="text-right">
@@ -32,8 +46,9 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <div class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
                 <div class="text-xs text-[#5F6F5B]/80 mb-1">Checklist Selesai</div>
-                <div class="text-lg font-bold text-[#5F6F5B]">{{ $checklistSummary['done'] }} /
-                    {{ $checklistSummary['total'] }}</div>
+                <div class="text-lg font-bold text-[#5F6F5B]"><span id="pcnt-done">{{ $checklistSummary['done'] }}</span> /
+                    <span id="pcnt-total">{{ $checklistSummary['total'] }}</span>
+                </div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
                 <div class="text-xs text-[#5F6F5B]/80 mb-1">Estimasi Tamu</div>
@@ -60,8 +75,6 @@
             'budget' => 'Budget',
             'guests' => 'Keluarga & Tamu',
             'vendors' => 'Vendor',
-            'rundown' => 'Rundown',
-            'docs' => 'Dokumentasi',
         ] as $key => $label)
                     <button @click="tab = '{{ $key }}'"
                         :class="tab === '{{ $key }}' ? 'bg-[#5F6F5B] text-white' :
@@ -116,9 +129,10 @@
                 {{-- ============ CHECKLIST ============ --}}
                 <div x-show="tab === 'checklist'" x-cloak>
                     <div class="flex items-center justify-between mb-4">
-                        <div class="text-xs text-[#B6ADA3]">
+                        <div class="text-xs text-[#B6ADA3]" id="pcnt-overdue-wrap">
                             @if ($checklistSummary['overdue'] > 0)
-                                <span class="text-[#C2757F] font-semibold">{{ $checklistSummary['overdue'] }} item melewati
+                                <span class="text-[#C2757F] font-semibold"><span
+                                        id="pcnt-overdue">{{ $checklistSummary['overdue'] }}</span> item melewati
                                     deadline</span>
                             @else
                                 Semua item dalam jadwal.
@@ -134,38 +148,56 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr
-                                    class="text-left text-[10px] uppercase tracking-wider text-[#B6ADA3] border-b border-[#B6ADA3]/25">
-                                    <th class="p-4">Item</th>
+                                    class="bg-[#FAF7F2] text-xs text-[#5F6F5B] uppercase tracking-wider border-b border-[#B6ADA3]/30">
+                                    <th class="p-4 w-12 text-center">Status</th>
+                                    <th class="p-4">Judul Checklist</th>
                                     <th class="p-4">Kategori</th>
-                                    <th class="p-4">Deadline</th>
+                                    <th class="p-4">Tenggat (Deadline)</th>
                                     <th class="p-4">Prioritas</th>
-                                    <th class="p-4">Status</th>
                                     <th class="p-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
                                 @forelse ($checklists as $item)
                                     <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
-                                        <td class="p-4 font-medium text-[#5F6F5B]">{{ $item->title }}</td>
-                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->category ?: '-' }}</td>
-                                        <td class="p-4 text-xs">
+                                        <td class="p-4 text-center">
+                                            <button type="button" class="cursor-pointer disabled:opacity-50"
+                                                data-url="{{ route('proposals.checklists.toggle', $item->id) }}"
+                                                @click="window.wpToggleProposalChecklist($el)"
+                                                :aria-label="'Ubah status checklist'">
+                                                <span data-icon>
+                                                    @if ($item->status === 'Done')
+                                                        <i class="fa-solid fa-circle-check text-[#5F6F5B] text-lg"></i>
+                                                    @elseif($item->status === 'Progress')
+                                                        <i class="fa-solid fa-spinner text-[#D8A7B1] text-lg"></i>
+                                                    @else
+                                                        <i
+                                                            class="fa-regular fa-circle text-[#B6ADA3] text-lg hover:text-[#5F6F5B]"></i>
+                                                    @endif
+                                                </span>
+                                            </button>
+                                        </td>
+                                        <td data-title
+                                            class="p-4 font-semibold text-[#5F6F5B] {{ $item->status === 'Done' ? 'line-through text-[#B6ADA3]' : '' }}">
+                                            {{ $item->title }}
+                                        </td>
+                                        <td class="p-4">
                                             <span
-                                                class="{{ $item->isOverdue() ? 'text-[#C2757F] font-semibold' : 'text-[#B6ADA3]' }}">
-                                                {{ $item->deadline?->format('d M Y') ?: '-' }}
+                                                class="text-xs bg-[#FAF7F2] text-[#5F6F5B] font-medium px-2.5 py-1 rounded-lg border border-[#B6ADA3]/40">
+                                                {{ $item->category }}
                                             </span>
                                         </td>
-                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->priority ?: '-' }}</td>
+                                        <td class="p-4 text-xs text-[#5F6F5B]">
+                                            {{ $item->deadline?->format('d M Y') ?: '—' }}
+                                        </td>
                                         <td class="p-4">
-                                            @php $label = $item->statusLabel(); @endphp
-                                            <span @class([
-                                                'px-2.5 py-1 rounded-full text-xs font-semibold',
-                                                'bg-[#5F6F5B]/12 text-[#5F6F5B]' => $label === 'Done',
-                                                'bg-[#C2757F]/15 text-[#C2757F]' => $label === 'Terlambat',
-                                                'bg-[#B6ADA3]/20 text-[#5F6F5B]' => !in_array($label, [
-                                                    'Done',
-                                                    'Terlambat',
-                                                ]),
-                                            ])>{{ $label }}</span>
+                                            <span
+                                                class="text-xs font-semibold px-2.5 py-1 rounded-full
+                                            @if ($item->priority === 'High') bg-[#D8A7B1]/30 text-[#5F6F5B] border border-[#A3B7A6]/40
+                                            @elseif($item->priority === 'Medium') bg-[#FAF7F2] text-[#5F6F5B] border border-[#A3B7A6]/40
+                                            @else bg-[#A3B7A6]/20 text-[#5F6F5B] border border-[#A3B7A6]/40 @endif">
+                                                {{ $item->priority }}
+                                            </span>
                                         </td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
@@ -184,7 +216,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="py-8 text-center text-xs text-[#B6ADA3]">Belum ada item
+                                        <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada item
                                             checklist.</td>
                                     </tr>
                                 @endforelse
@@ -215,33 +247,45 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr
-                                    class="text-left text-[10px] uppercase tracking-wider text-[#B6ADA3] border-b border-[#B6ADA3]/25">
-                                    <th class="p-4">Item</th>
+                                    class="bg-[#FAF7F2] text-xs text-[#5F6F5B] uppercase tracking-wider border-b border-[#B6ADA3]/30">
                                     <th class="p-4">Kategori</th>
+                                    <th class="p-4">Nama Item</th>
                                     <th class="p-4">Vendor</th>
-                                    <th class="p-4 text-right">Rencana</th>
-                                    <th class="p-4 text-right">Aktual</th>
-                                    <th class="p-4 text-right">Selisih</th>
+                                    <th class="p-4">Planned Budget</th>
+                                    <th class="p-4">Actual Cost</th>
+                                    <th class="p-4">Selisih / Remaining</th>
+                                    <th class="p-4">Catatan</th>
                                     <th class="p-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
                                 @forelse ($budgets as $item)
+                                    @php
+                                        $diff = $item->planned_budget - $item->actual_cost;
+                                    @endphp
                                     <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
+                                        <td class="p-4 font-semibold text-[#5F6F5B] text-xs">
+                                            <span class="bg-[#FAF7F2] px-2.5 py-1 rounded-lg border border-[#B6ADA3]/40">
+                                                {{ $item->category }}
+                                            </span>
+                                        </td>
                                         <td class="p-4 font-medium text-[#5F6F5B]">{{ $item->item_name }}</td>
-                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->category }}</td>
-                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->vendor?->name ?: '-' }}</td>
-                                        <td class="p-4 text-xs text-right">Rp
-                                            {{ number_format($item->planned_budget, 0, ',', '.') }}</td>
-                                        <td class="p-4 text-xs text-right">Rp
+                                        <td class="p-4 text-xs text-[#5F6F5B]/80">
+                                            @if ($item->vendor)
+                                                <span class="font-medium">{{ $item->vendor->name }}</span>
+                                            @else
+                                                <span class="text-[#B6ADA3]">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="p-4 text-[#5F6F5B]/80">Rp
+                                            {{ number_format($item->planned_budget, 0, ',', '.') }}
+                                        </td>
+                                        <td class="p-4 font-semibold text-[#5F6F5B]">Rp
                                             {{ number_format($item->actual_cost, 0, ',', '.') }}</td>
-                                        <td @class([
-                                            'p-4 text-xs text-right font-semibold',
-                                            'text-[#C2757F]' => $item->isOverBudget(),
-                                            'text-[#5F6F5B]' => !$item->isOverBudget(),
-                                        ])>
-                                            {{ $item->variance() >= 0 ? '+' : '-' }} Rp
-                                            {{ number_format(abs($item->variance()), 0, ',', '.') }}
+                                        <td class="p-4 font-bold {{ $diff >= 0 ? 'text-[#5F6F5B]' : 'text-[#5F6F5B]' }}">
+                                            Rp {{ number_format($diff, 0, ',', '.') }}
+                                        </td>
+                                        <td class="p-4 text-xs text-[#B6ADA3] max-w-xs truncate">{{ $item->notes ?? '-' }}
                                         </td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
@@ -260,7 +304,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="py-8 text-center text-xs text-[#B6ADA3]">Belum ada
+                                        <td colspan="8" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada
                                             budget lamaran.</td>
                                     </tr>
                                 @endforelse
@@ -276,7 +320,7 @@
                             {{ $guestSummary['rows'] }} nama · {{ $guestSummary['pax'] }} orang ·
                             {{ $guestSummary['attend'] }} hadir
                         </div>
-                        <button @click="modal = 'guest'; currentItem = { guest_count: 1, attendance_status: 'Pending' }"
+                        <button @click="modal = 'guest'; currentItem = { attendance_status: 'Pending' }"
                             class="btn-primary-rose px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
                             <i class="fa-solid fa-plus"></i> Tambah Tamu
                         </button>
@@ -286,11 +330,10 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr
-                                    class="text-left text-[10px] uppercase tracking-wider text-[#B6ADA3] border-b border-[#B6ADA3]/25">
+                                    class="bg-[#FAF7F2] text-xs text-[#5F6F5B] uppercase tracking-wider border-b border-[#B6ADA3]/30">
                                     <th class="p-4">Nama</th>
                                     <th class="p-4">Hubungan</th>
                                     <th class="p-4">Kategori</th>
-                                    <th class="p-4 text-center">Jumlah</th>
                                     <th class="p-4">Kehadiran</th>
                                     <th class="p-4 text-right">Aksi</th>
                                 </tr>
@@ -303,7 +346,6 @@
                                         </td>
                                         <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->relation ?: '-' }}</td>
                                         <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->category ?: '-' }}</td>
-                                        <td class="p-4 text-xs text-center">{{ $item->guest_count }}</td>
                                         <td class="p-4">
                                             <span @class([
                                                 'px-2.5 py-1 rounded-full text-xs font-semibold',
@@ -331,7 +373,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="py-8 text-center text-xs text-[#B6ADA3]">Belum ada tamu
+                                        <td colspan="5" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada tamu
                                             lamaran.</td>
                                     </tr>
                                 @endforelse
@@ -396,58 +438,6 @@
                     </div>
                 </div>
 
-                {{-- ============ RUNDOWN ============ --}}
-                <div x-show="tab === 'rundown'" x-cloak>
-                    <p class="text-xs text-[#B6ADA3] mb-4">Rundown lamaran dikelola di modul Rundown. Yang tampil di bawah
-                        hanya agenda acara lamaran.</p>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr
-                                    class="text-left text-[10px] uppercase tracking-wider text-[#B6ADA3] border-b border-[#B6ADA3]/25">
-                                    <th class="p-4">Waktu</th>
-                                    <th class="p-4">Kegiatan</th>
-                                    <th class="p-4">PIC</th>
-                                    <th class="p-4">Lokasi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-[#B6ADA3]/20 text-sm">
-                                @forelse ($rundown as $item)
-                                    <tr class="hover:bg-[#FAF7F2]/60 transition-colors">
-                                        <td class="p-4 text-xs text-[#5F6F5B] font-semibold">{{ $item->time }}</td>
-                                        <td class="p-4 font-medium text-[#5F6F5B]">{{ $item->activity }}</td>
-                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->pic ?: '-' }}</td>
-                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->location ?: '-' }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="py-8 text-center text-xs text-[#B6ADA3]">Belum ada
-                                            rundown lamaran.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {{-- ============ DOKUMENTASI ============ --}}
-                <div x-show="tab === 'docs'" x-cloak>
-                    <p class="text-xs text-[#B6ADA3] mb-4">Dokumentasi dan moodboard lamaran dikelola di modul Moodboard.
-                    </p>
-                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        @forelse ($moodboards as $doc)
-                            <div class="border border-[#B6ADA3]/25 rounded-xl p-3">
-                                <div class="text-sm font-medium text-[#5F6F5B]">{{ $doc->title }}</div>
-                                <div class="text-[10px] text-[#B6ADA3] mt-0.5">{{ $doc->category }}</div>
-                                @if ($doc->description)
-                                    <div class="text-xs text-[#B6ADA3] mt-2 line-clamp-3">{{ $doc->description }}</div>
-                                @endif
-                            </div>
-                        @empty
-                            <div class="text-xs text-[#B6ADA3] py-4 col-span-full">Belum ada dokumentasi lamaran.</div>
-                        @endforelse
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -456,9 +446,9 @@
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             @keydown.escape.window="modal = null">
             <div x-outside="modal = null"
-                class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
-                    <h3 class="font-bold text-[#5F6F5B]"
+                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
+                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
                         x-text="currentItem?.id ? 'Edit Item Checklist' : 'Tambah Item Checklist'"></h3>
                     <button @click="modal = null" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                             class="fa-solid fa-xmark"></i></button>
@@ -466,18 +456,20 @@
                 <form
                     :action="currentItem?.id ? '{{ route('proposals.checklists.update', 0) }}'.replace('/0/', '/' + currentItem
                         .id + '/') : '{{ route('proposals.checklists.store') }}'"
-                    method="POST" class="p-5 space-y-3">
+                    method="POST" class="space-y-4">
                     @csrf
                     <template x-if="currentItem?.id"><input type="hidden" name="_method" value="PUT"></template>
                     <div>
-                        <label class="form-label">Item <span class="text-[#C2757F]">*</span></label>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Judul Checklist *</label>
                         <input type="text" name="title" x-model="currentItem.title" required
-                            placeholder="mis. Booking dekorasi lamaran" class="form-input">
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"
+                            placeholder="Misal: Booking Catering">
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label">Kategori</label>
-                            <select name="category" x-model="currentItem.category" class="form-input">
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori *</label>
+                            <select name="category" x-model="currentItem.category" required
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 <option value="">-- Pilih Kategori --</option>
                                 @foreach (\App\Models\DropdownOption::getOptions('checklist_category') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
@@ -485,21 +477,26 @@
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">Deadline</label>
-                            <input type="text" name="deadline" x-model="currentItem.deadline"
-                                class="form-input datepicker">
-                        </div>
-                        <div>
-                            <label class="form-label">Prioritas</label>
-                            <select name="priority" x-model="currentItem.priority" class="form-input">
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Prioritas *</label>
+                            <select name="priority" x-model="currentItem.priority" required
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 @foreach (\App\Models\DropdownOption::getOptions('checklist_priority') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
                             </select>
                         </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label">Status</label>
-                            <select name="status" x-model="currentItem.status" class="form-input">
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tenggat Waktu</label>
+                            <input type="text" name="deadline" x-model="currentItem.deadline"
+                                placeholder="DD-MM-YYYY"
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status *</label>
+                            <select name="status" x-model="currentItem.status" required
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 @foreach (\App\Models\DropdownOption::getOptions('checklist_status') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
@@ -507,13 +504,15 @@
                         </div>
                     </div>
                     <div>
-                        <label class="form-label">Catatan</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="2" class="form-input"></textarea>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Deskripsi / Catatan</label>
+                        <textarea name="notes" x-model="currentItem.notes" rows="3"
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
-                    <div class="flex justify-end gap-2 pt-2">
+                    <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modal = null"
-                            class="px-4 py-2 rounded-xl text-sm bg-[#B6ADA3]/15 text-[#5F6F5B] cursor-pointer">Batal</button>
-                        <button class="btn-primary-rose px-5 py-2 rounded-xl text-sm cursor-pointer">Simpan</button>
+                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                        <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
+                            Checklist</button>
                     </div>
                 </form>
             </div>
@@ -524,62 +523,77 @@
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             @keydown.escape.window="modal = null">
             <div x-outside="modal = null"
-                class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
-                    <h3 class="font-bold text-[#5F6F5B]"
-                        x-text="currentItem?.id ? 'Edit Budget Lamaran' : 'Tambah Budget Lamaran'"></h3>
+                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
+                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
+                        x-text="currentItem?.id ? 'Edit Item Anggaran' : 'Tambah Item Anggaran'"></h3>
                     <button @click="modal = null" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
                             class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form
                     :action="currentItem?.id ? '{{ route('proposals.budgets.update', 0) }}'.replace('/0/', '/' + currentItem
                         .id + '/') : '{{ route('proposals.budgets.store') }}'"
-                    method="POST" class="p-5 space-y-3">
+                    method="POST" class="space-y-4">
                     @csrf
                     <template x-if="currentItem?.id"><input type="hidden" name="_method" value="PUT"></template>
+                    <input type="hidden" name="vendor_id" x-model="currentItem.vendor_id">
+
                     <div>
-                        <label class="form-label">Nama Item <span class="text-[#C2757F]">*</span></label>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori Budget *</label>
+                        <select name="category" x-model="currentItem.category" @change="selectedVendorId = ''" required
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                            <option value="">-- Pilih Kategori --</option>
+                            @foreach (\App\Models\DropdownOption::getOptions('checklist_category') as $opt)
+                                <option value="{{ $opt }}">{{ $opt }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div x-show="availableVendors.length > 0" x-cloak>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Pilih Vendor Terkait</label>
+                        <select x-model="selectedVendorId" @change="fillFromVendor()"
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                            <option value="">-- Pilih Vendor --</option>
+                            <template x-for="v in availableVendors" :key="v.id">
+                                <option :value="v.id" x-text="v.name"></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Item / Pengeluaran *</label>
                         <input type="text" name="item_name" x-model="currentItem.item_name" required
-                            placeholder="mis. Sewa venue lamaran" class="form-input">
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label">Kategori <span class="text-[#C2757F]">*</span></label>
-                            <select name="category" x-model="currentItem.category" required class="form-input">
-                                <option value="">-- Pilih Kategori --</option>
-                                @foreach (\App\Models\DropdownOption::getOptions('checklist_category') as $opt)
-                                    <option value="{{ $opt }}">{{ $opt }}</option>
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Planned Budget (Rp) *</label>
+                            <input type="text" name="planned_budget" inputmode="numeric" required
+                                :value="wpMoney(currentItem.planned_budget)"
+                                @input="currentItem.planned_budget = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
-                            <label class="form-label">Vendor</label>
-                            <select name="vendor_id" x-model="currentItem.vendor_id" class="form-input">
-                                <option value="">-- Pilih Vendor --</option>
-                                @foreach ($wedding->vendors()->orderBy('name')->get() as $v)
-                                    <option value="{{ $v->id }}">{{ $v->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="form-label">Rencana <span class="text-[#C2757F]">*</span></label>
-                            <input type="number" name="planned_budget" x-model="currentItem.planned_budget" required
-                                min="0" step="0.01" class="form-input form-input-number">
-                        </div>
-                        <div>
-                            <label class="form-label">Aktual</label>
-                            <input type="number" name="actual_cost" x-model="currentItem.actual_cost" min="0"
-                                step="0.01" class="form-input form-input-number">
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Actual Cost (Rp) *</label>
+                            <input type="text" name="actual_cost" inputmode="numeric" required
+                                :value="wpMoney(currentItem.actual_cost)"
+                                @input="currentItem.actual_cost = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>
+
                     <div>
-                        <label class="form-label">Catatan</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="2" class="form-input"></textarea>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan / Invoice Link</label>
+                        <textarea name="notes" x-model="currentItem.notes" rows="2"
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
-                    <div class="flex justify-end gap-2 pt-2">
+
+                    <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modal = null"
-                            class="px-4 py-2 rounded-xl text-sm bg-[#B6ADA3]/15 text-[#5F6F5B] cursor-pointer">Batal</button>
-                        <button class="btn-primary-rose px-5 py-2 rounded-xl text-sm cursor-pointer">Simpan</button>
+                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                        <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
+                            Anggaran</button>
                     </div>
                 </form>
             </div>
@@ -632,12 +646,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <label class="form-label">Jumlah</label>
-                            <input type="number" name="guest_count" x-model="currentItem.guest_count" min="1"
-                                class="form-input">
-                        </div>
-                        <div>
+                        <div class="col-span-2">
                             <label class="form-label">Kehadiran</label>
                             <select name="attendance_status" x-model="currentItem.attendance_status" class="form-input">
                                 @foreach (\App\Models\DropdownOption::getOptions('guest_status') as $opt)
@@ -645,10 +654,6 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div>
-                        <label class="form-label">Telepon</label>
-                        <input type="text" name="phone" x-model="currentItem.phone" class="form-input">
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" @click="modal = null"
@@ -659,4 +664,57 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Toggle status checklist lamaran tanpa reload: POST via fetch (jawab JSON),
+        // lalu update ikon, coretan judul, dan ringkasan. Mirror
+        // window.wpToggleChecklist di halaman checklist resepsi.
+        window.wpToggleProposalChecklist = async function(btn) {
+            const url = btn.dataset.url;
+            const token = document.querySelector('meta[name="csrf-token"]')?.content;
+            btn.disabled = true;
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    credentials: 'same-origin',
+                });
+                if (!res.ok) throw new Error('Toggle gagal: ' + res.status);
+                const d = await res.json();
+
+                btn.querySelector('[data-icon]').innerHTML = d.status === 'Done' ?
+                    '<i class="fa-solid fa-circle-check text-[#5F6F5B] text-lg"></i>' :
+                    '<i class="fa-regular fa-circle text-[#B6ADA3] text-lg hover:text-[#5F6F5B]"></i>';
+
+                const row = btn.closest('tr');
+                const title = row ? row.querySelector('[data-title]') : null;
+                if (title) {
+                    title.classList.toggle('line-through', d.status === 'Done');
+                    title.classList.toggle('text-[#B6ADA3]', d.status === 'Done');
+                }
+
+                const set = (id, v) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = v;
+                };
+                set('pcnt-done', d.doneCount);
+                set('pcnt-total', d.total);
+
+                const wrap = document.getElementById('pcnt-overdue-wrap');
+                if (wrap) {
+                    wrap.innerHTML = d.overdueCount > 0 ?
+                        `<span class="text-[#C2757F] font-semibold">${d.overdueCount} item melewati deadline</span>` :
+                        'Semua item dalam jadwal.';
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+            }
+        };
+    </script>
 @endsection

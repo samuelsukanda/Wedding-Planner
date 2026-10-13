@@ -106,6 +106,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::post('proposals/checklists', [ProposalController::class, 'storeChecklist'])->name('proposals.checklists.store');
     Route::put('proposals/checklists/{checklist}', [ProposalController::class, 'updateChecklist'])->name('proposals.checklists.update');
     Route::delete('proposals/checklists/{checklist}', [ProposalController::class, 'destroyChecklist'])->name('proposals.checklists.destroy');
+    Route::post('proposals/checklists/{checklist}/toggle', [ProposalController::class, 'toggleChecklist'])->name('proposals.checklists.toggle');
 
     Route::post('proposals/guests', [ProposalController::class, 'storeGuest'])->name('proposals.guests.store');
     Route::put('proposals/guests/{guest}', [ProposalController::class, 'updateGuest'])->name('proposals.guests.update');

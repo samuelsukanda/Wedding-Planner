@@ -46,6 +46,55 @@ class ProposalTest extends TestCase
         $this->assertDatabaseCount('proposal_events', 1);
     }
 
+    /**
+     * Tab Rundown & Dokumentasi dihapus dari Lamaran: tombol tab maupun
+     * panelnya tidak boleh dirender lagi.
+     */
+    public function test_rundown_and_docs_tabs_are_removed(): void
+    {
+        $user = $this->makeUser();
+
+        $html = $this->actingAs($user)->get('/proposals')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString("tab === 'rundown'", $html);
+        $this->assertStringNotContainsString("tab === 'docs'", $html);
+        $this->assertStringNotContainsString('Rundown lamaran dikelola', $html);
+        $this->assertStringNotContainsString('Belum ada dokumentasi lamaran', $html);
+    }
+
+    /**
+     * Toggle status checklist lamaran tanpa reload, mirror checklists.toggle:
+     * jawab JSON berisi status baru plus counter ringkasan.
+     */
+    public function test_checklist_can_be_toggled_without_reload(): void
+    {
+        $user = $this->makeUser();
+
+        $item = $user->wedding->proposalChecklists()->create([
+            'title' => 'Booking venue lamaran',
+            'status' => 'Todo',
+        ]);
+
+        $response = $this->actingAs($user)->postJson(
+            "/proposals/checklists/{$item->id}/toggle"
+        )->assertOk();
+
+        $response->assertJson([
+            'status' => 'Done',
+            'total' => 1,
+            'doneCount' => 1,
+            'overdueCount' => 0,
+        ]);
+
+        $this->assertSame('Done', $item->fresh()->status);
+
+        $this->actingAs($user)->postJson(
+            "/proposals/checklists/{$item->id}/toggle"
+        )->assertOk()->assertJsonPath('status', 'Todo');
+
+        $this->assertSame('Todo', $item->fresh()->status);
+    }
+
     public function test_event_info_can_be_saved(): void
     {
         $user = $this->makeUser();

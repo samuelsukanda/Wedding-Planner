@@ -17,8 +17,8 @@ class ProposalController extends Controller
      * PRD Module 13 - Lamaran.
      *
      * Satu acara per wedding, jadi event dibuat once lalu di-update. Tab
-     * Checklist / Budget / Tamu berdiri sendiri; Vendor, Rundown, dan
-     * Dokumentasi memakai tabel existing dengan proposal_event_id.
+     * Checklist / Budget / Tamu berdiri sendiri; Vendor memakai tabel
+     * existing dengan proposal_event_id.
      */
     public function index()
     {
@@ -37,9 +37,13 @@ class ProposalController extends Controller
 
         $budgets = $event->budgets()->with('vendor')->orderBy('category')->get();
 
-        // Rundown & dokumentasi lamaran (tabel existing).
-        $rundown = $event->rundownEvents()->orderBy('time')->get();
-        $moodboards = $event->moodboards()->orderBy('id')->get();
+        // JSON vendor untuk picker autofill-harga di modal budget
+        // (mirror BudgetController: dikelompokkan per kategori).
+        $pbudVendorsJson = $wedding->vendors()
+            ->whereNotNull('package')
+            ->get(['id', 'name', 'category', 'package', 'price'])
+            ->groupBy('category')
+            ->toJson();
 
         $checklistSummary = [
             'total' => $checklists->count(),
@@ -74,8 +78,7 @@ class ProposalController extends Controller
             'lamaranVendors',
             'otherVendors',
             'budgets',
-            'rundown',
-            'moodboards',
+            'pbudVendorsJson',
             'checklistSummary',
             'guestSummary',
             'budgetSummary',
@@ -145,6 +148,32 @@ class ProposalController extends Controller
 
         return redirect()->route('proposals.index')
             ->with('success', 'Item checklist dihapus.');
+    }
+
+    /**
+     * Toggle status checklist lamaran tanpa reload. Mirror
+     * ChecklistController@toggleStatus: jawab JSON supaya tidak ada
+     * navigasi/kedip; form biasa (tanpa JS) tetap redirect.
+     */
+    public function toggleChecklist(Request $request, ProposalChecklist $checklist)
+    {
+        $checklist->status = $checklist->status === 'Done' ? 'Todo' : 'Done';
+        $checklist->save();
+
+        if ($request->wantsJson()) {
+            $event = ProposalEvent::firstOrCreate(['wedding_id' => Wedding::current()->id]);
+            $checklists = $event->checklists()->get();
+
+            return response()->json([
+                'status' => $checklist->status,
+                'total' => $checklists->count(),
+                'doneCount' => $checklists->where('status', 'Done')->count(),
+                'overdueCount' => $checklists->filter(fn ($c) => $c->isOverdue())->count(),
+            ]);
+        }
+
+        return redirect()->route('proposals.index', ['tab' => 'checklist'])
+            ->with('success', 'Status checklist diperbarui!');
     }
 
     public function storeGuest(Request $request)
