@@ -224,7 +224,12 @@ class GuestController extends Controller
             ];
         })->filter();
 
-        return view('guests.wa-all', compact('links'));
+        return view('guests.wa-all', [
+            'links' => $links,
+            'waTemplate' => $wedding->wa_template ?: $this->defaultWaTemplate(),
+            'waIsDefault' => empty($wedding->wa_template),
+            'waDefault' => $this->defaultWaTemplate(),
+        ]);
     }
 
     public function toggleWaSent(Guest $guest)
@@ -237,32 +242,63 @@ class GuestController extends Controller
     private function buildWaUrl(Guest $guest): string
     {
         $wedding = Wedding::current();
-        $namaLengkap = $guest->title ? $guest->title . ' ' . $guest->name : $guest->name;
-
-        $bride = $wedding->bride_first_name;
-        $groom = $wedding->groom_first_name;
-        $date = $wedding->wedding_date ? $wedding->wedding_date->format('d F Y') : '—';
-        $time = '17:00';
-        $location = $wedding->location ?: 'Bandung';
-        $link = 'weddingplanner.web.id';
-
-        $msg = "Kepada Yth. {$namaLengkap},\n\n";
-        $msg .= "Dengan penuh sukacita, kami mengundang {$namaLengkap} untuk hadir dan turut merayakan hari bahagia kami dalam acara pernikahan:\n\n";
-        $msg .= "*{$bride} & {$groom}*\n\n";
-        $msg .= "Tanggal: *{$date}*\n";
-        $msg .= "Waktu: *{$time}*\n";
-        $msg .= "Tempat: *{$location}*\n\n";
-        $msg .= "Merupakan suatu kebahagiaan dan kehormatan bagi kami apabila {$namaLengkap} berkenan hadir serta memberikan doa dan ucapan selamat untuk mengiringi langkah baru kami.\n\n";
-        $msg .= "Informasi lengkap mengenai acara dapat dilihat melalui undangan digital berikut:\n\n";
-        $msg .= "*{$link}*\n\n";
-        $msg .= "Atas kehadiran, doa, dan perhatian yang diberikan, kami mengucapkan terima kasih.\n\n";
-        $msg .= "Hormat kami,\n\n";
-        $msg .= "*{$bride} & {$groom}*";
+        $msg = $this->renderWaMessage($wedding->wa_template ?: $this->defaultWaTemplate(), $guest, $wedding);
 
         $phone = preg_replace('/[^0-9]/', '', $guest->phone);
         $phoneNum = $phone[0] === '0' ? substr($phone, 1) : $phone;
 
         return 'https://api.whatsapp.com/send?phone=62' . $phoneNum . '&text=' . rawurlencode($msg);
+    }
+
+    /**
+     * Template bawaan pesan undangan WA. Placeholder yang didukung:
+     * {nama}, {mempelai}, {tanggal}, {waktu}, {tempat}, {link}.
+     */
+    public function defaultWaTemplate(): string
+    {
+        return "Kepada Yth. {nama},\n\n"
+            . "Dengan penuh sukacita, kami mengundang {nama} untuk hadir dan turut merayakan hari bahagia kami dalam acara pernikahan:\n\n"
+            . "*{mempelai}*\n\n"
+            . "Tanggal: *{tanggal}*\n"
+            . "Waktu: *{waktu}*\n"
+            . "Tempat: *{tempat}*\n\n"
+            . "Merupakan suatu kebahagiaan dan kehormatan bagi kami apabila {nama} berkenan hadir serta memberikan doa dan ucapan selamat untuk mengiringi langkah baru kami.\n\n"
+            . "Informasi lengkap mengenai acara dapat dilihat melalui undangan digital berikut:\n\n"
+            . "*{link}*\n\n"
+            . "Atas kehadiran, doa, dan perhatian yang diberikan, kami mengucapkan terima kasih.\n\n"
+            . "Hormat kami,\n\n"
+            . "*{mempelai}*";
+    }
+
+    private function renderWaMessage(string $template, Guest $guest, $wedding): string
+    {
+        $namaLengkap = $guest->title ? $guest->title . ' ' . $guest->name : $guest->name;
+
+        return str_replace(
+            ['{nama}', '{mempelai}', '{tanggal}', '{waktu}', '{tempat}', '{link}'],
+            [
+                $namaLengkap,
+                $wedding->groom_first_name . ' & ' . $wedding->bride_first_name,
+                $wedding->wedding_date ? $wedding->wedding_date->format('d F Y') : '—',
+                '17:00',
+                $wedding->location ?: 'Bandung',
+                'weddingplanner.web.id',
+            ],
+            $template
+        );
+    }
+
+    public function updateWaTemplate(Request $request)
+    {
+        $validated = $request->validate([
+            'wa_template' => 'nullable|string|max:2000',
+        ]);
+
+        // String kosong dianggap kembali ke template bawaan.
+        $template = trim($validated['wa_template'] ?? '') ?: null;
+        Wedding::current()->update(['wa_template' => $template]);
+
+        return redirect()->route('guests.wa-all')->with('success', 'Pesan undangan WA berhasil diperbarui!');
     }
 
     public function exportLabels()

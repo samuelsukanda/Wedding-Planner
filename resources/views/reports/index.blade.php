@@ -10,9 +10,11 @@
     </div>
 
     <div id="report-content" class="space-y-8" x-data="{}">
-        <div class="no-print flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="no-print flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Laporan & Rekap Pernikahan</h1>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Laporan & Rekap Pernikahan</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Lihat ringkasan persiapan, anggaran, pembayaran, dan kebutuhan
+                    pernikahan dalam satu laporan.</p>
             </div>
             <div class="no-print grid grid-cols-2 gap-3 w-full md:w-auto sm:flex sm:items-center sm:gap-3">
                 <button onclick="window.print()"
@@ -232,7 +234,8 @@
                 @endif
                 <div class="grid grid-cols-3 gap-3 text-center">
                     <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
-                        <div class="text-lg font-bold text-[#5F6F5B]">{{ $proposalChecklistDone }}/{{ $proposalChecklistTotal }}</div>
+                        <div class="text-lg font-bold text-[#5F6F5B]">
+                            {{ $proposalChecklistDone }}/{{ $proposalChecklistTotal }}</div>
                         <div class="text-xs text-[#5F6F5B]">Checklist</div>
                     </div>
                     <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">

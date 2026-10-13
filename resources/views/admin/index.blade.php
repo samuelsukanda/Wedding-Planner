@@ -9,7 +9,8 @@
             class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Profile</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Informasi acara pernikahan</p>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Kelola informasi pribadi, detail akun, dan pengaturan profil untuk
+                    memastikan data akun tetap akurat dan terkini.</p>
             </div>
         </div>
 
@@ -254,7 +255,9 @@
             const input = document.getElementById('photo-input');
             if (input) {
                 document.querySelectorAll('[data-photo-trigger]').forEach(function(button) {
-                    button.addEventListener('click', function() { input.click(); });
+                    button.addEventListener('click', function() {
+                        input.click();
+                    });
                 });
                 input.addEventListener('change', function() {
                     if (input.files && input.files.length) input.form.requestSubmit();

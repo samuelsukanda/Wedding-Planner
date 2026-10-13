@@ -11,7 +11,7 @@
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
-    <link rel="shortcut icon" href="{{ asset('img/icon.jpg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('img/icon-nupsera.jpg') }}" type="image/x-icon">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -236,6 +236,20 @@
                 justify-content: center;
                 padding-top: 0.75rem;
                 padding-bottom: 0.75rem;
+                /* Kolom ciut: padding horizontal px-4 bawaan menyisakan
+                   ~16px untuk konten sehingga max-width preflight ikut
+                   mengecilkan <img>. Nolkan supaya avatar muat penuh. */
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            /* Foto profil harus tetap w-9 h-9 saat sidebar ciut. Tanpa ini,
+               max-width: 100% preflight menjepit <img> ke lebar konten yang
+               sempit (tidak terjadi pada <div> inisial, makanya yang tanpa
+               foto terlihat normal). */
+            .sidebar.is-collapsed .shrink-0.border-t img,
+            html.sidebar-collapsed .sidebar .shrink-0.border-t img {
+                max-width: none;
             }
 
             .sidebar.is-collapsed .shrink-0.border-t form,
@@ -459,8 +473,8 @@
         <!-- Logo & Header -->
         <div class="px-3 py-2 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-w-0">
-                <img src="{{ asset('img/logo-nupsera.png') }}" alt="Logo"
-                    class="w-12 h-12 rounded-xl object-cover shrink-0">
+                <img src="{{ asset('img/nupsera-gold.png') }}" alt="Logo"
+                    class="w-9 h-9 rounded-xl object-cover shrink-0">
                 <div class="sidebar-label min-w-0">
                     <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight truncate">
                         {{ $brandName ?? 'Wedding Planner' }}</h1>
@@ -597,16 +611,16 @@
                 <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">
                     Admin</div>
 
-                <a href="{{ route('admin.master-data.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.master-data.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-layer-group w-5 text-center text-[#D8A7B1]"></i>
-                    <span>Master Data</span>
-                </a>
-
                 <a href="{{ route('admin.users.index') }}"
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.users.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                     <i class="fa-solid fa-users-gear w-5 text-center text-[#D8A7B1]"></i>
                     <span>Admin Panel</span>
+                </a>
+
+                <a href="{{ route('admin.master-data.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.master-data.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                    <i class="fa-solid fa-layer-group w-5 text-center text-[#D8A7B1]"></i>
+                    <span>Master Data</span>
                 </a>
 
                 <a href="{{ route('admin.document-templates.index') }}"

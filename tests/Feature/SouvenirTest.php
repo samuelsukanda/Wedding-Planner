@@ -36,7 +36,7 @@ class SouvenirTest extends TestCase
 
         $this->actingAs($user)->get('/souvenirs')
             ->assertOk()
-            ->assertSee('Daftar Seserahan');
+            ->assertSee('Seserahan');
     }
 
     public function test_item_can_be_created(): void

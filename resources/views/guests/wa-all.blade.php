@@ -3,16 +3,23 @@
 @section('title', 'Kirim WA Semua Tamu')
 
 @section('content')
-    <div class="space-y-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="space-y-6" x-data="{ templateModalOpen: false }">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Kirim Undangan WA</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">{{ $links->count() }} tamu dengan nomor telepon</p>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Kirim Undangan WA</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">{{ $links->count() }} tamu dengan nomor telepon
+                    · Pesan: {{ $waIsDefault ? 'bawaan' : 'kustom' }}</p>
             </div>
-            <a href="{{ route('guests.index') }}"
-                class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold w-full md:w-auto">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
-            </a>
+            <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                <button @click="templateModalOpen = true" type="button"
+                    class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold cursor-pointer">
+                    <i class="fa-solid fa-pen-to-square text-[#D8A7B1]"></i> Edit Pesan
+                </button>
+                <a href="{{ route('guests.index') }}"
+                    class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold w-full md:w-auto">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali
+                </a>
+            </div>
         </div>
 
         <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden">
@@ -73,5 +80,53 @@
                 </table>
             </div>
         </div>
+
+        <!-- Modal Edit Pesan Undangan WA -->
+        <div x-show="templateModalOpen" x-transition.opacity x-cloak
+            @keydown.escape.window="templateModalOpen = false"
+            class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
+            <div x-outside="templateModalOpen = false"
+                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
+                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Edit Pesan Undangan WA</h3>
+                    <button @click="templateModalOpen = false"
+                        class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                            class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <form action="{{ route('guests.wa-template.update') }}" method="POST" class="space-y-4">
+                    @csrf
+                    @method('PUT')
+
+                    <div>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Isi Pesan *</label>
+                        <textarea name="wa_template" id="wa-template-input" rows="12" required
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">{{ $waTemplate }}</textarea>
+                        <p class="text-[11px] text-[#B6ADA3] mt-1">Placeholder:
+                            <code>{nama}</code> <code>{mempelai}</code> <code>{tanggal}</code>
+                            <code>{waktu}</code> <code>{tempat}</code> <code>{link}</code>
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center gap-3 pt-3 border-t border-[#B6ADA3]/30">
+                        <button type="button" id="wa-template-reset"
+                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Kembalikan
+                            Default</button>
+                        <div class="flex gap-3">
+                            <button type="button" @click="templateModalOpen = false"
+                                class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            <button type="submit"
+                                class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
+                                Pesan</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script>
+            document.getElementById('wa-template-reset')?.addEventListener('click', function () {
+                document.getElementById('wa-template-input').value = @js($waDefault);
+            });
+        </script>
     </div>
 @endsection

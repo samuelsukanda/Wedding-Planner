@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Template Persyaratan Nikah')
+@section('title', 'Template Dokumen - Persyaratan Nikah')
 
 @section('content')
     <div class="space-y-6" x-data="{
@@ -10,10 +10,10 @@
         rawItems: '',
     }">
 
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Template Persyaratan Nikah</h1>
-                <p class="text-xs text-[#B6ADA3] mt-1">Daftar dokumen master yang bisa dipakai semua pasangan.</p>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Template Persyaratan Nikah</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Daftar dokumen master yang bisa dipakai semua pasangan.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = { items: [] }; rawItems = ''"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 cursor-pointer">
@@ -34,7 +34,7 @@
                         <span @class([
                             'px-2 py-0.5 rounded-full text-[10px] font-semibold shrink-0',
                             'bg-[#5F6F5B]/12 text-[#5F6F5B]' => $template->is_active,
-                            'bg-[#B6ADA3]/20 text-[#5F6F5B]' => ! $template->is_active,
+                            'bg-[#B6ADA3]/20 text-[#5F6F5B]' => !$template->is_active,
                         ])>{{ $template->is_active ? 'Aktif' : 'Nonaktif' }}</span>
                     </div>
 
@@ -52,14 +52,17 @@
                     </ul>
 
                     <div class="flex gap-2 mt-4 pt-4 border-t border-[#B6ADA3]/15">
-                        <button @click="modalOpen = true; editMode = true; currentItem = {{ Js::from($template) }}; rawItems = {{ Js::from(collect($template->items ?? [])->pluck('name')->implode("\n")) }}"
+                        <button
+                            @click="modalOpen = true; editMode = true; currentItem = {{ Js::from($template) }}; rawItems = {{ Js::from(collect($template->items ?? [])->pluck('name')->implode("\n")) }}"
                             class="text-xs text-[#5F6F5B] hover:text-[#C2757F] cursor-pointer">
                             <i class="fa-solid fa-pen mr-1"></i> Edit
                         </button>
-                        <form method="POST" action="{{ route('admin.document-templates.destroy', $template) }}" class="inline"
-                            onsubmit="return confirm('Hapus template ini?')">
+                        <form id="del-tpl-{{ $template->id }}" method="POST"
+                            action="{{ route('admin.document-templates.destroy', $template) }}" class="inline">
                             @csrf @method('DELETE')
-                            <button class="text-xs text-[#C2757F] hover:text-red-700 cursor-pointer">
+                            <button type="button"
+                                onclick="confirmDelete('del-tpl-{{ $template->id }}', '{{ addslashes($template->name) }}')"
+                                class="text-xs text-[#C2757F] hover:text-red-700 cursor-pointer">
                                 <i class="fa-solid fa-trash mr-1"></i> Hapus
                             </button>
                         </form>
@@ -76,19 +79,24 @@
         {{-- Modal --}}
         <div x-show="modalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             @keydown.escape.window="modalOpen = false">
-            <div x-outside="modalOpen = false" class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div x-outside="modalOpen = false"
+                class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B]" x-text="editMode ? 'Edit Template' : 'Template Baru'"></h3>
-                    <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                    <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                            class="fa-solid fa-xmark"></i></button>
                 </div>
 
-                <form :action="(editMode && currentItem.id) ? '{{ url('/admin/document-templates') }}/' + currentItem.id : '{{ route('admin.document-templates.store') }}'"
+                <form
+                    :action="(editMode && currentItem.id) ? '{{ url('/admin/document-templates') }}/' + currentItem.id:
+                        '{{ route('admin.document-templates.store') }}'"
                     method="POST" class="p-5 space-y-3">
                     @csrf
                     <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Nama Template <span class="text-[#C2757F]">*</span></label>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Nama Template <span
+                                class="text-[#C2757F]">*</span></label>
                         <input type="text" name="name" x-model="currentItem.name" required
                             class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
                     </div>
@@ -108,8 +116,8 @@
 
                     <div class="flex items-center gap-2">
                         <input type="hidden" name="is_active" value="0">
-                        <input type="checkbox" name="is_active" value="1" x-model="currentItem.is_active" id="is_active"
-                            class="w-4 h-4 rounded border-[#B6ADA3]">
+                        <input type="checkbox" name="is_active" value="1" x-model="currentItem.is_active"
+                            id="is_active" class="w-4 h-4 rounded border-[#B6ADA3]">
                         <label for="is_active" class="text-xs text-[#5F6F5B]">Template aktif (bisa dipakai pasangan)</label>
                     </div>
 

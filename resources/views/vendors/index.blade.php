@@ -4,26 +4,32 @@
 
 @section('content')
     <div class="space-y-6" x-data="tableFilter({
-            fields: ['search', 'category', 'status'],
-            // Filter tidak disimpan di query string supaya URL tetap bersih.
-            initial: { search: '', category: '', status: '' },
-            rows: {{ Js::from($vendors->map(fn ($v) => [
-                'name' => $v->name,
-                'category' => $v->category,
-                'status' => $v->booking_status,
-            ])) }},
-            extra: {
-                modalOpen: false,
-                editMode: false,
-                currentItem: {},
-                detailModalOpen: false,
-                detailVendor: null
-            }
-        })">
+        fields: ['search', 'category', 'status'],
+        // Filter tidak disimpan di query string supaya URL tetap bersih.
+        initial: { search: '', category: '', status: '' },
+        rows: {{ Js::from(
+            $vendors->map(
+                fn($v) => [
+                    'name' => $v->name,
+                    'category' => $v->category,
+                    'status' => $v->booking_status,
+                ],
+            ),
+        ) }},
+        extra: {
+            modalOpen: false,
+            editMode: false,
+            currentItem: {},
+            detailModalOpen: false,
+            detailVendor: null
+        }
+    })">
         <!-- Top Bar -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Vendor Management</h1>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Vendor Management</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Kelola vendor pernikahan, mulai dari pemilihan hingga pemantauan
+                    layanan dan pembayaran.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">

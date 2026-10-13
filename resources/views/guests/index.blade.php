@@ -30,9 +30,11 @@
         }
     })">
         <!-- Top Bar -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Guest Management</h1>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Guest Management</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Atur daftar tamu undangan, konfirmasi kehadiran, dan kebutuhan tamu
+                    dengan mudah.</p>
             </div>
             <div class="w-full md:w-auto md:flex md:items-center md:gap-2">
                 <div class="grid grid-cols-3 gap-2">
@@ -180,8 +182,7 @@
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-guest-{{ $g->id }}', '{{ addslashes($g->name) }}')"
-                                                class="btn-icon"><i
-                                                    class="fa-solid fa-trash"></i></button>
+                                                class="btn-icon"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>

@@ -72,6 +72,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::delete('vendors/package-items/{item}', [VendorController::class, 'destroyPackageItem'])->name('vendors.package-items.destroy');
 
     // Module 5 - Guest Management
+    Route::put('guests/wa-template', [GuestController::class, 'updateWaTemplate'])->name('guests.wa-template.update');
     Route::resource('guests', GuestController::class)->except(['create', 'edit', 'show']);
     Route::get('guests/export/csv', [GuestController::class, 'exportCsv'])->name('guests.export');
     Route::get('guests/export/labels', [GuestController::class, 'exportLabels'])->name('guests.labels');

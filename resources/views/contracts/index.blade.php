@@ -4,27 +4,33 @@
 
 @section('content')
     <div class="space-y-6" x-data="tableFilter({
-            fields: ['search', 'status'],
-            // Filter tidak disimpan di query string supaya URL tetap bersih.
-            initial: { search: '', status: '' },
-            rows: {{ Js::from($contracts->map(fn ($c) => [
-                'search' => trim($c->contract_number . ' ' . ($c->vendor?->name ?? '')),
-                'status' => $c->status,
-            ])) }},
-            extra: {
-                modalOpen: false,
-                editMode: false,
-                currentItem: {},
-                init() {
-                    // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
-                    // jadi tampilan flatpickr disegarkan lagi di sini.
-                    this.$watch('currentItem', () => window.syncDatepickersSoon());
-                }
+        fields: ['search', 'status'],
+        // Filter tidak disimpan di query string supaya URL tetap bersih.
+        initial: { search: '', status: '' },
+        rows: {{ Js::from(
+            $contracts->map(
+                fn($c) => [
+                    'search' => trim($c->contract_number . ' ' . ($c->vendor?->name ?? '')),
+                    'status' => $c->status,
+                ],
+            ),
+        ) }},
+        extra: {
+            modalOpen: false,
+            editMode: false,
+            currentItem: {},
+            init() {
+                // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
+                // jadi tampilan flatpickr disegarkan lagi di sini.
+                this.$watch('currentItem', () => window.syncDatepickersSoon());
             }
-        })">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        }
+    })">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Vendor Contract Management</h1>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Vendor Contract Management</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Simpan dan kelola kontrak vendor untuk memastikan setiap kesepakatan
+                    terdokumentasi dengan baik.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
@@ -102,16 +108,16 @@
                                     <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ Js::from([
-                            'id' => $c->id,
-                            'contract_number' => $c->contract_number,
-                            'vendor_id' => $c->vendor_id,
-                            'nominal' => $c->nominal,
-                            'dp_amount' => $c->dp_amount,
-                            'final_amount' => $c->final_amount,
-                            'due_date' => $c->due_date?->format('Y-m-d'),
-                            'status' => $c->status,
-                            'notes' => $c->notes,
-                        ]) }}"
+                                                'id' => $c->id,
+                                                'contract_number' => $c->contract_number,
+                                                'vendor_id' => $c->vendor_id,
+                                                'nominal' => $c->nominal,
+                                                'dp_amount' => $c->dp_amount,
+                                                'final_amount' => $c->final_amount,
+                                                'due_date' => $c->due_date?->format('Y-m-d'),
+                                                'status' => $c->status,
+                                                'notes' => $c->notes,
+                                            ]) }}"
                                             title="Edit" class="btn-icon"><i
                                                 class="fa-solid fa-pen-to-square"></i></button>
                                         <form id="del-contract-{{ $c->id }}"
@@ -120,8 +126,7 @@
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-contract-{{ $c->id }}', '{{ addslashes($c->contract_name ?? $c->vendor_name) }}')"
-                                                class="btn-icon"><i
-                                                    class="fa-solid fa-trash"></i></button>
+                                                class="btn-icon"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>

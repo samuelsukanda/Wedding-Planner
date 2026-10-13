@@ -16,6 +16,7 @@ class Wedding extends Model
         'total_budget',
         'location',
         'notes',
+        'wa_template',
     ];
 
     protected $casts = [

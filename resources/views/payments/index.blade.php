@@ -4,27 +4,33 @@
 
 @section('content')
     <div class="space-y-6" x-data="tableFilter({
-            fields: ['search', 'status'],
-            // Filter tidak disimpan di query string supaya URL tetap bersih.
-            initial: { search: '', status: '' },
-            rows: {{ Js::from($payments->map(fn ($p) => [
-                'search' => trim(($p->vendor?->name ?? '') . ' ' . ($p->notes ?? '')),
-                'status' => $p->status,
-            ])) }},
-            extra: {
-                modalOpen: false,
-                editMode: false,
-                currentItem: {},
-                init() {
-                    // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
-                    // jadi tampilan flatpickr disegarkan lagi di sini.
-                    this.$watch('currentItem', () => window.syncDatepickersSoon());
-                }
+        fields: ['search', 'status'],
+        // Filter tidak disimpan di query string supaya URL tetap bersih.
+        initial: { search: '', status: '' },
+        rows: {{ Js::from(
+            $payments->map(
+                fn($p) => [
+                    'search' => trim(($p->vendor?->name ?? '') . ' ' . ($p->notes ?? '')),
+                    'status' => $p->status,
+                ],
+            ),
+        ) }},
+        extra: {
+            modalOpen: false,
+            editMode: false,
+            currentItem: {},
+            init() {
+                // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
+                // jadi tampilan flatpickr disegarkan lagi di sini.
+                this.$watch('currentItem', () => window.syncDatepickersSoon());
             }
-        })">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        }
+    })">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Payment Tracker</h1>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Payment Tracker</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Pantau jadwal pembayaran, uang muka, dan sisa tagihan agar tidak ada
+                    pembayaran yang terlewat.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
@@ -122,15 +128,15 @@
                                     <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ Js::from([
-                            'id' => $p->id,
-                            'vendor_id' => $p->vendor_id,
-                            'nominal' => $p->nominal,
-                            'payment_date' => $p->payment_date?->format('Y-m-d'),
-                            'payment_method' => $p->payment_method,
-                            'status' => $p->status,
-                            'reminder_date' => $p->reminder_date?->format('Y-m-d'),
-                            'notes' => $p->notes,
-                        ]) }}"
+                                                'id' => $p->id,
+                                                'vendor_id' => $p->vendor_id,
+                                                'nominal' => $p->nominal,
+                                                'payment_date' => $p->payment_date?->format('Y-m-d'),
+                                                'payment_method' => $p->payment_method,
+                                                'status' => $p->status,
+                                                'reminder_date' => $p->reminder_date?->format('Y-m-d'),
+                                                'notes' => $p->notes,
+                                            ]) }}"
                                             title="Edit" class="btn-icon"><i
                                                 class="fa-solid fa-pen-to-square"></i></button>
                                         <form id="del-payment-{{ $p->id }}"
@@ -139,8 +145,7 @@
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-payment-{{ $p->id }}', '{{ addslashes($p->vendor_name) }}')"
-                                                class="btn-icon"><i
-                                                    class="fa-solid fa-trash"></i></button>
+                                                class="btn-icon"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>
@@ -207,12 +212,14 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Bayar</label>
-                            <input type="text" name="payment_date" x-model="currentItem.payment_date" placeholder="DD-MM-YYYY"
+                            <input type="text" name="payment_date" x-model="currentItem.payment_date"
+                                placeholder="DD-MM-YYYY"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Reminder</label>
-                            <input type="text" name="reminder_date" x-model="currentItem.reminder_date" placeholder="DD-MM-YYYY"
+                            <input type="text" name="reminder_date" x-model="currentItem.reminder_date"
+                                placeholder="DD-MM-YYYY"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
                         </div>
                     </div>

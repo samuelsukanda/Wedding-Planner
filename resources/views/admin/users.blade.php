@@ -3,9 +3,10 @@
 @section('title', 'Admin Panel - Admin')
 
 @section('content')
-    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {}, weddingMode: 'existing', init() { } }">
+    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {}, weddingMode: 'existing', init() {} }">
         <!-- Page Title & Header -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+        <div
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Admin Panel</h1>
                 <p class="text-xs text-[#5F6F5B]/70 mt-1">Kelola seluruh user terdaftar dan pasangannya</p>
@@ -16,16 +17,6 @@
             </button>
         </div>
 
-        <!-- Info: pasangan berbagi data -->
-        <div class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs flex items-start gap-3">
-            <i class="fa-solid fa-circle-info text-[#D8A7B1] mt-0.5"></i>
-            <p class="text-xs text-[#5F6F5B]/85 leading-relaxed">
-                Dua user yang berpasangan bisa diarahkan ke data pernikahan yang <strong>sama</strong>,
-                sehingga keduanya melihat seluruh data yang identik. Arahkan akun pasangan ke weddings
-                yang sudah ada, atau buat data pernikahan baru saat menambah user.
-            </p>
-        </div>
-
         <!-- Summary Widgets -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
@@ -34,15 +25,18 @@
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
                 <div class="text-xs text-[#5F6F5B]">Superadmin</div>
-                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $users->where('is_superadmin', true)->count() }}</div>
+                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">
+                    {{ $users->where('is_superadmin', true)->count() }}</div>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
                 <div class="text-xs text-[#5F6F5B]">Sudah Dipasangkan</div>
-                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $users->whereNotNull('wedding_id')->count() }}</div>
+                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $users->whereNotNull('wedding_id')->count() }}
+                </div>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
                 <div class="text-xs text-[#5F6F5B]">Belum Dipasangkan</div>
-                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $users->whereNull('wedding_id')->count() }}</div>
+                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $users->whereNull('wedding_id')->count() }}
+                </div>
             </div>
         </div>
 
@@ -51,7 +45,8 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-[#FAF7F2] text-xs text-[#5F6F5B] uppercase tracking-wider border-b border-[#B6ADA3]/30">
+                        <tr
+                            class="bg-[#FAF7F2] text-xs text-[#5F6F5B] uppercase tracking-wider border-b border-[#B6ADA3]/30">
                             <th class="p-4 w-12">No</th>
                             <th class="p-4">Nama</th>
                             <th class="p-4">Email</th>
@@ -76,18 +71,21 @@
                                             @endif
                                         </span>
                                     @else
-                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#FAF7F2] text-[#B6ADA3] border border-[#B6ADA3]/40">
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#FAF7F2] text-[#B6ADA3] border border-[#B6ADA3]/40">
                                             Belum dipasangkan
                                         </span>
                                     @endif
                                 </td>
                                 <td class="p-4">
                                     @if ($u->is_superadmin)
-                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#5F6F5B] text-white border border-[#5F6F5B]/40">
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#5F6F5B] text-white border border-[#5F6F5B]/40">
                                             Superadmin
                                         </span>
                                     @else
-                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40">
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40">
                                             User
                                         </span>
                                     @endif
@@ -96,12 +94,11 @@
                                     <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($u) }}"
-                                            title="Edit"
-                                            class="btn-icon">
+                                            title="Edit" class="btn-icon">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
-                                        <form id="del-user-{{ $u->id }}" action="{{ route('admin.users.destroy', $u->id) }}"
-                                            method="POST">
+                                        <form id="del-user-{{ $u->id }}"
+                                            action="{{ route('admin.users.destroy', $u->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
@@ -115,7 +112,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada user terdaftar.
+                                <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada user
+                                    terdaftar.
                                 </td>
                             </tr>
                         @endforelse
@@ -180,8 +178,9 @@
                         <select name="wedding_id"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             <option value="">-- Pilih --</option>
-                            @foreach($weddings as $w)
-                                <option value="{{ $w->id }}">{{ $w->couple_name }} (#{{ $w->id }})</option>
+                            @foreach ($weddings as $w)
+                                <option value="{{ $w->id }}">{{ $w->couple_name }} (#{{ $w->id }})
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -189,19 +188,22 @@
                     <div x-show="weddingMode === 'new'" class="space-y-3">
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Pengantin Pria *</label>
+                                <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Pengantin Pria
+                                    *</label>
                                 <input type="text" name="groom_name"
                                     class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Pengantin Wanita *</label>
+                                <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Pengantin Wanita
+                                    *</label>
                                 <input type="text" name="bride_name"
                                     class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             </div>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Pernikahan *</label>
-                            <input type="text" name="wedding_date" placeholder="DD-MM-YYYY" class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
+                            <input type="text" name="wedding_date" placeholder="DD-MM-YYYY"
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
                         </div>
                     </div>
 
@@ -214,8 +216,8 @@
                 </form>
 
                 <!-- FORM EDIT (server-side, pre-filled) -->
-                <form :action="'{{ url('admin/users') }}/' + currentItem.id" method="POST"
-                    class="space-y-4" x-show="editMode" x-cloak>
+                <form :action="'{{ url('admin/users') }}/' + currentItem.id" method="POST" class="space-y-4"
+                    x-show="editMode" x-cloak>
                     @csrf
                     @method('PUT')
                     <div>
@@ -239,8 +241,9 @@
                         <select name="wedding_id" x-model="currentItem.wedding_id"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             <option value="">-- Belum dipasangkan --</option>
-                            @foreach($weddings as $w)
-                                <option value="{{ $w->id }}">{{ $w->couple_name }} (#{{ $w->id }})</option>
+                            @foreach ($weddings as $w)
+                                <option value="{{ $w->id }}">{{ $w->couple_name }} (#{{ $w->id }})
+                                </option>
                             @endforeach
                         </select>
                     </div>

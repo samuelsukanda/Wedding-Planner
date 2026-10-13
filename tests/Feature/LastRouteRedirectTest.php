@@ -130,6 +130,27 @@ class LastRouteRedirectTest extends TestCase
     }
 
     /**
+     * Refresh superadmin di halaman admin harus kembali ke halaman itu
+     * (navigasi sungguhan, bukan render menumpang route dashboard) supaya
+     * halaman benar dan highlight sidebar admin tidak hilang.
+     */
+    public function test_superadmin_refresh_returns_to_admin_page(): void
+    {
+        foreach (['/admin/users', '/admin/master-data?group=checklist_category', '/admin/document-templates'] as $path) {
+            $admin = User::factory()->create([
+                'email' => 'admin-' . md5($path) . '@example.com',
+                'wedding_id' => null,
+                'is_superadmin' => true,
+            ]);
+
+            $this->actingAs($admin)
+                ->withUnencryptedCookie('weddingPlannerLastRoute', $path)
+                ->get('/')
+                ->assertRedirect($path, "Refresh superadmin dari {$path} harus kembali ke {$path}.");
+        }
+    }
+
+    /**
      * Setiap halaman daftar milik pasangan harus punya route .index supaya
      * ikut ter-whitelist. Ini yang membuat modul baru otomatis aman.
      */

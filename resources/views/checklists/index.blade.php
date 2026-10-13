@@ -4,29 +4,35 @@
 
 @section('content')
     <div class="space-y-6" x-data="tableFilter({
-            fields: ['search', 'status', 'priority'],
-            // Filter tidak disimpan di query string supaya URL tetap bersih.
-            initial: { search: '', status: '', priority: '' },
-            rows: {{ Js::from($checklists->map(fn ($c) => [
-                'search' => $c->title,
-                'status' => $c->status,
-                'priority' => $c->priority,
-            ])) }},
-            extra: {
-                modalOpen: false,
-editMode: false,
-                currentItem: {},
-                init() {
-                    // Nilai tanggal baru ditulis x-model setelah currentItem
-                    // terisi, jadi tampilan flatpickr disegarkan lagi di sini.
-                    this.$watch('currentItem', () => window.syncDatepickersSoon());
-                }
+        fields: ['search', 'status', 'priority'],
+        // Filter tidak disimpan di query string supaya URL tetap bersih.
+        initial: { search: '', status: '', priority: '' },
+        rows: {{ Js::from(
+            $checklists->map(
+                fn($c) => [
+                    'search' => $c->title,
+                    'status' => $c->status,
+                    'priority' => $c->priority,
+                ],
+            ),
+        ) }},
+        extra: {
+            modalOpen: false,
+            editMode: false,
+            currentItem: {},
+            init() {
+                // Nilai tanggal baru ditulis x-model setelah currentItem
+                // terisi, jadi tampilan flatpickr disegarkan lagi di sini.
+                this.$watch('currentItem', () => window.syncDatepickersSoon());
             }
-        })">
+        }
+    })">
         <!-- Top Bar -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Checklist</h1>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Checklist</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Pantau dan kelola seluruh tugas persiapan pernikahan agar tidak ada
+                    yang terlewat.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
@@ -163,22 +169,20 @@ editMode: false,
                                     <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ Js::from([
-                        'id' => $chk->id,
-                        'title' => $chk->title,
-                        'category' => $chk->category,
-                        'deadline' => $chk->deadline?->format('Y-m-d'),
-                        'priority' => $chk->priority,
-                        'status' => $chk->status,
-                        'description' => $chk->description,
-                    ]) }}"
+                                                'id' => $chk->id,
+                                                'title' => $chk->title,
+                                                'category' => $chk->category,
+                                                'deadline' => $chk->deadline?->format('Y-m-d'),
+                                                'priority' => $chk->priority,
+                                                'status' => $chk->status,
+                                                'description' => $chk->description,
+                                            ]) }}"
                                             title="Edit" class="btn-icon">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                         <form action="{{ route('checklists.duplicate', $chk->id) }}" method="POST">
                                             @csrf
-                                            <button type="submit"
-                                                class="btn-icon"
-                                                title="Duplikasi">
+                                            <button type="submit" class="btn-icon" title="Duplikasi">
                                                 <i class="fa-solid fa-copy"></i>
                                             </button>
                                         </form>
@@ -212,8 +216,7 @@ editMode: false,
         </div>
 
         <!-- Modal Form (Tambah / Edit Checklist) -->
-        <div x-show="modalOpen" x-transition.opacity x-cloak
-            @keydown.escape.window="modalOpen = false"
+        <div x-show="modalOpen" x-transition.opacity x-cloak @keydown.escape.window="modalOpen = false"
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div x-outside="modalOpen = false"
                 class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
@@ -264,7 +267,8 @@ editMode: false,
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tenggat Waktu</label>
-                            <input type="text" name="deadline" x-model="currentItem.deadline" placeholder="DD-MM-YYYY"
+                            <input type="text" name="deadline" x-model="currentItem.deadline"
+                                placeholder="DD-MM-YYYY"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
                         </div>
 
@@ -301,7 +305,7 @@ editMode: false,
     <script>
         // Toggle status checklist tanpa reload: POST via fetch (jawab JSON),
         // lalu update ikon, coretan judul, counter, dan baris filter Alpine.
-        window.wpToggleChecklist = async function (btn, rowIndex) {
+        window.wpToggleChecklist = async function(btn, rowIndex) {
             const url = btn.dataset.url;
             const token = document.querySelector('meta[name="csrf-token"]')?.content;
             btn.disabled = true;
@@ -318,9 +322,9 @@ editMode: false,
                 if (!res.ok) throw new Error('Toggle gagal: ' + res.status);
                 const d = await res.json();
 
-                btn.querySelector('[data-icon]').innerHTML = d.status === 'Done'
-                    ? '<i class="fa-solid fa-circle-check text-[#5F6F5B] text-lg"></i>'
-                    : '<i class="fa-regular fa-circle text-[#B6ADA3] text-lg hover:text-[#5F6F5B]"></i>';
+                btn.querySelector('[data-icon]').innerHTML = d.status === 'Done' ?
+                    '<i class="fa-solid fa-circle-check text-[#5F6F5B] text-lg"></i>' :
+                    '<i class="fa-regular fa-circle text-[#B6ADA3] text-lg hover:text-[#5F6F5B]"></i>';
 
                 const row = btn.closest('tr');
                 const title = row ? row.querySelector('[data-title]') : null;
@@ -329,7 +333,10 @@ editMode: false,
                     title.classList.toggle('text-[#B6ADA3]', d.status === 'Done');
                 }
 
-                const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+                const set = (id, v) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = v;
+                };
                 set('cnt-total', d.total);
                 set('cnt-done', d.doneCount);
                 set('cnt-progress', d.progressCount);

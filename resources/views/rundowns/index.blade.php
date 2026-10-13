@@ -18,9 +18,11 @@
             this.editMode = true;
         }
     }">
-        <div class="no-print flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="no-print flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Event Rundown</h1>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Event Rundown</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Susun urutan acara dan jadwal kegiatan agar seluruh rangkaian
+                    pernikahan berjalan lancar.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
@@ -84,16 +86,14 @@
 
                         <div class="no-print flex items-center gap-2 self-end md:self-center">
                             <button @click="openEdit(JSON.parse($el.dataset.rundown))" data-rundown="{{ json_encode($rd) }}"
-                                title="Edit" class="btn-icon"><i
-                                    class="fa-solid fa-pen-to-square"></i></button>
+                                title="Edit" class="btn-icon"><i class="fa-solid fa-pen-to-square"></i></button>
                             <form id="del-rundown-{{ $rd->id }}" action="{{ route('rundowns.destroy', $rd->id) }}"
                                 method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" title="Hapus"
                                     onclick="confirmDelete('del-rundown-{{ $rd->id }}', '{{ addslashes($rd->activity) }}')"
-                                    class="btn-icon"><i
-                                        class="fa-solid fa-trash"></i></button>
+                                    class="btn-icon"><i class="fa-solid fa-trash"></i></button>
                             </form>
                         </div>
                     </div>

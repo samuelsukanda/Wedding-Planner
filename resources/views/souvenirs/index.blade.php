@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Seserahan')
+@section('title', 'Perencanaan - Seserahan')
 
 @section('content')
     <div class="space-y-6" x-data="{
@@ -15,11 +15,11 @@
     }">
 
         {{-- Header --}}
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <h1 class="text-2xl font-bold font-serif-title">Daftar Seserahan</h1>
-                <p class="text-xs text-[#B6ADA3] mt-1">Katalog souvenir untuk tamu. Item yang sudah diterima otomatis masuk
-                    ke Budget Planner.</p>
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Seserahan</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Catat dan pantau kebutuhan seserahan agar setiap item siap menjelang
+                    hari pernikahan.</p>
             </div>
             <button
                 @click="modalOpen = true; editMode = false; currentItem = { status: 'Belum Dipilih', planned_price: '', actual_cost: '' }"

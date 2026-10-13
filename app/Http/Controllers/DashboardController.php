@@ -23,6 +23,24 @@ class DashboardController extends Controller
         $wedding = Wedding::current();
         if (!$wedding) {
             if (auth()->user()?->is_superadmin) {
+                // Refresh di halaman admin: cookie menyimpan path asli karena
+                // URL publik selalu "/". Alihkan sungguhan ke URL-nya supaya
+                // route menjadi admin.* (highlight sidebar ikut benar), bukan
+                // dirender menumpang route dashboard. Whitelist dari daftar
+                // route, bukan manual: halaman admin baru ikut otomatis.
+                $cookieRoute = rawurldecode((string) $request->cookie('weddingPlannerLastRoute', ''));
+                $cookiePath = parse_url($cookieRoute, PHP_URL_PATH) ?: '';
+                $adminPages = collect(Route::getRoutes())
+                    ->filter(fn ($route) => in_array('GET', $route->methods(), true) && str_ends_with($route->getName() ?? '', '.index'))
+                    ->map(fn ($route) => '/' . ltrim($route->uri(), '/'))
+                    ->filter(fn (string $uri) => str_starts_with($uri, '/admin'))
+                    ->unique();
+                $adminMatch = $adminPages->contains(fn (string $uri) => $cookiePath === $uri || str_starts_with($cookiePath, $uri . '/'));
+
+                if ($adminMatch) {
+                    return redirect()->to($cookieRoute);
+                }
+
                 $lastRoute = $request->session()->get('weddingPlanner.lastRoute');
 
                 if (str_starts_with($lastRoute ?? '', '/admin/master-data')) {

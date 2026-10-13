@@ -4,17 +4,18 @@
 
 @section('content')
     <div class="space-y-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
-                <a href="{{ route('documents.index') }}" class="text-xs text-[#B6ADA3] hover:text-[#5F6F5B]">
-                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Persyaratan Nikah
-                </a>
-                <h1 class="text-2xl font-bold font-serif-title mt-2">Riwayat: {{ $requirement->name }}</h1>
-                <p class="text-xs text-[#B6ADA3] mt-1">
+                <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B] mt-2">Riwayat: {{ $requirement->name }}</h1>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">
                     Status saat ini <strong>{{ $requirement->statusLabel() }}</strong>
                     @if ($requirement->pic_name) · PIC {{ $requirement->pic_name }} @endif
                 </p>
             </div>
+            <a href="{{ route('documents.index') }}"
+                class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold w-full md:w-auto">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </a>
         </div>
 
         <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs p-5">
