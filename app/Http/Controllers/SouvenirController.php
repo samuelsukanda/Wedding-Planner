@@ -70,6 +70,10 @@ class SouvenirController extends Controller
 
     private function validateItem(Request $request, bool $partial = false): array
     {
+        // Kedua harga dikirim terformat ("Rp 250.000") dari input uang di view,
+        // jadi digitsnya dibersihkan dulu sebelum aturan numeric jalan.
+        $this->normalizeDigitInputs($request, ['planned_price', 'actual_cost']);
+
         $required = $partial ? 'sometimes' : 'required';
 
         return $request->validate([
@@ -77,7 +81,10 @@ class SouvenirController extends Controller
             'vendor_id' => 'nullable|exists:vendors,id',
             'link' => 'nullable|string|max:255',
             'photo' => 'nullable|string|max:255',
-            'planned_price' => ($partial ? 'sometimes' : 'required') . '|numeric|min:0',
+            // planned_price wajib punya batas atas: kolomnya decimal(15,2),
+            // tanpa max angka kepanjangan lolos validasi lalu meledak jadi
+            // QueryException SQLSTATE[22003].
+            'planned_price' => $required . '|numeric|min:0|max:' . static::MONEY_MAX,
             'actual_cost' => $this->moneyRule(false),
             'status' => 'nullable|string|max:50',
             'received_date' => 'nullable|date',

@@ -57,6 +57,42 @@ class SouvenirTest extends TestCase
         ]);
     }
 
+    /**
+     * Harga Rencana & Harga Beli memakai input uang berformat ("Rp 250.000")
+     * seperti modul lain, jadi digitsnya harus dibersihkan sebelum aturan
+     * numeric dijalankan.
+     */
+    public function test_prices_accept_formatted_money_input(): void
+    {
+        $user = $this->makeUser();
+
+        $this->actingAs($user)->post('/souvenirs', [
+            'name' => 'Mug Keramik Custom',
+            'planned_price' => 'Rp 250.000',
+            'actual_cost' => 'Rp 200.500',
+            'status' => 'Belum Dipilih',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('souvenirs', [
+            'name' => 'Mug Keramik Custom',
+            'planned_price' => 250000,
+            'actual_cost' => 200500,
+        ]);
+    }
+
+    public function test_planned_price_beyond_column_capacity_is_rejected(): void
+    {
+        $user = $this->makeUser();
+
+        $this->actingAs($user)->post('/souvenirs', [
+            'name' => 'Mug Keramik Custom',
+            'planned_price' => 'Rp 1.000.001.111.111.140.000.000',
+            'status' => 'Belum Dipilih',
+        ])->assertSessionHasErrors('planned_price');
+
+        $this->assertDatabaseCount('souvenirs', 0);
+    }
+
     public function test_name_is_required(): void
     {
         $user = $this->makeUser();

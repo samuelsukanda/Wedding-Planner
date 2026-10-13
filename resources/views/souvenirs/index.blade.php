@@ -18,9 +18,11 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold font-serif-title">Daftar Seserahan</h1>
-                <p class="text-xs text-[#B6ADA3] mt-1">Katalog souvenir untuk tamu. Item yang sudah diterima otomatis masuk ke Budget Planner.</p>
+                <p class="text-xs text-[#B6ADA3] mt-1">Katalog souvenir untuk tamu. Item yang sudah diterima otomatis masuk
+                    ke Budget Planner.</p>
             </div>
-            <button @click="modalOpen = true; editMode = false; currentItem = { status: 'Belum Dipilih', planned_price: '', actual_cost: '' }"
+            <button
+                @click="modalOpen = true; editMode = false; currentItem = { status: 'Belum Dipilih', planned_price: '', actual_cost: '' }"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer">
                 <i class="fa-solid fa-plus"></i> Tambah Seserahan
             </button>
@@ -72,7 +74,8 @@
                                             <img src="{{ $item->photo }}" alt="{{ $item->name }}"
                                                 class="w-10 h-10 rounded-lg object-cover border border-[#B6ADA3]/30">
                                         @else
-                                            <div class="w-10 h-10 rounded-lg bg-[#5F6F5B]/8 flex items-center justify-center">
+                                            <div
+                                                class="w-10 h-10 rounded-lg bg-[#5F6F5B]/8 flex items-center justify-center">
                                                 <i class="fa-solid fa-gift text-[#B6ADA3] text-xs"></i>
                                             </div>
                                         @endif
@@ -88,32 +91,39 @@
                                     </div>
                                 </td>
                                 <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->vendor?->name ?: '-' }}</td>
-                                <td class="p-4 text-xs text-right">Rp {{ number_format($item->planned_price, 0, ',', '.') }}</td>
-                                <td class="p-4 text-xs text-right">Rp {{ number_format($item->actual_cost, 0, ',', '.') }}</td>
+                                <td class="p-4 text-xs text-right">Rp
+                                    {{ number_format($item->planned_price, 0, ',', '.') }}</td>
+                                <td class="p-4 text-xs text-right">Rp {{ number_format($item->actual_cost, 0, ',', '.') }}
+                                </td>
                                 <td @class([
                                     'p-4 text-xs text-right font-semibold',
                                     'text-[#C2757F]' => $item->variance() < 0,
                                     'text-[#5F6F5B]' => $item->variance() >= 0,
                                 ])>
-                                    {{ $item->variance() >= 0 ? '+' : '-' }} Rp {{ number_format(abs($item->variance()), 0, ',', '.') }}
+                                    {{ $item->variance() >= 0 ? '+' : '-' }} Rp
+                                    {{ number_format(abs($item->variance()), 0, ',', '.') }}
                                 </td>
                                 <td class="p-4">
                                     @if ($item->isReceived())
-                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#5F6F5B]/12 text-[#5F6F5B]">
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#5F6F5B]/12 text-[#5F6F5B]">
                                             Diterima
                                         </span>
                                         @if ($item->received_date)
-                                            <div class="text-[10px] text-[#B6ADA3] mt-0.5">{{ $item->received_date->format('d M Y') }}</div>
+                                            <div class="text-[10px] text-[#B6ADA3] mt-0.5">
+                                                {{ $item->received_date->format('d M Y') }}</div>
                                         @endif
                                     @else
-                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#B6ADA3]/20 text-[#5F6F5B]">
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#B6ADA3]/20 text-[#5F6F5B]">
                                             {{ $item->status }}
                                         </span>
                                     @endif
                                 </td>
                                 <td class="p-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <button @click="modalOpen = true; editMode = true; currentItem = {{ Js::from($item) }}"
+                                        <button
+                                            @click="modalOpen = true; editMode = true; currentItem = {{ Js::from($item) }}"
                                             title="Edit" class="btn-icon">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
@@ -142,12 +152,13 @@
         </div>
 
         {{-- Modal --}}
-        <div x-show="modalOpen" x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+        <div x-show="modalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             @keydown.escape.window="modalOpen = false">
-            <div x-outside="modalOpen = false" class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div x-outside="modalOpen = false"
+                class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
-                    <h3 class="font-bold text-[#5F6F5B]" x-text="editMode ? 'Edit Item Seserahan' : 'Tambah Item Seserahan'"></h3>
+                    <h3 class="font-bold text-[#5F6F5B]"
+                        x-text="editMode ? 'Edit Item Seserahan' : 'Tambah Item Seserahan'"></h3>
                     <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
@@ -156,24 +167,25 @@
                 {{-- action diturunkan dari currentItem.id, bukan flag editMode: kalau
                      editMode di-set di handler yang sama, Alpine bisa
                      mengevaluasi :action sebelum currentItem ter-assign. --}}
-                <form :action="(currentItem && currentItem.id) ? '{{ url('/souvenirs') }}/' + currentItem.id : '{{ route('souvenirs.store') }}'"
+                <form
+                    :action="(currentItem && currentItem.id) ? '{{ url('/souvenirs') }}/' + currentItem.id:
+                        '{{ route('souvenirs.store') }}'"
                     method="POST" class="p-5 space-y-3">
                     @csrf
-                    <template x-if="currentItem && currentItem.id"><input type="hidden" name="_method" value="PUT"></template>
+                    <template x-if="currentItem && currentItem.id"><input type="hidden" name="_method"
+                            value="PUT"></template>
 
                     <div>
                         <label class="form-label">Nama Item <span class="text-[#C2757F]">*</span></label>
                         <input type="text" name="name" x-model="currentItem.name" required
-                            placeholder="mis. Mug Keramik Custom"
-                            class="form-input">
+                            placeholder="mis. Mug Keramik Custom" class="form-input">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="form-label">Vendor</label>
-                            <select name="vendor_id" x-model="currentItem.vendor_id"
-                                class="form-input">
-                                <option value="">-</option>
+                            <select name="vendor_id" x-model="currentItem.vendor_id" class="form-input">
+                                <option value="">-- Pilih Vendor --</option>
                                 @foreach ($wedding->vendors()->orderBy('name')->get() as $v)
                                     <option value="{{ $v->id }}">{{ $v->name }}</option>
                                 @endforeach
@@ -181,8 +193,7 @@
                         </div>
                         <div>
                             <label class="form-label">Status</label>
-                            <select name="status" x-model="currentItem.status"
-                                class="form-input">
+                            <select name="status" x-model="currentItem.status" class="form-input">
                                 @foreach ($statuses as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
@@ -193,12 +204,16 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="form-label">Harga Rencana <span class="text-[#C2757F]">*</span></label>
-                            <input type="number" name="planned_price" x-model="currentItem.planned_price" required min="0" step="0.01"
+                            <input type="text" name="planned_price" inputmode="numeric" placeholder="Rp" required
+                                :value="wpMoney(currentItem.planned_price)"
+                                @input="currentItem.planned_price = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="form-input form-input-number">
                         </div>
                         <div>
                             <label class="form-label">Harga Beli</label>
-                            <input type="number" name="actual_cost" x-model="currentItem.actual_cost" min="0" step="0.01"
+                            <input type="text" name="actual_cost" inputmode="numeric" placeholder="Rp"
+                                :value="wpMoney(currentItem.actual_cost)"
+                                @input="currentItem.actual_cost = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="form-input form-input-number">
                         </div>
                     </div>
@@ -217,21 +232,20 @@
                         </div>
                         <div>
                             <label class="form-label">URL Foto</label>
-                            <input type="url" name="photo" x-model="currentItem.photo" placeholder="https://...jpg"
-                                class="form-input">
+                            <input type="url" name="photo" x-model="currentItem.photo"
+                                placeholder="https://...jpg" class="form-input">
                         </div>
                     </div>
 
                     <div x-show="currentItem.status === 'Diterima'" x-cloak>
                         <label class="form-label">Tanggal Diterima</label>
                         <input type="text" name="received_date" x-model="currentItem.received_date"
-                                class="form-input datepicker">
+                            class="form-input datepicker">
                     </div>
 
                     <div>
                         <label class="form-label">Catatan</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="2"
-                            class="form-input"></textarea>
+                        <textarea name="notes" x-model="currentItem.notes" rows="2" class="form-input"></textarea>
                     </div>
 
                     <div class="flex justify-end gap-2 pt-2">
