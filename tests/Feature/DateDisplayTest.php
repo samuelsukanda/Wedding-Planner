@@ -188,6 +188,35 @@ class DateDisplayTest extends TestCase
     }
 
     /**
+     * Sebaliknya, field bebas (bukan tanggal) tidak boleh punya class
+     * datepicker. Lokasi dan Tema acara pernah ikut dapat class itu sehingga
+     * mengetik teks bebas malah memunculkan kalender.
+     */
+    public function test_free_text_fields_do_not_use_datepicker(): void
+    {
+        $user = $this->makeUser();
+
+        $html = $this->actingAs($user)->get('/proposals')->assertOk()->getContent();
+
+        foreach (['location', 'theme'] as $field) {
+            // Ambil blok tag input untuk field ini; tag bisa berisi "->" di
+            // ekspresi Blade, jadi dipisah manual, bukan regex [^>]*.
+            $pos = strpos($html, 'name="' . $field . '"');
+
+            $this->assertNotFalse($pos, "Field {$field} tidak ditemukan di halaman Lamaran.");
+
+            $start = strrpos(substr($html, 0, $pos), '<input');
+            $tag = substr($html, $start, $pos - $start + 200);
+
+            $this->assertStringNotContainsString(
+                'datepicker',
+                $tag,
+                "Field {$field} bukan field tanggal tapi memakai class datepicker."
+            );
+        }
+    }
+
+    /**
      * src file view tidak boleh memuat em-dash rusak sedikit pun.
      */
     public function test_source_views_have_no_mojibake(): void

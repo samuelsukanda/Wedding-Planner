@@ -5,7 +5,7 @@
 @section('content')
     <div class="space-y-6" x-data="{
         tab: '{{ request('tab', 'info') }}',
-modal: null,
+        modal: null,
         currentItem: {},
         init() {
             // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
@@ -87,26 +87,23 @@ modal: null,
                             </div>
                             <div>
                                 <label class="form-label">Waktu</label>
-<input type="time" name="event_time" value="{{ old('event_time', $event->event_time) }}"
+                                <input type="time" name="event_time" value="{{ old('event_time', $event->event_time) }}"
                                     class="form-input">
                             </div>
                             <div>
                                 <label class="form-label">Lokasi</label>
                                 <input type="text" name="location" value="{{ old('location', $event->location) }}"
-                                    placeholder="Alamat acara lamaran"
-                                    class="form-input datepicker" placeholder="DD-MM-YYYY">
+                                    placeholder="Alamat acara lamaran" class="form-input">
                             </div>
                             <div>
                                 <label class="form-label">Tema</label>
                                 <input type="text" name="theme" value="{{ old('theme', $event->theme) }}"
-                                    placeholder="Tema acara"
-                                    class="form-input datepicker" placeholder="DD-MM-YYYY">
+                                    placeholder="Tema acara" class="form-input">
                             </div>
                             <div class="md:col-span-2">
                                 <label class="form-label">Catatan Kebutuhan
                                     Acara</label>
-<textarea name="notes" rows="4" placeholder="Kebutuhan khusus acara lamaran..."
-                                    class="form-input">{{ old('notes', $event->notes) }}</textarea>
+                                <textarea name="notes" rows="4" placeholder="Kebutuhan khusus acara lamaran..." class="form-input">{{ old('notes', $event->notes) }}</textarea>
                             </div>
                         </div>
                         <div class="mt-4 flex justify-end">
@@ -458,7 +455,8 @@ modal: null,
         <div x-show="modal === 'checklist'" x-cloak
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             @keydown.escape.window="modal = null">
-            <div x-outside="modal = null" class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div x-outside="modal = null"
+                class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B]"
                         x-text="currentItem?.id ? 'Edit Item Checklist' : 'Tambah Item Checklist'"></h3>
@@ -472,18 +470,15 @@ modal: null,
                     @csrf
                     <template x-if="currentItem?.id"><input type="hidden" name="_method" value="PUT"></template>
                     <div>
-                        <label class="form-label">Item <span
-                                class="text-[#C2757F]">*</span></label>
+                        <label class="form-label">Item <span class="text-[#C2757F]">*</span></label>
                         <input type="text" name="title" x-model="currentItem.title" required
-                            placeholder="mis. Booking dekorasi lamaran"
-                            class="form-input">
+                            placeholder="mis. Booking dekorasi lamaran" class="form-input">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="form-label">Kategori</label>
-                            <select name="category" x-model="currentItem.category"
-                                class="form-input">
-                                <option value="">-</option>
+                            <select name="category" x-model="currentItem.category" class="form-input">
+                                <option value="">-- Pilih Kategori --</option>
                                 @foreach (\App\Models\DropdownOption::getOptions('checklist_category') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
@@ -496,8 +491,7 @@ modal: null,
                         </div>
                         <div>
                             <label class="form-label">Prioritas</label>
-                            <select name="priority" x-model="currentItem.priority"
-                                class="form-input">
+                            <select name="priority" x-model="currentItem.priority" class="form-input">
                                 @foreach (\App\Models\DropdownOption::getOptions('checklist_priority') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
@@ -505,8 +499,7 @@ modal: null,
                         </div>
                         <div>
                             <label class="form-label">Status</label>
-                            <select name="status" x-model="currentItem.status"
-                                class="form-input">
+                            <select name="status" x-model="currentItem.status" class="form-input">
                                 @foreach (\App\Models\DropdownOption::getOptions('checklist_status') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
@@ -515,8 +508,7 @@ modal: null,
                     </div>
                     <div>
                         <label class="form-label">Catatan</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="2"
-                            class="form-input"></textarea>
+                        <textarea name="notes" x-model="currentItem.notes" rows="2" class="form-input"></textarea>
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" @click="modal = null"
@@ -531,7 +523,8 @@ modal: null,
         <div x-show="modal === 'budget'" x-cloak
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             @keydown.escape.window="modal = null">
-            <div x-outside="modal = null" class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div x-outside="modal = null"
+                class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B]"
                         x-text="currentItem?.id ? 'Edit Budget Lamaran' : 'Tambah Budget Lamaran'"></h3>
@@ -545,51 +538,43 @@ modal: null,
                     @csrf
                     <template x-if="currentItem?.id"><input type="hidden" name="_method" value="PUT"></template>
                     <div>
-                        <label class="form-label">Nama Item <span
-                                class="text-[#C2757F]">*</span></label>
+                        <label class="form-label">Nama Item <span class="text-[#C2757F]">*</span></label>
                         <input type="text" name="item_name" x-model="currentItem.item_name" required
-                            placeholder="mis. Sewa venue lamaran"
-                            class="form-input">
+                            placeholder="mis. Sewa venue lamaran" class="form-input">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="form-label">Kategori <span
-                                    class="text-[#C2757F]">*</span></label>
-                            <select name="category" x-model="currentItem.category" required
-                                class="form-input">
-                                @foreach (\App\Models\DropdownOption::getOptions('budget_category') as $opt)
+                            <label class="form-label">Kategori <span class="text-[#C2757F]">*</span></label>
+                            <select name="category" x-model="currentItem.category" required class="form-input">
+                                <option value="">-- Pilih Kategori --</option>
+                                @foreach (\App\Models\DropdownOption::getOptions('checklist_category') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
                             <label class="form-label">Vendor</label>
-                            <select name="vendor_id" x-model="currentItem.vendor_id"
-                                class="form-input">
-                                <option value="">-</option>
+                            <select name="vendor_id" x-model="currentItem.vendor_id" class="form-input">
+                                <option value="">-- Pilih Vendor --</option>
                                 @foreach ($wedding->vendors()->orderBy('name')->get() as $v)
                                     <option value="{{ $v->id }}">{{ $v->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">Rencana <span
-                                    class="text-[#C2757F]">*</span></label>
+                            <label class="form-label">Rencana <span class="text-[#C2757F]">*</span></label>
                             <input type="number" name="planned_budget" x-model="currentItem.planned_budget" required
-                                min="0" step="0.01"
-                                class="form-input form-input-number">
+                                min="0" step="0.01" class="form-input form-input-number">
                         </div>
                         <div>
                             <label class="form-label">Aktual</label>
                             <input type="number" name="actual_cost" x-model="currentItem.actual_cost" min="0"
-                                step="0.01"
-                                class="form-input form-input-number">
+                                step="0.01" class="form-input form-input-number">
                         </div>
                     </div>
                     <div>
                         <label class="form-label">Catatan</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="2"
-                            class="form-input"></textarea>
+                        <textarea name="notes" x-model="currentItem.notes" rows="2" class="form-input"></textarea>
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" @click="modal = null"
@@ -604,7 +589,8 @@ modal: null,
         <div x-show="modal === 'guest'" x-cloak
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             @keydown.escape.window="modal = null">
-            <div x-outside="modal = null" class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div x-outside="modal = null"
+                class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B]" x-text="currentItem?.id ? 'Edit Tamu' : 'Tambah Tamu'"></h3>
                     <button @click="modal = null" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
@@ -618,34 +604,29 @@ modal: null,
                     <template x-if="currentItem?.id"><input type="hidden" name="_method" value="PUT"></template>
                     <div class="grid grid-cols-[80px_1fr] gap-3">
                         <div>
-                            <label class="form-label">Sapaan</label>
-                            <select name="title" x-model="currentItem.title"
-                                class="form-input">
-                                <option value="">-</option>
+                            <label class="form-label">Gelar</label>
+                            <select name="title" x-model="currentItem.title" class="form-input">
+                                <option value="">-- Gelar --</option>
                                 @foreach (\App\Models\DropdownOption::getOptions('guest_title') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">Nama <span
-                                    class="text-[#C2757F]">*</span></label>
-                            <input type="text" name="name" x-model="currentItem.name" required
-                                class="form-input">
+                            <label class="form-label">Nama <span class="text-[#C2757F]">*</span></label>
+                            <input type="text" name="name" x-model="currentItem.name" required class="form-input">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="form-label">Hubungan</label>
                             <input type="text" name="relation" x-model="currentItem.relation"
-                                placeholder="mis. Keluarga pasangan dekat"
-                                class="form-input">
+                                placeholder="mis. Keluarga pasangan dekat" class="form-input">
                         </div>
                         <div>
                             <label class="form-label">Kategori</label>
-                            <select name="category" x-model="currentItem.category"
-                                class="form-input">
-                                <option value="">-</option>
+                            <select name="category" x-model="currentItem.category" class="form-input">
+                                <option value="">-- Pilih Kategori --</option>
                                 @foreach (\App\Models\DropdownOption::getOptions('guest_category') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
@@ -658,8 +639,7 @@ modal: null,
                         </div>
                         <div>
                             <label class="form-label">Kehadiran</label>
-                            <select name="attendance_status" x-model="currentItem.attendance_status"
-                                class="form-input">
+                            <select name="attendance_status" x-model="currentItem.attendance_status" class="form-input">
                                 @foreach (\App\Models\DropdownOption::getOptions('guest_status') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
@@ -668,8 +648,7 @@ modal: null,
                     </div>
                     <div>
                         <label class="form-label">Telepon</label>
-                        <input type="text" name="phone" x-model="currentItem.phone"
-                            class="form-input">
+                        <input type="text" name="phone" x-model="currentItem.phone" class="form-input">
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" @click="modal = null"
