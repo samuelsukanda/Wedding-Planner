@@ -105,7 +105,7 @@ class ProposalTest extends TestCase
             'location' => 'Rumah Orang Tua',
             'theme' => 'Tradisi Jawa',
             'notes' => 'Perlu sound system',
-        ])->assertRedirect(route('proposals.index'));
+        ])->assertRedirect(route('proposals.index', ['tab' => 'info']));
 
         $this->assertDatabaseHas('proposal_events', [
             'wedding_id' => $user->wedding_id,
@@ -126,7 +126,7 @@ class ProposalTest extends TestCase
             'deadline' => '2026-11-01',
             'priority' => 'High',
             'status' => 'Todo',
-        ])->assertRedirect(route('proposals.index'));
+        ])->assertRedirect(route('proposals.index', ['tab' => 'checklist']));
 
         $item = ProposalChecklist::first();
         $this->assertSame('Booking Cincin', $item->title);
@@ -134,7 +134,7 @@ class ProposalTest extends TestCase
         $this->actingAs($user)->put('/proposals/checklists/' . $item->id, [
             'title' => 'Booking Cincin Custom',
             'status' => 'Done',
-        ])->assertRedirect(route('proposals.index'));
+        ])->assertRedirect(route('proposals.index', ['tab' => 'checklist']));
 
         $this->assertDatabaseHas('proposal_checklists', [
             'id' => $item->id,
@@ -143,7 +143,7 @@ class ProposalTest extends TestCase
         ]);
 
         $this->actingAs($user)->delete('/proposals/checklists/' . $item->id)
-            ->assertRedirect(route('proposals.index'));
+            ->assertRedirect(route('proposals.index', ['tab' => 'checklist']));
 
         $this->assertDatabaseCount('proposal_checklists', 0);
     }
@@ -176,7 +176,7 @@ class ProposalTest extends TestCase
             'title' => 'Bpk.',
             'relation' => 'Ayah',
             'guest_count' => 3,
-        ])->assertRedirect(route('proposals.index'));
+        ])->assertRedirect(route('proposals.index', ['tab' => 'guests']));
 
         $guest = ProposalGuest::first();
         $this->assertSame(3, $guest->guest_count);
@@ -199,7 +199,7 @@ class ProposalTest extends TestCase
             'item_name' => 'Venue Lamaran',
             'planned_budget' => 15000000,
             'actual_cost' => 18000000,
-        ])->assertRedirect(route('proposals.index'));
+        ])->assertRedirect(route('proposals.index', ['tab' => 'budget']));
 
         // Business Rule 4: terpisah di tabelnya sendiri.
         $this->assertDatabaseCount('budgets', 1);
@@ -226,13 +226,13 @@ class ProposalTest extends TestCase
         $this->assertNull($vendor->proposal_event_id);
 
         $this->actingAs($user)->post('/proposals/vendors/' . $vendor->id . '/toggle')
-            ->assertRedirect(route('proposals.index'));
+            ->assertRedirect(route('proposals.index', ['tab' => 'vendors']));
 
         $this->assertNotNull($vendor->fresh()->proposal_event_id);
 
         // Toggle lagi melepaskannya kembali ke daftar umum.
         $this->actingAs($user)->post('/proposals/vendors/' . $vendor->id . '/toggle')
-            ->assertRedirect(route('proposals.index'));
+            ->assertRedirect(route('proposals.index', ['tab' => 'vendors']));
 
         $this->assertNull($vendor->fresh()->proposal_event_id);
     }
@@ -268,5 +268,87 @@ class ProposalTest extends TestCase
         ])->assertNotFound();
 
         $this->assertDatabaseHas('proposal_checklists', ['id' => $own->id, 'title' => 'Milik Saya']);
+    }
+
+    /**
+     * Tambah/ubah/hapus di tab mana pun harus kembali ke tab itu, bukan
+     * selalu ke Informasi Acara.
+     */
+    public function test_crud_redirects_keep_active_tab(): void
+    {
+        $user = $this->makeUser();
+
+        $this->actingAs($user)->post('/proposals/checklists', ['title' => 'A'])
+            ->assertRedirect(route('proposals.index', ['tab' => 'checklist']));
+
+        $item = ProposalChecklist::where('wedding_id', $user->wedding_id)->first();
+        $this->actingAs($user)->put('/proposals/checklists/' . $item->id, ['title' => 'B'])
+            ->assertRedirect(route('proposals.index', ['tab' => 'checklist']));
+        $this->actingAs($user)->delete('/proposals/checklists/' . $item->id)
+            ->assertRedirect(route('proposals.index', ['tab' => 'checklist']));
+
+        $this->actingAs($user)->post('/proposals/guests', ['name' => 'Tamu A'])
+            ->assertRedirect(route('proposals.index', ['tab' => 'guests']));
+
+        $this->actingAs($user)->post('/proposals/budgets', [
+            'category' => 'Venue',
+            'item_name' => 'Gedung',
+            'planned_budget' => '1000000',
+        ])->assertRedirect(route('proposals.index', ['tab' => 'budget']));
+    }
+
+    /**
+     * Input uang dikirim terformat ("Rp 1.000.000") dari modal; server harus
+     * menormalkannya jadi angka supaya validasi numeric lolos dan tersimpan.
+     */
+    public function test_store_budget_accepts_formatted_rupiah(): void
+    {
+        $user = $this->makeUser();
+
+        $this->actingAs($user)->post('/proposals/budgets', [
+            'category' => 'Venue',
+            'item_name' => 'Gedung',
+            'planned_budget' => 'Rp 1.000.000',
+            'actual_cost' => 'Rp 250.000',
+        ])->assertRedirect(route('proposals.index', ['tab' => 'budget']));
+
+        $this->assertDatabaseHas('proposal_budgets', [
+            'wedding_id' => $user->wedding_id,
+            'item_name' => 'Gedung',
+            'planned_budget' => 1000000,
+            'actual_cost' => 250000,
+        ]);
+    }
+
+    /**
+     * Tab awal dibaca dari ?tab= (dipakai redirect habis CRUD) dan view
+     * menyimpan/memulihkan tab via sessionStorage (kunci wp.proposals.tab)
+     * karena URL publik selalu '/' sehingga refresh tak kehilangan tab.
+     */
+    public function test_initial_tab_comes_from_query_and_persists_via_storage(): void
+    {
+        $user = $this->makeUser();
+
+        $this->actingAs($user)->get('/proposals?tab=budget')
+            ->assertOk()
+            ->assertSee("tab: 'budget'", false);
+
+        $this->actingAs($user)->get('/proposals')
+            ->assertOk()
+            ->assertSee("tab: 'info'", false)
+            ->assertSee('wp.proposals.tab', false);
+    }
+
+    /**
+     * Form edit membangun action dari ID asli. Pola replace('/0/') tidak
+     * pernah cocok (URL tanpa trailing slash) sehingga submit selalu 404.
+     */
+    public function test_edit_forms_point_to_real_ids(): void
+    {
+        $user = $this->makeUser();
+        $html = $this->actingAs($user)->get('/proposals')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString("replace('/0/'", $html);
+        $this->assertStringContainsString('replace(/\\/0$/', $html);
     }
 }

@@ -11,7 +11,7 @@
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
-    <link rel="shortcut icon" href="{{ asset('img/icon-nupsera.jpg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('img/nupsera-rose.jpg') }}" type="image/x-icon">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -471,9 +471,9 @@
         class="sidebar fixed md:relative inset-y-0 left-0 z-50 w-64 md:transition-[width,transform] duration-300 ease-in-out bg-white border-r border-[#B6ADA3]/35 flex flex-col shadow-lg md:shadow-none">
 
         <!-- Logo & Header -->
-        <div class="px-3 py-2 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
+        <div class="px-4 py-3 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-w-0">
-                <img src="{{ asset('img/nupsera-gold.png') }}" alt="Logo"
+                <img src="{{ asset('img/nupsera-rose.png') }}" alt="Logo"
                     class="w-9 h-9 rounded-xl object-cover shrink-0">
                 <div class="sidebar-label min-w-0">
                     <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight truncate">

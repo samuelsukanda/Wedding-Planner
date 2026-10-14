@@ -25,6 +25,23 @@
             // Nilai tanggal baru ditulis x-model setelah currentItem terisi,
             // jadi tampilan flatpickr disegarkan lagi di sini.
             this.$watch('currentItem', () => window.syncDatepickersSoon());
+
+            // Tab aktif disimpan dua tempat: sessionStorage untuk navigasi
+            // client-side, dan cookie menu (lewat wpRememberRoute) supaya
+            // refresh tetap benar walau sessionStorage dibersihkan browser.
+            // ?tab= eksplisit (habis tambah/ubah/hapus) selalu menang.
+            const tabs = ['info', 'checklist', 'budget', 'guests', 'vendors'];
+            const param = new URLSearchParams(window.location.search).get('tab');
+            if (tabs.includes(param)) {
+                this.tab = param;
+            } else {
+                const saved = sessionStorage.getItem('wp.proposals.tab');
+                if (tabs.includes(saved)) this.tab = saved;
+            }
+            this.$watch('tab', (v) => {
+                sessionStorage.setItem('wp.proposals.tab', v);
+                window.wpRememberRoute('/proposals?tab=' + v);
+            });
         }
     }">
 
@@ -454,8 +471,8 @@
                             class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form
-                    :action="currentItem?.id ? '{{ route('proposals.checklists.update', 0) }}'.replace('/0/', '/' + currentItem
-                        .id + '/') : '{{ route('proposals.checklists.store') }}'"
+                    :action="currentItem?.id ? '{{ route('proposals.checklists.update', 0) }}'.replace(/\/0$/, '/' + currentItem
+                        .id) : '{{ route('proposals.checklists.store') }}'"
                     method="POST" class="space-y-4">
                     @csrf
                     <template x-if="currentItem?.id"><input type="hidden" name="_method" value="PUT"></template>
@@ -531,8 +548,8 @@
                             class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form
-                    :action="currentItem?.id ? '{{ route('proposals.budgets.update', 0) }}'.replace('/0/', '/' + currentItem
-                        .id + '/') : '{{ route('proposals.budgets.store') }}'"
+                    :action="currentItem?.id ? '{{ route('proposals.budgets.update', 0) }}'.replace(/\/0$/, '/' + currentItem
+                        .id) : '{{ route('proposals.budgets.store') }}'"
                     method="POST" class="space-y-4">
                     @csrf
                     <template x-if="currentItem?.id"><input type="hidden" name="_method" value="PUT"></template>
@@ -611,12 +628,11 @@
                             class="fa-solid fa-xmark"></i></button>
                 </div>
                 <form
-                    :action="currentItem?.id ? '{{ route('proposals.guests.update', 0) }}'.replace('/0/', '/' + currentItem.id +
-                        '/') : '{{ route('proposals.guests.store') }}'"
+                    :action="currentItem?.id ? '{{ route('proposals.guests.update', 0) }}'.replace(/\/0$/, '/' + currentItem.id) : '{{ route('proposals.guests.store') }}'"
                     method="POST" class="p-5 space-y-3">
                     @csrf
                     <template x-if="currentItem?.id"><input type="hidden" name="_method" value="PUT"></template>
-                    <div class="grid grid-cols-[80px_1fr] gap-3">
+                    <div class="grid grid-cols-[130px_1fr] gap-3">
                         <div>
                             <label class="form-label">Gelar</label>
                             <select name="title" x-model="currentItem.title" class="form-input">

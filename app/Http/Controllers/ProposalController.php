@@ -102,7 +102,7 @@ class ProposalController extends Controller
         $event = ProposalEvent::firstOrCreate(['wedding_id' => Wedding::current()->id]);
         $event->update($validated);
 
-        return redirect()->route('proposals.index')
+        return redirect()->route('proposals.index', ['tab' => 'info'])
             ->with('success', 'Informasi acara lamaran disimpan.');
     }
 
@@ -121,7 +121,7 @@ class ProposalController extends Controller
 
         $wedding->proposalChecklists()->create($validated);
 
-        return redirect()->route('proposals.index')
+        return redirect()->route('proposals.index', ['tab' => 'checklist'])
             ->with('success', 'Item checklist ditambahkan.');
     }
 
@@ -138,7 +138,7 @@ class ProposalController extends Controller
 
         $checklist->update($validated);
 
-        return redirect()->route('proposals.index')
+        return redirect()->route('proposals.index', ['tab' => 'checklist'])
             ->with('success', 'Item checklist diperbarui.');
     }
 
@@ -146,7 +146,7 @@ class ProposalController extends Controller
     {
         $checklist->delete();
 
-        return redirect()->route('proposals.index')
+        return redirect()->route('proposals.index', ['tab' => 'checklist'])
             ->with('success', 'Item checklist dihapus.');
     }
 
@@ -195,8 +195,8 @@ class ProposalController extends Controller
 
         $wedding->proposalGuests()->create($validated);
 
-        return redirect()->route('proposals.index')
-            ->with('success', 'Tunamuan ditambahkan.');
+        return redirect()->route('proposals.index', ['tab' => 'guests'])
+            ->with('success', 'Tamu ditambahkan.');
     }
 
     public function updateGuest(Request $request, ProposalGuest $guest)
@@ -216,7 +216,7 @@ class ProposalController extends Controller
 
         $guest->update($validated);
 
-        return redirect()->route('proposals.index')
+        return redirect()->route('proposals.index', ['tab' => 'guests'])
             ->with('success', 'Tamu diperbarui.');
     }
 
@@ -224,13 +224,17 @@ class ProposalController extends Controller
     {
         $guest->delete();
 
-        return redirect()->route('proposals.index')
+        return redirect()->route('proposals.index', ['tab' => 'guests'])
             ->with('success', 'Tamu dihapus.');
     }
 
     public function storeBudget(Request $request)
     {
         $wedding = Wedding::current();
+
+        // Input dikirim terformat ("Rp 1.000.000") dari modal: simpan hanya
+        // angkanya supaya validasi numeric lolos (mirror BudgetController).
+        $this->normalizeDigitInputs($request, ['planned_budget', 'actual_cost']);
 
         $validated = $request->validate([
             'category' => 'required|string|max:255',
@@ -245,12 +249,15 @@ class ProposalController extends Controller
 
         $wedding->proposalBudgets()->create($validated);
 
-        return redirect()->route('proposals.index')
+        return redirect()->route('proposals.index', ['tab' => 'budget'])
             ->with('success', 'Budget lamaran ditambahkan.');
     }
 
     public function updateBudget(Request $request, ProposalBudget $budget)
     {
+        // Lihat storeBudget: normalisasi format "Rp ..." sebelum validasi.
+        $this->normalizeDigitInputs($request, ['planned_budget', 'actual_cost']);
+
         $validated = $request->validate([
             'category' => 'required|string|max:255',
             'item_name' => 'required|string|max:255',
@@ -264,7 +271,7 @@ class ProposalController extends Controller
 
         $budget->update($validated);
 
-        return redirect()->route('proposals.index')
+        return redirect()->route('proposals.index', ['tab' => 'budget'])
             ->with('success', 'Budget lamaran diperbarui.');
     }
 
@@ -272,7 +279,7 @@ class ProposalController extends Controller
     {
         $budget->delete();
 
-        return redirect()->route('proposals.index')
+        return redirect()->route('proposals.index', ['tab' => 'budget'])
             ->with('success', 'Budget lamaran dihapus.');
     }
 
@@ -285,14 +292,14 @@ class ProposalController extends Controller
         if ($vendor->proposal_event_id) {
             $vendor->update(['proposal_event_id' => null]);
 
-            return redirect()->route('proposals.index')
+            return redirect()->route('proposals.index', ['tab' => 'vendors'])
                 ->with('success', "{$vendor->name} dikembalikan ke daftar vendor umum.");
         }
 
         $event = ProposalEvent::firstOrCreate(['wedding_id' => Wedding::current()->id]);
         $vendor->update(['proposal_event_id' => $event->id]);
 
-        return redirect()->route('proposals.index')
+        return redirect()->route('proposals.index', ['tab' => 'vendors'])
             ->with('success', "{$vendor->name} ditandai untuk acara lamaran.");
     }
 }

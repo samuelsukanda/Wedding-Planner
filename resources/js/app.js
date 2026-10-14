@@ -31,6 +31,11 @@ function clearLastRoute() {
     document.cookie = `${LAST_ROUTE_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`;
 }
 
+// Dipakai halaman ber-tab (Lamaran) untuk menyimpan sub-state-nya ke cookie
+// menu yang sama. Cookie dibaca server saat refresh dialihkan ke menu aktif,
+// jadi tab tetap kembali meski sessionStorage dibersihkan browser.
+window.wpRememberRoute = rememberRoute;
+
 function internalLinkRoute(link) {
     if (!link || link.dataset.turbo === 'false' || link.target === '_blank') return null;
     const isMenuLink = link.closest('nav, aside');
@@ -76,6 +81,30 @@ document.addEventListener('click', function(event) {
 // kalau tidak halaman ter-fetch dua kali dan flash sukses/error habis dipakai
 // pada fetch pertama sehingga toast tidak pernah tampil.
 let skipNextVisitInterception = false;
+
+// Intersep klik menu sedini mungkin di turbo:click: satu klik = satu fetch
+// + satu swap body. Kalau hanya mengandalkan turbo:before-visit, visit asli
+// Turbo ikut berjalan bersama visitWithoutUrl (fetch ganda untuk satu klik,
+// URL kedip '/' <-> path asli) dan refresh bisa mendarat di menu yang salah.
+// preventDefault di sini membuat Turbo mengabaikan klik sepenuhnya, jadi
+// before-visit di bawah tidak pernah jalan untuk klik menu (tetap dipertahankan
+// sebagai pengaman untuk visit yang diusulkan dari jalur lain).
+document.addEventListener('turbo:click', function (event) {
+    const link = event.target && event.target.closest ? event.target.closest('a') : null;
+    const route = internalLinkRoute(link);
+    if (!route || route === '/') return;
+
+    // Dua-duanya harus dibatalkan: preventDefault pada turbo:click membuat
+    // Turbo mengabaikan klik, TAPI navigasi bawaan browser hanya batal bila
+    // native event-nya juga di-prevent (Turbo yang biasa melakukannya tidak
+    // jalan karena kita membuatnya skip). Tanpa ini klik = full reload.
+    event.preventDefault();
+    if (event.detail && event.detail.originalEvent) {
+        event.detail.originalEvent.preventDefault();
+    }
+    rememberRoute(route);
+    visitWithoutUrl(route);
+});
 
 document.addEventListener('turbo:before-visit', function(event) {
     if (event.detail.formSubmission || event.detail.isFormSubmission) return;

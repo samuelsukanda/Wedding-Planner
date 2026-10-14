@@ -223,7 +223,7 @@
                             *</label>
                         <div class="flex gap-2">
                             <select name="title" x-model="currentItem.title"
-                                class="w-28 bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                                class="w-36 shrink-0 bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 <option value="">-- Gelar --</option>
                                 <template x-for="t in titles" :key="t">
                                     <option :value="t" x-text="t"></option>
