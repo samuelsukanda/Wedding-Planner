@@ -80,6 +80,46 @@
             </div>
         </div>
 
+        <!-- ================= STATUS PAKET ================= -->
+        @if ($wedding)
+            <div class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <h2 class="text-base font-bold font-serif-title text-[#5F6F5B] flex items-center gap-2">
+                        <i class="fa-solid fa-crown text-[#D8A7B1]"></i> Status Akun
+                    </h2>
+
+                    @if ($wedding->isPro())
+                        <span
+                            class="inline-flex items-center gap-1.5 rounded-full border border-[#A3B7A6]/60 bg-[#F1F5F0] px-2.5 py-1 text-[11px] font-bold text-[#5F6F5B]">
+                            <i class="fa-solid fa-circle-check text-[#A3B7A6]"></i>
+                            PRO
+                        </span>
+                    @else
+                        <span
+                            class="inline-flex items-center gap-1.5 rounded-full border border-[#B6ADA3]/50 bg-[#FAF7F2] px-2.5 py-1 text-[11px] font-bold text-[#5F6F5B]/70">
+                            FREE
+                        </span>
+                    @endif
+                </div>
+
+                @if ($wedding->isPro())
+                    <p class="text-sm text-[#5F6F5B]/80 leading-relaxed">
+                        Semua fitur Pro terbuka untuk Wedding Kit ini, seumur akun dan berlaku juga untuk akun pasangan.
+                    </p>
+                @else
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <p class="text-sm text-[#5F6F5B]/80 leading-relaxed">
+                            Buka fitur Pro seperti <strong>Moodboard</strong> dengan sekali pembayaran, tanpa biaya bulanan.
+                        </p>
+                        <a href="{{ route('upgrade.index') }}"
+                            class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center">
+                            Upgrade ke Pro
+                        </a>
+                    </div>
+                @endif
+            </div>
+        @endif
+
         <!-- ================= INFORMASI ACARA PERNIKAHAN ================= -->
         @if ($wedding)
             <div class="space-y-6">

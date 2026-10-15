@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use App\Http\Middleware\EnsurePlan;
 use App\Http\Middleware\EnsureSuperadmin;
 use App\Http\Middleware\EnsureWedding;
 
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // DashboardController sebelum dipakai sebagai redirect.
         $middleware->encryptCookies(except: ['weddingPlannerLastRoute']);
         $middleware->alias([
+            'plan' => EnsurePlan::class,
             'superadmin' => EnsureSuperadmin::class,
             'wedding' => EnsureWedding::class,
         ]);

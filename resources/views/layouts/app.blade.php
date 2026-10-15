@@ -548,16 +548,24 @@
                     Inspirasi
                 </div>
 
-                <a href="{{ route('moodboards.index') }}"
+                {{-- Menu berbayar tetap terlihat (dengan gembok) untuk pasangan Free supaya
+                     mereka tahu fitur itu ada. Diklik diarahkan ke halaman upgrade,
+                     bukan ke 403. Satu-satunya penentu lock adalah Wedding::hasFeature(),
+                     sama yang dipakai middleware, jadi keduanya tidak bisa berbeda. --}}
+                @php
+                    $currentWedding = \App\Models\Wedding::current();
+                    $moodboardLocked = $currentWedding && ! $currentWedding->hasFeature('moodboard');
+                @endphp
+                <a href="{{ $moodboardLocked ? route('upgrade.index', ['from' => 'moodboard']) : route('moodboards.index') }}"
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('moodboards.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                     <i class="fa-solid fa-palette w-5 text-center text-[#D8A7B1]"></i>
                     <span>Moodboard</span>
-                </a>
-
-                <a href="{{ route('vendor-directory.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('vendor-directory.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-magnifying-glass-location w-5 text-center text-[#D8A7B1]"></i>
-                    <span>Cari Vendor</span>
+                    @if ($moodboardLocked)
+                        <span
+                            class="ml-auto inline-flex items-center gap-1 rounded-full border border-[#D8A7B1]/50 bg-[#D8A7B1]/10 px-2 py-0.5 text-[10px] font-bold text-[#C2757F]">
+                            <i class="fa-solid fa-lock text-[8px]"></i> PRO
+                        </span>
+                    @endif
                 </a>
 
                 <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">
@@ -633,6 +641,18 @@
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.document-templates.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                     <i class="fa-solid fa-file-lines w-5 text-center text-[#D8A7B1]"></i>
                     <span>Template Dokumen</span>
+                </a>
+
+                <a href="{{ route('admin.upgrade-requests.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.upgrade-requests.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                    <i class="fa-solid fa-crown w-5 text-center text-[#D8A7B1]"></i>
+                    <span>Request Upgrade Pro</span>
+                </a>
+
+                <a href="{{ route('admin.pro-settings.edit') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.pro-settings.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                    <i class="fa-solid fa-sliders w-5 text-center text-[#D8A7B1]"></i>
+                    <span>Pengaturan Pro</span>
                 </a>
             @endif
         </nav>

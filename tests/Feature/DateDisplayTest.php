@@ -32,6 +32,10 @@ class DateDisplayTest extends TestCase
             'bride_name' => 'Bride',
             'wedding_date' => '2027-10-07',
             'total_budget' => 100000000,
+            // Moodboard kini fitur Pro, jadi test ini perlu merender paket Pro
+            // supaya seluruh halaman daftar tetap bisa dirender. Perilaku
+            // lock-nya diuji terpisah di PlanTest.
+            'plan' => 'pro',
         ]);
 
         return User::factory()->create(['email' => $email, 'wedding_id' => $wedding->id]);

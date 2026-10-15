@@ -17,6 +17,7 @@ class Wedding extends Model
         'location',
         'notes',
         'wa_template',
+        'plan',
     ];
 
     protected $casts = [
@@ -61,6 +62,33 @@ class Wedding extends Model
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    /**
+     * Paket berbayar. Disimpan di weddings, bukan users, karena satu Wedding Kit
+     * dipakai dua akun sekaligus (suami + istri) dan cukup satu yang upgrade.
+     */
+    public function isPro(): bool
+    {
+        return $this->plan === 'pro';
+    }
+
+    /**
+     * Satu-satunya tempat yang memutuskan sebuah fitur berbayar boleh dibuka.
+     * Middleware dan ikon gembok di sidebar sama-sama memakai ini supaya
+     * keduanya tidak bisa berbeda pendapat.
+     */
+    public function hasFeature(string $feature): bool
+    {
+        $required = config("plans.features.{$feature}");
+
+        // Fitur tidak terdaftar di config = fitur gratis.
+        return $required === null || $this->plan === $required;
+    }
+
+    public function upgradeRequests()
+    {
+        return $this->hasMany(UpgradeRequest::class);
     }
 
     public function checklists()
