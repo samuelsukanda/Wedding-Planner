@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\VendorDirectoryController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\MoodboardController;
 use App\Http\Controllers\RundownController;
@@ -70,6 +71,16 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::resource('vendors', VendorController::class)->except(['create', 'edit', 'show']);
     Route::post('vendors/{vendor}/package-items', [VendorController::class, 'storePackageItem'])->name('vendors.package-items.store');
     Route::delete('vendors/package-items/{item}', [VendorController::class, 'destroyPackageItem'])->name('vendors.package-items.destroy');
+
+    // Cari Vendor - katalog publik hasil import Weddingku.
+    // Nama route WAJIB diakhiri .index: DashboardController menyusun whitelist
+    // refresh dari route GET berawalan .index, jadi tanpa itu menu ini akan
+    // kembali ke menu sebelumnya saat refresh.
+    // Parameter bernama {catalog}, bukan {vendor}, supaya route model binding
+    // tidak salah resolving ke model Vendor (tabel milik pasangan).
+    Route::get('cari-vendor', [VendorDirectoryController::class, 'index'])->name('vendor-directory.index');
+    Route::get('cari-vendor/{catalog}', [VendorDirectoryController::class, 'show'])->name('vendor-directory.show');
+    Route::post('cari-vendor/{catalog}', [VendorDirectoryController::class, 'store'])->name('vendor-directory.store');
 
     // Module 5 - Guest Management
     Route::put('guests/wa-template', [GuestController::class, 'updateWaTemplate'])->name('guests.wa-template.update');

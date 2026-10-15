@@ -2,10 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\ScopedToWedding;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\ScopedToWedding;
 
+/**
+ * Module 5 - Vendor Management (data milik pasangan).
+ *
+ * Berbeda dengan VendorCatalog: tabel ini milik satu wedding dan ikut
+ * di-scope ScopedToWedding. Kolom instagram/whatsapp diisi dari katalog
+ * saat user menyimpan vendor hasil pencarian.
+ */
 class Vendor extends Model
 {
     use HasFactory;
@@ -19,6 +26,8 @@ class Vendor extends Model
         'contact',
         'address',
         'google_maps_url',
+        'instagram',
+        'whatsapp',
         'package',
         'price',
         'rating',

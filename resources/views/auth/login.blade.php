@@ -12,7 +12,7 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="shortcut icon" href="{{ asset('img/icon.jpg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('img/nupsera-ori.jpg') }}" type="image/x-icon">
     @vite(['resources/css/app.css'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
@@ -253,7 +253,7 @@
 </head>
 
 <body>
-    <div class="login-card" x-data="{ tab: '{{ old('_form') === 'register' || $errors->any() && old('password_confirmation') ? 'register' : 'login' }}' }">
+    <div class="login-card" x-data="{ tab: '{{ old('_form') === 'register' || ($errors->any() && old('password_confirmation')) ? 'register' : 'login' }}' }">
         <div class="brand-icon">
             <i class="fa-solid fa-heart" style="font-size: 26px; color: #D8A7B1;"></i>
         </div>
@@ -326,7 +326,8 @@
                     <label for="reg_password">Password</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" id="reg_password" name="password" placeholder="Min. 8 karakter" required>
+                        <input type="password" id="reg_password" name="password" placeholder="Min. 8 karakter"
+                            required>
                     </div>
                 </div>
                 <div class="form-group">
@@ -345,7 +346,8 @@
 
         <div class="divider">atau</div>
 
-        <a href="{{ route('google.redirect') }}" class="btn-google" style="text-decoration:none;" data-turbo="false">
+        <a href="{{ route('google.redirect') }}" class="btn-google" style="text-decoration:none;"
+            data-turbo="false">
             <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
                 <path fill="#EA4335"
                     d="M24 9.5c3.54 0 6.71 1.23 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />

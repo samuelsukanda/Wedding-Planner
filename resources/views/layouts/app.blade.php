@@ -11,7 +11,7 @@
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
-    <link rel="shortcut icon" href="{{ asset('img/nupsera-rose.jpg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('img/nupsera-ori.jpg') }}" type="image/x-icon">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -473,7 +473,7 @@
         <!-- Logo & Header -->
         <div class="px-4 py-3 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-w-0">
-                <img src="{{ asset('img/nupsera-rose.png') }}" alt="Logo"
+                <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo"
                     class="w-9 h-9 rounded-xl object-cover shrink-0">
                 <div class="sidebar-label min-w-0">
                     <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight truncate">
@@ -552,6 +552,12 @@
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('moodboards.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                     <i class="fa-solid fa-palette w-5 text-center text-[#D8A7B1]"></i>
                     <span>Moodboard</span>
+                </a>
+
+                <a href="{{ route('vendor-directory.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('vendor-directory.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                    <i class="fa-solid fa-magnifying-glass-location w-5 text-center text-[#D8A7B1]"></i>
+                    <span>Cari Vendor</span>
                 </a>
 
                 <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">
