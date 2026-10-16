@@ -116,9 +116,18 @@
                                         class="px-5 py-2 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FAF7F2] transition cursor-pointer whitespace-nowrap">
                                         <i class="fa-solid fa-xmark mr-1"></i> Tolak
                                     </button>
-                                    <input type="text" name="admin_note" required maxlength="500"
-                                        placeholder="Alasan ditolak (wajib)"
+                                    <input type="text" name="admin_note" required maxlength="500" list="reject-reasons"
+                                        placeholder="Alasan ditolak (wajib) — klik kanan untuk lihat contoh"
                                         class="flex-1 px-3.5 py-2 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-xs text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
+                                    {{-- Saran alasan penolakan. Isinya group
+                                         Master Data 'upgrade_reject_reason', jadi
+                                         superadmin bisa menambah atau mengganti
+                                         kalimatnya tanpa sentuh kode. --}}
+                                    <datalist id="reject-reasons">
+                                        @foreach ($rejectReasons as $reason)
+                                            <option value="{{ $reason }}"></option>
+                                        @endforeach
+                                    </datalist>
                                 </form>
                             </div>
 

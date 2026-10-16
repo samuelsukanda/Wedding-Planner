@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Notification;
+use App\Models\DropdownOption;
 use App\Models\Setting;
 use App\Models\UpgradeRequest;
 use App\Models\User;
@@ -459,6 +460,42 @@ public function test_pending_state_shows_verification_card_with_refresh_and_cont
             ->assertSee('Rp 150.000')
             ->assertSee('6281-2345-6789')
             ->assertSee('data-format="money"', false);
+    }
+
+public function test_reject_field_offers_default_reason_templates()
+    {
+        Storage::fake('public');
+        [, $user] = $this->couple();
+
+        $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
+
+        // Belum ada isinya di Master Data, jadi harus jatuh ke bawaan.
+        $this->actingAs($this->superadmin())
+            ->get('/admin/upgrade-requests')
+            ->assertOk()
+            ->assertSee('list="reject-reasons"', false)
+            ->assertSee('Bukti transfer tidak terbaca, silakan kirim ulang yang lebih jelas')
+            ->assertSee('Nominal transfer tidak sesuai dengan harga paket Pro');
+    }
+
+    public function test_reject_reason_templates_come_from_master_data()
+    {
+        Storage::fake('public');
+        DropdownOption::create([
+            'group_key' => 'upgrade_reject_reason',
+            'group_name' => 'Alasan Tolak Upgrade Pro',
+            'option_value' => 'Rekening tujuan salah Transfer',
+        ]);
+
+        [, $user] = $this->couple();
+        $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
+
+        $this->actingAs($this->superadmin())
+            ->get('/admin/upgrade-requests')
+            ->assertOk()
+            ->assertSee('Rekening tujuan salah Transfer')
+            // Defaults tergantikan begitu superadmin mengisi sendiri.
+            ->assertDontSee('Nominal transfer tidak sesuai dengan harga paket Pro');
     }
 
 public function test_admin_pages_render_for_superadmin()

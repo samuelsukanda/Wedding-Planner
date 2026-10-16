@@ -54,6 +54,7 @@ class DropdownOption extends Model
             'contract_status' => 'Status Kontrak Vendor',
             'payment_status' => 'Status Pembayaran',
             'gift_type' => 'Jenis Hadiah',
+            'upgrade_reject_reason' => 'Alasan Tolak Upgrade Pro',
         ];
     }
 }

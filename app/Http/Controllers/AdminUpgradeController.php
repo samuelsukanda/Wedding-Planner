@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DropdownOption;
 use App\Models\UpgradeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,14 @@ use Illuminate\Support\Facades\Storage;
  */
 class AdminUpgradeController extends Controller
 {
+    /** Alasan bawaan kalau superadmin belum mengisi group Master Data. */
+    private const DEFAULT_REJECT_REASONS = [
+        'Bukti transfer tidak terbaca, silakan kirim ulang yang lebih jelas',
+        'Nominal transfer tidak sesuai dengan harga paket Pro',
+        'Transfer berasal dari rekening selain yang kami cantumkan',
+        'Dana belum kami terima, mohon konfirmasi ke admin',
+    ];
+
     public function index()
     {
         // Pending didahulukan supaya request yang menunggu action selalu di atas.
@@ -20,7 +29,10 @@ class AdminUpgradeController extends Controller
             ->latest()
             ->get();
 
-        return view('admin.upgrade-requests', ['requests' => $requests]);
+        return view('admin.upgrade-requests', [
+            'requests' => $requests,
+            'rejectReasons' => DropdownOption::getOptions('upgrade_reject_reason', self::DEFAULT_REJECT_REASONS),
+        ]);
     }
 
     public function approve(UpgradeRequest $upgradeRequest)
