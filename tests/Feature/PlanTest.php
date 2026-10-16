@@ -238,10 +238,15 @@ class PlanTest extends TestCase
             ->assertSee('Upgrade ke Pro · Rp 55.000')
             // Harga coret tidak ada karena setting kosong.
             ->assertDontSee('line-through')
-            // Nomor rekening & form ada di DOM tapi disembunyikan sampai CTA
-            // diklik, jadi keduanya harus tetap bisa dirender tanpa error.
+            // Ringkasan + rekening + form ada di dalam modal yang baru tampil
+            // setelah CTA diklik, jadi tetap harus bisa dirender tanpa error.
+            ->assertSee('Ringkasan Pembelian')
             ->assertSee('Rekening Tujuan')
-            ->assertSee('Kirim Bukti Transfer');
+            ->assertSee('Bukti Transfer')
+            ->assertSee('Kirim Bukti · Rp 55.000')
+            // Pola modal harus sama dengan modal Tambah Data modul lain.
+            ->assertSee('x-outside="modalOpen = false"', false)
+            ->assertSee('keydown.escape.window="modalOpen = false"', false);
     }
 
     public function test_struck_through_price_only_shows_when_higher_than_selling_price()

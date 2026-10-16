@@ -59,7 +59,7 @@
             {{-- checkout = false Initially: nomor rekening dan form upload sengaja
                  TIDAK ada di DOM sebelum tombol Pro diklik, supaya belum ada yang
                  bisa dikirim ke server tanpa lewat tombol itu. --}}
-            <div class="w-full space-y-6" x-data="{ checkout: false }">
+            <div class="w-full space-y-6" x-data="{ modalOpen: false }">
 
                 <!-- ================= HERO PAKET ================= -->
                 {{-- Warna hero pakai palet app (rose), bukan hijau tua: teks putih
@@ -111,24 +111,30 @@
                 </div>
 
                 <!-- ================= CTA PEMBUKA CHECKOUT ================= -->
-                <button type="button" @click="checkout = true" x-show="!checkout"
+                <button type="button" @click="modalOpen = true"
                     class="btn-primary-rose w-full px-6 py-4 rounded-2xl text-sm cursor-pointer">
                     <i class="fa-solid fa-sparkles mr-2"></i> Upgrade ke Pro · Rp {{ number_format($price, 0, ',', '.') }}
                 </button>
 
-                <!-- ================= CHECKOUT (muncul setelah CTA diklik) ================= -->
-                <div x-show="checkout" x-cloak class="w-full space-y-6">
+                <!-- ================= MODAL RINGKASAN PEMBELIAN =================
+                     Struktur, warna, dan cara menutupnya mengikuti modal
+                     "Tambah Data" di modul lain (x-show + x-outside + Escape),
+                     supaya tidak ada gaya modal ketiga di aplikasi ini. -->
+                <div x-show="modalOpen" x-transition.opacity x-cloak @keydown.escape.window="modalOpen = false"
+                    class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
+                    <div x-outside="modalOpen = false"
+                        class="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-5">
 
-                    <!-- Barsih-bali ke langkah 1 tanpa reload -->
-                    <button type="button" @click="checkout = false"
-                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5F6F5B]/70 hover:text-[#5F6F5B] transition cursor-pointer">
-                        <i class="fa-solid fa-chevron-left text-[10px]"></i> Kembali
-                    </button>
+                        <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
+                            <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Ringkasan Pembelian</h3>
+                            <button @click="modalOpen = false" aria-label="Tutup"
+                                class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
 
-                    <!-- Ringkasan total harga -->
-                    <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-                        <h3 class="text-sm font-bold text-[#5F6F5B]">Ringkasan Pembayaran</h3>
-                        <dl class="mt-4 text-sm divide-y divide-[#B6ADA3]/25">
+                        <!-- Ringkasan total harga -->
+                        <dl class="text-sm divide-y divide-[#B6ADA3]/25">
                             <div class="flex items-center justify-between gap-4 py-2.5">
                                 <dt class="text-[#5F6F5B]/70">Paket</dt>
                                 <dd class="font-semibold text-[#5F6F5B]">Pro / Lifetime</dd>
@@ -147,35 +153,29 @@
                             </div>
                             <div class="flex items-center justify-between gap-4 pt-3 mt-1">
                                 <dt class="font-bold text-[#5F6F5B]">Total</dt>
-                                <dd class="text-xl font-bold font-serif-title text-[#5F6F5B]">
+                                <dd class="text-xl font-bold font-serif-title text-[#C2757F]">
                                     Rp {{ number_format($price, 0, ',', '.') }}
                                 </dd>
                             </div>
                         </dl>
-                    </div>
 
-                    <!-- Rekening tujuan -->
-                    <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-                        <h3 class="text-sm font-bold text-[#5F6F5B] flex items-center gap-2">
-                            <i class="fa-solid fa-building-columns text-[#D8A7B1]"></i> Rekening Tujuan
-                        </h3>
-                        <p class="mt-3 text-sm text-[#5F6F5B]/90 whitespace-pre-line leading-relaxed">{{ $bank ?: 'Belum diatur. Hubungi admin.' }}</p>
+                        <!-- Rekening tujuan -->
+                        <div class="rounded-xl bg-[#FAF7F2] p-4">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-[#5F6F5B] flex items-center gap-2">
+                                <i class="fa-solid fa-building-columns text-[#D8A7B1]"></i> Rekening Tujuan
+                            </h4>
+                            <p class="mt-2 text-sm text-[#5F6F5B]/90 whitespace-pre-line leading-relaxed">{{ $bank ?: 'Belum diatur. Hubungi admin.' }}</p>
 
-                        @if ($adminWa)
-                            <a href="https://wa.me/{{ preg_replace('/\D/', '', $adminWa) }}" target="_blank" rel="noopener"
-                                class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FAF7F2] transition">
-                                <i class="fa-brands fa-whatsapp"></i> {{ $adminWa }}
-                            </a>
-                        @endif
-                    </div>
+                            @if ($adminWa)
+                                <a href="https://wa.me/{{ preg_replace('/\D/', '', $adminWa) }}" target="_blank" rel="noopener"
+                                    class="mt-3 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FBF2F4] transition">
+                                    <i class="fa-brands fa-whatsapp"></i> {{ $adminWa }}
+                                </a>
+                            @endif
+                        </div>
 
-                    <!-- Kirim bukti -->
-                    <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-                        <h3 class="text-sm font-bold text-[#5F6F5B] flex items-center gap-2">
-                            <i class="fa-solid fa-receipt text-[#D8A7B1]"></i> Kirim Bukti Transfer
-                        </h3>
-
-                        <form method="POST" action="{{ route('upgrade.store') }}" enctype="multipart/form-data" class="mt-4 space-y-4">
+                        <!-- Kirim bukti -->
+                        <form method="POST" action="{{ route('upgrade.store') }}" enctype="multipart/form-data" class="space-y-4">
                             @csrf
                             <div>
                                 <label for="proof" class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
@@ -190,7 +190,7 @@
                                 <p class="text-sm text-[#C2757F]">{{ $message }}</p>
                             @enderror
 
-                            <button type="submit" class="btn-primary-rose w-full px-6 py-4 rounded-2xl text-sm cursor-pointer">
+                            <button type="submit" class="btn-primary-rose w-full px-6 py-3.5 rounded-xl text-sm cursor-pointer">
                                 Kirim Bukti · Rp {{ number_format($price, 0, ',', '.') }}
                             </button>
                         </form>
