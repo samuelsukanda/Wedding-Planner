@@ -219,6 +219,42 @@ class PlanTest extends TestCase
             ->assertDontSee('Upgrade ke Pro');
     }
 
+    public function test_pending_state_shows_verification_card_with_refresh_and_contact()
+    {
+        Storage::fake('public');
+        Setting::put('pro_price', '55000');
+        Setting::put('admin_whatsapp', '6281234567890');
+
+        [, $user] = $this->couple();
+        $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
+
+        $this->actingAs($user)->get('/upgrade')
+            ->assertOk()
+            ->assertSee('Pembayaran Sedang Diverifikasi')
+            ->assertSee('Admin sedang memeriksa pembayaran Pro kamu.')
+            ->assertSee('Rp 55.000')
+            ->assertSee('Menunggu Aktivasi')
+            ->assertSee('Refresh Status')
+            ->assertSee('Kontak Admin')
+            ->assertSee('wa.me/6281234567890', false)
+            // Teks "kamu akan menerima email" dihapus: app ini tidak mengirim email.
+            ->assertDontSee('kamu akan menerima email');
+    }
+
+    public function test_pending_state_hides_contact_button_when_admin_wa_missing()
+    {
+        Storage::fake('public');
+        Setting::put('pro_price', '55000');
+
+        [, $user] = $this->couple();
+        $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
+
+        $this->actingAs($user)->get('/upgrade')
+            ->assertOk()
+            ->assertSee('Refresh Status')
+            ->assertDontSee('Kontak Admin');
+    }
+
     public function test_upgrade_page_shows_price_and_bank_from_settings()
     {
         Setting::put('pro_price', '249000');
