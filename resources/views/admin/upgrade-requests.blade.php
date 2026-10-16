@@ -100,27 +100,19 @@
 
                         @if ($request->status === 'pending')
                             <div class="space-y-3 pt-3 border-t border-[#B6ADA3]/25">
-                                <div class="flex flex-col sm:flex-row gap-2">
-                                    <form method="POST" action="{{ route('admin.upgrade-requests.approve', $request->id) }}"
-                                        class="flex-1" data-confirm="Aktifkan paket Pro untuk {{ $request->wedding?->couple_name ?: 'Wedding Kit ini' }}?">
-                                        @csrf
-                                        <button type="submit" class="btn-sage w-full px-5 py-2.5 rounded-xl text-xs cursor-pointer">
-                                            <i class="fa-solid fa-check mr-1"></i> Setujui
-                                        </button>
-                                    </form>
+                                <form method="POST" action="{{ route('admin.upgrade-requests.approve', $request->id) }}"
+                                    data-confirm="Aktifkan paket Pro untuk {{ $request->wedding?->couple_name ?: 'Wedding Kit ini' }}?">
+                                    @csrf
+                                    <button type="submit" class="btn-sage w-full px-5 py-2.5 rounded-xl text-xs cursor-pointer">
+                                        <i class="fa-solid fa-check mr-1"></i> Setujui
+                                    </button>
+                                </form>
 
-                                    <form method="POST" action="{{ route('admin.upgrade-requests.reject', $request->id) }}"
-                                        class="flex-1">
-                                        @csrf
-                                        <button type="submit"
-                                            class="w-full px-5 py-2.5 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FBF2F4] transition cursor-pointer">
-                                            <i class="fa-solid fa-xmark mr-1"></i> Tolak
-                                        </button>
-                                    </form>
-                                </div>
-
-                                <form method="POST" action="{{ route('admin.upgrade-requests.reject', $request->id) }}"
-                                    class="space-y-2">
+                                {{-- Kolom alasan dan tombol Tolak HARUS di form yang
+                                     sama: kalau tombolnya dipisah ke form sendiri,
+                                     admin_note tidak ikut terkirim dan penolakan
+                                     selalu gagal divalidasi. --}}
+                                <form method="POST" action="{{ route('admin.upgrade-requests.reject', $request->id) }}">
                                     @csrf
 
                                     {{-- Contoh alasan penolakan. Isinya group Master Data
@@ -142,6 +134,11 @@
                                             placeholder="Alasan ditolak (wajib) — atau pilih contoh di samping"
                                             class="flex-1 px-3.5 py-2 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-xs text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
                                     </div>
+
+                                    <button type="submit"
+                                        class="mt-2 w-full px-5 py-2.5 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FBF2F4] transition cursor-pointer">
+                                        <i class="fa-solid fa-xmark mr-1"></i> Tolak
+                                    </button>
                                 </form>
                             </div>
 

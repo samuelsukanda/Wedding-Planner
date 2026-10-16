@@ -462,6 +462,42 @@ public function test_pending_state_shows_verification_card_with_refresh_and_cont
             ->assertSee('data-format="money"', false);
     }
 
+public function test_reject_button_lives_inside_the_form_holding_the_reason()
+    {
+        Storage::fake('public');
+        [, $user] = $this->couple();
+        $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
+
+        $html = $this->actingAs($this->superadmin())
+            ->get('/admin/upgrade-requests')
+            ->assertOk()
+            ->getContent();
+
+        $dom = new \DOMDocument();
+        @$dom->loadHTML('<?xml encoding="utf-8" ?>' . $html);
+        $xpath = new \DOMXPath($dom);
+
+        $notes = $xpath->query('//input[@name="admin_note"]');
+        $this->assertGreaterThan(0, $notes->length, 'Kolom alasan tidak ada di halaman.');
+
+        foreach ($notes as $note) {
+            $form = $note->parentNode;
+            while ($form && $form->nodeName !== 'form') {
+                $form = $form->parentNode;
+            }
+
+            $this->assertNotNull($form, 'Kolom alasan tidak berada di dalam form.');
+
+            // Tombol Tolak di form terpisah berarti admin_note tidak ikut
+            // terkirim dan penolakan selalu gagal divalidasi.
+            $this->assertGreaterThan(
+                0,
+                $xpath->query('.//button[@type="submit"]', $form)->length,
+                'Tombol Tolak tidak ada di form yang sama dengan kolom alasannya.'
+            );
+        }
+    }
+
 public function test_reject_field_offers_default_reason_templates()
     {
         Storage::fake('public');
