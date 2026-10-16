@@ -473,9 +473,12 @@ public function test_reject_field_offers_default_reason_templates()
         $this->actingAs($this->superadmin())
             ->get('/admin/upgrade-requests')
             ->assertOk()
-            ->assertSee('list="reject-reasons"', false)
+            ->assertSee('data-fill-target="reject-note-', false)
             ->assertSee('Bukti transfer tidak terbaca, silakan kirim ulang yang lebih jelas')
-            ->assertSee('Nominal transfer tidak sesuai dengan harga paket Pro');
+            ->assertSee('Nominal transfer tidak sesuai dengan harga paket Pro')
+            // Datalist membuka panel selebar inputnya sehingga menimpa card
+            // di bawahnya, jadi tidak boleh dipakai lagi di sini.
+            ->assertDontSee('<datalist', false);
     }
 
     public function test_reject_reason_templates_come_from_master_data()

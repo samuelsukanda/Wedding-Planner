@@ -99,35 +99,49 @@
                         </div>
 
                         @if ($request->status === 'pending')
-                            <div class="flex flex-col sm:flex-row sm:items-end gap-3 pt-1 border-t border-[#B6ADA3]/25">
-                                <form method="POST" action="{{ route('admin.upgrade-requests.approve', $request->id) }}"
-                                    data-confirm="Aktifkan paket Pro untuk {{ $request->wedding?->couple_name ?: 'Wedding Kit ini' }}?">
-                                    @csrf
-                                    <button type="submit"
-                                        class="btn-sage px-5 py-2 rounded-xl text-xs cursor-pointer w-full sm:w-auto">
-                                        <i class="fa-solid fa-check mr-1"></i> Setujui
-                                    </button>
-                                </form>
+                            <div class="space-y-3 pt-3 border-t border-[#B6ADA3]/25">
+                                <div class="flex flex-col sm:flex-row gap-2">
+                                    <form method="POST" action="{{ route('admin.upgrade-requests.approve', $request->id) }}"
+                                        class="flex-1" data-confirm="Aktifkan paket Pro untuk {{ $request->wedding?->couple_name ?: 'Wedding Kit ini' }}?">
+                                        @csrf
+                                        <button type="submit" class="btn-sage w-full px-5 py-2.5 rounded-xl text-xs cursor-pointer">
+                                            <i class="fa-solid fa-check mr-1"></i> Setujui
+                                        </button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('admin.upgrade-requests.reject', $request->id) }}"
+                                        class="flex-1">
+                                        @csrf
+                                        <button type="submit"
+                                            class="w-full px-5 py-2.5 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FBF2F4] transition cursor-pointer">
+                                            <i class="fa-solid fa-xmark mr-1"></i> Tolak
+                                        </button>
+                                    </form>
+                                </div>
 
                                 <form method="POST" action="{{ route('admin.upgrade-requests.reject', $request->id) }}"
-                                    class="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
+                                    class="space-y-2">
                                     @csrf
-                                    <button type="submit"
-                                        class="px-5 py-2 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FAF7F2] transition cursor-pointer whitespace-nowrap">
-                                        <i class="fa-solid fa-xmark mr-1"></i> Tolak
-                                    </button>
-                                    <input type="text" name="admin_note" required maxlength="500" list="reject-reasons"
-                                        placeholder="Alasan ditolak (wajib) — klik kanan untuk lihat contoh"
-                                        class="flex-1 px-3.5 py-2 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-xs text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
-                                    {{-- Saran alasan penolakan. Isinya group
-                                         Master Data 'upgrade_reject_reason', jadi
-                                         superadmin bisa menambah atau mengganti
-                                         kalimatnya tanpa sentuh kode. --}}
-                                    <datalist id="reject-reasons">
-                                        @foreach ($rejectReasons as $reason)
-                                            <option value="{{ $reason }}"></option>
-                                        @endforeach
-                                    </datalist>
+
+                                    {{-- Contoh alasan penolakan. Isinya group Master Data
+                                         'upgrade_reject_reason', jadi superadmin bisa
+                                         menambah atau mengganti kalimatnya tanpa sentuh
+                                         kode. Dipakai <select>, bukan <datalist>:
+                                         datalist membuka panel selebar inputnya sehingga
+                                         menimpa card di bawahnya. --}}
+                                    <div class="flex flex-col sm:flex-row gap-2">
+                                        <select data-fill-target="reject-note-{{ $request->id }}"
+                                            class="sm:w-64 shrink-0 px-3 py-2 rounded-xl border border-[#B6ADA3]/40 bg-white text-xs text-[#5F6F5B] focus:border-[#D8A7B1] focus:outline-none transition cursor-pointer">
+                                            <option value="">Pilih contoh alasan…</option>
+                                            @foreach ($rejectReasons as $reason)
+                                                <option value="{{ $reason }}">{{ $reason }}</option>
+                                            @endforeach
+                                        </select>
+
+                                        <input type="text" id="reject-note-{{ $request->id }}" name="admin_note" required maxlength="500"
+                                            placeholder="Alasan ditolak (wajib) — atau pilih contoh di samping"
+                                            class="flex-1 px-3.5 py-2 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-xs text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
+                                    </div>
                                 </form>
                             </div>
 
@@ -154,6 +168,20 @@
 
 @push('scripts')
     <script>
+        // Memilih salah satu contoh alasan akan menuliskannya ke kolom teks, jadi
+        // admin tetap bebas menyunting sebelum menekan Tolak. Menulis ke kolom
+        // (bukan langsung submit) penting supaya alasan tidak terkirim tanpa
+        // ditinjau.
+        document.querySelectorAll('select[data-fill-target]').forEach(function(select) {
+            select.addEventListener('change', function() {
+                const input = document.getElementById(select.dataset.fillTarget);
+                if (!input || !select.value) return;
+
+                input.value = select.value;
+                input.focus();
+            });
+        });
+
         // Setuju/tolak mengubah paket pasangan, jadi selalu minta konfirmasi dulu.
         document.querySelectorAll('form[data-confirm]').forEach(function(form) {
             form.addEventListener('submit', function(event) {
