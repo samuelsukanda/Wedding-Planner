@@ -1,0 +1,61 @@
+{
+  "responsestatus": { "code": "00", "description": "Success", "access_token": null },
+  "inspirations": [
+    {
+      "product_id": 1645707,
+      "folder_id": 98403,
+      "caption": "RECEPTION VENUE",
+      "create_date": "2020-05-02 10:12:00",
+      "is_loved": false,
+      "is_boost": false,
+      "is_choose": false,
+      "media_preview": {
+        "image_media": {
+          "src": "https://images.weddingku.com/images/upload/partners/84631/product/98403/images800/98403-va6dth2ssnuq.jpg",
+          "width": 800,
+          "height": 533
+        }
+      },
+      "url": "https://www.weddingku.com/wedding-vendors/hotel-ballroom/the-apurva-kempinski-bali/collections"
+    },
+    {
+      "product_id": 1645708,
+      "folder_id": 98403,
+      "caption": "RECEPTION VENUE",
+      "create_date": "2020-05-02 10:14:00",
+      "is_loved": false,
+      "is_boost": false,
+      "is_choose": false,
+      "media_preview": {
+        "image_media": {
+          "src": "https://images.weddingku.com/images/upload/partners/84631/product/98403/images800/98403-n63um88lkf4i.jpg",
+          "width": 800,
+          "height": 533
+        }
+      },
+      "url": "https://www.weddingku.com/wedding-vendors/hotel-ballroom/the-apurva-kempinski-bali/collections"
+    },
+    {
+      "product_id": 1645709,
+      "folder_id": 98403,
+      "caption": "OUTDOOR LAWN",
+      "create_date": "2020-05-02 10:16:00",
+      "is_loved": false,
+      "is_boost": false,
+      "is_choose": false,
+      "media_preview": {
+        "image_media": {
+          "src": "https://images.weddingku.com/images/upload/partners/84631/product/98403/images800/98403-jofq27thg0ie.jpg",
+          "width": 800,
+          "height": 533
+        }
+      },
+      "url": "https://www.weddingku.com/wedding-vendors/hotel-ballroom/the-apurva-kempinski-bali/collections"
+    }
+  ],
+  "page_info": {
+    "current_page": 1,
+    "has_next_page": true,
+    "count": { "page": 4, "record": 35 }
+  }
+}

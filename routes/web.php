@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
@@ -84,6 +84,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::get('cari-vendor', [VendorDirectoryController::class, 'index'])->name('vendor-directory.index');
     Route::get('cari-vendor/{catalog}', [VendorDirectoryController::class, 'show'])->name('vendor-directory.show');
     Route::post('cari-vendor/{catalog}', [VendorDirectoryController::class, 'store'])->name('vendor-directory.store');
+    Route::post('cari-vendor/{catalog}/review', [VendorDirectoryController::class, 'storeReview'])->name('vendor-directory.review');
 
     // Module 5 - Guest Management
     Route::put('guests/wa-template', [GuestController::class, 'updateWaTemplate'])->name('guests.wa-template.update');
@@ -159,7 +160,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
 
-    // Paket Pro â€” checkout manual (transfer + bukti) dan halaman upsell.
+    // Paket Pro — checkout manual (transfer + bukti) dan halaman upsell.
     Route::get('upgrade', [UpgradeController::class, 'index'])->name('upgrade.index');
     Route::post('upgrade', [UpgradeController::class, 'store'])->name('upgrade.store');
 
@@ -186,7 +187,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
         Route::put('admin/document-templates/{template}', [DocumentTemplateController::class, 'update'])->name('admin.document-templates.update');
         Route::delete('admin/document-templates/{template}', [DocumentTemplateController::class, 'destroy'])->name('admin.document-templates.destroy');
 
-        // Paket Pro â€” antrean persetujuan upgrade + setelan harga/rekening/WA.
+        // Paket Pro — antrean persetujuan upgrade + setelan harga/rekening/WA.
         Route::get('admin/upgrade-requests', [AdminUpgradeController::class, 'index'])->name('admin.upgrade-requests.index');
         Route::post('admin/upgrade-requests/{upgradeRequest}/approve', [AdminUpgradeController::class, 'approve'])->name('admin.upgrade-requests.approve');
         Route::post('admin/upgrade-requests/{upgradeRequest}/reject', [AdminUpgradeController::class, 'reject'])->name('admin.upgrade-requests.reject');

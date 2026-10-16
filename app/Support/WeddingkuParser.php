@@ -56,6 +56,7 @@ class WeddingkuParser
         return [
             'source' => 'weddingku',
             'source_url' => $sourceUrl,
+            'vendor_id' => $this->vendorId($html),
             'slug' => $this->slugFromUrl($sourceUrl),
             'name' => $name,
             'category' => $this->categoryFromBreadcrumb($xpath),
@@ -69,6 +70,208 @@ class WeddingkuParser
             'about' => $this->firstText($xpath, '//div[contains(@class,"about-desc")]'),
             'photo' => $this->firstPhoto($xpath),
         ];
+    }
+
+    /**
+     * ID internal vendor di Weddingku, ditulis sebagai `var VendorID=84631`
+     * di semua sub-page vendor. Dipakai sebagai parameter `i` untuk endpoint
+     * /directory/ajax/*.asp yang memuat data venue & review.
+     */
+    private function vendorId(string $html): ?int
+    {
+        if (! preg_match('/var\s+VendorID\s*=\s*(\d+)/', $html, $m)) {
+            return null;
+        }
+
+        return (int) $m[1];
+    }
+
+    /**
+     * Response JSON /directory/ajax/venue_new.asp -> daftar ruangan + harga.
+     *
+     * Endpoint ini berada di /directory/ajax/, BUKAN /ajax/ yang dilarang
+     * robots.txt, jadi aman diambil. Endpoint mengembalikan venues: [] untuk
+     * vendor yang bukan venue, jadi hasilnya kosong dengan aman.
+     *
+     * @return array{venue_rooms: array, starting_price: ?float, price_label: ?string}
+     */
+    public function parseVenues(string $json): array
+    {
+        $empty = ['venue_rooms' => [], 'starting_price' => null, 'price_label' => null];
+
+        $data = json_decode($json, true);
+
+        if (! is_array($data['venues'] ?? null)) {
+            return $empty;
+        }
+
+        $rooms = [];
+        $lowest = null;
+        $lowestLabel = null;
+
+        foreach ($data['venues'] as $venue) {
+            $seated = (int) ($venue['capacity_seated']['max'] ?? 0);
+            $standing = (int) ($venue['capacity_standing']['max'] ?? 0);
+
+            // Satu ruangan bisa punya dua harga (seated & standing). Untuk
+            // "mulai dari" yang benar ambil yang paling murah, bukan
+            // selalu seated -- kalau tidak harga termurah ikut hilang.
+            $prices = array_filter([
+                (int) ($venue['price_seated'] ?? 0),
+                (int) ($venue['price_standing'] ?? 0),
+            ]);
+            $price = $prices === [] ? 0 : min($prices);
+
+            if ($price <= 0 && $seated === 0 && $standing === 0) {
+                continue;
+            }
+
+            $capacity = [];
+
+            if ($seated > 0) {
+                $capacity[] = 'Seated ' . ($venue['capacity_seated']['min'] ?? 0) . '-' . $seated;
+            }
+
+            if ($standing > 0) {
+                $capacity[] = 'Standing ' . ($venue['capacity_standing']['min'] ?? 0) . '-' . $standing;
+            }
+
+            $rooms[] = [
+                'name' => trim((string) ($venue['name'] ?? 'Ruangan')),
+                'capacity' => implode(' / ', $capacity),
+                'price' => $price,
+            ];
+
+            if ($price > 0 && ($lowest === null || $price < $lowest)) {
+                $lowest = $price;
+                $lowestLabel = 'Mulai Rp ' . number_format($price, 0, ',', '.');
+            }
+        }
+
+        return [
+            'venue_rooms' => $rooms,
+            'starting_price' => $lowest,
+            'price_label' => $lowestLabel,
+        ];
+    }
+
+    /**
+     * Response JSON /directory/ajax/collections.asp -> URL foto album.
+     *
+     * PENTING: album TIDAK pernah muncul di HTML server-side (ul.collections
+     * selalu kosong) karena dimuat AJAX. Yang bisa diambil hanya URL gambarnya
+     * -- file foto tidak diunduh, sesuai keputusan awal.
+     *
+     * Setiap elemen punya media_preview.image_media.src. Folder pertama (f=0)
+     * adalah album utama vendor.
+     *
+     * @return array{album: array, album_count: ?int}
+     */
+    public function parseAlbum(string $json, int $limit = 10): array
+    {
+        $empty = ['album' => [], 'album_count' => null];
+
+        $data = json_decode($json, true);
+
+        if (! is_array($data['inspirations'] ?? null)) {
+            return $empty;
+        }
+
+        $album = [];
+        $total = 0;
+
+        foreach ($data['inspirations'] as $item) {
+            $url = $item['media_preview']['image_media']['src'] ?? null;
+
+            if (! $url || ! str_contains((string) $url, 'images.weddingku.com')) {
+                continue;
+            }
+
+            $total++;
+
+            if (count($album) < $limit) {
+                $album[] = str_replace('\\/', '/', $url);
+            }
+        }
+
+        return [
+            'album' => $album,
+            // Total asli dari endpoint, bukan jumlah yang kita ambil.
+            'album_count' => $total > 0 ? ($data['page_info']['count']['record'] ?? $total) : null,
+        ];
+    }
+
+    /**
+     * Response JSON /directory/ajax/review.asp -> review vendor.
+     *
+     * Rating diambil dari rata-rata skor quality/service/professionalism/price
+     * milik tiap review, karena angka rating di HTML halaman vendor selalu
+     * tercetak 0.0 meskipun vendor punya ratusan review.
+     *
+     * @return array{reviews: array, review_count: ?int, rating: ?float}
+     */
+    public function parseReviews(string $json, int $limit = 5): array
+    {
+        $empty = ['reviews' => [], 'review_count' => null, 'rating' => null];
+
+        $data = json_decode($json, true);
+
+        if (! is_array($data['reviews'] ?? null)) {
+            return $empty;
+        }
+
+        $reviews = [];
+
+        // Jumlah review sebenarnya ada di page_info, bukan panjang array ini:
+        // array hanya berisi satu halaman (maks 20) dari total yang bisa lebih.
+        $total = (int) ($data['page_info']['count']['record'] ?? count($data['reviews']));
+
+        // Rating TIDAK ada di HTML halaman vendor (selalu tercetak 0.0), tapi
+        // tiap review membawa 4 skor 1-5: quality, service, professionalism,
+        // price. Rata-ratanya dipakai sebagai rating vendor.
+        $scores = [];
+
+        foreach ($data['reviews'] as $review) {
+            foreach (['quality', 'service', 'professionalism', 'price'] as $key) {
+                $score = (float) ($review[$key] ?? 0);
+
+                // Hanya skala 1-5 yang dipakai; angka di luar itu data rusak.
+                if ($score >= 1 && $score <= 5) {
+                    $scores[] = $score;
+                }
+            }
+
+            if (count($reviews) >= $limit) {
+                continue;
+            }
+
+            // Teks review masih berupa entitas HTML (&amp; dkk).
+            $content = $this->decode(trim((string) ($review['content'] ?? '')));
+
+            if ($content === '') {
+                continue;
+            }
+
+            $reviews[] = [
+                'title' => $this->decode(trim((string) ($review['title'] ?? ''))),
+                'content' => $content,
+                'date' => substr((string) ($review['review_date'] ?? ''), 0, 10),
+            ];
+        }
+
+        return [
+            'reviews' => $reviews,
+            'review_count' => $total > 0 ? $total : null,
+            'rating' => $scores === []
+                ? null
+                : round(array_sum($scores) / count($scores), 1),
+        ];
+    }
+
+    /** Teks dari endpoint AJAX masih berupa entitas HTML. */
+    private function decode(string $text): string
+    {
+        return html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
     /**

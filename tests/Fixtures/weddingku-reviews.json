@@ -1,0 +1,47 @@
+{
+  "responsestatus": { "code": "00", "description": "Success", "access_token": null },
+  "reviews": [
+    {
+      "review_id": 40491,
+      "title": "Aulika &amp; Kiki",
+      "content": "Makasih banget buat Mba Aisyah dan team yang udah bikin acara aku lancar banget.ISTICS Sampai nyiapin plan A, B, C, D, E segala.",
+      "quality": 0,
+      "service": 0,
+      "professionalism": 0,
+      "price": 0,
+      "review_count": 0,
+      "review_category": null,
+      "review_date": "2020-12-02T08:47:44Z",
+      "vendor_comment": null,
+      "member": "aulika",
+      "typeid": 1,
+      "youtube": null,
+      "realwedding": null,
+      "venue_name": null
+    },
+    {
+      "review_id": 40449,
+      "title": "Wuddan &amp; Wazid",
+      "content": "Untukku yang serba detail dan idealis, tadinya gamau pake WO karena merasa bisa sendiri. Tapi事实证明 mereka萨克 sangat membantu.",
+      "quality": 0,
+      "service": 0,
+      "professionalism": 0,
+      "price": 0,
+      "review_count": 0,
+      "review_category": null,
+      "review_date": "2020-11-11T18:06:36Z",
+      "vendor_comment": null,
+      "member": "wuddan",
+      "typeid": 1,
+      "youtube": null,
+      "realwedding": null,
+      "venue_name": null
+    }
+  ],
+  "page_info": {
+    "current_page": 1,
+    "has_next_page": false,
+    "count": { "page": 1, "record": 13 }
+  },
+  "is_reviewed": false
+}

@@ -37,6 +37,25 @@
             </button>
         </div>
 
+        <!-- Cari Vendor: katalog publik dari Weddingku -->
+        <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row md:items-center gap-4">
+            <div class="w-12 h-12 shrink-0 rounded-2xl bg-[#5F6F5B] flex items-center justify-center">
+                <i class="fa-solid fa-magnifying-glass text-[#D8A7B1] text-lg"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                    <h2 class="text-base font-bold font-serif-title text-[#5F6F5B]">Cari Vendor</h2>
+                    <span class="px-2 py-0.5 rounded-md bg-[#5F6F5B] text-[9px] font-bold uppercase tracking-wider text-white">Pro</span>
+                </div>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Temukan vendor pernikahan yang sesuai dengan lokasi, jenis vendor, dan
+                    budget kamu.</p>
+            </div>
+            <a href="{{ route('vendor-directory.index') }}"
+                class="btn-primary-rose px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 w-full md:w-auto shrink-0">
+                <i class="fa-solid fa-magnifying-glass"></i> Cari Vendor
+            </a>
+        </div>
+
         <!-- Filter Bar -->
         <div
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
@@ -80,11 +99,15 @@
                             <div>
                                 <span
                                     class="text-[11px] font-semibold text-[#5F6F5B] bg-[#A3B7A6]/20 px-2.5 py-1 rounded-full border border-[#A3B7A6]/40">{{ $v->category }}</span>
-                                <h3 class="font-bold text-[#5F6F5B] text-lg mt-2 leading-snug group-hover:text-[#D8A7B1] transition-colors flex items-center gap-1.5"
+                                <h3 class="font-bold text-[#5F6F5B] text-lg mt-2 leading-snug group-hover:text-[#D8A7B1] transition-colors flex items-center gap-1.5 cursor-pointer"
                                     title="Klik untuk lihat detail & isi paketan vendor">
                                     <span>{{ $v->name }}</span>
+                                    {{-- Panah selalu terlihat, bukan hanya saat hover:
+                                         kalau disembunyikan till hover, judul
+                                         terlihat seperti teks biasa dan tidak
+                                         terbaca bisa diklik. --}}
                                     <i
-                                        class="fa-solid fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-0.5"></i>
+                                        class="fa-solid fa-chevron-right text-xs text-[#D8A7B1] shrink-0 transition-transform group-hover:translate-x-0.5"></i>
                                 </h3>
                             </div>
                             <span
@@ -135,9 +158,10 @@
                             @endif
                         </div>
                         @if ($v->review)
+                            {{-- Catatan dibatasi hanya di UI kartu; data lengkap tampil di modal detail --}}
                             <div
-                                class="mt-3 p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 text-xs italic text-[#5F6F5B]/80">
-                                "{{ $v->review }}"
+                                class="mt-3 p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 text-xs italic text-[#5F6F5B]/80 line-clamp-4">
+                                "{{ Str::limit($v->review, 140) }}"
                             </div>
                         @endif
                     </div>
@@ -256,8 +280,8 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Review / Catatan</label>
-                            <input type="text" name="review" x-model="currentItem.review"
-                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
+                            <textarea name="review" x-model="currentItem.review" rows="4"
+                                class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                         </div>
                     </div>
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
@@ -296,8 +320,26 @@
                                 }"
                                 x-text="detailVendor ? detailVendor.booking_status : ''"></span>
                         </div>
-                        <h2 class="text-2xl font-bold font-serif-title text-[#5F6F5B]"
-                            x-text="detailVendor ? detailVendor.name : ''"></h2>
+                        {{-- Judul jadi tautan ke halaman vendor lengkap di katalog, tapi hanya
+                             kalau vendor ini memang berasal dari katalog. --}}
+                        <template x-if="detailVendor && detailVendor.catalog_slug">
+                            {{-- Warna ditaruh di <a>, bukan di <h2>. Kalau h2 punya
+                                 kelas warnanya sendiri, dia tidak mewarisi hover
+                                 dari elemen induk sehingga judul tidak pernah
+                                 berubah warna. --}}
+                            <a :href="'/cari-vendor/' + detailVendor.catalog_slug"
+                                class="inline-flex items-center gap-2 text-[#5F6F5B] hover:text-[#D8A7B1] transition-colors cursor-pointer"
+                                title="Lihat halaman lengkap vendor ini">
+                                <h2 class="text-2xl font-bold font-serif-title"
+                                    x-text="detailVendor ? detailVendor.name : ''"></h2>
+                                <i
+                                    class="fa-solid fa-chevron-right text-sm text-[#D8A7B1] shrink-0 transition-transform hover:translate-x-0.5"></i>
+                            </a>
+                        </template>
+                        <template x-if="!detailVendor || !detailVendor.catalog_slug">
+                            <h2 class="text-2xl font-bold font-serif-title text-[#5F6F5B]"
+                                x-text="detailVendor ? detailVendor.name : ''"></h2>
+                        </template>
                     </div>
                     <button @click="detailModalOpen = false"
                         class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer p-1"><i
@@ -379,7 +421,7 @@
                                             <div>
                                                 <span class="text-xs font-bold text-[#5F6F5B] block truncate"
                                                     x-text="item.name"></span>
-                                                <span class="text-[10px] text-[#B6ADA3] font-semibold"
+                                                <span class="text-[10px] text-[#B6ADA3] font-semibold whitespace-pre-line"
                                                     x-text="item.type || 'Include'"></span>
                                             </div>
                                         </div>
@@ -387,8 +429,12 @@
                                             method="POST" @click.stop>
                                             @csrf
                                             @method('DELETE')
+                                            {{-- @click (bukan onclick) supaya item.id ikut dievaluasi
+                                                 Alpine. onclick= biasa merender "item.id"
+                                                 sebagai teks, jadi form dengan id itu tidak pernah
+                                                 ditemukan dan tombolnya diam-diam tidak bekerja. --}}
                                             <button type="button" title="Hapus"
-                                                onclick="confirmDelete('del-pkg-' + item.id, 'item paketan ini')"
+                                                @click="confirmDelete('del-pkg-' + item.id, 'item paketan ini')"
                                                 class="text-[#B6ADA3] hover:text-[#5F6F5B] p-1.5 cursor-pointer">
                                                 <i class="fa-solid fa-trash text-xs"></i>
                                             </button>

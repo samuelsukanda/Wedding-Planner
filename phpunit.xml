@@ -18,19 +18,37 @@
         </include>
     </source>
     <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
-        <env name="BCRYPT_ROUNDS" value="4"/>
-        <env name="BROADCAST_CONNECTION" value="null"/>
-        <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
-        <env name="DB_URL" value=""/>
-        <env name="MAIL_MAILER" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="PULSE_ENABLED" value="false"/>
-        <env name="TELESCOPE_ENABLED" value="false"/>
-        <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!-- force="true": mesin ini punya APP_ENV/DB_* global di environment
+             Windows (masuk ke $_SERVER, yang dibaca Laravel lebih dulu), jadi
+             tests tanpa force jalan ke MySQL production. Dengan force, nilai
+             test selalu diutamakan di $_ENV maupun $_SERVER. -->
+        <server name="APP_ENV" force="true" value="testing"/>
+        <server name="APP_MAINTENANCE_DRIVER" force="true" value="file"/>
+        <server name="BCRYPT_ROUNDS" force="true" value="4"/>
+        <server name="BROADCAST_CONNECTION" force="true" value="null"/>
+        <server name="CACHE_STORE" force="true" value="array"/>
+        <server name="DB_CONNECTION" force="true" value="sqlite"/>
+        <server name="DB_DATABASE" force="true" value=":memory:"/>
+        <server name="DB_URL" force="true" value=""/>
+        <server name="MAIL_MAILER" force="true" value="array"/>
+        <server name="QUEUE_CONNECTION" force="true" value="sync"/>
+        <server name="SESSION_DRIVER" force="true" value="array"/>
+        <server name="PULSE_ENABLED" force="true" value="false"/>
+        <server name="TELESCOPE_ENABLED" force="true" value="false"/>
+        <server name="NIGHTWATCH_ENABLED" force="true" value="false"/>
+        <env name="APP_ENV" force="true" value="testing"/>
+        <env name="APP_MAINTENANCE_DRIVER" force="true" value="file"/>
+        <env name="BCRYPT_ROUNDS" force="true" value="4"/>
+        <env name="BROADCAST_CONNECTION" force="true" value="null"/>
+        <env name="CACHE_STORE" force="true" value="array"/>
+        <env name="DB_CONNECTION" force="true" value="sqlite"/>
+        <env name="DB_DATABASE" force="true" value=":memory:"/>
+        <env name="DB_URL" force="true" value=""/>
+        <env name="MAIL_MAILER" force="true" value="array"/>
+        <env name="QUEUE_CONNECTION" force="true" value="sync"/>
+        <env name="SESSION_DRIVER" force="true" value="array"/>
+        <env name="PULSE_ENABLED" force="true" value="false"/>
+        <env name="TELESCOPE_ENABLED" force="true" value="false"/>
+        <env name="NIGHTWATCH_ENABLED" force="true" value="false"/>
     </php>
 </phpunit>

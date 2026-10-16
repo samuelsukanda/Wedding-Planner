@@ -1,0 +1,104 @@
+{
+  "responsestatus": {
+    "code": "00",
+    "description": "Success",
+    "access_token": null
+  },
+  "venues": [
+    {
+      "capacity": null,
+      "capacity_seated": { "max": 30, "min": 2 },
+      "capacity_standing": { "max": 0, "min": 0 },
+      "city": null,
+      "district_name": null,
+      "hotflag": true,
+      "media_preview": null,
+      "name": "Amara or Kimaya Cliff Chapel",
+      "packages": [],
+      "price": {
+        "discount": 0,
+        "discount_string": null,
+        "down_payment": 0,
+        "highlight": null,
+        "qty": 0,
+        "regular": 0,
+        "regular_string": null,
+        "save": 0,
+        "special": 0,
+        "special_string": null,
+        "unit": null,
+        "valid_until": null
+      },
+      "price_seated": 2299000,
+      "price_standing": 0,
+      "url": "https://www.weddingku.com/wedding-vendors/hotel-ballroom/the-apurva-kempinski-bali/venue/cliff-chapel",
+      "venue_event_types": [],
+      "venue_id": 935
+    },
+    {
+      "capacity": null,
+      "capacity_seated": { "max": 150, "min": 30 },
+      "capacity_standing": { "max": 0, "min": 0 },
+      "city": null,
+      "district_name": null,
+      "hotflag": false,
+      "media_preview": null,
+      "name": "Nusantara Presidential",
+      "packages": [],
+      "price": {
+        "discount": 0,
+        "discount_string": null,
+        "down_payment": 0,
+        "highlight": null,
+        "qty": 0,
+        "regular": 0,
+        "regular_string": null,
+        "save": 0,
+        "special": 0,
+        "special_string": null,
+        "unit": null,
+        "valid_until": null
+      },
+      "price_seated": 2299000,
+      "price_standing": 0,
+      "url": "https://www.weddingku.com/wedding-vendors/hotel-ballroom/the-apurva-kempinski-bali/venue/",
+      "venue_event_types": [],
+      "venue_id": 936
+    },
+    {
+      "capacity": null,
+      "capacity_seated": { "max": 300, "min": 50 },
+      "capacity_standing": { "max": 400, "min": 200 },
+      "city": null,
+      "district_name": null,
+      "hotflag": false,
+      "media_preview": null,
+      "name": "Ocean Front Lawn",
+      "packages": [],
+      "price": {
+        "discount": 0,
+        "discount_string": null,
+        "down_payment": 0,
+        "highlight": null,
+        "qty": 0,
+        "regular": 0,
+        "regular_string": null,
+        "save": 0,
+        "special": 0,
+        "special_string": null,
+        "unit": null,
+        "valid_until": null
+      },
+      "price_seated": 2299000,
+      "price_standing": 1500000,
+      "url": "https://www.weddingku.com/wedding-vendors/hotel-ballroom/the-apurva-kempinski-bali/venue/ocean-front-lawn",
+      "venue_event_types": [],
+      "venue_id": 937
+    }
+  ],
+  "page_info": {
+    "current_page": 1,
+    "has_next_page": false,
+    "count": { "page": 1, "record": 3 }
+  }
+}

@@ -20,6 +20,7 @@ class VendorCatalog extends Model
     protected $fillable = [
         'source',
         'source_url',
+        'vendor_id',
         'slug',
         'name',
         'category',
@@ -31,16 +32,33 @@ class VendorCatalog extends Model
         'instagram',
         'rating',
         'review_count',
+        'starting_price',
+        'price_label',
+        'venue_rooms',
+        'album',
+        'album_count',
+        'reviews',
         'about',
         'photo',
         'scraped_at',
     ];
 
     protected $casts = [
+        'vendor_id' => 'integer',
         'rating' => 'float',
         'review_count' => 'integer',
+        'album_count' => 'integer',
+        'starting_price' => 'decimal:2',
+        'venue_rooms' => 'array',
+        'album' => 'array',
+        'reviews' => 'array',
         'scraped_at' => 'datetime',
     ];
+
+    public function userReviews()
+    {
+        return $this->hasMany(VendorCatalogReview::class, 'vendor_catalog_id');
+    }
 
     /**
      * URL detail memakai slug vendor, bukan id, supaya lebih enak dibaca.

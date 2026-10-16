@@ -7,6 +7,67 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Import Katalog Vendor
+
+Halaman **Cari Vendor** menampilkan katalog vendor publik yang di-import sekali
+lewat artisan command. Katalog disimpan di tabel `vendor_catalog` (global, tanpa
+`wedding_id`), terpisah dari tabel `vendors` milik pasangan.
+
+### Menjalankan ulang dari database kosong
+
+Kalau database di-truncate, jalankan berurutan:
+
+```bash
+php artisan migrate --force      # buat tabel vendor_catalog
+php artisan vendors:import        # isi katalog, +- 5 menit
+```
+
+Uji cepat dulu sebelum import penuh:
+
+```bash
+php artisan vendors:import --limit=10
+```
+
+Command aman dijalankan berulang kali — data di-upsert berdasarkan `source_url`.
+
+### Data yang diambil
+
+| Field | Keterangan |
+|---|---|
+| nama, kategori, kota, alamat, telepon, Instagram, foto, deskripsi | Dari HTML halaman vendor |
+| rating | Rata-rata 4 skor tiap review (quality/service/professionalism/price) |
+| review | Maks. 5 review per vendor |
+| pricelist | Ruangan + kapasitas + harga, hanya kategori venue/hotel/restaurant |
+| album | Maks. **10** URL foto per vendor (file tidak diunduh, URL saja) |
+
+Album dibatasi 10 foto supaya tabel tidak membengkak — satu halaman endpoint
+sudah berisi 10 foto, jadi batas ini tidak menambah request. `album_count`
+tetap menyimpan jumlah foto sebenarnya di sumber.
+
+### Endpoint yang dipakai
+
+Semuanya di `/directory/ajax/`, yang **tidak** dilarang `robots.txt` sumber
+(`robots.txt` hanya melarang `/ajax/` di root):
+
+- `venue_new.asp` — pricelist
+- `collections.asp` — album
+- `review.asp` — review + skor rating
+
+Jadi import tidak butuh browser/headless, dan tidak menambah dependency baru.
+
+### Batasan yang perlu diketahui
+
+- **Maksimal 484 vendor.** Sitemap sumber dibatasi 500 URL, dan halaman
+  daftar vendor dimuat sepenuhnya lewat JavaScript sehingga tidak bisa
+  di-crawl lewat HTML.
+- **Rating & review hanya ada di 37 dari 484 vendor.** Sisanya memang belum
+  punya review di sumber, jadi kosong bukan kegagalan scraping.
+
+Untuk menambah jumlah vendor di luar itu diperlukan API resmi atau izin dari
+pemilik situs.
+
+---
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

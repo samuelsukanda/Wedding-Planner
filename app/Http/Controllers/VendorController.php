@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Wedding;
 use App\Models\Vendor;
+use App\Models\VendorCatalog;
 use App\Models\VendorPackageItem;
 use App\Models\DropdownOption;
 use Illuminate\Http\Request;
@@ -17,6 +18,15 @@ class VendorController extends Controller
         // Filter dipindah ke Alpine (tableFilter) supaya tidak ada reload
         // halaman. Semua data dikirim sekali, penyaringan terjadi di client.
         $vendors = $wedding->vendors()->with('packageItems')->latest()->get();
+
+        // Slug katalogvendor ini, supaya judul di modal detail bisa ditautkan
+        // ke halaman vendor yang lengkap (album, pricelist, review).
+        // Satu query untuk semua vendor, bukan satu per vendor.
+        $catalogSlugs = VendorCatalog::whereIn('name', $vendors->pluck('name'))->pluck('slug', 'name');
+
+        foreach ($vendors as $vendor) {
+            $vendor->catalog_slug = $catalogSlugs->get($vendor->name);
+        }
 
         $categories = DropdownOption::getOptions('vendor_category', [
             'Venue', 'Catering', 'Dekorasi', 'Wedding Organizer', 'MUA',
