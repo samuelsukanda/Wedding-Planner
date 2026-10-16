@@ -62,28 +62,31 @@
             <div class="w-full space-y-6" x-data="{ checkout: false }">
 
                 <!-- ================= HERO PAKET ================= -->
+                {{-- Warna hero pakai palet app (rose), bukan hijau tua: teks putih
+                     hanya terbaca kalau latar cukup gelap, dan kartu hero satu
+                     warna dengan tombol CTA di bawahnya. --}}
                 <div
-                    class="w-full rounded-2xl bg-gradient-to-br from-[#5F6F5B] to-[#4D5C4A] p-6 md:p-8 shadow-xs">
+                    class="w-full rounded-2xl bg-gradient-to-br from-[#C2757F] to-[#A855A0] p-6 md:p-8 shadow-xs">
                     <span
-                        class="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                        class="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Recommended
                     </span>
 
                     <h2 class="mt-4 text-2xl md:text-3xl font-bold font-serif-title text-white">Meet to Marry Pro</h2>
-                    <p class="mt-1.5 text-sm text-white/75">Akses penuh semua Wedding Kit, berlaku juga untuk akun pasanganmu.</p>
+                    <p class="mt-1.5 text-sm text-white/85">Akses penuh semua Wedding Kit, berlaku juga untuk akun pasanganmu.</p>
 
                     <div class="mt-5 flex items-end flex-wrap gap-x-3 gap-y-1">
                         {{-- Harga coret hanya muncul kalau superadmin mengisinya dan
                              angkanya memang lebih besar dari harga jual. --}}
                         @if ($priceBefore > $price && $price > 0)
-                            <span class="text-base text-white/50 line-through pb-1">
+                            <span class="text-base text-white/60 line-through pb-1">
                                 Rp {{ number_format($priceBefore, 0, ',', '.') }}
                             </span>
                         @endif
                         <span class="text-3xl md:text-4xl font-bold font-serif-title text-white leading-none">
                             Rp {{ number_format($price, 0, ',', '.') }}
                         </span>
-                        <span class="text-sm text-white/70 pb-1">/ Lifetime</span>
+                        <span class="text-sm text-white/80 pb-1">/ Lifetime</span>
                     </div>
                 </div>
 
@@ -100,7 +103,7 @@
                             'Bisa diakses dari HP maupun desktop',
                         ] as $benefit)
                             <li class="flex items-center gap-3 text-sm text-[#5F6F5B]/85">
-                                <i class="fa-solid fa-check text-[#A3B7A6] text-xs"></i>
+                                <i class="fa-solid fa-circle-check text-[#C2757F]"></i>
                                 <span>{{ $benefit }}</span>
                             </li>
                         @endforeach
@@ -109,12 +112,18 @@
 
                 <!-- ================= CTA PEMBUKA CHECKOUT ================= -->
                 <button type="button" @click="checkout = true" x-show="!checkout"
-                    class="btn-sage w-full px-6 py-4 rounded-2xl text-sm cursor-pointer">
+                    class="btn-primary-rose w-full px-6 py-4 rounded-2xl text-sm cursor-pointer">
                     <i class="fa-solid fa-sparkles mr-2"></i> Upgrade ke Pro · Rp {{ number_format($price, 0, ',', '.') }}
                 </button>
 
                 <!-- ================= CHECKOUT (muncul setelah CTA diklik) ================= -->
                 <div x-show="checkout" x-cloak class="w-full space-y-6">
+
+                    <!-- Barsih-bali ke langkah 1 tanpa reload -->
+                    <button type="button" @click="checkout = false"
+                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5F6F5B]/70 hover:text-[#5F6F5B] transition cursor-pointer">
+                        <i class="fa-solid fa-chevron-left text-[10px]"></i> Kembali
+                    </button>
 
                     <!-- Ringkasan total harga -->
                     <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">

@@ -15,6 +15,15 @@
     --color-deep-olive: #5F6F5B;
 }
 
+/* Alpine memproses x-cloak yang terakhir; sebelum itu elemen ber-x-show ikut
+   tampil sebentar. Aturan ini tidak pernah ada sebelumnya, jadi seluruh
+   elemen x-cloak di app (sidebar, modal, dropdown) berkedip saat halaman
+   dibuka. !important dipakai supaya utility display dari Tailwind tidak
+   menimpa aturan ini. */
+[x-cloak] {
+    display: none !important;
+}
+
 
 /* ==========================================================================
    Komponen form.
