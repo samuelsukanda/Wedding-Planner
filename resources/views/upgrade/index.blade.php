@@ -44,7 +44,7 @@
                      Kontak Admin disembunyikan kalau nomor WA belum diisi admin. --}}
                 <div class="flex flex-col sm:flex-row gap-3">
                     <a href="{{ route('upgrade.index') }}"
-                        class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white border border-[#B6ADA3]/40 text-[#5F6F5B] text-xs font-semibold hover:bg-[#FAF7F2] transition">
+                        class="btn-primary-rose flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs">
                         <i class="fa-solid fa-rotate-right"></i> Refresh Status
                     </a>
                     @if ($adminWa)
