@@ -81,10 +81,14 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     // kembali ke menu sebelumnya saat refresh.
     // Parameter bernama {catalog}, bukan {vendor}, supaya route model binding
     // tidak salah resolving ke model Vendor (tabel milik pasangan).
-    Route::get('cari-vendor', [VendorDirectoryController::class, 'index'])->name('vendor-directory.index');
-    Route::get('cari-vendor/{catalog}', [VendorDirectoryController::class, 'show'])->name('vendor-directory.show');
-    Route::post('cari-vendor/{catalog}', [VendorDirectoryController::class, 'store'])->name('vendor-directory.store');
-    Route::post('cari-vendor/{catalog}/review', [VendorDirectoryController::class, 'storeReview'])->name('vendor-directory.review');
+    Route::get('cari-vendor', [VendorDirectoryController::class, 'index'])
+        ->middleware('plan:vendor_directory')->name('vendor-directory.index');
+    Route::get('cari-vendor/{catalog}', [VendorDirectoryController::class, 'show'])
+        ->middleware('plan:vendor_directory')->name('vendor-directory.show');
+    Route::post('cari-vendor/{catalog}', [VendorDirectoryController::class, 'store'])
+        ->middleware('plan:vendor_directory')->name('vendor-directory.store');
+    Route::post('cari-vendor/{catalog}/review', [VendorDirectoryController::class, 'storeReview'])
+        ->middleware('plan:vendor_directory')->name('vendor-directory.review');
 
     // Module 5 - Guest Management
     Route::put('guests/wa-template', [GuestController::class, 'updateWaTemplate'])->name('guests.wa-template.update');

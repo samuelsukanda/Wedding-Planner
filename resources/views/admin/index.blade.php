@@ -109,7 +109,7 @@
                 @else
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <p class="text-sm text-[#5F6F5B]/80 leading-relaxed">
-                            <strong>Moodboard</strong> tanpa batas jumlah item, dengan sekali pembayaran dan tanpa biaya bulanan.
+                            <strong>Moodboard</strong> tanpa batas jumlah item dan akses penuh <strong>Cari Vendor</strong>, dengan sekali pembayaran dan tanpa biaya bulanan.
                         </p>
                         <a href="{{ route('upgrade.index') }}"
                             class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center">

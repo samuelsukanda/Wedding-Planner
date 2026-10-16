@@ -10,10 +10,13 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Menahan akses ke fitur berbayar dan mengarahkan ke halaman upgrade.
  *
- * Pemakaian: ->middleware('plan:moodboard')
+ * Pemakaian: ->middleware('plan:vendor_directory')
  *
  * Paket yang dibutuhkan dibaca dari config('plans.features'), jadi menambah
  * fitur baru cukup mengubah routes/web.php — file ini tidak pernah disentuh.
+ *
+ * Arahkan ke halaman upgrade tanpa parameter fitur: halaman itu sudah
+ * mencantumkan seluruh benefit Pro, jadi tidak perlu konteks tambahan.
  */
 class EnsurePlan
 {
@@ -25,6 +28,6 @@ class EnsurePlan
             return $next($request);
         }
 
-        return redirect()->route('upgrade.index', ['from' => $feature]);
+        return redirect()->route('upgrade.index');
     }
 }

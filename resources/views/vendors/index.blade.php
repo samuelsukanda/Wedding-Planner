@@ -50,9 +50,17 @@
                 <p class="text-xs text-[#5F6F5B]/70 mt-1">Temukan vendor pernikahan yang sesuai dengan lokasi, jenis vendor, dan
                     budget kamu.</p>
             </div>
-            <a href="{{ route('vendor-directory.index') }}"
+            @php
+                // Kartu tetap terlihat untuk pasangan Free — itu pintu upsell-nya.
+                // Hanya tujuannya yang berubah: ke katalog untuk Pro, ke halaman
+                // upgrade untuk Free. Penentu lock sama dengan middleware EnsurePlan.
+                $navWedding = \App\Models\Wedding::current();
+                $directoryLocked = $navWedding && ! $navWedding->hasFeature('vendor_directory');
+            @endphp
+            <a href="{{ $directoryLocked ? route('upgrade.index') : route('vendor-directory.index') }}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 w-full md:w-auto shrink-0">
-                <i class="fa-solid fa-magnifying-glass"></i> Cari Vendor
+                <i class="fa-solid {{ $directoryLocked ? 'fa-crown' : 'fa-magnifying-glass' }}"></i>
+                {{ $directoryLocked ? 'Upgrade ke Pro' : 'Cari Vendor' }}
             </a>
         </div>
 

@@ -20,6 +20,10 @@ class VendorDirectoryTest extends TestCase
             'bride_name' => 'Bride',
             'wedding_date' => '2027-10-07',
             'total_budget' => 100000000,
+            // Cari Vendor kini fitur Pro yang dikunci mati. Test di file ini
+            // menguji isi katalog, bukan kontrol akses, jadi akunnya dibuat
+            // Pro supaya halamannya tetap bisa dirender.
+            'plan' => 'pro',
         ]);
 
         return User::factory()->create([

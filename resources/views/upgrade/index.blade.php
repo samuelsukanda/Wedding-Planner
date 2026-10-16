@@ -49,6 +49,10 @@
                             </li>
                             <li class="flex items-start gap-2.5">
                                 <i class="fa-solid fa-circle-check text-[#A3B7A6] mt-0.5"></i>
+                                <span><strong>Cari Vendor</strong> — telusuri katalog vendor weddings sesuai lokasi, jenis, dan budget kamu.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-[#A3B7A6] mt-0.5"></i>
                                 <span>Aktif <strong>seumur akun</strong>, tidak ada biaya bulanan.</span>
                             </li>
                             <li class="flex items-start gap-2.5">

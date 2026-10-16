@@ -16,5 +16,7 @@
  * sini lalu pasang ->middleware('plan:nama_modul') di routes/web.php.
  */
 return [
-    'features' => [],
+    'features' => [
+        'vendor_directory' => 'pro',
+    ],
 ];

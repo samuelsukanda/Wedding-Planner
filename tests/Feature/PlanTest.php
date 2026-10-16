@@ -6,6 +6,8 @@ use App\Models\Notification;
 use App\Models\Setting;
 use App\Models\UpgradeRequest;
 use App\Models\User;
+use App\Models\Vendor;
+use App\Models\VendorCatalog;
 use App\Models\Wedding;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -152,6 +154,69 @@ class PlanTest extends TestCase
             ->assertSessionHas('error');
 
         $this->assertSame(3, $wedding->moodboards()->count());
+    }
+
+    public function test_free_couple_is_redirected_from_vendor_directory()
+    {
+        [$wedding] = $this->couple();
+
+        $vendor = VendorCatalog::create([
+            'name' => 'The Apurva Kempinski Bali',
+            'slug' => 'apurva',
+            'category' => 'Hotel Wedding Venue',
+            'source_url' => 'https://weddingku.com/vendor/apurva',
+        ]);
+
+        // Semua gerbang ikut terkunci: daftar, detail, simpan ke daftar, review.
+        foreach ([
+            '/cari-vendor',
+            '/cari-vendor/' . $vendor->slug,
+        ] as $path) {
+            $this->actingAs($wedding->users->first())
+                ->get($path)
+                ->assertRedirect(route('upgrade.index'));
+        }
+
+        $this->actingAs($wedding->users->first())
+            ->post('/cari-vendor/' . $vendor->slug)
+            ->assertRedirect(route('upgrade.index'));
+
+        $this->assertSame(0, Vendor::count());
+    }
+
+    public function test_pro_couple_can_open_vendor_directory()
+    {
+        [$wedding] = $this->couple('pro');
+
+        $vendor = VendorCatalog::create([
+            'name' => 'The Apurva Kempinski Bali',
+            'slug' => 'apurva',
+            'category' => 'Hotel Wedding Venue',
+            'source_url' => 'https://weddingku.com/vendor/apurva',
+        ]);
+
+        $user = $wedding->users->first();
+
+        $this->actingAs($user)->get('/cari-vendor')->assertOk();
+        $this->actingAs($user)->get('/cari-vendor/' . $vendor->slug)->assertOk();
+    }
+
+    public function test_vendor_card_prompts_free_couple_to_upgrade()
+    {
+        [, $freeUser] = $this->couple();
+
+        // Kartu tetap tampil (pintu upsell), tapi tujuannya ke halaman upgrade.
+        $this->actingAs($freeUser)->get('/vendors')
+            ->assertOk()
+            ->assertSee('Cari Vendor')
+            ->assertSee('Upgrade ke Pro');
+
+        [, $proUser] = $this->couple('pro');
+        $this->flushSession();
+        $this->actingAs($proUser)->get('/vendors')
+            ->assertOk()
+            ->assertSee('Cari Vendor')
+            ->assertDontSee('Upgrade ke Pro');
     }
 
     public function test_upgrade_page_shows_price_and_bank_from_settings()
