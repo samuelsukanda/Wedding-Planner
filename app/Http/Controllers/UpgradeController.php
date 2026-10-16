@@ -32,7 +32,6 @@ class UpgradeController extends Controller
             'price' => (int) Setting::get('pro_price', 0),
             'bank' => (string) Setting::get('pro_bank', ''),
             'adminWa' => (string) Setting::get('admin_whatsapp', ''),
-            'from' => $request->query('from'),
         ]);
     }
 

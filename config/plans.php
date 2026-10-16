@@ -1,22 +1,20 @@
 <?php
 
 /**
- * Registry fitur berbayar.
+ * Registry fitur yang dikunci penuh per paket.
  *
- * Setiap fitur dipakai dua kali: sebagai keyword route middleware
- * (->middleware('plan:moodboard')) dan sebagai kunci untuk ikon gembok di
- * sidebar. Menambah menu Pro berarti menambah satu baris di sini, satu keyword
- * di routes/web.php, dan satu atribut di nav — tidak ada kode gating lain yang
- * perlu disentuh.
+ * Bentuknya: 'nama_menu' => 'paket_yang_dibutuhkan'. Dipakai middleware
+ * EnsurePlan (alias 'plan' di bootstrap/app.php).
  *
- * Fitur yang tidak terdaftar di sini dianggap gratis, jadi middleware tidak
- * menahannya.
+ * Kosong sekarang: semua fitur Pro yang ada berbasis KUOTA, bukan kunci mati,
+ * sehingga tidak ada route yang memakai EnsurePlan. Moodboard free boleh
+ * dibuka, hanya jumlah item-nya yang dibatasi (lihat Wedding::limitFor()).
+ * Jangan isi 'moodboard' di sini — hasFeature() akan menyatakan free tidak
+ * boleh akses padahal nyatanya boleh.
  *
- * Harga, rekening, dan nomor WA admin sengaja TIDAK ada di sini karena
- * dikelola superadmin lewat tabel app_settings (lihat App\Models\Setting).
+ * Kalau nanti ada modul Premium yang mau dikunci mati, tambahkan satu baris di
+ * sini lalu pasang ->middleware('plan:nama_modul') di routes/web.php.
  */
 return [
-    'features' => [
-        'moodboard' => 'pro',
-    ],
+    'features' => [],
 ];

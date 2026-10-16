@@ -45,7 +45,7 @@
                         <ul class="space-y-2.5 text-sm text-[#5F6F5B]/85">
                             <li class="flex items-start gap-2.5">
                                 <i class="fa-solid fa-circle-check text-[#A3B7A6] mt-0.5"></i>
-                                <span><strong>Moodboard</strong> — kumpulkan referensi dekorasi, gaun, dan vendor dalam satu papan.</span>
+                                <span><strong>Moodboard</strong> — kumpulkan referensi dekorasi, gaun, dan vendor dalam satu papan, <strong>tanpa batas jumlah item</strong>.</span>
                             </li>
                             <li class="flex items-start gap-2.5">
                                 <i class="fa-solid fa-circle-check text-[#A3B7A6] mt-0.5"></i>

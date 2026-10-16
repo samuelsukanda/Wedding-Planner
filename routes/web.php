@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
@@ -94,10 +94,10 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::get('guests/wa-all', [GuestController::class, 'sendWaAll'])->name('guests.wa-all');
     Route::post('guests/{guest}/wa-sent', [GuestController::class, 'toggleWaSent'])->name('guests.wa-sent');
 
-    // Module 6 - Moodboard (fitur Pro)
-    Route::resource('moodboards', MoodboardController::class)
-        ->except(['create', 'edit', 'show'])
-        ->middleware('plan:moodboard');
+    // Module 6 - Moodboard. Fitur Pro berbasis kuota, bukan kunci mati: Free
+    // boleh membuka halaman ini, cuma jumlah item-nya dibatasi (lihat
+    // Wedding::limitFor dan enforcement di MoodboardController@store).
+    Route::resource('moodboards', MoodboardController::class)->except(['create', 'edit', 'show']);
 
     // Module 7 - Event Rundown
     Route::resource('rundowns', RundownController::class)->except(['create', 'edit', 'show']);
@@ -159,7 +159,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
 
-    // Paket Pro — checkout manual (transfer + bukti) dan halaman upsell.
+    // Paket Pro â€” checkout manual (transfer + bukti) dan halaman upsell.
     Route::get('upgrade', [UpgradeController::class, 'index'])->name('upgrade.index');
     Route::post('upgrade', [UpgradeController::class, 'store'])->name('upgrade.store');
 
@@ -186,7 +186,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
         Route::put('admin/document-templates/{template}', [DocumentTemplateController::class, 'update'])->name('admin.document-templates.update');
         Route::delete('admin/document-templates/{template}', [DocumentTemplateController::class, 'destroy'])->name('admin.document-templates.destroy');
 
-        // Paket Pro — antrean persetujuan upgrade + setelan harga/rekening/WA.
+        // Paket Pro â€” antrean persetujuan upgrade + setelan harga/rekening/WA.
         Route::get('admin/upgrade-requests', [AdminUpgradeController::class, 'index'])->name('admin.upgrade-requests.index');
         Route::post('admin/upgrade-requests/{upgradeRequest}/approve', [AdminUpgradeController::class, 'approve'])->name('admin.upgrade-requests.approve');
         Route::post('admin/upgrade-requests/{upgradeRequest}/reject', [AdminUpgradeController::class, 'reject'])->name('admin.upgrade-requests.reject');

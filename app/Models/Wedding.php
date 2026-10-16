@@ -64,6 +64,11 @@ class Wedding extends Model
         return $this->hasMany(User::class);
     }
 
+    public function catalogReviews()
+    {
+        return $this->hasMany(VendorCatalogReview::class);
+    }
+
     /**
      * Paket berbayar. Disimpan di weddings, bukan users, karena satu Wedding Kit
      * dipakai dua akun sekaligus (suami + istri) dan cukup satu yang upgrade.
@@ -84,6 +89,22 @@ class Wedding extends Model
 
         // Fitur tidak terdaftar di config = fitur gratis.
         return $required === null || $this->plan === $required;
+    }
+
+    /**
+     * Kuota item untuk fitur berbayar. null = tanpa batas (Pro).
+     *
+     * Angkanya dikelola superadmin lewat app_settings, jadi batas kuota bisa
+     * diubah tanpa deploy. Angka cadangan dipakai sebelum superadmin pernah
+     * mengaturnya.
+     */
+    public function limitFor(string $feature): ?int
+    {
+        if ($this->isPro()) {
+            return null;
+        }
+
+        return (int) Setting::get("{$feature}_free_limit", 3);
     }
 
     public function upgradeRequests()

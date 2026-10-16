@@ -22,12 +22,31 @@ class MoodboardController extends Controller
 
         $categories = DropdownOption::getOptions('moodboard_category', ['Dekorasi', 'Pelaminan', 'Gaun Pengantin', 'Suit', 'Makeup', 'Undangan', 'Souvenir', 'Table Setting']);
 
-        return view('moodboards.index', compact('wedding', 'moodboards', 'categories'));
+        // Dipakai view untuk menampilkan sisa kuota dan menjadikan tombol
+        // "Tambah" jadi link upgrade kalau sudah penuh. Filter kategori tidak
+        // ikut dihitung — kuota berlaku untuk seluruh item moodboard.
+        return view('moodboards.index', [
+            'wedding' => $wedding,
+            'moodboards' => $moodboards,
+            'categories' => $categories,
+            'limit' => $wedding->limitFor('moodboard'),
+            'used' => $wedding->moodboards()->count(),
+        ]);
     }
 
     public function store(Request $request)
     {
         $wedding = Wedding::current();
+
+        // Kuota dicek sebelum validasi: kalau sudah penuh, tidak ada gunanya
+        // memvalidasi form yang pasti ditolak. Ini satu-satunya jalur tulis
+        // item baru, jadi cukup di sini.
+        $limit = $wedding->limitFor('moodboard');
+
+        if ($limit !== null && $wedding->moodboards()->count() >= $limit) {
+            return back()->with('error', "Paket Free bisa menyimpan maksimal {$limit} item moodboard. Upgrade ke Pro untuk menambah tanpa batas.");
+        }
+
         $validated = $request->validate([
             'category' => 'required|string',
             'title' => 'required|string|max:255',
