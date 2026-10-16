@@ -32,6 +32,24 @@
             </div>
 
             <div>
+                <label for="pro_price_before"
+                    class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
+                    Harga Coret / Sebelum Diskon
+                </label>
+                <input type="number" name="pro_price_before" id="pro_price_before" min="0" step="1000"
+                    value="{{ old('pro_price_before', $values['pro_price_before']) }}"
+                    class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition"
+                    placeholder="Kosongkan kalau tidak ada diskon">
+                <p class="mt-1.5 text-[11px] text-[#5F6F5B]/60">
+                    Angka dicoret di halaman upgrade untuk memberi kesan diskon. Hanya tampil kalau lebih besar
+                    dari Harga Pro. Kosongkan kalau tidak ada diskon yang ditampilkan.
+                </p>
+                @error('pro_price_before')
+                    <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
                 <label for="pro_bank" class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
                     Rekening Tujuan *
                 </label>

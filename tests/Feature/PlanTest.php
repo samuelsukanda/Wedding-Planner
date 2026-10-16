@@ -219,7 +219,49 @@ class PlanTest extends TestCase
             ->assertDontSee('Upgrade ke Pro');
     }
 
-    public function test_pending_state_shows_verification_card_with_refresh_and_contact()
+    public function test_upgrade_page_is_a_two_step_flow()
+    {
+        Setting::put('pro_price', '55000');
+        Setting::put('pro_bank', 'BCA 1234567890');
+        Setting::put('admin_whatsapp', '6281234567890');
+
+        [, $user] = $this->couple();
+
+        $this->actingAs($user)->get('/upgrade')
+            ->assertOk()
+            // Langkah 1: hero + manfaat + tombol CTA.
+            ->assertSee('Meet to Marry Pro')
+            ->assertSee('Recommended')
+            ->assertSee('Yang kamu dapat')
+            ->assertSee('Moodboard tanpa batas jumlah item')
+            ->assertSee('Cari Vendor')
+            ->assertSee('Upgrade ke Pro · Rp 55.000')
+            // Harga coret tidak ada karena setting kosong.
+            ->assertDontSee('line-through')
+            // Nomor rekening & form ada di DOM tapi disembunyikan sampai CTA
+            // diklik, jadi keduanya harus tetap bisa dirender tanpa error.
+            ->assertSee('Rekening Tujuan')
+            ->assertSee('Kirim Bukti Transfer');
+    }
+
+    public function test_struck_through_price_only_shows_when_higher_than_selling_price()
+    {
+        [, $user] = $this->couple();
+
+        // Kosong atau lebih kecil dari harga jual = tidak ada coretan yang menyesatkan.
+        Setting::put('pro_price', '55000');
+        Setting::put('pro_price_before', '40000');
+        $this->actingAs($user)->get('/upgrade')->assertDontSee('line-through');
+
+        $this->flushSession();
+        Setting::put('pro_price_before', '149000');
+        $this->actingAs($user)->get('/upgrade')
+            ->assertOk()
+            ->assertSee('line-through')
+            ->assertSee('Rp 149.000');
+    }
+
+public function test_pending_state_shows_verification_card_with_refresh_and_contact()
     {
         Storage::fake('public');
         Setting::put('pro_price', '55000');

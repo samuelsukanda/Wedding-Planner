@@ -30,6 +30,7 @@ class UpgradeController extends Controller
             'pending' => $wedding?->upgradeRequests()->where('status', 'pending')->latest()->first(),
             'rejected' => $wedding?->upgradeRequests()->where('status', 'rejected')->latest()->first(),
             'price' => (int) Setting::get('pro_price', 0),
+            'priceBefore' => (int) Setting::get('pro_price_before', 0),
             'bank' => (string) Setting::get('pro_bank', ''),
             'adminWa' => (string) Setting::get('admin_whatsapp', ''),
         ]);

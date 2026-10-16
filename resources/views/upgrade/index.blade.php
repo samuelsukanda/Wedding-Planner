@@ -4,18 +4,6 @@
 
 @section('content')
     <div class="space-y-6">
-        <!-- Header -->
-        <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-crown text-[#D8A7B1] text-xl"></i>
-                <div>
-                    <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Upgrade ke Pro</h1>
-                    <p class="text-xs text-[#5F6F5B]/70 mt-0.5">Nikmati semua fitur premium dengan satu kali pembayaran.
-                        Aktif selamanya, tanpa biaya berlangganan bulanan.</p>
-                </div>
-            </div>
-        </div>
-
         @if ($pending)
             <!-- ================= STATUS: MENUNGGU KONFIRMASI ================= -->
             <a href="{{ route('admin.index') }}"
@@ -68,102 +56,133 @@
                 </div>
             </div>
         @else
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            {{-- checkout = false Initially: nomor rekening dan form upload sengaja
+                 TIDAK ada di DOM sebelum tombol Pro diklik, supaya belum ada yang
+                 bisa dikirim ke server tanpa lewat tombol itu. --}}
+            <div class="w-full space-y-6" x-data="{ checkout: false }">
 
-                <!-- ================= KIRI: MANFAAT + HARGA ================= -->
-                <div class="space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                        <h2 class="text-base font-bold font-serif-title text-[#5F6F5B] flex items-center gap-2">
-                            <i class="fa-solid fa-sparkles text-[#D8A7B1]"></i> Yang Didapat
-                        </h2>
-                        <ul class="space-y-2.5 text-sm text-[#5F6F5B]/85">
-                            <li class="flex items-start gap-2.5">
-                                <i class="fa-solid fa-circle-check text-[#A3B7A6] mt-0.5"></i>
-                                <span><strong>Moodboard</strong> — kumpulkan referensi dekorasi, gaun, dan vendor dalam satu
-                                    papan, <strong>tanpa batas jumlah item</strong>.</span>
-                            </li>
-                            <li class="flex items-start gap-2.5">
-                                <i class="fa-solid fa-circle-check text-[#A3B7A6] mt-0.5"></i>
-                                <span><strong>Cari Vendor</strong> — telusuri katalog vendor weddings sesuai lokasi, jenis,
-                                    dan budget kamu.</span>
-                            </li>
-                            <li class="flex items-start gap-2.5">
-                                <i class="fa-solid fa-circle-check text-[#A3B7A6] mt-0.5"></i>
-                                <span>Aktif <strong>seumur akun</strong>, tidak ada biaya bulanan.</span>
-                            </li>
-                            <li class="flex items-start gap-2.5">
-                                <i class="fa-solid fa-circle-check text-[#A3B7A6] mt-0.5"></i>
-                                <span>Berlaku untuk <strong>semua akun</strong> di Wedding Kit yang sama.</span>
-                            </li>
-                        </ul>
-                    </div>
+                <!-- ================= HERO PAKET ================= -->
+                <div
+                    class="w-full rounded-2xl bg-gradient-to-br from-[#5F6F5B] to-[#4D5C4A] p-6 md:p-8 shadow-xs">
+                    <span
+                        class="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Recommended
+                    </span>
 
-                    <div class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                        <h2 class="text-base font-bold font-serif-title text-[#5F6F5B] flex items-center gap-2">
-                            <i class="fa-solid fa-tag text-[#D8A7B1]"></i> Harga
-                        </h2>
-                        <p class="text-3xl font-bold font-serif-title text-[#5F6F5B]">
+                    <h2 class="mt-4 text-2xl md:text-3xl font-bold font-serif-title text-white">Meet to Marry Pro</h2>
+                    <p class="mt-1.5 text-sm text-white/75">Akses penuh semua Wedding Kit, berlaku juga untuk akun pasanganmu.</p>
+
+                    <div class="mt-5 flex items-end flex-wrap gap-x-3 gap-y-1">
+                        {{-- Harga coret hanya muncul kalau superadmin mengisinya dan
+                             angkanya memang lebih besar dari harga jual. --}}
+                        @if ($priceBefore > $price && $price > 0)
+                            <span class="text-base text-white/50 line-through pb-1">
+                                Rp {{ number_format($priceBefore, 0, ',', '.') }}
+                            </span>
+                        @endif
+                        <span class="text-3xl md:text-4xl font-bold font-serif-title text-white leading-none">
                             Rp {{ number_format($price, 0, ',', '.') }}
-                        </p>
-                        <p class="text-xs text-[#5F6F5B]/70">Sekali transfer, langsung aktif setelah dikonfirmasi admin.</p>
+                        </span>
+                        <span class="text-sm text-white/70 pb-1">/ Lifetime</span>
                     </div>
                 </div>
 
-                <!-- ================= KANAN: TRANSFER + UPLOAD BUKTI ================= -->
-                <div class="space-y-6">
-                    @if ($rejected)
-                        <div class="bg-white p-5 rounded-2xl border border-[#D8A7B1]/60 bg-[#FBF2F4] shadow-xs space-y-2">
-                            <div class="flex items-center gap-2 font-bold text-[#5F6F5B]">
-                                <i class="fa-solid fa-circle-exclamation text-[#D8A7B1]"></i>
-                                <span>Bukti sebelumnya ditolak</span>
-                            </div>
-                            <p class="text-sm text-[#5F6F5B]/85 leading-relaxed">{{ $rejected->admin_note }}</p>
-                            <p class="text-xs text-[#5F6F5B]/70">Silakan transfer ulang lalu kirim bukti yang baru.</p>
-                        </div>
-                    @endif
+                <!-- ================= YANG KAMU DAPAT ================= -->
+                <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+                    <h3 class="text-sm font-bold text-[#5F6F5B]">Yang kamu dapat</h3>
+                    <ul class="mt-4 space-y-3">
+                        @foreach ([
+                            'Semua modul Wedding Kit terbuka',
+                            'Moodboard tanpa batas jumlah item',
+                            'Cari Vendor — katalog vendor weddings lengkap',
+                            'Berlaku seumur akun, tanpa biaya bulanan',
+                            'Berlaku juga untuk akun pasangan di Wedding Kit yang sama',
+                            'Bisa diakses dari HP maupun desktop',
+                        ] as $benefit)
+                            <li class="flex items-center gap-3 text-sm text-[#5F6F5B]/85">
+                                <i class="fa-solid fa-check text-[#A3B7A6] text-xs"></i>
+                                <span>{{ $benefit }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                        <h2 class="text-base font-bold font-serif-title text-[#5F6F5B] flex items-center gap-2">
+                <!-- ================= CTA PEMBUKA CHECKOUT ================= -->
+                <button type="button" @click="checkout = true" x-show="!checkout"
+                    class="btn-sage w-full px-6 py-4 rounded-2xl text-sm cursor-pointer">
+                    <i class="fa-solid fa-sparkles mr-2"></i> Upgrade ke Pro · Rp {{ number_format($price, 0, ',', '.') }}
+                </button>
+
+                <!-- ================= CHECKOUT (muncul setelah CTA diklik) ================= -->
+                <div x-show="checkout" x-cloak class="w-full space-y-6">
+
+                    <!-- Ringkasan total harga -->
+                    <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+                        <h3 class="text-sm font-bold text-[#5F6F5B]">Ringkasan Pembayaran</h3>
+                        <dl class="mt-4 text-sm divide-y divide-[#B6ADA3]/25">
+                            <div class="flex items-center justify-between gap-4 py-2.5">
+                                <dt class="text-[#5F6F5B]/70">Paket</dt>
+                                <dd class="font-semibold text-[#5F6F5B]">Pro / Lifetime</dd>
+                            </div>
+                            @if ($priceBefore > $price && $price > 0)
+                                <div class="flex items-center justify-between gap-4 py-2.5">
+                                    <dt class="text-[#5F6F5B]/70">Harga normal</dt>
+                                    <dd class="text-[#B6ADA3] line-through">
+                                        Rp {{ number_format($priceBefore, 0, ',', '.') }}
+                                    </dd>
+                                </div>
+                            @endif
+                            <div class="flex items-center justify-between gap-4 py-2.5">
+                                <dt class="text-[#5F6F5B]/70">Batas Moodboard</dt>
+                                <dd class="font-semibold text-[#5F6F5B]">Tanpa batas</dd>
+                            </div>
+                            <div class="flex items-center justify-between gap-4 pt-3 mt-1">
+                                <dt class="font-bold text-[#5F6F5B]">Total</dt>
+                                <dd class="text-xl font-bold font-serif-title text-[#5F6F5B]">
+                                    Rp {{ number_format($price, 0, ',', '.') }}
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <!-- Rekening tujuan -->
+                    <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+                        <h3 class="text-sm font-bold text-[#5F6F5B] flex items-center gap-2">
                             <i class="fa-solid fa-building-columns text-[#D8A7B1]"></i> Rekening Tujuan
-                        </h2>
-                        <p class="text-sm text-[#5F6F5B]/90 whitespace-pre-line leading-relaxed">
-                            {{ $bank ?: 'Belum diatur. Hubungi admin.' }}</p>
+                        </h3>
+                        <p class="mt-3 text-sm text-[#5F6F5B]/90 whitespace-pre-line leading-relaxed">{{ $bank ?: 'Belum diatur. Hubungi admin.' }}</p>
 
                         @if ($adminWa)
                             <a href="https://wa.me/{{ preg_replace('/\D/', '', $adminWa) }}" target="_blank" rel="noopener"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-sm font-medium hover:bg-[#FAF7F2] transition">
+                                class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FAF7F2] transition">
                                 <i class="fa-brands fa-whatsapp"></i> {{ $adminWa }}
                             </a>
                         @endif
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                        <h2 class="text-base font-bold font-serif-title text-[#5F6F5B] flex items-center gap-2">
+                    <!-- Kirim bukti -->
+                    <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+                        <h3 class="text-sm font-bold text-[#5F6F5B] flex items-center gap-2">
                             <i class="fa-solid fa-receipt text-[#D8A7B1]"></i> Kirim Bukti Transfer
-                        </h2>
+                        </h3>
 
-                        <form method="POST" action="{{ route('upgrade.store') }}" enctype="multipart/form-data"
-                            class="space-y-4">
+                        <form method="POST" action="{{ route('upgrade.store') }}" enctype="multipart/form-data" class="mt-4 space-y-4">
                             @csrf
                             <div>
-                                <label for="proof"
-                                    class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
+                                <label for="proof" class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
                                     Bukti Transfer *
                                 </label>
-                                <input type="file" name="proof" id="proof"
-                                    accept="image/jpeg,image/png,application/pdf" required
+                                <input type="file" name="proof" id="proof" accept="image/jpeg,image/png,application/pdf" required
                                     class="block w-full text-sm text-[#5F6F5B] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-[#FAF7F2] file:text-[#5F6F5B] file:text-xs file:font-semibold file:cursor-pointer hover:file:bg-[#F2EDE4] transition">
-                                <p class="mt-1.5 text-[11px] text-[#5F6F5B]/60">Format JPG, PNG, atau PDF. Maksimal 2 MB.
-                                </p>
+                                <p class="mt-1.5 text-[11px] text-[#5F6F5B]/60">Format JPG, PNG, atau PDF. Maksimal 2 MB.</p>
                             </div>
 
                             @error('proof')
                                 <p class="text-sm text-[#C2757F]">{{ $message }}</p>
                             @enderror
 
-                            <button type="submit"
-                                class="btn-primary-rose w-full px-5 py-2.5 rounded-xl text-sm cursor-pointer">
-                                Kirim Bukti
+                            <button type="submit" class="btn-primary-rose w-full px-6 py-4 rounded-2xl text-sm cursor-pointer">
+                                Kirim Bukti · Rp {{ number_format($price, 0, ',', '.') }}
                             </button>
                         </form>
                     </div>
