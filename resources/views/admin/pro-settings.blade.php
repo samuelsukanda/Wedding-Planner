@@ -115,20 +115,20 @@
     <script>
         (function() {
             // Format uang dan telepon memakai helper global yang sama dengan
-            // modal form modul lain (layouts/app.blade.php), jadi tidak ada
+            // input telepon di modal Tambah Data (wpPhone), jadi tidak ada
             // aturan format kedua di aplikasi ini.
             //
-            // Dipasang pada blur, bukan tiap ketikan: menulis ulang nilai input
-            // di tengah pengetikan membuat kursor meloncat ke akhir field.
-            // Saat mengetik hanya dipotong digitnya kalau benar-benar kelebihan.
+            // Diformat tiap ketik, supaya sama seperti input telepon di modal
+            // Tambah Data. wpPhone/wpMoney sudah memanggil wpDigits di dalam
+            // dirinya, jadi batas 13 digit ikut terpotong.
             document.querySelectorAll('input[data-format]').forEach(function(input) {
                 const format = input.dataset.format === 'phone' ? window.wpPhone : window.wpMoney;
 
-                const apply = function() { input.value = format(input.value); };
+                input.addEventListener('input', function() {
+                    input.value = format(input.value);
+                });
 
-                input.addEventListener('input', function() { window.wpClamp(input, format); });
-                input.addEventListener('blur', apply);
-                apply();
+                input.value = format(input.value);
             });
         })();
     </script>
