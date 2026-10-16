@@ -26,6 +26,13 @@ class ProSettingsController extends Controller
 
     public function update(Request $request)
     {
+        // Kolom uang dan telepon diformat supaya terbaca manusia ("Rp 55.000",
+        // "6281-2345-6789"), jadi angkanya dibersihkan dulu sebelum divalidasi.
+        // Tanpa langkah ini validasi integer gagal karena menerima "Rp 55.000".
+        foreach (['pro_price', 'pro_price_before', 'admin_whatsapp'] as $key) {
+            $request->merge([$key => $this->digitsOnly($request->input($key))]);
+        }
+
         $validated = $request->validate([
             'pro_price' => ['required', 'integer', 'min:0'],
             // Opsional: harga coret untuk diskon. Kosong = tidak ada coretan.
@@ -41,5 +48,13 @@ class ProSettingsController extends Controller
 
         return redirect()->route('admin.pro-settings.edit')
             ->with('success', 'Pengaturan Pro disimpan.');
+    }
+
+    /** Buang semua karakter selain angka. Kosong jadi null supaya aturan nullable tetap berlaku. */
+    private function digitsOnly(mixed $value): ?string
+    {
+        $digits = preg_replace('/\D/', '', (string) $value);
+
+        return $digits === '' ? null : $digits;
     }
 }

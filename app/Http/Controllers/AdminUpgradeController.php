@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\UpgradeRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Antrean persetujuan upgrade Pro. Semua route di controller ini ada di dalam
@@ -57,5 +58,18 @@ class AdminUpgradeController extends Controller
         ]);
 
         return back()->with('success', 'Request ditolak. Pasangan bisa mengirim ulang bukti transfer.');
+    }
+
+    public function destroy(UpgradeRequest $upgradeRequest)
+    {
+        // Bukti transfer ikut dihapus. Kalau dibiarkan, file yang sudah tidak
+        // dirujuk siapa pun akan menumpuk di storage.
+        if ($upgradeRequest->proof_path) {
+            Storage::disk('public')->delete($upgradeRequest->proof_path);
+        }
+
+        $upgradeRequest->delete();
+
+        return back()->with('success', 'Request upgrade dihapus.');
     }
 }

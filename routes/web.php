@@ -195,6 +195,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
         Route::get('admin/upgrade-requests', [AdminUpgradeController::class, 'index'])->name('admin.upgrade-requests.index');
         Route::post('admin/upgrade-requests/{upgradeRequest}/approve', [AdminUpgradeController::class, 'approve'])->name('admin.upgrade-requests.approve');
         Route::post('admin/upgrade-requests/{upgradeRequest}/reject', [AdminUpgradeController::class, 'reject'])->name('admin.upgrade-requests.reject');
+        Route::delete('admin/upgrade-requests/{upgradeRequest}', [AdminUpgradeController::class, 'destroy'])->name('admin.upgrade-requests.destroy');
 
         Route::get('admin/pro-settings', [ProSettingsController::class, 'edit'])->name('admin.pro-settings.edit');
         Route::put('admin/pro-settings', [ProSettingsController::class, 'update'])->name('admin.pro-settings.update');

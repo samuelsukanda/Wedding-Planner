@@ -427,7 +427,41 @@ public function test_pending_state_shows_verification_card_with_refresh_and_cont
         $this->actingAs($user)->get('/admin/pro-settings')->assertForbidden();
     }
 
-    public function test_admin_pages_render_for_superadmin()
+    public function test_settings_accept_formatted_money_and_phone_input()
+    {
+        $this->actingAs($this->superadmin())
+            ->put('/admin/pro-settings', [
+                // Persis seperti yang terkirim browser: field uang & telepon
+                // sudah diformat, jadi controller wajib membersihkan sendiri.
+                'pro_price' => 'Rp 249.000',
+                'pro_price_before' => 'Rp 1.500.000',
+                'pro_bank' => 'BCA 1234567890',
+                'admin_whatsapp' => '6281-2345-6789',
+                'moodboard_free_limit' => 5,
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('249000', Setting::get('pro_price'));
+        $this->assertSame('1500000', Setting::get('pro_price_before'));
+        $this->assertSame('628123456789', Setting::get('admin_whatsapp'));
+    }
+
+    public function test_pro_settings_page_renders_formatted_values()
+    {
+        Setting::put('pro_price', '55000');
+        Setting::put('pro_price_before', '150000');
+        Setting::put('admin_whatsapp', '6281234567890');
+
+        $this->actingAs($this->superadmin())
+            ->get('/admin/pro-settings')
+            ->assertOk()
+            ->assertSee('Rp 55.000')
+            ->assertSee('Rp 150.000')
+            ->assertSee('6281-2345-6789')
+            ->assertSee('data-format="money"', false);
+    }
+
+public function test_admin_pages_render_for_superadmin()
     {
         $this->actingAs($this->superadmin())
             ->get('/admin/upgrade-requests')
@@ -440,7 +474,27 @@ public function test_pending_state_shows_verification_card_with_refresh_and_cont
             ->assertSee('Pengaturan Pro');
     }
 
-    public function test_superadmin_can_save_pro_settings()
+    public function test_superadmin_can_delete_a_request_and_its_proof_file()
+    {
+        Storage::fake('public');
+        [$wedding, $user] = $this->couple();
+
+        $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
+        $request = UpgradeRequest::sole();
+        $proofPath = $request->proof_path;
+
+        Storage::disk('public')->assertExists($proofPath);
+
+        $this->actingAs($this->superadmin())
+            ->delete("/admin/upgrade-requests/{$request->id}")
+            ->assertSessionHas('success');
+
+        $this->assertSame(0, UpgradeRequest::count());
+        // Bukti ikut hilang, kalau tidak file yatim menumpuk di storage.
+        Storage::disk('public')->assertMissing($proofPath);
+    }
+
+public function test_superadmin_can_save_pro_settings()
     {
         $this->actingAs($this->superadmin())
             ->put('/admin/pro-settings', [
