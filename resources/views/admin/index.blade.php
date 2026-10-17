@@ -113,7 +113,7 @@
                         </p>
                         <a href="{{ route('upgrade.index') }}"
                             class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center">
-                            Upgrade ke Pro
+                            <i class="fa-solid fa-sparkles mr-2"></i> Upgrade ke Pro
                         </a>
                     </div>
                 @endif

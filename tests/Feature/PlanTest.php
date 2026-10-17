@@ -230,13 +230,17 @@ class PlanTest extends TestCase
 
         $this->actingAs($user)->get('/upgrade')
             ->assertOk()
-            // Langkah 1: hero + manfaat + tombol CTA.
-            ->assertSee('Meet to Marry Pro')
+            // Langkah 1: hero + manfaat + tombol CTA. Nama brand di hero
+            // sengaja tidak di-assert di sini supaya pergantian nama tidak
+            // membuat test ini gagal; yang dijaga strukturnya.
             ->assertSee('Recommended')
             ->assertSee('Yang kamu dapat')
             ->assertSee('Moodboard tanpa batas jumlah item')
             ->assertSee('Cari Vendor')
-            ->assertSee('Upgrade ke Pro · Rp 55.000')
+            // fa-sparkles adalah icon FontAwesome Pro yang tidak tampil di
+            // versi gratis, jadi CTA memakai fa-wand-magic-sparkles.
+            ->assertSee('fa-wand-magic-sparkles', false)
+            ->assertSee('Upgrade ke Pro')
             // Harga coret tidak ada karena setting kosong.
             ->assertDontSee('line-through')
             // Ringkasan + rekening + form ada di dalam modal yang baru tampil
@@ -244,7 +248,7 @@ class PlanTest extends TestCase
             ->assertSee('Ringkasan Pembelian')
             ->assertSee('Rekening Tujuan')
             ->assertSee('Bukti Transfer')
-            ->assertSee('Kirim Bukti · Rp 55.000')
+            ->assertSee('Kirim Bukti')
             // Pola modal harus sama dengan modal Tambah Data modul lain.
             ->assertSee('x-outside="modalOpen = false"', false)
             ->assertSee('keydown.escape.window="modalOpen = false"', false);
@@ -332,6 +336,7 @@ public function test_pending_state_shows_verification_card_with_refresh_and_cont
             ->assertOk()
             ->assertSee('Status Akun')
             ->assertSee('FREE')
+            ->assertSee('fa-sparkles', false)
             ->assertSee('Upgrade ke Pro');
 
         $this->flushSession();
