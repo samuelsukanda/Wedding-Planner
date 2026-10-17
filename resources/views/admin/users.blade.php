@@ -3,7 +3,7 @@
 @section('title', 'Admin Panel - Admin')
 
 @section('content')
-    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {}, weddingMode: 'existing', init() {} }">
+    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {}, weddingMode: 'existing', partnerModalOpen: false, partnerItem: {}, openPartnerModal(u) { this.partnerItem = u; this.partnerModalOpen = true }, init() {} }">
         <!-- Page Title & Header -->
         <div
             class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
@@ -51,7 +51,8 @@
                             <th class="p-4">Nama</th>
                             <th class="p-4">Email</th>
                             <th class="p-4">Data Pernikahan</th>
-                            <th class="p-4">Role</th>
+                            <th class="p-4">Pasangan</th>
+                            <th class="p-4">Status Akun</th>
                             <th class="p-4 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -77,26 +78,64 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="p-4">
-                                    @if ($u->is_superadmin)
-                                        <span
-                                            class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#5F6F5B] text-white border border-[#5F6F5B]/40">
-                                            Superadmin
+                                {{-- Pasangan = user lain yang memakai Wedding Kit
+                                     yang sama, jadi keduanya saling melihat
+                                     data tanpa perlu kolom terpisah. --}}
+                                <td class="p-4 text-xs text-[#5F6F5B]">
+                                    @if ($u->partner_name)
+                                        <span class="font-semibold">{{ $u->partner_name }}</span>
+                                        <span class="block text-[10px] text-[#B6ADA3] mt-0.5">
+                                            {{ $u->partner_email }}
                                         </span>
                                     @else
-                                        <span
-                                            class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40">
-                                            User
-                                        </span>
+                                        <span class="text-[#B6ADA3]">&mdash;</span>
+                                    @endif
+                                </td>
+                                {{-- Status akun menempel pada Wedding Kit, jadi
+                                     dua akun pasangan selalu sama. --}}
+                                <td class="p-4">
+                                    @if ($u->wedding)
+                                        @if ($u->wedding->isPro())
+                                            <span
+                                                class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#D8A7B1]/25 text-[#C2757F] border border-[#D8A7B1]/40 inline-flex items-center gap-1">
+                                                <i class="fa-solid fa-crown text-[9px]"></i> Pro
+                                            </span>
+                                        @else
+                                            <span
+                                                class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/40">
+                                                Free
+                                            </span>
+                                        @endif
+                                    @else
+                                        <span class="text-xs text-[#B6ADA3]">&mdash;</span>
                                     @endif
                                 </td>
                                 <td class="p-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
+                                    <div class="flex items-center justify-end gap-2" x-data="{ open: false }">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($u) }}"
                                             title="Edit" class="btn-icon">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
+
+                                        {{-- Dropdown aksi cepat: tambah / ubah
+                                             pasangan tanpa membuka form edit. --}}
+                                        <div class="relative">
+                                            <button type="button" @click="open = !open" title="Aksi lainnya"
+                                                class="btn-icon">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                            <div x-show="open" @click.outside="open = false" x-transition x-cloak
+                                                class="absolute right-0 mt-1 w-52 bg-white border border-[#B6ADA3]/40 rounded-xl shadow-lg py-1 z-20">
+                                                <button type="button"
+                                                    @click="open = false; openPartnerModal({{ json_encode($u) }})"
+                                                    class="w-full text-left px-4 py-2 text-xs text-[#5F6F5B] hover:bg-[#FAF7F2]">
+                                                    <i class="fa-solid fa-user-plus text-[#C2757F] w-4"></i>
+                                                    {{ $u->partner_name ? 'Ubah Pasangan' : 'Tambah Pasangan' }}
+                                                </button>
+                                            </div>
+                                        </div>
+
                                         <form id="del-user-{{ $u->id }}"
                                             action="{{ route('admin.users.destroy', $u->id) }}" method="POST">
                                             @csrf
@@ -112,7 +151,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada user
+                                <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada user
                                     terdaftar.
                                 </td>
                             </tr>
@@ -247,6 +286,38 @@
                             @endforeach
                         </select>
                     </div>
+                    {{-- Status akun: menempel pada Wedding Kit, jadi hanya ada kalau user
+                         sudah dipasangkan ke sebuah wedding. --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status Akun</label>
+                        <select name="plan" x-model="currentItem.plan"
+                            :disabled="!currentItem.wedding_id"
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed">
+                            <option value="free">Free</option>
+                            <option value="pro">Pro</option>
+                        </select>
+                        <p class="text-[10px] text-[#B6ADA3] mt-1">Status mengikuti Wedding Kit, jadi berlaku untuk kedua akun pasangan.</p>
+                    </div>
+                    <div class="rounded-xl border border-[#B6ADA3]/30 bg-[#FAF7F2]/50 p-3 space-y-3">
+                        <p class="text-xs font-semibold text-[#5F6F5B]">Pasangan</p>
+                        <div>
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Pasangan</label>
+                            <input type="text" name="partner_name" x-model="currentItem.partner_name"
+                                :disabled="!currentItem.wedding_id"
+                                class="w-full bg-white border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+                                placeholder="Contoh: Nabila">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Email Pasangan</label>
+                            <input type="email" name="partner_email" x-model="currentItem.partner_email"
+                                :disabled="!currentItem.wedding_id"
+                                class="w-full bg-white border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+                                placeholder="nabila@email.com">
+                        </div>
+                        <p class="text-[10px] text-[#B6ADA3]">Kalau email-nya sudah terdaftar, akun tersebut
+                            bergabung ke Wedding Kit ini. Kalau belum, dibuatkan akun baru dan pasangan memakai
+                            &quot;Lupa Password&quot; untuk masuk.</p>
+                    </div>
                     <label class="flex items-center gap-2 text-sm text-[#5F6F5B] cursor-pointer">
                         <input type="checkbox" name="is_superadmin" value="1" x-model="currentItem.is_superadmin"
                             class="rounded">
@@ -257,6 +328,56 @@
                             class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal cepat: tambah/ubah pasangan dari dropdown di list -->
+        <div x-show="partnerModalOpen" x-transition.opacity x-cloak
+            class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
+            <div x-outside="partnerModalOpen = false"
+                class="bg-white w-full max-w-md p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
+                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]">
+                        Pasangan untuk <span x-text="partnerItem.name"></span>
+                    </h3>
+                    <button @click="partnerModalOpen = false"
+                        class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div x-show="!partnerItem.wedding_id" class="text-sm text-[#C2757F] bg-[#D8A7B1]/15 rounded-xl p-3">
+                    User ini belum dipasangkan ke Wedding Kit. Pasang dulu di form Edit User, baru bisa menambahkan
+                    pasangan.
+                </div>
+
+                <form :action="'{{ url('admin/users') }}/' + partnerItem.id + '/partner'" method="POST"
+                    class="space-y-4" x-show="partnerItem.wedding_id">
+                    @csrf
+                    @method('PUT')
+                    <div>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Pasangan</label>
+                        <input type="text" name="partner_name" x-model="partnerItem.partner_name"
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"
+                            placeholder="Contoh: Nabila">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Email Pasangan *</label>
+                        <input type="email" name="partner_email" x-model="partnerItem.partner_email" required
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"
+                            placeholder="nabila@email.com">
+                    </div>
+                    <p class="text-[10px] text-[#B6ADA3]">Kalau email-nya sudah terdaftar, akun tersebut bergabung ke
+                        Wedding Kit ini. Kalau belum, dibuatkan akun baru dan pasangan memakai &quot;Lupa
+                        Password&quot; untuk masuk.</p>
+                    <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
+                        <button type="button" @click="partnerModalOpen = false"
+                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                        <button type="submit"
+                            class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
+                            Pasangan</button>
                     </div>
                 </form>
             </div>

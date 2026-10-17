@@ -10,10 +10,12 @@
         rawItems: '',
     }">
 
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+        <div
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Template Persyaratan Nikah</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Daftar dokumen master yang bisa dipakai semua pasangan.</p>
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Kelola daftar dokumen persyaratan nikah yang dapat digunakan
+                    sebagai acuan oleh seluruh pasangan.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = { items: [] }; rawItems = ''"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 cursor-pointer">

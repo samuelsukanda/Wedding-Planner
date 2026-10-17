@@ -28,11 +28,48 @@ class User extends Authenticatable
     }
 
     /**
+     * Status akun (free/pro) sebenarnya milik Wedding Kit, tapi panel admin
+     * menampilkan user per baris. Accessor ini supaya $user->plan bisa dipakai
+     * langsung, termasuk di json_encode() untuk form edit.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = ['plan', 'partner_name', 'partner_email'];
+
+    public function getPlanAttribute(): ?string
+    {
+        return $this->wedding?->plan;
+    }
+
+    public function getPartnerNameAttribute(): ?string
+    {
+        return $this->partners()->first()?->name;
+    }
+
+    public function getPartnerEmailAttribute(): ?string
+    {
+        return $this->partners()->first()?->email;
+    }
+
+    /**
      * User yang berpasangan memakai wedding_id yang sama, jadi data mereka saling terlihat.
      */
     public function wedding()
     {
         return $this->belongsTo(Wedding::class);
+    }
+
+    /**
+     * Pasangan = user lain yang memakai Wedding Kit yang sama.
+     *
+     * Tidak perlu tabel atau kolom baru: panel admin cukup menunjuk email
+     * pasangan, lalu keduanya berbagi wedding_id dan otomatis saling
+     * melihat data.
+     */
+    public function partners()
+    {
+        return $this->hasMany(self::class, 'wedding_id', 'wedding_id')
+            ->where('users.id', '!=', $this->getKey());
     }
 
     /**

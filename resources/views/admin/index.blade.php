@@ -104,16 +104,18 @@
 
                 @if ($wedding->isPro())
                     <p class="text-sm text-[#5F6F5B]/80 leading-relaxed">
-                        Semua fitur Pro terbuka untuk Wedding Kit ini, seumur akun dan berlaku juga untuk akun pasangan.
+                        Semua fitur Pro aktif untuk akun ini dan akun pasangan, berlaku seumur akun tanpa biaya berlangganan
+                        tambahan.
                     </p>
                 @else
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <p class="text-sm text-[#5F6F5B]/80 leading-relaxed">
-                            <strong>Moodboard</strong> tanpa batas jumlah item dan akses penuh <strong>Cari Vendor</strong>, dengan sekali pembayaran dan tanpa biaya bulanan.
+                            <strong>Moodboard</strong> tanpa batas jumlah item dan akses penuh <strong>Cari Vendor</strong>,
+                            dengan sekali pembayaran dan tanpa biaya bulanan.
                         </p>
                         <a href="{{ route('upgrade.index') }}"
-                            class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center">
-                            <i class="fa-solid fa-wand-sparkles mr-2"></i> Upgrade ke Pro
+                            class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center inline-flex items-center justify-center">
+                            <i class="fa-solid fa-star mr-2"></i> Upgrade ke Pro
                         </a>
                     </div>
                 @endif

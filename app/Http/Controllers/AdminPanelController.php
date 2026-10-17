@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Support\ChecklistTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class AdminPanelController extends Controller
@@ -185,6 +186,11 @@ class AdminPanelController extends Controller
             'password' => 'nullable|string|min:8',
             'wedding_id' => 'nullable|exists:weddings,id',
             'is_superadmin' => 'nullable|boolean',
+            'plan' => 'nullable|in:free,pro',
+            'partner_name' => 'nullable|string|max:255',
+            // Sengaja TANPA unique: email pasangan yang sudah terdaftar justru
+            // harus bisa dipakai untuk menautkan akun itu ke Wedding Kit ini.
+            'partner_email' => ['nullable', 'email', 'max:255', 'not_in:'.$user->email],
         ]);
 
         $user->fill([
@@ -200,7 +206,75 @@ class AdminPanelController extends Controller
 
         $user->save();
 
+        // Status akun (free/pro) menempel pada Wedding Kit, bukan pada User,
+        // jadi di sini belong dipakai. Disetel setelah save supaya mengikuti
+        // wedding yang benar kalau sekalian user-nya dipindah ke wedding lain.
+        if (! empty($validated['plan']) && $user->wedding) {
+            $user->wedding->update(['plan' => $validated['plan']]);
+        }
+
+        $this->syncPartner($user, $validated['partner_email'] ?? null, $validated['partner_name'] ?? null);
+
         return redirect()->route('admin.users.index')->with('success', 'User berhasil diperbarui!');
+    }
+
+    /**
+     * Form cepat dari dropdown di list user: hanya menyimpan data pasangan,
+     * tanpa menyentuh nama/email/password akunnya sendiri.
+     */
+    public function updatePartner(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'partner_name' => 'nullable|string|max:255',
+            'partner_email' => [
+                'required',
+                'email',
+                'max:255',
+                'not_in:'.$user->email,
+            ],
+        ]);
+
+        $this->syncPartner($user, $validated['partner_email'], $validated['partner_name'] ?? null);
+
+        return redirect()->route('admin.users.index')->with('success', 'Pasangan berhasil ditambahkan!');
+    }
+
+    /**
+     * Menautkan pasangan ke Wedding Kit yang sama.
+     *
+     * Kalau email-nya sudah terdaftar, akun itu yang dipakai (dipindahkan ke
+     * wedding yang sama) sehingga pasangan bisa langsung login. Kalau belum,
+     * dibuatkan akun baru dengan password acak -- pasangan memakai fitur
+     * "Lupa Password" untuk mengganti passwordnya sendiri.
+     */
+    private function syncPartner(User $user, ?string $email, ?string $name): void
+    {
+        $email = trim((string) $email);
+
+        // Tidak bisa dipasangkan ke dirinya sendiri, dan tanpa Wedding Kit
+        // tidak ada workspace yang bisa dibagi.
+        if ($email === '' || $email === $user->email || ! $user->wedding_id) {
+            return;
+        }
+
+        $partner = User::where('email', $email)->first();
+
+        if ($partner) {
+            $partner->update(['wedding_id' => $user->wedding_id]);
+
+            if (! empty($name)) {
+                $partner->update(['name' => $name]);
+            }
+
+            return;
+        }
+
+        User::create([
+            'name' => $name ?: Str::before($email, '@'),
+            'email' => $email,
+            'password' => Str::password(16),
+            'wedding_id' => $user->wedding_id,
+        ]);
     }
 
     public function destroyUser(Request $request, User $user)

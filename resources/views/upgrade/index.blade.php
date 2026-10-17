@@ -24,7 +24,8 @@
 
                 {{-- Nominal direkam saat request dibuat, jadi tetap sesuai harga saat
                      pembayaran dibuat walau admin nanti mengubah harga Pro. --}}
-                <dl class="rounded-xl border border-[#D8A7B1]/35 bg-[#FBF2F4]/60 px-4 py-3.5 text-sm divide-y divide-[#D8A7B1]/20">
+                <dl
+                    class="rounded-xl border border-[#D8A7B1]/35 bg-[#FBF2F4]/60 px-4 py-3.5 text-sm divide-y divide-[#D8A7B1]/20">
                     <div class="flex items-center justify-between gap-4 py-1.5">
                         <dt class="text-xs text-[#5F6F5B]/70">Nominal</dt>
                         <dd class="font-semibold text-[#5F6F5B]">Rp {{ number_format($pending->amount, 0, ',', '.') }}</dd>
@@ -65,15 +66,15 @@
                 {{-- Warna hero pakai palet app (rose), bukan hijau tua: teks putih
                      hanya terbaca kalau latar cukup gelap, dan kartu hero satu
                      warna dengan tombol CTA di bawahnya. --}}
-                <div
-                    class="w-full rounded-2xl bg-gradient-to-br from-[#C2757F] to-[#A855A0] p-6 md:p-8 shadow-xs">
+                <div class="w-full rounded-2xl bg-gradient-to-br from-[#C2757F] to-[#A855A0] p-6 md:p-8 shadow-xs">
+
                     <span
                         class="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Recommended
                     </span>
 
-                    <h2 class="mt-4 text-2xl md:text-3xl font-bold font-serif-title text-white">Meet to Marry Pro</h2>
-                    <p class="mt-1.5 text-sm text-white/85">Akses penuh semua Wedding Kit, berlaku juga untuk akun pasanganmu.</p>
+                    <h2 class="mt-4 text-2xl md:text-3xl font-bold font-serif-title text-white">Nupsera Pro</h2>
+                    <p class="mt-1.5 text-sm text-white/85">Upgrade sekali, nikmati Pro selamanya.</p>
 
                     <div class="mt-5 flex items-end flex-wrap gap-x-3 gap-y-1">
                         {{-- Harga coret hanya muncul kalau superadmin mengisinya dan
@@ -94,14 +95,7 @@
                 <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
                     <h3 class="text-sm font-bold text-[#5F6F5B]">Yang kamu dapat</h3>
                     <ul class="mt-4 space-y-3">
-                        @foreach ([
-                            'Semua modul Wedding Kit terbuka',
-                            'Moodboard tanpa batas jumlah item',
-                            'Cari Vendor — katalog vendor weddings lengkap',
-                            'Berlaku seumur akun, tanpa biaya bulanan',
-                            'Berlaku juga untuk akun pasangan di Wedding Kit yang sama',
-                            'Bisa diakses dari HP maupun desktop',
-                        ] as $benefit)
+                        @foreach (['Moodboard tanpa batas jumlah item', 'Cari Vendor — katalog vendor weddings lengkap', 'Berlaku selamanya, tanpa biaya bulanan', 'Berlaku juga untuk akun pasangan di Workspace yang sama', 'Bisa diakses dari HP maupun desktop'] as $benefit)
                             <li class="flex items-center gap-3 text-sm text-[#5F6F5B]/85">
                                 <i class="fa-solid fa-circle-check text-[#C2757F]"></i>
                                 <span>{{ $benefit }}</span>
@@ -113,13 +107,13 @@
                 <!-- ================= CTA PEMBUKA CHECKOUT ================= -->
                 <button type="button" @click="modalOpen = true"
                     class="btn-primary-rose w-full px-6 py-4 rounded-2xl text-sm cursor-pointer">
-                    <i class="fa-solid fa-sparkles mr-2"></i> Upgrade ke Pro · Rp {{ number_format($price, 0, ',', '.') }}
+                    <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Upgrade ke Pro
                 </button>
 
                 <!-- ================= MODAL RINGKASAN PEMBELIAN =================
-                     Struktur, warna, dan cara menutupnya mengikuti modal
-                     "Tambah Data" di modul lain (x-show + x-outside + Escape),
-                     supaya tidak ada gaya modal ketiga di aplikasi ini. -->
+                                         Struktur, warna, dan cara menutupnya mengikuti modal
+                                         "Tambah Data" di modul lain (x-show + x-outside + Escape),
+                                         supaya tidak ada gaya modal ketiga di aplikasi ini. -->
                 <div x-show="modalOpen" x-transition.opacity x-cloak @keydown.escape.window="modalOpen = false"
                     class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
                     <div x-outside="modalOpen = false"
@@ -137,7 +131,7 @@
                         <dl class="text-sm divide-y divide-[#B6ADA3]/25">
                             <div class="flex items-center justify-between gap-4 py-2.5">
                                 <dt class="text-[#5F6F5B]/70">Paket</dt>
-                                <dd class="font-semibold text-[#5F6F5B]">Pro / Lifetime</dd>
+                                <dd class="font-semibold text-[#5F6F5B]">Pro</dd>
                             </div>
                             @if ($priceBefore > $price && $price > 0)
                                 <div class="flex items-center justify-between gap-4 py-2.5">
@@ -164,10 +158,12 @@
                             <h4 class="text-xs font-bold uppercase tracking-wider text-[#5F6F5B] flex items-center gap-2">
                                 <i class="fa-solid fa-building-columns text-[#D8A7B1]"></i> Rekening Tujuan
                             </h4>
-                            <p class="mt-2 text-sm text-[#5F6F5B]/90 whitespace-pre-line leading-relaxed">{{ $bank ?: 'Belum diatur. Hubungi admin.' }}</p>
+                            <p class="mt-2 text-sm text-[#5F6F5B]/90 whitespace-pre-line leading-relaxed">
+                                {{ $bank ?: 'Belum diatur. Hubungi admin.' }}</p>
 
                             @if ($adminWa)
-                                <a href="https://wa.me/{{ preg_replace('/\D/', '', $adminWa) }}" target="_blank" rel="noopener"
+                                <a href="https://wa.me/{{ preg_replace('/\D/', '', $adminWa) }}" target="_blank"
+                                    rel="noopener"
                                     class="mt-3 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FBF2F4] transition">
                                     <i class="fa-brands fa-whatsapp"></i> {{ $adminWa }}
                                 </a>
@@ -175,22 +171,27 @@
                         </div>
 
                         <!-- Kirim bukti -->
-                        <form method="POST" action="{{ route('upgrade.store') }}" enctype="multipart/form-data" class="space-y-4">
+                        <form method="POST" action="{{ route('upgrade.store') }}" enctype="multipart/form-data"
+                            class="space-y-4">
                             @csrf
                             <div>
-                                <label for="proof" class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
+                                <label for="proof"
+                                    class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
                                     Bukti Transfer *
                                 </label>
-                                <input type="file" name="proof" id="proof" accept="image/jpeg,image/png,application/pdf" required
+                                <input type="file" name="proof" id="proof"
+                                    accept="image/jpeg,image/png,application/pdf" required
                                     class="block w-full text-sm text-[#5F6F5B] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-[#FAF7F2] file:text-[#5F6F5B] file:text-xs file:font-semibold file:cursor-pointer hover:file:bg-[#F2EDE4] transition">
-                                <p class="mt-1.5 text-[11px] text-[#5F6F5B]/60">Format JPG, PNG, atau PDF. Maksimal 2 MB.</p>
+                                <p class="mt-1.5 text-[11px] text-[#5F6F5B]/60">Format JPG, PNG, atau PDF. Maksimal 2 MB.
+                                </p>
                             </div>
 
                             @error('proof')
                                 <p class="text-sm text-[#C2757F]">{{ $message }}</p>
                             @enderror
 
-                            <button type="submit" class="btn-primary-rose w-full px-6 py-3.5 rounded-xl text-sm cursor-pointer">
+                            <button type="submit"
+                                class="btn-primary-rose w-full px-6 py-3.5 rounded-xl text-sm cursor-pointer">
                                 Kirim Bukti · Rp {{ number_format($price, 0, ',', '.') }}
                             </button>
                         </form>

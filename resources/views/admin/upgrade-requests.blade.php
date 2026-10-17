@@ -45,7 +45,7 @@
                                 </p>
                             </div>
                             <!-- Hapus tersedia untuk semua status, bukan cuma yang pending: record lama
-                                 yang sudah disetujui atau ditolak juga perlu bisa dibersihkan. -->
+                                     yang sudah disetujui atau ditolak juga perlu bisa dibersihkan. -->
                             <div class="flex items-center gap-1 shrink-0">
                                 <span
                                     class="rounded-full border px-2.5 py-0.5 text-[11px] font-semibold {{ $badge[0] }}">
@@ -103,7 +103,8 @@
                                 <form method="POST" action="{{ route('admin.upgrade-requests.approve', $request->id) }}"
                                     data-confirm="Aktifkan paket Pro untuk {{ $request->wedding?->couple_name ?: 'Wedding Kit ini' }}?">
                                     @csrf
-                                    <button type="submit" class="btn-sage w-full px-5 py-2.5 rounded-xl text-xs cursor-pointer">
+                                    <button type="submit"
+                                        class="btn-sage w-full px-5 py-2.5 rounded-xl text-xs cursor-pointer">
                                         <i class="fa-solid fa-check mr-1"></i> Setujui
                                     </button>
                                 </form>
@@ -130,7 +131,8 @@
                                             @endforeach
                                         </select>
 
-                                        <input type="text" id="reject-note-{{ $request->id }}" name="admin_note" required maxlength="500"
+                                        <input type="text" id="reject-note-{{ $request->id }}" name="admin_note"
+                                            required maxlength="500"
                                             placeholder="Alasan ditolak (wajib) — atau pilih contoh di samping"
                                             class="flex-1 px-3.5 py-2 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-xs text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
                                     </div>
@@ -151,7 +153,7 @@
                                     <p><span class="font-semibold">Catatan admin:</span> {{ $request->admin_note }}</p>
                                 @endif
                                 @if ($request->reviewer)
-                                    <p>Diproses oleh {{ $request->reviewer->name }}
+                                    <p>Diproses oleh {{ $request->reviewer->name }} -
                                         {{ $request->reviewed_at?->translatedFormat('d M Y H:i') }}</p>
                                 @endif
                             </div>

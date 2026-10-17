@@ -25,7 +25,8 @@
         }
     })">
         <!-- Top Bar -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+        <div
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Vendor Management</h1>
                 <p class="text-xs text-[#5F6F5B]/70 mt-1">Kelola vendor pernikahan, mulai dari pemilihan hingga pemantauan
@@ -38,16 +39,19 @@
         </div>
 
         <!-- Cari Vendor: katalog publik dari Weddingku -->
-        <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row md:items-center gap-4">
-            <div class="w-12 h-12 shrink-0 rounded-2xl bg-[#5F6F5B] flex items-center justify-center">
-                <i class="fa-solid fa-magnifying-glass text-[#D8A7B1] text-lg"></i>
+        <div
+            class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row md:items-center gap-4">
+            <div class="w-12 h-12 shrink-0 rounded-2xl bg-[#D8A7B1] flex items-center justify-center">
+                <i class="fa-solid fa-magnifying-glass text-white text-lg"></i>
             </div>
             <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
                     <h2 class="text-base font-bold font-serif-title text-[#5F6F5B]">Cari Vendor</h2>
-                    <span class="px-2 py-0.5 rounded-md bg-[#5F6F5B] text-[9px] font-bold uppercase tracking-wider text-white">Pro</span>
+                    <span
+                        class="px-2 py-0.5 rounded-md bg-[#D8A7B1] text-[9px] font-bold uppercase tracking-wider text-white">Pro</span>
                 </div>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Temukan vendor pernikahan yang sesuai dengan lokasi, jenis vendor, dan
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Temukan vendor pernikahan yang sesuai dengan lokasi, jenis vendor,
+                    dan
                     budget kamu.</p>
             </div>
             @php
@@ -55,7 +59,7 @@
                 // Hanya tujuannya yang berubah: ke katalog untuk Pro, ke halaman
                 // upgrade untuk Free. Penentu lock sama dengan middleware EnsurePlan.
                 $navWedding = \App\Models\Wedding::current();
-                $directoryLocked = $navWedding && ! $navWedding->hasFeature('vendor_directory');
+                $directoryLocked = $navWedding && !$navWedding->hasFeature('vendor_directory');
             @endphp
             <a href="{{ $directoryLocked ? route('upgrade.index') : route('vendor-directory.index') }}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 w-full md:w-auto shrink-0">

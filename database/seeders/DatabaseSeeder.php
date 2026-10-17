@@ -34,10 +34,19 @@ class DatabaseSeeder extends Seeder
     /**
      * Akun superadmin: hanya untuk mengelola user & master data,
      * tidak punya wedding sehingga tidak bisa melihat modul aplikasi.
+     *
+     * Pakai updateOrCreate, bukan firstOrCreate: kredensial superadmin harus
+     * bisa dikembalikan ke default dengan `db:seed` -- misalnya setelah
+     * password-nya berubah atau akunnya terhapus. firstOrCreate akan
+     * membiarkan password lama utuh, jadi account yang "di-seed ulang"
+     * justru tidak bisa dipakai.
+     *
+     * Password di bawah hanya default pengembangan. Ganti sebelum dipakai
+     * di server publik.
      */
     private function seedSuperadmin(): void
     {
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@weddingplanner.web.id'],
             [
                 'name' => 'Superadmin',

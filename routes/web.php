@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ResetWeddingDataController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\VendorController;
@@ -61,6 +62,9 @@ Route::middleware('auth')->group(function () {
 Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::post('profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
     Route::delete('profile/photo', [ProfileController::class, 'destroyPhoto'])->name('profile.photo.destroy');
+
+    // Reset Semua Data - permanen, hanya milik Wedding Kit sendiri.
+    Route::delete('profile/reset-data', [ResetWeddingDataController::class, 'destroy'])->name('profile.reset-data');
 
     // Module 2 - Wedding Checklist
     Route::resource('checklists', ChecklistController::class)->except(['create', 'edit', 'show']);
@@ -183,6 +187,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
         Route::get('admin/users', [AdminPanelController::class, 'users'])->name('admin.users.index');
         Route::post('admin/users', [AdminPanelController::class, 'storeUser'])->name('admin.users.store');
         Route::put('admin/users/{user}', [AdminPanelController::class, 'updateUser'])->name('admin.users.update');
+        Route::put('admin/users/{user}/partner', [AdminPanelController::class, 'updatePartner'])->name('admin.users.partner');
         Route::delete('admin/users/{user}', [AdminPanelController::class, 'destroyUser'])->name('admin.users.destroy');
 
         // Module 15 - Template Persyaratan Nikah (dikelola superadmin).
