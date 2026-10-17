@@ -273,6 +273,98 @@
                                     Keuangan</strong>.
                             </p>
                         </div>
+
+                        <!-- ================= RESET SEMUA DATA ================= -->
+                        <div x-data="{ open: false, typed: '' }"
+                            class="bg-white p-5 rounded-2xl border border-[#D8A7B1]/50 bg-[#FBF2F4] shadow-xs space-y-3 text-xs">
+                            <div class="flex items-center gap-2 font-bold text-[#5F6F5B] text-sm">
+                                <i class="fa-solid fa-rotate-left text-[#C2757F]"></i>
+                                <span>Reset Semua Data</span>
+                            </div>
+                            <p class="text-[#5F6F5B] leading-relaxed">
+                                Hapus semua worksheet <strong>Lamaran &amp; Pernikahan</strong> beserta profil acara,
+                                lalu mulai dari awal. Status Pro, pembelian Wedding Kit, akun, dan pasangan yang
+                                terhubung tidak ikut terhapus.
+                            </p>
+
+                            <button type="button" @click="open = true; typed = ''"
+                                class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#C2757F]/60 text-[#C2757F] font-semibold hover:bg-[#FBF2F4] transition cursor-pointer">
+                                <i class="fa-solid fa-rotate-left mr-1"></i> Reset Semua Data
+                            </button>
+
+                            {{-- Modal mengikuti pola modal Tambah Data: x-show + x-outside + Escape.
+                                 Mematikan tombol hanya kenyamanan; kata kunci RESET
+                                 tetap divalidasi ulang di server. --}}
+                            <div x-show="open" x-transition.opacity x-cloak @keydown.escape.window="open = false"
+                                class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
+                                <div x-outside="open = false"
+                                    class="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div class="flex items-center gap-2.5">
+                                            <i class="fa-solid fa-triangle-exclamation text-[#C2757F] text-lg mt-0.5"></i>
+                                            <h3 class="text-base font-bold font-serif-title text-[#C2757F]">
+                                                Yakin reset semua data?
+                                            </h3>
+                                        </div>
+                                        <button type="button" @click="open = false" aria-label="Tutup"
+                                            class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </div>
+
+                                    <p class="text-sm text-[#5F6F5B] leading-relaxed">
+                                        Tindakan ini <strong class="text-[#C2757F]">tidak bisa dibatalkan</strong>.
+                                        Data berikut akan dihapus permanen:
+                                    </p>
+
+                                    <ul class="text-xs text-[#5F6F5B]/85 space-y-1.5 list-disc pl-4">
+                                        <li><strong>Lamaran:</strong> acara, tugas, anggaran, dan tamu lamaran</li>
+                                        <li><strong>Pernikahan:</strong> Checklist, Budget Planner, Tamu, Vendor
+                                            (beserta kontrak &amp; pembayarannya), Rundown Acara, Seserahan,
+                                            Persyaratan Nikah, Moodboard, Gift, Tabungan, dan review vendor</li>
+                                        <li><strong>Profil acara:</strong> nama pasangan, tanggal, budget, lokasi, dan
+                                            catatan</li>
+                                    </ul>
+
+                                    <div class="rounded-xl bg-[#FAF7F2] p-3.5">
+                                        <p class="text-xs font-bold text-[#5F6F5B]">Tetap aman:</p>
+                                        <p class="text-xs text-[#5F6F5B]/80 leading-relaxed mt-1">
+                                            Akun &amp; login, pasangan yang terhubung, status Pro/Free, dan riwayat
+                                            pembelian Wedding Kit tidak ikut terhapus.
+                                        </p>
+                                    </div>
+
+                                    <form method="POST" action="{{ route('profile.reset-data') }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <label for="reset-confirm"
+                                            class="block text-xs font-bold text-[#5F6F5B] mb-1.5">
+                                            Ketik <span class="uppercase">RESET</span> untuk konfirmasi
+                                        </label>
+                                        <input type="text" name="confirm" id="reset-confirm" x-model="typed"
+                                            autocomplete="off" placeholder="RESET"
+                                            class="block w-full px-3.5 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm uppercase tracking-widest text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
+
+                                        @error('confirm')
+                                            <p class="mt-1.5 text-xs text-[#C2757F]">{{ $message }}</p>
+                                        @enderror
+
+                                        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-1">
+                                            <button type="button" @click="open = false"
+                                                class="px-4 py-2.5 rounded-xl bg-white border border-[#B6ADA3]/50 text-[#5F6F5B] text-xs font-semibold hover:bg-[#FAF7F2] transition cursor-pointer">
+                                                Batal
+                                            </button>
+                                            <button type="submit" :disabled="typed !== 'RESET'"
+                                                :class="typed === 'RESET' ? 'btn-primary-rose' : 'opacity-40 cursor-not-allowed'"
+                                                class="px-4 py-2.5 rounded-xl text-xs font-semibold">
+                                                <i class="fa-solid fa-rotate-left mr-1"></i> Ya, Reset Semua
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
