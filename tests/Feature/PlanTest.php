@@ -336,7 +336,7 @@ public function test_pending_state_shows_verification_card_with_refresh_and_cont
             ->assertOk()
             ->assertSee('Status Akun')
             ->assertSee('FREE')
-            ->assertSee('fa-sparkles', false)
+            ->assertSee('fa-wand-sparkles', false)
             ->assertSee('Upgrade ke Pro');
 
         $this->flushSession();
