@@ -122,6 +122,24 @@ class LastRouteRedirectTest extends TestCase
         }
     }
 
+    /**
+     * Refresh dari halaman Profile harus kembali ke Profile.
+     *
+     * app.js menulis ulang URL ke '/' setiap kali Turbo memuat halaman, jadi
+     * reload sebenarnya meminta "/" dan hanya cookie yang tahu halaman mana
+     * yang sedang dibuka. Selama /admin masih dikecualikan dari whitelist,
+     * refresh dari Profile selalu mendarat di Dashboard.
+     */
+    public function test_refresh_from_profile_returns_to_profile(): void
+    {
+        $user = $this->makeUser();
+
+        $this->actingAs($user)
+            ->withUnencryptedCookie('weddingPlannerLastRoute', '/admin')
+            ->get('/')
+            ->assertRedirect('/admin');
+    }
+
     public function test_empty_cookie_renders_dashboard(): void
     {
         $user = $this->makeUser();

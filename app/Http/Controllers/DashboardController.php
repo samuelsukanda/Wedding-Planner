@@ -70,19 +70,29 @@ class DashboardController extends Controller
         // otomatis begitu routenya ada, dan tidak ada yang bisa luput
         // sehingga refresh diam-diam jatuh ke Dashboard.
         //
-        // Area admin dan onboarding dikecualikan: keduanya punya aturan
-        // sendiri di EnsureWedding, dan ikut dialihkan dari sini membuat
-        // login superadmin bermasalah.
+        // Onboarding dan halaman admin lain tetap dikecualikan: user tanpa data
+        // pernikahan harus mendarat di wizard, dan halaman admin lain milik
+        // superadmin sehingga pasangan tidak boleh dialihkan ke sana.
+        //
+        // Pengecualiannya hanya /admin (Akun & Profile). app.js menulis ulang URL
+        // ke '/' setiap kali Turbo memuat halaman, jadi tanpa /admin ikut
+        // whitelist, reload dari halaman Profile selalu jatuh ke Dashboard.
         $listPages = collect(Route::getRoutes())
             ->filter(fn ($route) => in_array('GET', $route->methods(), true) && str_ends_with($route->getName() ?? '', '.index'))
             ->map(fn ($route) => '/' . ltrim($route->uri(), '/'))
-            ->reject(fn (string $uri) => $uri === '/' || $uri === '/onboarding' || str_starts_with($uri, '/admin'))
+            ->reject(fn (string $uri) => $uri === '/' || $uri === '/onboarding' || ($uri !== '/admin' && str_starts_with($uri, '/admin')))
             ->unique();
 
         // Perbandingan pakai string, bukan regex: nama path sudah coming dari
         // route yang sah, dan '='+'/'+"$" cukup untuk menolak /guests-extra
         // sekaligus menerima /guests/123.
-        $matchesMenu = $listPages->contains(fn (string $uri) => $path === $uri || str_starts_with($path, $uri . '/'));
+        //
+        // Pengecualian /admin di atas harus diperiksa ulang di sini: karena
+        // pencocokan berbasis prefix, /admin yang ada di whitelist akan ikut
+        // menelan /admin/users, /admin/master-data, dan lainnya — semuanya
+        // halaman superadmin yang tidak boleh dilihat pasangan.
+        $matchesMenu = ! str_starts_with($path, '/admin/')
+            && $listPages->contains(fn (string $uri) => $path === $uri || str_starts_with($path, $uri . '/'));
 
         if ($matchesMenu) {
             return redirect()->to($lastRoute);
