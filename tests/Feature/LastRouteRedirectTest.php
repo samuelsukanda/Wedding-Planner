@@ -140,6 +140,53 @@ class LastRouteRedirectTest extends TestCase
             ->assertRedirect('/admin');
     }
 
+    /**
+     * Superadmin yang sekaligus punya wedding masuk ke blok whitelist
+     * pasangan, bukan ke blok superadmin di atas. Kalau aturannya tidak
+     * dibedakan berdasarkan peran, reload dari halaman admin miliknya sendiri
+     * akan jatuh ke Dashboard.
+     */
+    public function test_superadmin_with_own_wedding_returns_to_admin_page(): void
+    {
+        $wedding = Wedding::create([
+            'groom_name' => 'Groom',
+            'bride_name' => 'Bride',
+            'wedding_date' => '2027-10-07',
+            'total_budget' => 100000000,
+        ]);
+
+        foreach (['/admin/users', '/admin/master-data?group=checklist_category',
+            '/admin/document-templates', '/admin/upgrade-requests', '/admin/pro-settings'] as $path) {
+            $admin = User::factory()->create([
+                'email' => 'admin-wedding-' . md5($path) . '@example.com',
+                'wedding_id' => $wedding->id,
+                'is_superadmin' => true,
+            ]);
+
+            $this->actingAs($admin)
+                ->withUnencryptedCookie('weddingPlannerLastRoute', $path)
+                ->get('/')
+                ->assertRedirect($path, "Refresh superadmin dari {$path} harus kembali ke {$path}.");
+        }
+    }
+
+    /**
+     * Pasangan biasa tidak boleh dipulihkan ke halaman admin mana pun kecuali
+     * /admin, karena semuanya berakhir 403.
+     */
+    public function test_couple_is_never_redirected_to_superadmin_pages(): void
+    {
+        foreach (['/admin/users', '/admin/master-data', '/admin/document-templates',
+            '/admin/upgrade-requests', '/admin/pro-settings'] as $path) {
+            $user = $this->makeUser();
+
+            $this->actingAs($user)
+                ->withUnencryptedCookie('weddingPlannerLastRoute', $path)
+                ->get('/')
+                ->assertOk("Path {$path} tidak boleh dialihkan ke dirinya sendiri.");
+        }
+    }
+
     public function test_empty_cookie_renders_dashboard(): void
     {
         $user = $this->makeUser();

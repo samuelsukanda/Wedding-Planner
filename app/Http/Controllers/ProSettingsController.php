@@ -46,7 +46,7 @@ class ProSettingsController extends Controller
             Setting::put($key, (string) $value);
         }
 
-        return redirect()->route('admin.pro-settings.edit')
+        return redirect()->route('admin.pro-settings.index')
             ->with('success', 'Pengaturan Pro disimpan.');
     }
 

@@ -202,7 +202,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
         Route::post('admin/upgrade-requests/{upgradeRequest}/reject', [AdminUpgradeController::class, 'reject'])->name('admin.upgrade-requests.reject');
         Route::delete('admin/upgrade-requests/{upgradeRequest}', [AdminUpgradeController::class, 'destroy'])->name('admin.upgrade-requests.destroy');
 
-        Route::get('admin/pro-settings', [ProSettingsController::class, 'edit'])->name('admin.pro-settings.edit');
+        Route::get('admin/pro-settings', [ProSettingsController::class, 'edit'])->name('admin.pro-settings.index');
         Route::put('admin/pro-settings', [ProSettingsController::class, 'update'])->name('admin.pro-settings.update');
     });
 });

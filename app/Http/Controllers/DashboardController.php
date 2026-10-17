@@ -70,28 +70,31 @@ class DashboardController extends Controller
         // otomatis begitu routenya ada, dan tidak ada yang bisa luput
         // sehingga refresh diam-diam jatuh ke Dashboard.
         //
-        // Onboarding dan halaman admin lain tetap dikecualikan: user tanpa data
-        // pernikahan harus mendarat di wizard, dan halaman admin lain milik
-        // superadmin sehingga pasangan tidak boleh dialihkan ke sana.
-        //
-        // Pengecualiannya hanya /admin (Akun & Profile). app.js menulis ulang URL
-        // ke '/' setiap kali Turbo memuat halaman, jadi tanpa /admin ikut
-        // whitelist, reload dari halaman Profile selalu jatuh ke Dashboard.
+        // Onboarding dikecualikan: user tanpa data pernikahan harus mendarat di
+        // wizard, bukan pada menu yang terakhir dibuka.
         $listPages = collect(Route::getRoutes())
             ->filter(fn ($route) => in_array('GET', $route->methods(), true) && str_ends_with($route->getName() ?? '', '.index'))
             ->map(fn ($route) => '/' . ltrim($route->uri(), '/'))
-            ->reject(fn (string $uri) => $uri === '/' || $uri === '/onboarding' || ($uri !== '/admin' && str_starts_with($uri, '/admin')))
+            ->reject(fn (string $uri) => $uri === '/' || $uri === '/onboarding')
             ->unique();
+
+        // Aturan area admin dipisah dari whitelist di atas karena berbeda menurut
+        // siapa yang sedang login: pasangan hanya boleh /admin (Akun &
+        // Profile), superadmin boleh seluruh area admin.
+        //
+        // app.js menulis ulang URL ke '/' setiap kali Turbo memuat halaman, jadi
+        // tanpa cabang ini reload dari halaman admin selalu jatuh ke Dashboard -
+        // termasuk bagi superadmin yang punya wedding, karena ia masuk ke blok
+        // ini, bukan ke blok superadmin di atas.
+        //
+        // Path /admin/lain tetap mengembalikan pasangan ke Dashboard, bukan ke
+        // halaman superadmin yang akan berakhir 403.
+        $adminAllowed = auth()->user()?->is_superadmin || $path === '/admin';
 
         // Perbandingan pakai string, bukan regex: nama path sudah coming dari
         // route yang sah, dan '='+'/'+"$" cukup untuk menolak /guests-extra
         // sekaligus menerima /guests/123.
-        //
-        // Pengecualian /admin di atas harus diperiksa ulang di sini: karena
-        // pencocokan berbasis prefix, /admin yang ada di whitelist akan ikut
-        // menelan /admin/users, /admin/master-data, dan lainnya — semuanya
-        // halaman superadmin yang tidak boleh dilihat pasangan.
-        $matchesMenu = ! str_starts_with($path, '/admin/')
+        $matchesMenu = ($adminAllowed || ! str_starts_with($path, '/admin/'))
             && $listPages->contains(fn (string $uri) => $path === $uri || str_starts_with($path, $uri . '/'));
 
         if ($matchesMenu) {

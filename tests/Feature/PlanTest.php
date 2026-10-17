@@ -583,7 +583,7 @@ public function test_superadmin_can_save_pro_settings()
                 'admin_whatsapp' => '6281234567890',
                 'moodboard_free_limit' => 3,
             ])
-            ->assertRedirect(route('admin.pro-settings.edit'));
+            ->assertRedirect(route('admin.pro-settings.index'));
 
         $this->assertSame('249000', Setting::get('pro_price'));
         $this->assertSame('6281234567890', Setting::get('admin_whatsapp'));
