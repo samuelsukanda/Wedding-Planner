@@ -85,6 +85,27 @@ class PlanTest extends TestCase
         $this->assertStringContainsString('Kolaborasi Partner &amp; Vendor', $html);
         $this->assertStringContainsString('Palette &amp; Template Eksklusif', $html);
 
+        // Aset gambar disimpan di repo, bukan hotlink ke Pinterest: link CDN
+        // bisa berubah atau diblokir. Test ini menahan aset yang hilang supaya
+        // kotak kosong tidak baru ketahuan setelah deploy.
+        $this->assertStringContainsString('img/moodboard-rustic-arch.jpg', $html);
+        $this->assertStringContainsString('img/moodboard-rustic-table.jpg', $html);
+        foreach (['moodboard-rustic-arch', 'moodboard-rustic-table'] as $asset) {
+            $this->assertFileExists(public_path("img/$asset.jpg"));
+        }
+
+        // Warna palette diambil dari pin champagne-beige, bukan tebakan.
+        foreach (['998376', 'C6AD99', 'C8B8AB', 'DACCC3'] as $swatch) {
+            $this->assertStringContainsString($swatch, $html);
+        }
+
+        // Kartu tengah yang dikunci isinya foto memburam, bukan kotak warna:
+// siluet board lebih terbaca sebagai "ada isinya tapi belum boleh dibuka".
+        $this->assertMatchesRegularExpression(
+            '/<img[^>]*moodboard-rustic-arch\.jpg[^>]*blur-\[7px\]/',
+            $html,
+        );
+
         // Harga ikut dari app_settings, bukan ditulis mati di view.
         $this->assertStringContainsString('55.000', $html);
 

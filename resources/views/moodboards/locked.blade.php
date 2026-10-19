@@ -3,10 +3,11 @@
 @section('title', 'Inspirasi - Moodboard')
 
 @section('content')
-    {{-- Halaman terkunci untuk paket Free. Isinya murni CSS dan SVG inline,
-         bukan file gambar: blok foto pada desain ini kecil, miring, dan
-         sengaja dibuat buram, jadi gradien memberi hasil yang sama
-         tanpa menambah aset binary ke repo dan tanpa masalah hak cipta. --}}
+    {{-- Halaman terkunci untuk paket Free.
+         Foto dan palet diambil dari pin yang dipilih pemilik produk dan
+         disimpan sendiri di public/img, bukan hotlink ke i.pinimg.com:
+         link Pinterest bisa berubah atau diblokir, dan halaman ini tidak
+         boleh ikut rusak kalau CDN-nya berubah. --}}
     <div class="relative overflow-hidden rounded-3xl px-5 py-14 md:py-20 text-center">
         {{-- Cahaya hangat di belakang, biar tengah halaman tidak terasa kosong --}}
         <div aria-hidden="true"
@@ -34,29 +35,22 @@
                 <div
                     class="hidden w-36 rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 -rotate-6 sm:block md:w-44">
                     <div class="grid grid-cols-2 gap-1.5">
-                        @foreach ([
-                            'linear-gradient(140deg,#A8B5A0,#6E7F6B)',
-                            'linear-gradient(140deg,#F0D9D5,#D8A7B1)',
-                            'linear-gradient(140deg,#F6EFE4,#D9CBB6)',
-                            'linear-gradient(140deg,#C08570,#8E5A44)',
-                        ] as $tile)
-                            <span class="aspect-square rounded-lg" style="background:{{ $tile }}"></span>
+                        @foreach (['moodboard-rustic-arch', 'moodboard-rustic-table'] as $photo)
+                            <img src="{{ asset("img/$photo.jpg") }}" alt=""
+                                class="aspect-[3/4] w-full rounded-lg object-cover" loading="lazy">
                         @endforeach
                     </div>
                 </div>
 
-                {{-- Kartu tengah: board terkunci --}}
+                {{-- Kartu tengah: board terkunci. Isinya foto yang diburam,
+                     bukan color palette - siluet board lebih terbaca sebagai
+                     "isi yang belum boleh dibuka" kalau berupa foto. --}}
                 <div
                     class="relative z-10 w-32 rounded-2xl border border-[#B6ADA3]/40 bg-white p-2.5 shadow-xl shadow-[#5F6F5B]/15 md:w-40">
                     <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-[#FAF7F2]">
-                        {{-- Isi board sengaja diburam: yang dilihat pengguna bukan
-                             detailnya, tapi bahwa isinya ada di sana. --}}
-                        <div aria-hidden="true" class="absolute inset-0 grid grid-cols-2 gap-1 p-1.5 blur-[7px]">
-                            <span class="rounded-md bg-[#A8B5A0]"></span>
-                            <span class="rounded-md bg-[#D8A7B1]"></span>
-                            <span class="rounded-md bg-[#C08570]"></span>
-                            <span class="rounded-md bg-[#EFE6D4]"></span>
-                        </div>
+                        <img src="{{ asset('img/moodboard-rustic-arch.jpg') }}" alt="" aria-hidden="true"
+                            class="absolute inset-0 h-full w-full scale-110 object-cover blur-[7px]"
+                            loading="lazy">
 
                         <div class="absolute inset-0 flex flex-col items-center justify-center gap-2.5">
                             <span
@@ -71,14 +65,15 @@
                     </div>
                 </div>
 
-                {{-- Kartu kanan: palette dan template, miring ke kanan --}}
+                {{-- Kartu kanan: color palette + template, miring ke kanan.
+                     Warna diambil dari pin palet champagne-beige, jadi
+                     persis sama dengan referensinya, bukan tebakan warna. --}}
                 <div
                     class="hidden w-36 rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 rotate-6 sm:block md:w-44">
                     <div class="grid grid-cols-4 gap-1">
-                        <span class="aspect-square rounded-md bg-[#7D8B74]"></span>
-                        <span class="aspect-square rounded-md bg-[#D8CFC0]"></span>
-                        <span class="aspect-square rounded-md bg-[#EFE7D6]"></span>
-                        <span class="aspect-square rounded-md bg-[#C0724A]"></span>
+                        @foreach (['998376', 'C6AD99', 'C8B8AB', 'DACCC3'] as $swatch)
+                            <span class="aspect-square rounded-md" style="background:#{{ $swatch }}"></span>
+                        @endforeach
                     </div>
 
                     {{-- Dua template garis: SVG inline supaya tidak butuh aset --}}
