@@ -41,6 +41,25 @@ class PartnerInviteTest extends TestCase
         ]);
     }
 
+    public function test_profile_shows_the_partner_menu_only_for_pro()
+    {
+        [$wedding, $user] = $this->couple('pro');
+
+        $this->actingAs($user)
+            ->get('/admin')
+            ->assertOk()
+            ->assertSee('Tambah Pasangan')
+            ->assertSee(route('profile.partner-invites.index'));
+
+        [$freeWedding, $freeUser] = $this->couple('free');
+
+        $this->actingAs($freeUser)
+            ->get('/admin')
+            ->assertOk()
+            ->assertDontSee('Tambah Pasangan')
+            ->assertDontSee(route('profile.partner-invites.index'));
+    }
+
     public function test_free_couple_cannot_open_the_invite_page()
     {
         [, $user] = $this->couple('free');
