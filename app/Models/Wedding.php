@@ -112,6 +112,11 @@ class Wedding extends Model
         return $this->hasMany(UpgradeRequest::class);
     }
 
+    public function invites()
+    {
+        return $this->hasMany(WeddingInvite::class);
+    }
+
     public function checklists()
     {
         return $this->hasMany(Checklist::class);

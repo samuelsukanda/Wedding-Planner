@@ -8,6 +8,7 @@ use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetWeddingDataController;
+use App\Http\Controllers\PartnerInviteController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\VendorController;
@@ -42,6 +43,11 @@ Route::post('register', [RegisterController::class, 'register']);
 Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google.redirect');
 Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
 
+// Undangan pasangan: publik, karena yang membukanya belum punya akun. Berada
+// di luar middleware auth, dan EnsureWedding meloloskan pengunjung tanpa login.
+Route::get('undangan/{token}', [PartnerInviteController::class, 'show'])->name('invite.accept');
+Route::post('undangan/{token}', [PartnerInviteController::class, 'accept'])->name('invite.accept.store');
+
 // ========== ONBOARDING (wajib login, belum punya data pernikahan) ==========
 // Seluruh langkah wizard berjalan di client (Alpine), jadi hanya ada dua
 // route: buka halaman wizard dan simpan hasil akhirnya.
@@ -65,6 +71,11 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
 
     // Reset Semua Data - permanen, hanya milik Wedding Kit sendiri.
     Route::delete('profile/reset-data', [ResetWeddingDataController::class, 'destroy'])->name('profile.reset-data');
+
+    // Ajak pasangan bergabung lewat tautan (khusus paket Pro).
+    Route::get('profile/pasangan', [PartnerInviteController::class, 'index'])->name('profile.partner-invites.index');
+    Route::post('profile/pasangan', [PartnerInviteController::class, 'store'])->name('profile.partner-invites.store');
+    Route::delete('profile/pasangan/{invite}', [PartnerInviteController::class, 'destroy'])->name('profile.partner-invites.destroy');
 
     // Module 2 - Wedding Checklist
     Route::resource('checklists', ChecklistController::class)->except(['create', 'edit', 'show']);

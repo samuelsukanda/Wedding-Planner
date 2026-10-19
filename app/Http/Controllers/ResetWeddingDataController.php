@@ -25,6 +25,7 @@ class ResetWeddingDataController extends Controller
      * dari vendors.
      */
     private const WIPE = [
+        'wedding_invites',
         'savings_transactions',
         'savings_goals',
         'document_histories',
