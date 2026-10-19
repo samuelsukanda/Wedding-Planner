@@ -152,13 +152,16 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada riwayat
-                                    pembayaran vendor.</td>
+                                <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">
+                                    <i class="fa-solid fa-receipt text-[#B6ADA3] text-2xl mb-3"></i>
+                                    <div>Belum ada riwayat pembayaran vendor.</div>
+                                </td>
                             </tr>
                         @endforelse
                         <tr x-show="hasActiveFilter() && visibleCount() === 0" x-cloak>
                             <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                Tidak ada pembayaran yang cocok dengan filter.
+                                <i class="fa-solid fa-receipt text-[#B6ADA3] text-2xl mb-3"></i>
+                                <div>Tidak ada pembayaran yang cocok dengan filter.</div>
                             </td>
                         </tr>
                     </tbody>

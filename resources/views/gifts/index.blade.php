@@ -130,8 +130,10 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada hadiah yang
-                                    tercatat.</td>
+                                <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">
+                                    <i class="fa-solid fa-gift text-[#B6ADA3] text-2xl mb-3"></i>
+                                    <div>Belum ada hadiah yang tercatat.</div>
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>

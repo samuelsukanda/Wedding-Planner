@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Wedding;
 use App\Models\WeddingInvite;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -71,14 +72,22 @@ class PartnerInviteController extends Controller
     /** Halaman undangan: publik, belum login pun boleh membuka. */
     public function show(string $token)
     {
-        $invite = $this->findUsableInvite($token);
+        $invite = WeddingInvite::with('wedding')->where('token', $token)->first();
+
+        if ($problem = $this->inviteProblem($invite)) {
+            return $problem;
+        }
 
         return view('invites.accept', ['invite' => $invite]);
     }
 
     public function accept(Request $request, string $token)
     {
-        $invite = $this->findUsableInvite($token);
+        $invite = WeddingInvite::with('wedding')->where('token', $token)->first();
+
+        if ($problem = $this->inviteProblem($invite)) {
+            return $problem;
+        }
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -120,24 +129,64 @@ class PartnerInviteController extends Controller
     }
 
     /**
-     * Undangan yang sudah dipakai atau kedaluwarsa tidak boleh dibuka lagi,
-     * dan alasannya harus berbeda: "sudah dipakai" bukan "tidak ditemukan",
-     * supaya pemilik Wedding Kit bisa paham link-nya kenapa mati.
+     * Kenapa sebuah tautan tidak bisa dipakai lagi, atau null kalau masih bisa.
+     *
+     * Sengaja dikembalikan sebagai halaman aplikasi, bukan abort(): yang
+     * membuka tautan belum punya akun dan sering salah klik / kirim tautan
+     * lama, jadi halaman error Laravel yang mentah hanya menambah kebingungan.
+     * Status HTTP-nya tetap 404/410 supaya mesin pencari dan cache tetap paham
+     * tautannya mati.
+     *
+     * Ketiganya dibedakan karena jalannya berbeda: "tidak ditemukan" berarti
+     * tautannya salah, "sudah dipakai" berarti orangnya mungkin sudah punya
+     * akun, "kedaluwarsa" berarti harus minta tautan baru.
      */
-    private function findUsableInvite(string $token): WeddingInvite
+    private function inviteProblem(?WeddingInvite $invite): ?Response
     {
-        $invite = WeddingInvite::with('wedding')->where('token', $token)->first();
-
-        abort_if(! $invite, 404, 'Link undangan tidak ditemukan.');
+        if (! $invite) {
+            return $this->problemPage(
+                404,
+                'fa-link-slash',
+                'Link Undangan Tidak Ditemukan',
+                'Tautan undangan tidak valid atau sudah tidak tersedia. Periksa kembali tautan yang kamu terima.',
+                null,
+            );
+        }
 
         if ($invite->accepted_at) {
-            abort(410, 'Link undangan ini sudah pernah dipakai.');
+            return $this->problemPage(
+                410,
+                'fa-user-check',
+                'Link Undangan Sudah Dipakai',
+                'Tautan ini sudah pernah dipakai untuk membuat akun. Kalau itu akun kamu, langsung masuk saja.',
+                'Belum punya akun?',
+                route('register'),
+            );
         }
 
         if ($invite->expires_at->isPast()) {
-            abort(410, 'Link undangan ini sudah kedaluwarsa. Minta pasangan membuat link baru.');
+            return $this->problemPage(
+                410,
+                'fa-clock',
+                'Link Undangan Kedaluwarsa',
+                'Tautan undangan hanya berlaku '.WeddingInvite::VALID_DAYS.' hari. Minta yang mengirimnya membuat tautan baru.',
+                'Belum punya akun?',
+                route('register'),
+            );
         }
 
-        return $invite;
+        return null;
+    }
+
+    /** @param string|null $hintLead teks sebelum tautan, null kalau tanpa tautan */
+    private function problemPage(int $code, string $icon, string $title, string $message, ?string $hintLead = null, ?string $hintLink = null): Response
+    {
+        return response()->view('invites.problem', [
+            'title' => $title,
+            'icon' => $icon,
+            'message' => $message,
+            'hint' => $hintLead,
+            'hintLink' => $hintLink,
+        ], $code);
     }
 }

@@ -172,8 +172,10 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada rincian
-                                    anggaran.</td>
+                                <td colspan="8" class="text-center py-10 text-[#B6ADA3] text-sm">
+                                    <i class="fa-solid fa-wallet text-[#B6ADA3] text-2xl mb-3"></i>
+                                    <div>Belum ada rincian anggaran.</div>
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>

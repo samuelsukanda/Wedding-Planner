@@ -98,7 +98,10 @@
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada susunan acara yang dibuat.</div>
+                    <div class="text-center py-10 text-[#B6ADA3] text-sm">
+                    <i class="fa-solid fa-timeline text-[#B6ADA3] text-2xl mb-3"></i>
+                    <div>Belum ada susunan acara yang dibuat.</div>
+                </div>
                 @endforelse
             </div>
         </div>

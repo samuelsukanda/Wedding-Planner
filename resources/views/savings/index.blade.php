@@ -187,7 +187,8 @@
                         @empty
                             <tr>
                                 <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                    Belum ada target tabungan.
+                                    <i class="fa-solid fa-piggy-bank text-[#B6ADA3] text-2xl mb-3"></i>
+                                    <div>Belum ada target tabungan.</div>
                                 </td>
                             </tr>
                         @endforelse
@@ -250,7 +251,8 @@
                         @empty
                             <tr>
                                 <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                    Belum ada transaksi.
+                                    <i class="fa-solid fa-money-bill-transfer text-[#B6ADA3] text-2xl mb-3"></i>
+                                    <div>Belum ada transaksi.</div>
                                 </td>
                             </tr>
                         @endforelse

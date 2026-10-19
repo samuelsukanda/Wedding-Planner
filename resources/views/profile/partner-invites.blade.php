@@ -8,8 +8,8 @@
         <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Tambah Pasangan</h1>
             <p class="text-xs text-[#5F6F5B]/70 mt-1">
-                Buat link undangan, lalu kirim ke pasanganmu. Yang membuka link itu akan membuat akun dengan
-                password-nya sendiri lalu langsung masuk ke Wedding Kit yang sama.</p>
+                Buat dan bagikan link undangan agar pasanganmu dapat bergabung dan mengelola persiapan pernikahan bersama.
+            </p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
@@ -40,8 +40,8 @@
                     </div>
                 @else
                     <p class="text-sm text-[#5F6F5B]/75 leading-relaxed">
-                        Belum ada pasangan yang terhubung. Kirim link undangan supaya akunnya bergabung ke Wedding Kit
-                        yang sama.
+                        Belum ada pasangan yang terhubung. Bagikan link undangan agar pasanganmu dapat bergabung dan
+                        mengelola persiapan pernikahan bersama.
                     </p>
                 @endif
             </div>
@@ -72,7 +72,8 @@
                                 <i class="fa-solid fa-copy mr-1"></i> Salin Link
                             </button>
 
-                            <a href="https://wa.me/?text={{ rawurlencode('Halo, kamu Capitan undangan untuk Wedding Kit kami. Buka link ini untuk membuat akun dan bergabung: ' . $inviteUrl($pending)) }}&api=wa" target="_blank" rel="noopener"
+                            <a href="https://wa.me/?text={{ rawurlencode('Halo, kamu Capitan undangan untuk Wedding Kit kami. Buka link ini untuk membuat akun dan bergabung: ' . $inviteUrl($pending)) }}&api=wa"
+                                target="_blank" rel="noopener"
                                 class="px-4 py-2.5 rounded-xl btn-primary-rose text-xs flex items-center justify-center">
                                 <i class="fa-brands fa-whatsapp mr-1"></i> Bagikan ke WhatsApp
                             </a>
@@ -90,14 +91,15 @@
                 @else
                     <div class="space-y-3">
                         <p class="text-sm text-[#5F6F5B]/75 leading-relaxed">
-                            Belum ada link aktif. Satu link berlaku
-                            <strong>{{ \App\Models\WeddingInvite::VALID_DAYS }} hari</strong> dan hanya bisa dipakai satu
+                            Belum ada link undangan aktif. Link berlaku selama
+                            <strong>{{ \App\Models\WeddingInvite::VALID_DAYS }} hari</strong> dan hanya dapat digunakan satu
                             kali.
                         </p>
 
                         <form method="POST" action="{{ route('profile.partner-invites.store') }}">
                             @csrf
-                            <button type="submit" class="btn-primary-rose w-full px-4 py-3 rounded-xl text-sm cursor-pointer">
+                            <button type="submit"
+                                class="btn-primary-rose w-full px-4 py-3 rounded-xl text-sm cursor-pointer">
                                 <i class="fa-solid fa-link mr-1"></i> Buat Link Undangan
                             </button>
                         </form>
@@ -164,7 +166,11 @@
                 };
 
                 if (navigator.clipboard && window.isSecureContext) {
-                    navigator.clipboard.writeText(text).then(function() { done(true); }, function() { done(false); });
+                    navigator.clipboard.writeText(text).then(function() {
+                        done(true);
+                    }, function() {
+                        done(false);
+                    });
                     return;
                 }
 

@@ -125,7 +125,7 @@ class PartnerInviteTest extends TestCase
         $this->assertNotNull(WeddingInvite::find($invite->id));
     }
 
-    public function test_guest_can_open_an_invite_and_see_only_first_names()
+    public function test_guest_can_open_an_invite_without_leaking_the_couple_names()
     {
         $wedding = Wedding::create([
             'bride_name' => 'Siti Rahma',
@@ -143,11 +143,11 @@ class PartnerInviteTest extends TestCase
 
         $this->get(route('invite.accept', $invite->token))
             ->assertOk()
-            ->assertSee('Budi &amp; Siti', false)
+            ->assertSee('Kamu Diundang')
             // Nama lengkap tidak ikut tampil, karena link bisa saja terbawa
             // ke orang lain tanpa sengaja.
-            ->assertDontSee('Siti Rahma')
-            ->assertDontSee('Budi Santoso');
+            ->assertDontSee('Siti')
+            ->assertDontSee('Budi');
     }
 
     public function test_accepting_creates_a_partner_account_in_the_same_wedding()
@@ -228,6 +228,94 @@ class PartnerInviteTest extends TestCase
     public function test_unknown_token_is_not_found()
     {
         $this->get(route('invite.accept', 'tidak-ada-token-ini'))->assertNotFound();
+    }
+
+    /**
+     * Yang membuka tautan belum punya akun dan sering salah klik, jadi error
+     * harus berupa halaman aplikasi -- bukan halaman error Laravel mentah yang
+     * menampilkan trace exception.
+     */
+    public function test_used_invite_shows_a_friendly_page_not_a_laravel_error_page()
+    {
+        [$wedding] = $this->couple();
+        $invite = $this->inviteFor($wedding);
+
+        $this->post(route('invite.accept.store', $invite->token), [
+            'name' => 'Siti',
+            'email' => 'siti@example.com',
+            'password' => 'rahasia123',
+            'password_confirmation' => 'rahasia123',
+        ]);
+
+        $response = $this->get(route('invite.accept', $invite->token));
+
+        $response->assertStatus(410);
+        $response->assertSee('Link Undangan Sudah Dipakai');
+        $response->assertDontSee('Exception trace');
+        $response->assertDontSee('vendor/laravel');
+        // Tidak boleh membocorkan siapa saja yang sudah memakainya.
+        $response->assertDontSee('siti@example.com');
+    }
+
+    public function test_expired_invite_shows_a_friendly_page_and_tells_how_long_it_lasted()
+    {
+        [$wedding] = $this->couple();
+        $invite = WeddingInvite::create([
+            'wedding_id' => $wedding->id,
+            'token' => 'tok-' . bin2hex(random_bytes(8)),
+            'expires_at' => now()->subMinute(),
+            'created_by' => User::factory()->create()->id,
+        ]);
+
+        $response = $this->get(route('invite.accept', $invite->token));
+
+        $response->assertStatus(410);
+        $response->assertSee('Link Undangan Kedaluwarsa');
+        $response->assertSee(WeddingInvite::VALID_DAYS.' hari');
+        $response->assertDontSee('Exception trace');
+    }
+
+    public function test_unknown_token_shows_a_friendly_page()
+    {
+        $response = $this->get(route('invite.accept', 'tidak-ada-token-ini'));
+
+        $response->assertNotFound();
+        $response->assertSee('Link Undangan Tidak Ditemukan');
+        $response->assertDontSee('Exception trace');
+    }
+
+    /** POST ke tautan mati juga harus sopan, bukan melempar exception. */
+    public function test_posting_to_a_dead_invite_shows_the_same_friendly_page()
+    {
+        [$wedding] = $this->couple();
+        $invite = $this->inviteFor($wedding);
+
+        $response = $this->post(route('invite.accept.store', $invite->token), [
+            'name' => 'Siti',
+            'email' => 'siti@example.com',
+            'password' => 'rahasia123',
+            'password_confirmation' => 'rahasia123',
+        ]);
+
+        // Dipakai ulang setelah accept pertama.
+        $this->post(route('invite.accept.store', $invite->token), [
+            'name' => 'Lain',
+            'email' => 'lain@example.com',
+            'password' => 'rahasia123',
+            'password_confirmation' => 'rahasia123',
+        ])->assertStatus(410)->assertDontSee('Exception trace');
+    }
+
+    /** Halaman undangan yang masih hidup tidak boleh ikut jadi halaman error. */
+    public function test_valid_invite_still_renders_the_signup_form()
+    {
+        [$wedding] = $this->couple();
+        $invite = $this->inviteFor($wedding);
+
+        $this->get(route('invite.accept', $invite->token))
+            ->assertOk()
+            ->assertSee('Kamu Diundang')
+            ->assertSee('name="password_confirmation"', false);
     }
 
     public function test_existing_email_is_rejected_and_keeps_its_own_wedding()

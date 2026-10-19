@@ -116,8 +116,8 @@
                 @else
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <p class="text-sm text-[#5F6F5B]/80 leading-relaxed">
-                            <strong>Moodboard</strong> tanpa batas jumlah item dan akses penuh <strong>Cari Vendor</strong>,
-                            dengan sekali pembayaran dan tanpa biaya bulanan.
+                            Semua fitur Pro aktif untuk akun ini dan akun pasangan, berlaku seumur akun tanpa biaya
+                            berlangganan tambahan.
                         </p>
                         <a href="{{ route('upgrade.index') }}"
                             class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center inline-flex items-center justify-center">
@@ -142,7 +142,10 @@
                                         'pending' => ['bg-[#FAF7F2] border-[#B6ADA3]/50 text-[#5F6F5B]', 'Menunggu'],
                                         'approved' => ['bg-[#F1F5F0] border-[#A3B7A6]/60 text-[#5F6F5B]', 'Disetujui'],
                                         'rejected' => ['bg-[#FBF2F4] border-[#D8A7B1]/60 text-[#C2757F]', 'Ditolak'],
-                                    ][$purchase->status] ?? ['bg-[#FAF7F2] border-[#B6ADA3]/50 text-[#5F6F5B]', $purchase->status];
+                                    ][$purchase->status] ?? [
+                                        'bg-[#FAF7F2] border-[#B6ADA3]/50 text-[#5F6F5B]',
+                                        $purchase->status,
+                                    ];
 
                                     // Yang ditampilkan adalah tanggal persetujuan, karena
                                     // itulah saat paketnya benar-benar aktif. Kalau masih
@@ -257,7 +260,8 @@
 
                             <!-- Notes & Theme -->
                             <div>
-                                <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Catatan & Tema Pernikahan</label>
+                                <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Catatan & Tema
+                                    Pernikahan</label>
                                 <textarea name="notes" rows="3" placeholder="Misal: Tema warna Dusty Rose & Sage Green..."
                                     class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-medium text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all resize-none">{{ old('notes', $wedding->notes) }}</textarea>
                             </div>
@@ -346,7 +350,7 @@
                             </div>
                             <p class="text-[#5F6F5B] leading-relaxed">
                                 Hapus semua worksheet <strong>Lamaran &amp; Pernikahan</strong> beserta profil acara,
-                                lalu mulai dari awal. Status Pro, pembelian Wedding Kit, akun, dan pasangan yang
+                                lalu mulai dari awal. Status Pro, akun, dan pasangan yang
                                 terhubung tidak ikut terhapus.
                             </p>
 
@@ -393,20 +397,18 @@
                                     <div class="rounded-xl bg-[#FAF7F2] p-3.5">
                                         <p class="text-xs font-bold text-[#5F6F5B]">Tetap aman:</p>
                                         <p class="text-xs text-[#5F6F5B]/80 leading-relaxed mt-1">
-                                            Akun &amp; login, pasangan yang terhubung, status Pro/Free, dan riwayat
-                                            pembelian Wedding Kit tidak ikut terhapus.
+                                            Akun &amp; login, pasangan yang terhubung, status Pro/Free tidak ikut terhapus.
                                         </p>
                                     </div>
 
                                     <form method="POST" action="{{ route('profile.reset-data') }}">
                                         @csrf
                                         @method('DELETE')
-                                        <label for="reset-confirm"
-                                            class="block text-xs font-bold text-[#5F6F5B] mb-1.5">
+                                        <label for="reset-confirm" class="block text-xs font-bold text-[#5F6F5B] mb-1.5">
                                             Ketik <span class="uppercase">RESET</span> untuk konfirmasi
                                         </label>
-                                        <input type="text" id="reset-confirm" x-model="typed"
-                                            autocomplete="off" placeholder="RESET"
+                                        <input type="text" id="reset-confirm" x-model="typed" autocomplete="off"
+                                            placeholder="RESET"
                                             class="block w-full px-3.5 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm uppercase tracking-widest text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
                                         {{-- Yang terkirim ke server adalah hasil normalisasi,
                                              bukan apa yang diketik mentah, supaya validasi
@@ -418,7 +420,7 @@
                                             <p class="mt-1.5 text-xs text-[#C2757F]">{{ $message }}</p>
                                         @enderror
 
-                                        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-1">
+                                        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
                                             <button type="button" @click="open = false"
                                                 class="px-4 py-2.5 rounded-xl bg-white border border-[#B6ADA3]/50 text-[#5F6F5B] text-xs font-semibold hover:bg-[#FAF7F2] transition cursor-pointer">
                                                 Batal

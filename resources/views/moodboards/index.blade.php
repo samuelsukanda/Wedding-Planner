@@ -103,7 +103,8 @@
             @empty
                 <div
                     class="col-span-full text-center py-12 bg-white rounded-2xl text-[#B6ADA3] text-sm border border-[#B6ADA3]/35">
-                    Belum ada inspirasi moodboard dalam kategori ini.
+                    <i class="fa-solid fa-palette text-[#B6ADA3] text-2xl mb-3"></i>
+                    <div>Belum ada inspirasi moodboard dalam kategori ini.</div>
                 </div>
             @endforelse
         </div>

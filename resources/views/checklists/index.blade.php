@@ -201,13 +201,16 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada item
-                                    checklist.</td>
+                                <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">
+                                    <i class="fa-solid fa-list-check text-[#B6ADA3] text-2xl mb-3"></i>
+                                    <div>Belum ada item checklist.</div>
+                                </td>
                             </tr>
                         @endforelse
                         <tr x-show="hasActiveFilter() && visibleCount() === 0" x-cloak>
                             <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                Tidak ada item yang cocok dengan filter.
+                                <i class="fa-solid fa-list-check text-[#B6ADA3] text-2xl mb-3"></i>
+                                <div>Tidak ada item yang cocok dengan filter.</div>
                             </td>
                         </tr>
                     </tbody>

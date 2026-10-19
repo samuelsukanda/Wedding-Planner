@@ -202,12 +202,14 @@
             @empty
                 <div
                     class="col-span-full text-center py-12 bg-white rounded-2xl text-[#B6ADA3] text-sm border border-[#B6ADA3]/35">
-                    Belum ada data vendor ditemukan.
+                    <i class="fa-solid fa-store text-[#B6ADA3] text-2xl mb-3"></i>
+                    <div>Belum ada data vendor ditemukan.</div>
                 </div>
             @endforelse
             <div x-show="hasActiveFilter() && visibleCount() === 0" x-cloak
                 class="col-span-full text-center py-12 bg-white rounded-2xl text-[#B6ADA3] text-sm border border-[#B6ADA3]/35">
-                Tidak ada vendor yang cocok dengan filter.
+                <i class="fa-solid fa-store text-[#B6ADA3] text-2xl mb-3"></i>
+                <div>Tidak ada vendor yang cocok dengan filter.</div>
             </div>
         </div>
 
