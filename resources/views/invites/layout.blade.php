@@ -21,22 +21,27 @@
 
         body {
             font-family: 'Outfit', sans-serif;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #FAF7F2;
             padding: 20px;
+            box-sizing: border-box;
         }
 
         .invite-card {
             background: #ffffff;
             border-radius: 24px;
-            padding: 36px 32px;
+            padding: 28px 32px;
             max-width: 460px;
             width: 100%;
             border: 1px solid #e5e0d8;
             box-shadow: 0 8px 32px rgba(95, 111, 91, 0.08);
+            /* Kartu bisa scroll internal jika konten lebih tinggi dari viewport */
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
         }
     </style>
 </head>

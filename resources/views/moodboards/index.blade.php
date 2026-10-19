@@ -5,7 +5,8 @@
 @section('content')
     <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {} }">
         <!-- Top Bar -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+        <div
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Moodboard</h1>
                 <p class="text-xs text-[#5F6F5B]/70 mt-1">Kumpulkan inspirasi tema, dekorasi, warna, dan konsep visual untuk
@@ -15,7 +16,7 @@
                 <span
                     class="inline-flex items-center gap-1.5 rounded-full border border-[#A3B7A6]/60 bg-[#F1F5F0] px-3 py-1.5 text-[11px] font-bold text-[#5F6F5B]">
                     <i class="fa-solid fa-crown text-[#A3B7A6]"></i>
-                    Tanpa batas
+                    PRO
                 </span>
 
                 <button @click="modalOpen = true; editMode = false; currentItem = {}"

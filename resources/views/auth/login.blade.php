@@ -254,10 +254,18 @@
 
 <body>
     <div class="login-card" x-data="{ tab: '{{ old('_form') === 'register' || ($errors->any() && old('password_confirmation')) ? 'register' : 'login' }}' }">
-        <div class="brand-icon">
-            <i class="fa-solid fa-heart" style="font-size: 26px; color: #D8A7B1;"></i>
+        {{-- Logo Nupsera: ikon + nama brand sesuai desain sidebar --}}
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:18px;">
+            <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo Nupsera"
+                style="height:56px;width:auto;object-fit:contain;display:block;">
+            <div style="text-align:center;line-height:1;">
+                <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
+                    background:linear-gradient(135deg,#8B4513 0%,#C07830 35%,#D4A96A 60%,#B8762A 100%);
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Nupsera</div>
+                <div style="font-family:'Outfit',sans-serif;font-size:9px;font-weight:600;
+                    letter-spacing:0.18em;text-transform:uppercase;color:#4A5240;margin-top:2px;">Wedding &amp; Moments</div>
+            </div>
         </div>
-        <h1>Wedding Planner</h1>
         <p class="subtitle">Masuk untuk mengelola acara pernikahan</p>
 
         <x-flash-toast :error="$errors->first()" />
@@ -366,7 +374,7 @@
         @endunless
 
         <div class="footer-text">
-            &copy; {{ date('Y') }} Wedding Planner
+            &copy; {{ date('Y') }} Nupsera
         </div>
     </div>
 

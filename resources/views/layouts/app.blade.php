@@ -476,18 +476,19 @@
                  saling tumpang tindih. -->
         <div class="px-4 py-3 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-w-0">
-                <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo"
-                    class="w-9 h-9 rounded-xl object-cover shrink-0">
-                <div class="sidebar-label min-w-0 ml-3">
-                    {{-- Warna diambil dari gradien logo nupsera-ori.png: brick
-                         #A23725 dan terracotta #B4503A. Kontrasnya dihitung di
-                         atas background sidebar #FAF7F2, yaitu 6.3:1 dan 4.7:1,
-                         jadi baris 11px tetap terbaca. Warna coral #D97659
-                         yang paling cerah dari logo tidak dipakai karena hanya
-                         2.9:1 di sini. --}}
-                    <h1 class="font-serif-title font-bold text-lg text-[#A23725] leading-tight truncate">Nupsera</h1>
-                    <p class="text-[11px] text-[#B4503A] font-bold tracking-wide uppercase whitespace-nowrap">Wedding
-                        &amp; Moments</p>
+                {{-- Logo ikon: nupsera-ori.png ditampilkan seukuran tinggi teks
+                     (h-8 / 32px) agar proporsional. object-contain memastikan
+                     seluruh logo tampil tanpa terpotong. --}}
+                <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo Nupsera"
+                    class="shrink-0 object-contain"
+                    style="height:2rem;width:auto;max-width:2.5rem;">
+                <div class="sidebar-label min-w-0 leading-none">
+                    {{-- "Nupsera" — gold/copper gradient sesuai logo-brand.jpg --}}
+                    <h1 class="font-serif-title font-bold text-[1.1rem] leading-tight truncate"
+                        style="background:linear-gradient(135deg,#8B4513 0%,#C07830 35%,#D4A96A 60%,#B8762A 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Nupsera</h1>
+                    {{-- "WEDDING & MOMENTS" — sans-serif, uppercase kecil, warna gelap sesuai referensi --}}
+                    <p class="whitespace-nowrap font-semibold uppercase tracking-widest"
+                        style="font-size:0.55rem;color:#4A5240;letter-spacing:0.18em;">Wedding &amp; Moments</p>
                 </div>
             </a>
             <button @click="sidebarOpen = false"
