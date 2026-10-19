@@ -22,6 +22,12 @@ class AdminPanelController extends Controller
         return view('admin.index', [
             'wedding' => $wedding,
             'me' => auth()->user(),
+            // Riwayat pembelian paket Pro, ditampilkan di kartu Status Akun.
+            // Lewat relasi jadi otomatis ter-scope ke wedding yang sedang login;
+            // superadmin tanpa wedding tidak punya apa pun untuk ditampilkan.
+            'upgradeRequests' => $wedding
+                ? $wedding->upgradeRequests()->latest()->get()
+                : collect(),
         ]);
     }
 

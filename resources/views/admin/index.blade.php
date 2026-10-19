@@ -125,6 +125,55 @@
                         </a>
                     </div>
                 @endif
+
+                {{-- Riwayat pembelian paket Pro. Pending dan rejected ikut
+                     ditampilkan: pending supaya pengguna tahu permintaannya
+                     masih diproses, rejected supaya jelas kenapa tidak jadi Pro. --}}
+                @if ($upgradeRequests->isNotEmpty())
+                    <div class="border-t border-[#B6ADA3]/30 pt-4">
+                        <h3 class="text-[11px] font-bold uppercase tracking-wider text-[#B6ADA3] mb-2.5">
+                            Riwayat Pembelian
+                        </h3>
+
+                        <ul class="space-y-2">
+                            @foreach ($upgradeRequests as $purchase)
+                                @php
+                                    $badge = [
+                                        'pending' => ['bg-[#FAF7F2] border-[#B6ADA3]/50 text-[#5F6F5B]', 'Menunggu'],
+                                        'approved' => ['bg-[#F1F5F0] border-[#A3B7A6]/60 text-[#5F6F5B]', 'Disetujui'],
+                                        'rejected' => ['bg-[#FBF2F4] border-[#D8A7B1]/60 text-[#C2757F]', 'Ditolak'],
+                                    ][$purchase->status] ?? ['bg-[#FAF7F2] border-[#B6ADA3]/50 text-[#5F6F5B]', $purchase->status];
+
+                                    // Yang ditampilkan adalah tanggal persetujuan, karena
+                                    // itulah saat paketnya benar-benar aktif. Kalau masih
+                                    // pending, tanggal pengajuannya yang relevan.
+                                    $date = $purchase->reviewed_at ?? $purchase->created_at;
+                                @endphp
+
+                                <li
+                                    class="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 px-3.5 py-2.5">
+                                    <div class="min-w-0">
+                                        <div class="text-sm font-semibold text-[#5F6F5B]">
+                                            Paket {{ strtoupper($purchase->plan) }} &middot;
+                                            Rp {{ number_format($purchase->amount, 0, ',', '.') }}
+                                        </div>
+                                        <div class="text-[11px] text-[#B6ADA3]">
+                                            {{ $date->translatedFormat('d M Y') }}
+                                            @if ($purchase->status === 'rejected' && $purchase->admin_note)
+                                                &middot; {{ $purchase->admin_note }}
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <span
+                                        class="shrink-0 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold {{ $badge[0] }}">
+                                        {{ $badge[1] }}
+                                    </span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
         @endif
 
