@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class ProSettingsController extends Controller
 {
     /** Kunci app_settings yang dikelola dari halaman ini. */
-    private const KEYS = ['pro_price', 'pro_price_before', 'pro_bank', 'admin_whatsapp', 'moodboard_free_limit'];
+    private const KEYS = ['pro_price', 'pro_price_before', 'pro_bank', 'admin_whatsapp'];
 
     public function edit()
     {
@@ -39,7 +39,6 @@ class ProSettingsController extends Controller
             'pro_price_before' => ['nullable', 'integer', 'min:0'],
             'pro_bank' => ['required', 'string', 'max:500'],
             'admin_whatsapp' => ['required', 'string', 'max:30'],
-            'moodboard_free_limit' => ['required', 'integer', 'min:0', 'max:1000'],
         ]);
 
         foreach ($validated as $key => $value) {

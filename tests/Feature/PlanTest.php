@@ -53,70 +53,33 @@ class PlanTest extends TestCase
         ]);
     }
 
-    public function test_free_couple_can_open_moodboard_up_to_the_quota()
+    public function test_free_couple_sees_the_locked_moodboard_page()
     {
         [$wedding, $user] = $this->couple();
 
-        $this->actingAs($user)->get('/moodboards')->assertOk()->assertSee('0 / 3 item terpakai');
+        // Item sisa dari pasangan yang sebelumnya masih Free tidak boleh bocor
+        // ke halaman terkunci.
+        $wedding->moodboards()->create(['category' => 'Dekorasi', 'title' => 'Referensi lama']);
 
-        // Form moodboard minimal: kategori + judul.
-        $payload = ['category' => 'Dekorasi', 'title' => 'Referensi'];
-
-        foreach (range(1, 3) as $i) {
-            $this->actingAs($user)
-                ->post('/moodboards', $payload + ['title' => "Referensi {$i}"])
-                ->assertRedirect(route('moodboards.index'));
-        }
-
-        $this->assertSame(3, $wedding->moodboards()->count());
+        $this->actingAs($user)->get('/moodboards')
+            ->assertOk()
+            ->assertSee('Upgrade ke Pro')
+            ->assertSee(route('upgrade.index'))
+            ->assertDontSee('Referensi lama')
+            // Tidak ada form maupun tombol tambah: paket Free tidak punya
+            // akses ke apa pun di modul ini.
+            ->assertDontSee('Tambah Moodboard');
     }
 
-    public function test_free_couple_is_blocked_at_the_quota_and_frees_a_slot_on_delete()
+    public function test_free_couple_cannot_create_items()
     {
         [$wedding, $user] = $this->couple();
-        $payload = ['category' => 'Dekorasi', 'title' => 'Referensi'];
-
-        foreach (range(1, 3) as $i) {
-            $this->actingAs($user)->post('/moodboards', $payload + ['title' => "Referensi {$i}"]);
-        }
-
-        // Keempatnya ditolak, jumlah item tidak bertambah.
-        $this->actingAs($user)
-            ->from('/moodboards')
-            ->post('/moodboards', $payload + ['title' => 'Keempat'])
-            ->assertRedirect('/moodboards')
-            ->assertSessionHas('error');
-
-        $this->assertSame(3, $wedding->moodboards()->count());
-
-        // Hapus satu, slot langsung tersedia lagi.
-        $this->actingAs($user)->delete('/moodboards/' . $wedding->moodboards()->first()->id);
 
         $this->actingAs($user)
-            ->post('/moodboards', $payload + ['title' => 'Setelah hapus'])
+            ->post('/moodboards', ['category' => 'Dekorasi', 'title' => 'Referensi'])
             ->assertRedirect(route('moodboards.index'));
 
-        $this->assertSame(3, $wedding->moodboards()->count());
-    }
-
-    public function test_quota_comes_from_admin_settings()
-    {
-        Setting::put('moodboard_free_limit', '5');
-
-        [$wedding, $user] = $this->couple();
-        $payload = ['category' => 'Dekorasi', 'title' => 'Referensi'];
-
-        foreach (range(1, 5) as $i) {
-            $this->actingAs($user)->post('/moodboards', $payload + ['title' => "Referensi {$i}"]);
-        }
-
-        $this->assertSame(5, $wedding->moodboards()->count());
-
-        $this->actingAs($user)
-            ->post('/moodboards', $payload + ['title' => 'Keenam'])
-            ->assertSessionHas('error');
-
-        $this->assertSame(5, $wedding->moodboards()->count());
+        $this->assertSame(0, $wedding->moodboards()->count());
     }
 
     public function test_pro_couple_is_not_limited()
@@ -132,29 +95,23 @@ class PlanTest extends TestCase
         $this->assertSame(5, $wedding->moodboards()->count());
     }
 
-    public function test_couple_over_quota_keeps_access_to_existing_items()
+    public function test_free_couple_cannot_edit_or_delete_leftover_items()
     {
-        // Batas diturunkan lewat admin di tengah jalan: item yang sudah ada
-        // tidak boleh hilang atau terkunci, pasangan hanya tidak bisa menambah.
-        Setting::put('moodboard_free_limit', '1');
-
+        // Pasangan yang sebelumnya masih Free bisa saja sudah punya item.
+        // Membuka kunci mati tidak boleh menyisakan jalur tulis di belakang
+        // halaman terkunci, jadi edit dan hapus ikut tertutup.
         [$wedding, $user] = $this->couple();
-
-        foreach (range(1, 3) as $i) {
-            $wedding->moodboards()->create(['category' => 'Dekorasi', 'title' => "Referensi {$i}"]);
-        }
+        $item = $wedding->moodboards()->create(['category' => 'Dekorasi', 'title' => 'Referensi lama']);
 
         $this->actingAs($user)
-            ->get('/moodboards')
-            ->assertOk()
-            ->assertSee('Referensi 1')
-            ->assertSee('3 / 1 item terpakai');
+            ->put('/moodboards/' . $item->id, ['category' => 'Dekorasi', 'title' => 'Diubah'])
+            ->assertRedirect(route('moodboards.index'));
+        $this->assertSame('Referensi lama', $item->fresh()->title);
 
         $this->actingAs($user)
-            ->post('/moodboards', ['category' => 'Dekorasi', 'title' => 'Baru'])
-            ->assertSessionHas('error');
-
-        $this->assertSame(3, $wedding->moodboards()->count());
+            ->delete('/moodboards/' . $item->id)
+            ->assertRedirect(route('moodboards.index'));
+        $this->assertSame(1, $wedding->moodboards()->count());
     }
 
     public function test_free_couple_is_redirected_from_vendor_directory()
@@ -581,12 +538,10 @@ public function test_superadmin_can_save_pro_settings()
                 'pro_price' => 249000,
                 'pro_bank' => 'BCA 1234567890 a/n Wedding Planner',
                 'admin_whatsapp' => '6281234567890',
-                'moodboard_free_limit' => 3,
             ])
             ->assertRedirect(route('admin.pro-settings.index'));
 
         $this->assertSame('249000', Setting::get('pro_price'));
         $this->assertSame('6281234567890', Setting::get('admin_whatsapp'));
-        $this->assertSame('3', Setting::get('moodboard_free_limit'));
     }
 }

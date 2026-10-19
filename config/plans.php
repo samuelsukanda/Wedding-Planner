@@ -3,20 +3,23 @@
 /**
  * Registry fitur yang dikunci penuh per paket.
  *
- * Bentuknya: 'nama_menu' => 'paket_yang_dibutuhkan'. Dipakai middleware
- * EnsurePlan (alias 'plan' di bootstrap/app.php).
+ * Bentuknya: 'nama_menu' => 'paket_yang_dibutuhkan'. Satu-satunya tempat yang
+ * memutuskan sebuah fitur berbayar boleh dibuka; middleware EnsurePlan, halaman
+ * terkunci, dan ikon gembok di sidebar semuanya membaca dari sini supaya tidak
+ * bisa berbeda pendapat.
  *
- * Kosong sekarang: semua fitur Pro yang ada berbasis KUOTA, bukan kunci mati,
- * sehingga tidak ada route yang memakai EnsurePlan. Moodboard free boleh
- * dibuka, hanya jumlah item-nya yang dibatasi (lihat Wedding::limitFor()).
- * Jangan isi 'moodboard' di sini — hasFeature() akan menyatakan free tidak
- * boleh akses padahal nyatanya boleh.
+ * Dua cara mengunci, pilihannya ada di routes/web.php:
+ * - ->middleware('plan:nama') untuk fitur yang cukup dialihkan ke /upgrade
+ *   (Cari Vendor).
+ * - Halaman terkunci sendiri untuk fitur yang lebih baik menampilkan penjelasan
+ *   apa yang terkunci di halaman tersebut (Moodboard).
  *
- * Kalau nanti ada modul Premium yang mau dikunci mati, tambahkan satu baris di
- * sini lalu pasang ->middleware('plan:nama_modul') di routes/web.php.
+ * Kalau nanti ada modul Premium lain, tambahkan satu baris di sini lalu pilih
+ * salah satu dari dua cara di atas.
  */
 return [
     'features' => [
         'vendor_directory' => 'pro',
+        'moodboard' => 'pro',
     ],
 ];

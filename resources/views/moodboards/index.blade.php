@@ -12,30 +12,16 @@
                     mewujudkan pernikahan impian.</p>
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
-                @if ($limit === null)
-                    <span
-                        class="inline-flex items-center gap-1.5 rounded-full border border-[#A3B7A6]/60 bg-[#F1F5F0] px-3 py-1.5 text-[11px] font-bold text-[#5F6F5B]">
-                        <i class="fa-solid fa-crown text-[#A3B7A6]"></i>
-                        Tanpa batas
-                    </span>
-                @else
-                    <span
-                        class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold {{ $used >= $limit ? 'border-[#D8A7B1]/60 bg-[#FBF2F4] text-[#C2757F]' : 'border-[#B6ADA3]/50 bg-[#FAF7F2] text-[#5F6F5B]/80' }}">
-                        {{ $used }} / {{ $limit }} item terpakai
-                    </span>
-                @endif
+                <span
+                    class="inline-flex items-center gap-1.5 rounded-full border border-[#A3B7A6]/60 bg-[#F1F5F0] px-3 py-1.5 text-[11px] font-bold text-[#5F6F5B]">
+                    <i class="fa-solid fa-crown text-[#A3B7A6]"></i>
+                    Tanpa batas
+                </span>
 
-                @if ($limit !== null && $used >= $limit)
-                    <a href="{{ route('upgrade.index') }}"
-                        class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 w-full md:w-auto">
-                        <i class="fa-solid fa-crown"></i> Upgrade ke Pro
-                    </a>
-                @else
-                    <button @click="modalOpen = true; editMode = false; currentItem = {}"
-                        class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
-                        <i class="fa-solid fa-plus"></i> Tambah Moodboard
-                    </button>
-                @endif
+                <button @click="modalOpen = true; editMode = false; currentItem = {}"
+                    class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
+                    <i class="fa-solid fa-plus"></i> Tambah Moodboard
+                </button>
             </div>
         </div>
 

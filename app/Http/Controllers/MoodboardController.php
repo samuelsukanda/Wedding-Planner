@@ -9,9 +9,26 @@ use Illuminate\Http\Request;
 
 class MoodboardController extends Controller
 {
+    /**
+     * Copy halaman terkunci, dipisah dari view supaya mudah dibaca dan diuji.
+     */
+    private const LOCKED_COPY = [
+        'title' => 'Moodboard',
+        'description' => 'Kumpulan inspirasi wedding kamu — dekor, gaun, bouquet, venue — dalam board yang bisa dibagi ke pasangan.',
+        'highlights' => ['Sage', 'Bouquet', 'Akad', 'Rustic'],
+        'note' => 'Buka semua Wedding Kit + Invite Pasangan + Multi-device',
+    ];
+
     public function index(Request $request)
     {
         $wedding = Wedding::current();
+
+        // Moodboard dikunci penuh, bukan berbasis kuota: untuk paket Free daftar
+        // item-nya tidak pernah dirender, hanya halaman penjelasan yang tampil.
+        if (! $wedding->hasFeature('moodboard')) {
+            return view('moodboards.locked', ['feature' => self::LOCKED_COPY]);
+        }
+
         $query = $wedding->moodboards();
 
         if ($request->filled('category')) {
@@ -22,15 +39,10 @@ class MoodboardController extends Controller
 
         $categories = DropdownOption::getOptions('moodboard_category', ['Dekorasi', 'Pelaminan', 'Gaun Pengantin', 'Suit', 'Makeup', 'Undangan', 'Souvenir', 'Table Setting']);
 
-        // Dipakai view untuk menampilkan sisa kuota dan menjadikan tombol
-        // "Tambah" jadi link upgrade kalau sudah penuh. Filter kategori tidak
-        // ikut dihitung — kuota berlaku untuk seluruh item moodboard.
         return view('moodboards.index', [
             'wedding' => $wedding,
             'moodboards' => $moodboards,
             'categories' => $categories,
-            'limit' => $wedding->limitFor('moodboard'),
-            'used' => $wedding->moodboards()->count(),
         ]);
     }
 
@@ -38,13 +50,8 @@ class MoodboardController extends Controller
     {
         $wedding = Wedding::current();
 
-        // Kuota dicek sebelum validasi: kalau sudah penuh, tidak ada gunanya
-        // memvalidasi form yang pasti ditolak. Ini satu-satunya jalur tulis
-        // item baru, jadi cukup di sini.
-        $limit = $wedding->limitFor('moodboard');
-
-        if ($limit !== null && $wedding->moodboards()->count() >= $limit) {
-            return back()->with('error', "Paket Free bisa menyimpan maksimal {$limit} item moodboard. Upgrade ke Pro untuk menambah tanpa batas.");
+        if ($this->locked($wedding)) {
+            return redirect()->route('moodboards.index');
         }
 
         $validated = $request->validate([
@@ -65,6 +72,12 @@ class MoodboardController extends Controller
 
     public function update(Request $request, Moodboard $moodboard)
     {
+        // Item sisa dari pasangan yang sebelumnya masih Free tetap bisa ada,
+        // jadi jalur edit ikut tertutup - bukan hanya halaman daftarnya.
+        if ($this->locked(Wedding::current())) {
+            return redirect()->route('moodboards.index');
+        }
+
         $validated = $request->validate([
             'category' => 'required|string',
             'title' => 'required|string|max:255',
@@ -119,7 +132,17 @@ class MoodboardController extends Controller
 
     public function destroy(Moodboard $moodboard)
     {
+        if ($this->locked(Wedding::current())) {
+            return redirect()->route('moodboards.index');
+        }
+
         $moodboard->delete();
         return redirect()->route('moodboards.index')->with('success', 'Moodboard berhasil dihapus!');
+    }
+
+    /** Moodboard hanya untuk paket Pro. Satu-satunya sumber kebenarannya Wedding::hasFeature(). */
+    private function locked(Wedding $wedding): bool
+    {
+        return ! $wedding->hasFeature('moodboard');
     }
 }

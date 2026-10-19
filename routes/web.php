@@ -114,9 +114,10 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::get('guests/wa-all', [GuestController::class, 'sendWaAll'])->name('guests.wa-all');
     Route::post('guests/{guest}/wa-sent', [GuestController::class, 'toggleWaSent'])->name('guests.wa-sent');
 
-    // Module 6 - Moodboard. Fitur Pro berbasis kuota, bukan kunci mati: Free
-    // boleh membuka halaman ini, cuma jumlah item-nya dibatasi (lihat
-    // Wedding::limitFor dan enforcement di MoodboardController@store).
+    // Module 6 - Moodboard. Sepenuhnya Pro, tanpa kuota: paket Free mendapat
+    // halaman terkunci, bukan daftar item. Gate-nya ada di controller karena
+    // butuh merender halaman penjelasan, bukan sekadar redirect ke /upgrade
+    // seperti EnsurePlan.
     Route::resource('moodboards', MoodboardController::class)->except(['create', 'edit', 'show']);
 
     // Module 7 - Event Rundown

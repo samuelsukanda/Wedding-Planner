@@ -79,19 +79,6 @@
                 @enderror
             </div>
 
-            <div>
-                <label for="moodboard_free_limit"
-                    class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
-                    Batas Moodboard Paket Free *
-                </label>
-                <input type="number" name="moodboard_free_limit" id="moodboard_free_limit" min="0" max="1000"
-                    required value="{{ old('moodboard_free_limit', $values['moodboard_free_limit'] ?: 3) }}"
-                    class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] focus:border-[#D8A7B1] focus:outline-none transition">
-                @error('moodboard_free_limit')
-                    <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
-                @enderror
-            </div>
-
             <button type="submit" class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer">
                 Simpan Pengaturan
             </button>
