@@ -111,9 +111,9 @@
                 </button>
 
                 <!-- ================= MODAL RINGKASAN PEMBELIAN =================
-                                         Struktur, warna, dan cara menutupnya mengikuti modal
-                                         "Tambah Data" di modul lain (x-show + x-outside + Escape),
-                                         supaya tidak ada gaya modal ketiga di aplikasi ini. -->
+                                             Struktur, warna, dan cara menutupnya mengikuti modal
+                                             "Tambah Data" di modul lain (x-show + x-outside + Escape),
+                                             supaya tidak ada gaya modal ketiga di aplikasi ini. -->
                 <div x-show="modalOpen" x-transition.opacity x-cloak @keydown.escape.window="modalOpen = false"
                     class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
                     <div x-outside="modalOpen = false"
@@ -143,7 +143,7 @@
                             @endif
                             <div class="flex items-center justify-between gap-4 py-2.5">
                                 <dt class="text-[#5F6F5B]/70">Batas Moodboard</dt>
-                                <dd class="font-semibold text-[#5F6F5B]">Tanpa batas</dd>
+                                <dd class="font-semibold text-[#5F6F5B]">PRO</dd>
                             </div>
                             <div class="flex items-center justify-between gap-4 pt-3 mt-1">
                                 <dt class="font-bold text-[#5F6F5B]">Total</dt>

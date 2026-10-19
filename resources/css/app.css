@@ -295,6 +295,18 @@ body {
     font-family: 'Playfair Display', serif;
 }
 
+/* Font brand Nupsera, hanya untuk lockup "Nupsera / Wedding & Moments"
+   di sidebar. Cinzel untuk nama, Montserrat untuk tagline - dua huruf yang
+   dipakai di brand kit resmi. Sisanya aplikasi tetap memakai Outfit dan
+   Playfair Display supaya bobot font tidak bertambah di halaman lain. */
+.font-nupsera-brand {
+    font-family: 'Cinzel', Georgia, serif;
+}
+
+.font-nupsera-tagline {
+    font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+}
+
 /* Animasi toast dipakai bersama oleh komponen <x-flash-toast> dan toast
    validasi di wizard, supaya keduanya identik.
    Masuk: fade in dari atas ke bawah. Keluar: fade out ke arah sebaliknya,

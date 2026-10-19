@@ -478,7 +478,7 @@
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-w-0">
                 <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo"
                     class="w-9 h-9 rounded-xl object-cover shrink-0">
-                <div class="sidebar-label min-w-0">
+                <div class="sidebar-label min-w-0 ml-3">
                     {{-- Warna diambil dari gradien logo nupsera-ori.png: brick
                          #A23725 dan terracotta #B4503A. Kontrasnya dihitung di
                          atas background sidebar #FAF7F2, yaitu 6.3:1 dan 4.7:1,
@@ -499,7 +499,8 @@
         <!-- Navigation Links (All 11 PRD Modules) -->
         <nav class="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
             @unless (auth()->user()?->is_superadmin)
-                <div class="nav-section px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Utama</div>
+                <div class="nav-section px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Utama
+                </div>
 
                 <a href="{{ route('dashboard') }}"
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('dashboard') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">

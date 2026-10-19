@@ -15,7 +15,8 @@
         class="relative flex min-h-[calc(100vh_-_13rem)] flex-col justify-center overflow-hidden rounded-3xl px-5 py-4 text-center md:py-5">
         {{-- Cahaya hangat di belakang, biar tengah halaman tidak terasa kosong --}}
         <div aria-hidden="true"
-            class="pointer-events-none absolute inset-x-0 top-1/2 h-72 w-[46rem] max-w-full -translate-y-1/2 rounded-full bg-[#F3E4E1]/50 blur-3xl"></div>
+            class="pointer-events-none absolute inset-x-0 top-1/2 h-72 w-[46rem] max-w-full -translate-y-1/2 rounded-full bg-[#F3E4E1]/50 blur-3xl">
+        </div>
 
         <div class="relative">
             {{-- ================= PIL FITUR ================= --}}
@@ -121,10 +122,9 @@
                  saat pengguna memutuskan membayar. --}}
             <p class="mt-2.5 text-[11px] text-[#B6ADA3]">
                 @if ($price > 0)
-                    Sekali bayar Rp {{ number_format($price, 0, ',', '.') }} &middot; Akses semua fitur &amp; device
-                    &middot; Berlaku seumur akun
+                    Lifetime + Akses ke semua fitur + Multi device + Invite Pasangan
                 @else
-                    Sekali bayar &middot; Akses semua fitur &amp; device &middot; Berlaku seumur akun
+                    Lifetime + Akses ke semua fitur + Multi device + Invite Pasangan
                 @endif
             </p>
         </div>

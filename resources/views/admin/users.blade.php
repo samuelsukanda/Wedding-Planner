@@ -3,7 +3,8 @@
 @section('title', 'Admin Panel - Admin')
 
 @section('content')
-    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {}, weddingMode: 'existing', partnerModalOpen: false, partnerItem: {}, openPartnerModal(u) { this.partnerItem = u; this.partnerModalOpen = true }, init() {} }">
+    <div class="space-y-6" x-data="{ modalOpen: false, editMode: false, currentItem: {}, weddingMode: 'existing', partnerModalOpen: false, partnerItem: {}, openPartnerModal(u) { this.partnerItem = u;
+            this.partnerModalOpen = true }, init() {} }">
         <!-- Page Title & Header -->
         <div
             class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
@@ -290,13 +291,11 @@
                          sudah dipasangkan ke sebuah wedding. --}}
                     <div>
                         <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status Akun</label>
-                        <select name="plan" x-model="currentItem.plan"
-                            :disabled="!currentItem.wedding_id"
+                        <select name="plan" x-model="currentItem.plan" :disabled="!currentItem.wedding_id"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed">
                             <option value="free">Free</option>
                             <option value="pro">Pro</option>
                         </select>
-                        <p class="text-[10px] text-[#B6ADA3] mt-1">Status mengikuti Wedding Kit, jadi berlaku untuk kedua akun pasangan.</p>
                     </div>
                     <div class="rounded-xl border border-[#B6ADA3]/30 bg-[#FAF7F2]/50 p-3 space-y-3">
                         <p class="text-xs font-semibold text-[#5F6F5B]">Pasangan</p>
@@ -314,9 +313,6 @@
                                 class="w-full bg-white border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                                 placeholder="nabila@email.com">
                         </div>
-                        <p class="text-[10px] text-[#B6ADA3]">Kalau email-nya sudah terdaftar, akun tersebut
-                            bergabung ke Wedding Kit ini. Kalau belum, dibuatkan akun baru dan pasangan memakai
-                            &quot;Lupa Password&quot; untuk masuk.</p>
                     </div>
                     <label class="flex items-center gap-2 text-sm text-[#5F6F5B] cursor-pointer">
                         <input type="checkbox" name="is_superadmin" value="1" x-model="currentItem.is_superadmin"
@@ -342,8 +338,7 @@
                     <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]">
                         Pasangan untuk <span x-text="partnerItem.name"></span>
                     </h3>
-                    <button @click="partnerModalOpen = false"
-                        class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                    <button @click="partnerModalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
@@ -375,8 +370,7 @@
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="partnerModalOpen = false"
                             class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
-                        <button type="submit"
-                            class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
+                        <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             Pasangan</button>
                     </div>
                 </form>
