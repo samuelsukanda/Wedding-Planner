@@ -130,6 +130,13 @@ class PlanTest extends TestCase
         // Muat satu layar tanpa harus scroll ke bawah.
         $this->assertStringContainsString('min-h-[calc(100vh_-_13rem)]', $html);
 
+        // Ukuran kartu mengikuti tinggi layar lewat clamp. Angkanya sengaja
+        // dikunci di sini: versi sebelumnya clamp(6rem, 15vh, 10rem) membuat
+        // kartunya mengecil jadi sekitar 93px dan halaman terlihat kosong,
+        // padahal ruangnya masih plenty.
+        $this->assertSame(3, substr_count($html, 'w-[clamp(7rem,20vh,13rem)]'));
+        $this->assertStringNotContainsString('clamp(6rem,15vh', $html);
+
         // Kartu tengah: palet putih-krem muda, gembok coklat, badge PRO coklat.
         foreach (['FFFFFF', 'FDFAF5', 'F6EEE3', 'EADFCB'] as $cream) {
             $this->assertStringContainsString($cream, $html);

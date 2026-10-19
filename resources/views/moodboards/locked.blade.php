@@ -25,7 +25,7 @@
             </span>
 
             <h1
-                class="mx-auto mt-3 max-w-2xl font-serif-title text-[1.25rem] font-bold leading-tight text-[#3F4A3B] md:text-[1.625rem]">
+                class="mx-auto mt-2.5 max-w-2xl font-serif-title text-[1.25rem] font-bold leading-tight text-[#3F4A3B] md:text-[1.5rem]">
                 {{ $feature['title'] }}
             </h1>
 
@@ -37,10 +37,10 @@
                  Semua kartu:sama lebarnya, satu foto melebar penuh berdiri di
                  kolom luar dan dua foto setengah lebar di kolom dalam, dengan
                  kolom penuhnya dibalik antar kartu kiri dan kanan. --}}
-            <div class="mt-4 flex items-center justify-center gap-3 md:mt-5 md:gap-5">
+            <div class="mt-5 flex items-center justify-center gap-3 md:mt-6 md:gap-6">
                 {{-- Kartu kiri: foto penuh di kolom kiri, miring ke kiri --}}
                 <div
-                    class="hidden w-[clamp(6rem,15vh,10rem)] rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 transition-transform duration-300 ease-out hover:-translate-y-2 hover:rotate-0 hover:shadow-xl motion-reduce:transform-none sm:block -rotate-6">
+                    class="hidden w-[clamp(7rem,20vh,13rem)] rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 transition-transform duration-300 ease-out hover:-translate-y-2 hover:rotate-0 hover:shadow-xl motion-reduce:transform-none sm:block -rotate-6">
                     <div class="grid grid-cols-2 gap-1.5">
                         {{-- h-full, bukan aspect-ratio: tinggi kolom dalam sudah
                              ditentukan dua kotak persegi, jadi foto penuh tinggal
@@ -61,7 +61,7 @@
                      dan badge PRO memakai coklat supaya terpisah dari aksen
                      pink halaman. --}}
                 <div
-                    class="relative z-10 w-[clamp(6rem,15vh,10rem)] rounded-2xl border border-[#B6ADA3]/40 bg-white p-2.5 shadow-xl shadow-[#5F6F5B]/15 transition-transform duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl motion-reduce:transform-none">
+                    class="relative z-10 w-[clamp(7rem,20vh,13rem)] rounded-2xl border border-[#B6ADA3]/40 bg-white p-2.5 shadow-xl shadow-[#5F6F5B]/15 transition-transform duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl motion-reduce:transform-none">
                     <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-[#FBF7F0]">
                         <div aria-hidden="true" class="absolute inset-0 grid grid-cols-2 gap-1 p-1.5 blur-[7px]">
                             @foreach (['FFFFFF', 'FDFAF5', 'F6EEE3', 'EADFCB'] as $cream)
@@ -84,7 +84,7 @@
 
                 {{-- Kartu kanan: foto penuh di kolom kanan, miring ke kanan --}}
                 <div
-                    class="hidden w-[clamp(6rem,15vh,10rem)] rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 transition-transform duration-300 ease-out hover:-translate-y-2 hover:rotate-0 hover:shadow-xl motion-reduce:transform-none sm:block rotate-6">
+                    class="hidden w-[clamp(7rem,20vh,13rem)] rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 transition-transform duration-300 ease-out hover:-translate-y-2 hover:rotate-0 hover:shadow-xl motion-reduce:transform-none sm:block rotate-6">
                     <div class="grid grid-cols-2 gap-1.5">
                         <div class="flex flex-col gap-1.5">
                             <img src="{{ asset('img/pexels-ceremony-flowers.jpg') }}" alt=""
@@ -100,7 +100,7 @@
             </div>
 
             {{-- ================= MANFAAT ================= --}}
-            <ul class="mt-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-2.5 md:mt-5 text-[13px]">
+            <ul class="mt-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 md:mt-5 text-xs">
                 @foreach ($feature['benefits'] as $benefit)
                     <li class="flex items-center gap-2 text-sm text-[#5F6F5B]">
                         <i class="fa-solid {{ $benefit['icon'] }} text-[#C2757F]"></i>
