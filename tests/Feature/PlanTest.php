@@ -88,23 +88,24 @@ class PlanTest extends TestCase
         // Aset gambar disimpan di repo, bukan hotlink ke Pinterest: link CDN
         // bisa berubah atau diblokir. Test ini menahan aset yang hilang supaya
         // kotak kosong tidak baru ketahuan setelah deploy.
-        $this->assertStringContainsString('img/moodboard-rustic-arch.jpg', $html);
-        $this->assertStringContainsString('img/moodboard-rustic-table.jpg', $html);
-        foreach (['moodboard-rustic-arch', 'moodboard-rustic-table'] as $asset) {
+        $this->assertStringNotContainsString('moodboard-rustic-table', $html);
+        foreach (['moodboard-rustic-hands', 'moodboard-rustic-arch'] as $asset) {
+            $this->assertStringContainsString("img/$asset.jpg", $html);
             $this->assertFileExists(public_path("img/$asset.jpg"));
         }
 
-        // Warna palette diambil dari pin champagne-beige, bukan tebakan.
-        foreach (['998376', 'C6AD99', 'C8B8AB', 'DACCC3'] as $swatch) {
+        // Warna kartu kanan dibaca dari pixel dua pin (dekorasi meja rustik
+        // dan palet champagne-beige), bukan tebakan.
+        foreach (['867847', 'A77B56', 'C9AD85', 'DACCC3'] as $swatch) {
             $this->assertStringContainsString($swatch, $html);
         }
 
-        // Kartu tengah yang dikunci isinya foto memburam, bukan kotak warna:
-// siluet board lebih terbaca sebagai "ada isinya tapi belum boleh dibuka".
-        $this->assertMatchesRegularExpression(
-            '/<img[^>]*moodboard-rustic-arch\.jpg[^>]*blur-\[7px\]/',
-            $html,
-        );
+        // Kartu tengah: palet putih-krem muda, gembok coklat, badge PRO coklat.
+        foreach (['FFFFFF', 'FDFAF5', 'F6EEE3', 'EADFCB'] as $cream) {
+            $this->assertStringContainsString($cream, $html);
+        }
+        $this->assertStringContainsString('text-[#8A6A45]', $html);
+        $this->assertStringContainsString('fa-lock', $html);
 
         // Harga ikut dari app_settings, bukan ditulis mati di view.
         $this->assertStringContainsString('55.000', $html);

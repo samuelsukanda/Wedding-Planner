@@ -4,10 +4,11 @@
 
 @section('content')
     {{-- Halaman terkunci untuk paket Free.
-         Foto dan palet diambil dari pin yang dipilih pemilik produk dan
-         disimpan sendiri di public/img, bukan hotlink ke i.pinimg.com:
-         link Pinterest bisa berubah atau diblokir, dan halaman ini tidak
-         boleh ikut rusak kalau CDN-nya berubah. --}}
+         Foto dan warna diambil dari pin yang dipilih pemilik produk dan
+         disimpan sendiri di repo, bukan hotlink ke i.pinimg.com: link
+         Pinterest bisa berubah atau diblokir, dan halaman ini tidak boleh
+         ikut rusak kalau CDN-nya berganti. Warna palette dibaca langsung dari
+         pixel pin aslinya, jadi bukan tebakan. --}}
     <div class="relative overflow-hidden rounded-3xl px-5 py-14 md:py-20 text-center">
         {{-- Cahaya hangat di belakang, biar tengah halaman tidak terasa kosong --}}
         <div aria-hidden="true"
@@ -31,47 +32,51 @@
 
             {{-- ================= KLASTER BOARD ================= --}}
             <div class="mt-12 flex items-center justify-center gap-4 md:gap-7">
-                {{-- Kartu kiri: kolase foto, miring ke kiri --}}
+                {{-- Kartu kiri: dua foto bertumpuk, tiap baris satu baris
+                     penuh selebar kartu, miring ke kiri --}}
                 <div
                     class="hidden w-36 rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 -rotate-6 sm:block md:w-44">
-                    <div class="grid grid-cols-2 gap-1.5">
-                        @foreach (['moodboard-rustic-arch', 'moodboard-rustic-table'] as $photo)
+                    <div class="space-y-1.5">
+                        @foreach (['moodboard-rustic-hands', 'moodboard-rustic-arch'] as $photo)
                             <img src="{{ asset("img/$photo.jpg") }}" alt=""
-                                class="aspect-[3/4] w-full rounded-lg object-cover" loading="lazy">
+                                class="aspect-[4/3] w-full rounded-lg object-cover" loading="lazy">
                         @endforeach
                     </div>
                 </div>
 
-                {{-- Kartu tengah: board terkunci. Isinya foto yang diburam,
-                     bukan color palette - siluet board lebih terbaca sebagai
-                     "isi yang belum boleh dibuka" kalau berupa foto. --}}
+                {{-- Kartu tengah: board terkunci. Isinya palet putih-krem
+                     muda, jadi isinya kelihatan tapi tidak terbaca
+                     detailnya. Gembok dan badge PRO memakai coklat supaya
+                     terpisah dari aksen pink halaman. --}}
                 <div
                     class="relative z-10 w-32 rounded-2xl border border-[#B6ADA3]/40 bg-white p-2.5 shadow-xl shadow-[#5F6F5B]/15 md:w-40">
-                    <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-[#FAF7F2]">
-                        <img src="{{ asset('img/moodboard-rustic-arch.jpg') }}" alt="" aria-hidden="true"
-                            class="absolute inset-0 h-full w-full scale-110 object-cover blur-[7px]"
-                            loading="lazy">
+                    <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-[#FBF7F0]">
+                        <div aria-hidden="true" class="absolute inset-0 grid grid-cols-2 gap-1 p-1.5 blur-[7px]">
+                            @foreach (['FFFFFF', 'FDFAF5', 'F6EEE3', 'EADFCB'] as $cream)
+                                <span class="rounded-md" style="background:#{{ $cream }}"></span>
+                            @endforeach
+                        </div>
 
                         <div class="absolute inset-0 flex flex-col items-center justify-center gap-2.5">
                             <span
-                                class="flex h-11 w-11 items-center justify-center rounded-full border border-[#C9A227]/40 bg-[#C9A227]/15">
-                                <i class="fa-solid fa-lock text-[#C9A227]"></i>
+                                class="flex h-11 w-11 items-center justify-center rounded-full border border-[#B08D57]/40 bg-[#B08D57]/15">
+                                <i class="fa-solid fa-lock text-[#B08D57]"></i>
                             </span>
                             <span
-                                class="rounded-full bg-[#C2757F]/15 px-2.5 py-1 text-[10px] font-bold tracking-wide text-[#C2757F]">
+                                class="rounded-full bg-[#8A6A45]/12 px-2.5 py-1 text-[10px] font-bold tracking-wide text-[#8A6A45]">
                                 PRO
                             </span>
                         </div>
                     </div>
                 </div>
 
-                {{-- Kartu kanan: color palette + template, miring ke kanan.
-                     Warna diambil dari pin palet champagne-beige, jadi
-                     persis sama dengan referensinya, bukan tebakan warna. --}}
+                {{-- Kartu kanan: color palette, miring ke kanan.
+                     Warna diambil dari dua pin: olive dan tan dari dekorasi
+                     meja rustik, krem dari palet champagne-beige. --}}
                 <div
                     class="hidden w-36 rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 rotate-6 sm:block md:w-44">
                     <div class="grid grid-cols-4 gap-1">
-                        @foreach (['998376', 'C6AD99', 'C8B8AB', 'DACCC3'] as $swatch)
+                        @foreach (['867847', 'A77B56', 'C9AD85', 'DACCC3'] as $swatch)
                             <span class="aspect-square rounded-md" style="background:#{{ $swatch }}"></span>
                         @endforeach
                     </div>
