@@ -105,17 +105,30 @@ class PlanTest extends TestCase
         // masih merujuk ke sana.
         $this->assertStringNotContainsString('img/moodboard-rustic-', $html);
 
-        // Kartu kiri: satu foto melebar penuh (col-span-2) di atas dua foto
-        // setengah lebar. Kartu kanan kebalikannya, jadi foto penuhnya tidak
-        // boleh ikut.col-span-2.
-        $this->assertMatchesRegularExpression(
-            '/pexels-cake-floral\.jpg[^>]*col-span-2[^>]*aspect-\[2\/1\]/',
-            $html,
-        );
-        $this->assertMatchesRegularExpression(
-            '/pexels-photo-layout\.jpg[^>]*h-full/',
-            $html,
-        );
+        // Kartu kiri dan kanan sama-sama memuat satu foto melebar penuh (h-full)
+        // dan dua foto setengah lebar (aspect-square). Sisi penuhnya dibalik:
+        // di kartu kiri foto penuh mendahului kolom setengah lebarnya, di
+        // kartu kanan sebaliknya.
+        $leftFull = strpos($html, 'pexels-cake-floral.jpg');
+        $leftHalves = strpos($html, 'pexels-cake-elegant.jpg');
+        $rightFull = strpos($html, 'pexels-photo-layout.jpg');
+        $rightHalves = strpos($html, 'pexels-bridal-flatlay.jpg');
+
+        $this->assertLessThan($leftHalves, $leftFull);
+        $this->assertGreaterThan($rightHalves, $rightFull);
+
+        // Foto penuh membentang setinggi kolomnya, bukan kotak persegi.
+        $this->assertMatchesRegularExpression('/pexels-cake-floral\.jpg[^>]*h-full/', $html);
+        $this->assertMatchesRegularExpression('/pexels-photo-layout\.jpg[^>]*h-full/', $html);
+
+        // Ada gerak halus saat hover, dan dimatikan kalau pengguna meminta
+        // pengurangan animasi di sistemnya.
+        $this->assertStringContainsString('hover:-translate-y-2', $html);
+        $this->assertStringContainsString('hover:rotate-0', $html);
+        $this->assertStringContainsString('motion-reduce:transform-none', $html);
+
+        // Muat satu layar tanpa harus scroll ke bawah.
+        $this->assertStringContainsString('min-h-[calc(100vh_-_13rem)]', $html);
 
         // Kartu tengah: palet putih-krem muda, gembok coklat, badge PRO coklat.
         foreach (['FFFFFF', 'FDFAF5', 'F6EEE3', 'EADFCB'] as $cream) {

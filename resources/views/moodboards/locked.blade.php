@@ -4,54 +4,64 @@
 
 @section('content')
     {{-- Halaman terkunci untuk paket Free.
-         Foto dan warna diambil dari pin yang dipilih pemilik produk dan
-         disimpan sendiri di repo, bukan hotlink ke i.pinimg.com: link
-         Pinterest bisa berubah atau diblokir, dan halaman ini tidak boleh
-         ikut rusak kalau CDN-nya berganti. Warna palette dibaca langsung dari
-         pixel pin aslinya, jadi bukan tebakan. --}}
-    <div class="relative overflow-hidden rounded-3xl px-5 py-14 md:py-20 text-center">
+         Enam foto berlisensi Pexels (bebas komersial, tanpa wajib atribusi)
+         disimpan sendiri di repo, bukan hotlink ke CDN pihak ketiga. --}}
+    {{-- min-h pakai 13rem, bukan angka tebakan: ruang yang benar-benar
+         tersisa di dalam #main-content dikurangi header (~89px), footer
+         (~49px), dan padding halaman 2x32px, total sekitar 202px. Kalau
+         minsinya lebih besar dari sisa itu, halaman justru jadi lebih tinggi
+         dari layar dan memaksa scroll. --}}
+    <div
+        class="relative flex min-h-[calc(100vh_-_13rem)] flex-col justify-center overflow-hidden rounded-3xl px-5 py-4 text-center md:py-5">
         {{-- Cahaya hangat di belakang, biar tengah halaman tidak terasa kosong --}}
         <div aria-hidden="true"
-            class="pointer-events-none absolute inset-x-0 top-10 mx-auto h-72 w-[46rem] max-w-full rounded-full bg-[#F3E4E1]/50 blur-3xl"></div>
+            class="pointer-events-none absolute inset-x-0 top-1/2 h-72 w-[46rem] max-w-full -translate-y-1/2 rounded-full bg-[#F3E4E1]/50 blur-3xl"></div>
 
         <div class="relative">
             {{-- ================= PIL FITUR ================= --}}
             <span
-                class="inline-flex items-center gap-1.5 rounded-full border border-[#D8A7B1]/50 bg-[#D8A7B1]/10 px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-[#C2757F]">
+                class="inline-flex items-center gap-1.5 rounded-full border border-[#D8A7B1]/50 bg-[#D8A7B1]/10 px-3 py-1 text-[11px] font-bold tracking-wide text-[#C2757F]">
                 <i class="fa-solid fa-wand-magic-sparkles"></i> FITUR PRO
             </span>
 
             <h1
-                class="mx-auto mt-6 max-w-2xl font-serif-title text-[1.75rem] font-bold leading-tight text-[#3F4A3B] md:text-[2.5rem]">
+                class="mx-auto mt-3 max-w-2xl font-serif-title text-[1.25rem] font-bold leading-tight text-[#3F4A3B] md:text-[1.625rem]">
                 {{ $feature['title'] }}
             </h1>
 
-            <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#5F6F5B]/70">
+            <p class="mx-auto mt-1.5 max-w-lg text-[13px] leading-relaxed text-[#5F6F5B]/70">
                 {{ $feature['description'] }}
             </p>
 
-            {{-- ================= KLASTER BOARD ================= --}}
-            <div class="mt-12 flex items-center justify-center gap-4 md:gap-7">
-                {{-- Kartu kiri: satu foto melebar penuh di baris atas, dua foto
-                     setengah lebar di bawahnya. Miring ke kiri. --}}
+            {{-- ================= KLASTER BOARD =================
+                 Semua kartu:sama lebarnya, satu foto melebar penuh berdiri di
+                 kolom luar dan dua foto setengah lebar di kolom dalam, dengan
+                 kolom penuhnya dibalik antar kartu kiri dan kanan. --}}
+            <div class="mt-4 flex items-center justify-center gap-3 md:mt-5 md:gap-5">
+                {{-- Kartu kiri: foto penuh di kolom kiri, miring ke kiri --}}
                 <div
-                    class="hidden w-32 rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 -rotate-6 sm:block md:w-40">
+                    class="hidden w-[clamp(6rem,15vh,10rem)] rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 transition-transform duration-300 ease-out hover:-translate-y-2 hover:rotate-0 hover:shadow-xl motion-reduce:transform-none sm:block -rotate-6">
                     <div class="grid grid-cols-2 gap-1.5">
+                        {{-- h-full, bukan aspect-ratio: tinggi kolom dalam sudah
+                             ditentukan dua kotak persegi, jadi foto penuh tinggal
+                             ikut meregang setinggi itu. --}}
                         <img src="{{ asset('img/pexels-cake-floral.jpg') }}" alt=""
-                            class="col-span-2 aspect-[2/1] w-full rounded-lg object-cover" loading="lazy">
-                        <img src="{{ asset('img/pexels-cake-elegant.jpg') }}" alt=""
-                            class="aspect-square w-full rounded-lg object-cover" loading="lazy">
-                        <img src="{{ asset('img/pexels-flatlay-seal.jpg') }}" alt=""
-                            class="aspect-square w-full rounded-lg object-cover" loading="lazy">
+                            class="h-full w-full rounded-lg object-cover" loading="lazy">
+                        <div class="flex flex-col gap-1.5">
+                            <img src="{{ asset('img/pexels-cake-elegant.jpg') }}" alt=""
+                                class="aspect-square w-full rounded-lg object-cover" loading="lazy">
+                            <img src="{{ asset('img/pexels-flatlay-seal.jpg') }}" alt=""
+                                class="aspect-square w-full rounded-lg object-cover" loading="lazy">
+                        </div>
                     </div>
                 </div>
 
                 {{-- Kartu tengah: board terkunci. Isinya palet putih-krem
-                     muda, jadi isinya kelihatan tapi tidak terbaca
-                     detailnya. Gembok dan badge PRO memakai coklat supaya
-                     terpisah dari aksen pink halaman. --}}
+                     muda, jadi kelihatan tapi tidak terbaca detailnya. Gembok
+                     dan badge PRO memakai coklat supaya terpisah dari aksen
+                     pink halaman. --}}
                 <div
-                    class="relative z-10 w-32 rounded-2xl border border-[#B6ADA3]/40 bg-white p-2.5 shadow-xl shadow-[#5F6F5B]/15 md:w-40">
+                    class="relative z-10 w-[clamp(6rem,15vh,10rem)] rounded-2xl border border-[#B6ADA3]/40 bg-white p-2.5 shadow-xl shadow-[#5F6F5B]/15 transition-transform duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl motion-reduce:transform-none">
                     <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-[#FBF7F0]">
                         <div aria-hidden="true" class="absolute inset-0 grid grid-cols-2 gap-1 p-1.5 blur-[7px]">
                             @foreach (['FFFFFF', 'FDFAF5', 'F6EEE3', 'EADFCB'] as $cream)
@@ -72,11 +82,9 @@
                     </div>
                 </div>
 
-                {{-- Kartu kanan: kebalikan dari kartu kiri. Dua foto setengah lebar
-                     ditumpuk di kolom kiri, satu foto melebar penuh berdiri
-                     di kolom kanan. Miring ke kanan. --}}
+                {{-- Kartu kanan: foto penuh di kolom kanan, miring ke kanan --}}
                 <div
-                    class="hidden w-32 rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 rotate-6 sm:block md:w-40">
+                    class="hidden w-[clamp(6rem,15vh,10rem)] rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 transition-transform duration-300 ease-out hover:-translate-y-2 hover:rotate-0 hover:shadow-xl motion-reduce:transform-none sm:block rotate-6">
                     <div class="grid grid-cols-2 gap-1.5">
                         <div class="flex flex-col gap-1.5">
                             <img src="{{ asset('img/pexels-ceremony-flowers.jpg') }}" alt=""
@@ -85,9 +93,6 @@
                                 class="aspect-square w-full rounded-lg object-cover" loading="lazy">
                         </div>
 
-                        {{-- h-full, bukan aspect-ratio: tinggi kolom kiri sudah
-                             ditentukan dua kotak persegi, jadi foto kanan tinggal
-                             ikut meregang setinggi itu. --}}
                         <img src="{{ asset('img/pexels-photo-layout.jpg') }}" alt=""
                             class="h-full w-full rounded-lg object-cover" loading="lazy">
                     </div>
@@ -95,7 +100,7 @@
             </div>
 
             {{-- ================= MANFAAT ================= --}}
-            <ul class="mt-12 flex flex-wrap items-center justify-center gap-x-9 gap-y-4">
+            <ul class="mt-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-2.5 md:mt-5 text-[13px]">
                 @foreach ($feature['benefits'] as $benefit)
                     <li class="flex items-center gap-2 text-sm text-[#5F6F5B]">
                         <i class="fa-solid {{ $benefit['icon'] }} text-[#C2757F]"></i>
@@ -106,7 +111,7 @@
 
             {{-- ================= CTA ================= --}}
             <a href="{{ route('upgrade.index') }}"
-                class="btn-primary-rose mt-9 inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold cursor-pointer">
+                class="btn-primary-rose mt-4 inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold cursor-pointer">
                 <i class="fa-solid fa-wand-magic-sparkles"></i> Upgrade ke Pro Sekarang
             </a>
 
@@ -114,7 +119,7 @@
                  tidak boleh ada "/bulan" atau "batalkan kapan saja" di sini:
                  itu akan jadi klaim palsu di halaman yang paling dipercaya
                  saat pengguna memutuskan membayar. --}}
-            <p class="mt-6 text-xs text-[#B6ADA3]">
+            <p class="mt-2.5 text-[11px] text-[#B6ADA3]">
                 @if ($price > 0)
                     Sekali bayar Rp {{ number_format($price, 0, ',', '.') }} &middot; Akses semua fitur &amp; device
                     &middot; Berlaku seumur akun
