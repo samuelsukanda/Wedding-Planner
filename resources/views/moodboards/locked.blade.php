@@ -32,15 +32,17 @@
 
             {{-- ================= KLASTER BOARD ================= --}}
             <div class="mt-12 flex items-center justify-center gap-4 md:gap-7">
-                {{-- Kartu kiri: dua foto bertumpuk, tiap baris satu baris
-                     penuh selebar kartu, miring ke kiri --}}
+                {{-- Kartu kiri: satu foto melebar penuh di baris atas, dua foto
+                     setengah lebar di bawahnya. Miring ke kiri. --}}
                 <div
-                    class="hidden w-36 rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 -rotate-6 sm:block md:w-44">
-                    <div class="space-y-1.5">
-                        @foreach (['moodboard-rustic-hands', 'moodboard-rustic-arch'] as $photo)
-                            <img src="{{ asset("img/$photo.jpg") }}" alt=""
-                                class="aspect-[4/3] w-full rounded-lg object-cover" loading="lazy">
-                        @endforeach
+                    class="hidden w-32 rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 -rotate-6 sm:block md:w-40">
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <img src="{{ asset('img/pexels-cake-floral.jpg') }}" alt=""
+                            class="col-span-2 aspect-[2/1] w-full rounded-lg object-cover" loading="lazy">
+                        <img src="{{ asset('img/pexels-cake-elegant.jpg') }}" alt=""
+                            class="aspect-square w-full rounded-lg object-cover" loading="lazy">
+                        <img src="{{ asset('img/pexels-flatlay-seal.jpg') }}" alt=""
+                            class="aspect-square w-full rounded-lg object-cover" loading="lazy">
                     </div>
                 </div>
 
@@ -70,30 +72,24 @@
                     </div>
                 </div>
 
-                {{-- Kartu kanan: color palette, miring ke kanan.
-                     Warna diambil dari dua pin: olive dan tan dari dekorasi
-                     meja rustik, krem dari palet champagne-beige. --}}
+                {{-- Kartu kanan: kebalikan dari kartu kiri. Dua foto setengah lebar
+                     ditumpuk di kolom kiri, satu foto melebar penuh berdiri
+                     di kolom kanan. Miring ke kanan. --}}
                 <div
-                    class="hidden w-36 rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 rotate-6 sm:block md:w-44">
-                    <div class="grid grid-cols-4 gap-1">
-                        @foreach (['867847', 'A77B56', 'C9AD85', 'DACCC3'] as $swatch)
-                            <span class="aspect-square rounded-md" style="background:#{{ $swatch }}"></span>
-                        @endforeach
-                    </div>
+                    class="hidden w-32 rounded-2xl border border-[#B6ADA3]/30 bg-white p-2.5 shadow-lg shadow-[#5F6F5B]/10 rotate-6 sm:block md:w-40">
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <div class="flex flex-col gap-1.5">
+                            <img src="{{ asset('img/pexels-ceremony-flowers.jpg') }}" alt=""
+                                class="aspect-square w-full rounded-lg object-cover" loading="lazy">
+                            <img src="{{ asset('img/pexels-bridal-flatlay.jpg') }}" alt=""
+                                class="aspect-square w-full rounded-lg object-cover" loading="lazy">
+                        </div>
 
-                    {{-- Dua template garis: SVG inline supaya tidak butuh aset --}}
-                    <div class="mt-1.5 grid grid-cols-2 gap-1.5">
-                        @foreach ([
-                            'M10 34c0-9 5-16 12-16s12 7 12 16c0 6-5 9-12 9s-12-3-12-9z M22 18v25 M15 26h14',
-                            'M8 40h28 M22 40V16 M22 16c-6 0-9 4-9 8 M22 16c6 0 9 4 9 8',
-                        ] as $path)
-                            <span class="flex aspect-square items-center justify-center rounded-lg bg-[#F6F1E8]">
-                                <svg viewBox="0 0 44 48" fill="none" stroke="#A8987C" stroke-width="1.6"
-                                    stroke-linecap="round" class="h-3/5 w-3/5" aria-hidden="true">
-                                    <path d="{{ $path }}" />
-                                </svg>
-                            </span>
-                        @endforeach
+                        {{-- h-full, bukan aspect-ratio: tinggi kolom kiri sudah
+                             ditentukan dua kotak persegi, jadi foto kanan tinggal
+                             ikut meregang setinggi itu. --}}
+                        <img src="{{ asset('img/pexels-photo-layout.jpg') }}" alt=""
+                            class="h-full w-full rounded-lg object-cover" loading="lazy">
                     </div>
                 </div>
             </div>

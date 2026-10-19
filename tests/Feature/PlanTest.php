@@ -89,16 +89,33 @@ class PlanTest extends TestCase
         // bisa berubah atau diblokir. Test ini menahan aset yang hilang supaya
         // kotak kosong tidak baru ketahuan setelah deploy.
         $this->assertStringNotContainsString('moodboard-rustic-table', $html);
-        foreach (['moodboard-rustic-hands', 'moodboard-rustic-arch'] as $asset) {
+
+        // Enam foto Pexels (Pexels License: bebas komersial, tanpa wajib
+        // atribusi), disimpan di repo supaya tidak bergantung pada CDN pihak
+        // ketiga yang bisa diblokir atau berubah.
+        foreach ([
+            'pexels-cake-floral', 'pexels-cake-elegant', 'pexels-flatlay-seal',
+            'pexels-ceremony-flowers', 'pexels-bridal-flatlay', 'pexels-photo-layout',
+        ] as $asset) {
             $this->assertStringContainsString("img/$asset.jpg", $html);
             $this->assertFileExists(public_path("img/$asset.jpg"));
         }
 
-        // Warna kartu kanan dibaca dari pixel dua pin (dekorasi meja rustik
-        // dan palet champagne-beige), bukan tebakan.
-        foreach (['867847', 'A77B56', 'C9AD85', 'DACCC3'] as $swatch) {
-            $this->assertStringContainsString($swatch, $html);
-        }
+        // Foto Pinterest sebelumnya sudah tidak dipakai; halaman tidak boleh
+        // masih merujuk ke sana.
+        $this->assertStringNotContainsString('img/moodboard-rustic-', $html);
+
+        // Kartu kiri: satu foto melebar penuh (col-span-2) di atas dua foto
+        // setengah lebar. Kartu kanan kebalikannya, jadi foto penuhnya tidak
+        // boleh ikut.col-span-2.
+        $this->assertMatchesRegularExpression(
+            '/pexels-cake-floral\.jpg[^>]*col-span-2[^>]*aspect-\[2\/1\]/',
+            $html,
+        );
+        $this->assertMatchesRegularExpression(
+            '/pexels-photo-layout\.jpg[^>]*h-full/',
+            $html,
+        );
 
         // Kartu tengah: palet putih-krem muda, gembok coklat, badge PRO coklat.
         foreach (['FFFFFF', 'FDFAF5', 'F6EEE3', 'EADFCB'] as $cream) {
