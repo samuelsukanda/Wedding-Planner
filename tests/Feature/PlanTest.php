@@ -71,6 +71,31 @@ class PlanTest extends TestCase
             ->assertDontSee('Tambah Moodboard');
     }
 
+    public function test_locked_moodboard_page_sells_the_feature_without_a_lying_price()
+    {
+        Setting::put('pro_price', '55000');
+
+        [, $user] = $this->couple();
+
+        $html = $this->actingAs($user)->get('/moodboards')->assertOk()->getContent();
+
+        $this->assertStringContainsString('FITUR PRO', $html);
+        $this->assertStringContainsString('Buka Akses Moodboard Tanpa Batas', $html);
+        $this->assertStringContainsString('Unlimited Boards', $html);
+        $this->assertStringContainsString('Kolaborasi Partner &amp; Vendor', $html);
+        $this->assertStringContainsString('Palette &amp; Template Eksklusif', $html);
+
+        // Harga ikut dari app_settings, bukan ditulis mati di view.
+        $this->assertStringContainsString('55.000', $html);
+
+        // Paket Pro di aplikasi ini dibeli sekali dan berlaku seumur akun.
+        // "/bulan" dan "batalkan kapan saja" akan jadi klaim iklan palsu tepat
+        // di halaman yang paling dipercaya saat pengguna memutuskan bayar.
+        $this->assertStringNotContainsString('/bulan', $html);
+        $this->assertStringNotContainsString('Batalkan kapan saja', $html);
+        $this->assertStringNotContainsString('Berlangganan', $html);
+    }
+
     public function test_free_couple_cannot_create_items()
     {
         [$wedding, $user] = $this->couple();

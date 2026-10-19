@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use App\Models\Wedding;
 use App\Models\Moodboard;
 use App\Models\DropdownOption;
@@ -13,10 +14,13 @@ class MoodboardController extends Controller
      * Copy halaman terkunci, dipisah dari view supaya mudah dibaca dan diuji.
      */
     private const LOCKED_COPY = [
-        'title' => 'Moodboard',
-        'description' => 'Kumpulan inspirasi wedding kamu — dekor, gaun, bouquet, venue — dalam board yang bisa dibagi ke pasangan.',
-        'highlights' => ['Sage', 'Bouquet', 'Akad', 'Rustic'],
-        'note' => 'Buka semua Wedding Kit + Invite Pasangan + Multi-device',
+        'title' => 'Buka Akses Moodboard Tanpa Batas',
+        'description' => 'Semua inspirasi dan kolaborasi dalam satu board yang bisa kamu bagikan ke pasangan.',
+        'benefits' => [
+            ['icon' => 'fa-layer-group', 'label' => 'Unlimited Boards'],
+            ['icon' => 'fa-users', 'label' => 'Kolaborasi Partner & Vendor'],
+            ['icon' => 'fa-palette', 'label' => 'Palette & Template Eksklusif'],
+        ],
     ];
 
     public function index(Request $request)
@@ -26,7 +30,12 @@ class MoodboardController extends Controller
         // Moodboard dikunci penuh, bukan berbasis kuota: untuk paket Free daftar
         // item-nya tidak pernah dirender, hanya halaman penjelasan yang tampil.
         if (! $wedding->hasFeature('moodboard')) {
-            return view('moodboards.locked', ['feature' => self::LOCKED_COPY]);
+            return view('moodboards.locked', [
+                'feature' => self::LOCKED_COPY,
+                // Harga diambil dari app_settings, bukan ditulis di view, supaya
+                // angka di sini tidak pernah melenceng dari halaman upgrade.
+                'price' => (int) Setting::get('pro_price', 0),
+            ]);
         }
 
         $query = $wedding->moodboards();
