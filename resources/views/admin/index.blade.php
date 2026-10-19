@@ -281,7 +281,15 @@
                         </div>
 
                         <!-- ================= RESET SEMUA DATA ================= -->
-                        <div x-data="{ open: false, typed: '' }"
+                        <div x-data="{
+                            open: false,
+                            typed: '',
+                            // Input-nya styled uppercase, jadi yang tampil di layar
+                            // bukan isi aslinya. Tanpa normalisasi di sini, mengetik
+                            // 'reset' lowercase terlihat seperti 'RESET' tapi tetap
+                            // tidak cocok dan tombolnya tidak pernah hidup.
+                            get ready() { return this.typed.trim().toUpperCase() === 'RESET' }
+                        }"
                             class="bg-white p-5 rounded-2xl border border-[#D8A7B1]/50 bg-[#FBF2F4] shadow-xs space-y-3 text-xs">
                             <div class="flex items-center gap-2 font-bold text-[#5F6F5B] text-sm">
                                 <i class="fa-solid fa-rotate-left text-[#C2757F]"></i>
@@ -348,9 +356,14 @@
                                             class="block text-xs font-bold text-[#5F6F5B] mb-1.5">
                                             Ketik <span class="uppercase">RESET</span> untuk konfirmasi
                                         </label>
-                                        <input type="text" name="confirm" id="reset-confirm" x-model="typed"
+                                        <input type="text" id="reset-confirm" x-model="typed"
                                             autocomplete="off" placeholder="RESET"
                                             class="block w-full px-3.5 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm uppercase tracking-widest text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
+                                        {{-- Yang terkirim ke server adalah hasil normalisasi,
+                                             bukan apa yang diketik mentah, supaya validasi
+                                             'in:RESET' di server tidak gagal hanya karena
+                                             huruf besar-kecil atau spasi kebetulan. --}}
+                                        <input type="hidden" name="confirm" :value="typed.trim().toUpperCase()">
 
                                         @error('confirm')
                                             <p class="mt-1.5 text-xs text-[#C2757F]">{{ $message }}</p>
@@ -361,8 +374,8 @@
                                                 class="px-4 py-2.5 rounded-xl bg-white border border-[#B6ADA3]/50 text-[#5F6F5B] text-xs font-semibold hover:bg-[#FAF7F2] transition cursor-pointer">
                                                 Batal
                                             </button>
-                                            <button type="submit" :disabled="typed !== 'RESET'"
-                                                :class="typed === 'RESET' ? 'btn-primary-rose' : 'opacity-40 cursor-not-allowed'"
+                                            <button type="submit" :disabled="!ready"
+                                                :class="ready ? 'btn-primary-rose' : 'opacity-40 cursor-not-allowed'"
                                                 class="px-4 py-2.5 rounded-xl text-xs font-semibold">
                                                 <i class="fa-solid fa-rotate-left mr-1"></i> Ya, Reset Semua
                                             </button>

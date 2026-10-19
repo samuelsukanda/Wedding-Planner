@@ -208,4 +208,24 @@ class ResetWeddingDataTest extends TestCase
             ->assertSee(route('profile.reset-data'))
             ->assertSee('Ketik', false);
     }
+
+    public function test_reset_keyword_is_matched_case_insensitively_and_trimmed()
+    {
+        [$wedding, $user] = $this->couple();
+
+        $html = $this->actingAs($user)->get('/admin')->assertOk()->getContent();
+
+        // Input keyword reset ber-text-transform uppercase, jadi yang tampil di
+        // layar bukan isi aslinya. Kalau perbandingannya mentah, mengetik
+        // 'reset' lowercase terlihat seperti 'RESET' tapi tombolnya tetap mati
+        // dan pengguna mengira aplikasinya rusak.
+        $this->assertStringNotContainsString("typed !== 'RESET'", $html);
+        $this->assertStringNotContainsString("typed === 'RESET'", $html);
+
+        // Yang dikirim ke server harus hasil normalisasi, supaya validasi
+        // 'in:RESET' tidak gagal hanya karena huruf besar-kecil atau spasi.
+        $this->assertStringContainsString(':value="typed.trim().toUpperCase()"', $html);
+        $this->assertStringContainsString('get ready()', $html);
+        $this->assertStringContainsString(':disabled="!ready"', $html);
+    }
 }
