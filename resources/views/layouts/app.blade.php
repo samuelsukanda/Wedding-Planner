@@ -470,16 +470,18 @@
         ]"
         class="sidebar fixed md:relative inset-y-0 left-0 z-50 w-64 md:transition-[width,transform] duration-300 ease-in-out bg-white border-r border-[#B6ADA3]/35 flex flex-col shadow-lg md:shadow-none">
 
-        <!-- Logo & Header -->
+        <!-- Logo & Header. Baris di bawah logo adalah merek, bukan nama pasangan:
+                 nama pasangan sudah tampil di header utama, jadi mengulangnya
+                 di sini hanya memakan ruang dan membuat dua baris brand
+                 saling tumpang tindih. -->
         <div class="px-4 py-3 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-w-0">
                 <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo"
                     class="w-9 h-9 rounded-xl object-cover shrink-0">
                 <div class="sidebar-label min-w-0">
-                    <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight truncate">
-                        {{ $brandName ?? 'Wedding Planner' }}</h1>
+                    <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight truncate">Nupsera</h1>
                     <p class="text-[11px] text-[#5F6F5B] font-bold tracking-wide uppercase whitespace-nowrap">Wedding
-                        Planner</p>
+                        &amp; Moments</p>
                 </div>
             </a>
             <button @click="sidebarOpen = false"

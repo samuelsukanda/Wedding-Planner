@@ -144,15 +144,15 @@ class PlanTest extends TestCase
         $this->assertStringContainsString('text-[#8A6A45]', $html);
         $this->assertStringContainsString('fa-lock', $html);
 
-        // Harga ikut dari app_settings, bukan ditulis mati di view.
-        $this->assertStringContainsString('55.000', $html);
-
         // Paket Pro di aplikasi ini dibeli sekali dan berlaku seumur akun.
         // "/bulan" dan "batalkan kapan saja" akan jadi klaim iklan palsu tepat
         // di halaman yang paling dipercaya saat pengguna memutuskan bayar.
+        // Halaman ini tidak menampilkan harga sama sekali; harga hanya muncul
+        // di /upgrade yang menampilkannya dari app_settings.
         $this->assertStringNotContainsString('/bulan', $html);
         $this->assertStringNotContainsString('Batalkan kapan saja', $html);
         $this->assertStringNotContainsString('Berlangganan', $html);
+        $this->assertStringNotContainsString('Sekali bayar', $html);
     }
 
     public function test_free_couple_cannot_create_items()
@@ -627,5 +627,22 @@ public function test_superadmin_can_save_pro_settings()
 
         $this->assertSame('249000', Setting::get('pro_price'));
         $this->assertSame('6281234567890', Setting::get('admin_whatsapp'));
+    }
+
+    public function test_sidebar_brand_shows_the_product_name_not_the_couple_name()
+    {
+        [$wedding, $user] = $this->couple();
+
+        $html = $this->actingAs($user)->get('/')->assertOk()->getContent();
+
+        // Baris di bawah logo adalah merek: "Nupsera" lalu "Wedding & Moments".
+        // Blade memecah baris di dalam <p>, jadi teksnya jadi "Wedding\n& Moments".
+        $this->assertMatchesRegularExpression('/<h1[^>]*>\s*Nupsera\s*<\/h1>/', $html);
+        $this->assertMatchesRegularExpression('/Wedding\s+&amp;\s+Moments/', $html);
+
+        // "Wedding Planner" tidak boleh lagi jadi baris brand di sidebar.
+        // Nama pasangan ($brandName) sudah tampil di header utama, jadi
+        // mengulangnya di sidebar cuma memakan ruang.
+        $this->assertDoesNotMatchRegularExpression('/Wedding\s+Planner<\/p>/', $html);
     }
 }
