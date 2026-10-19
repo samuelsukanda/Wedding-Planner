@@ -479,8 +479,14 @@
                 <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo"
                     class="w-9 h-9 rounded-xl object-cover shrink-0">
                 <div class="sidebar-label min-w-0">
-                    <h1 class="font-serif-title font-bold text-lg text-[#5F6F5B] leading-tight truncate">Nupsera</h1>
-                    <p class="text-[11px] text-[#5F6F5B] font-bold tracking-wide uppercase whitespace-nowrap">Wedding
+                    {{-- Warna diambil dari gradien logo nupsera-ori.png: brick
+                         #A23725 dan terracotta #B4503A. Kontrasnya dihitung di
+                         atas background sidebar #FAF7F2, yaitu 6.3:1 dan 4.7:1,
+                         jadi baris 11px tetap terbaca. Warna coral #D97659
+                         yang paling cerah dari logo tidak dipakai karena hanya
+                         2.9:1 di sini. --}}
+                    <h1 class="font-serif-title font-bold text-lg text-[#A23725] leading-tight truncate">Nupsera</h1>
+                    <p class="text-[11px] text-[#B4503A] font-bold tracking-wide uppercase whitespace-nowrap">Wedding
                         &amp; Moments</p>
                 </div>
             </a>

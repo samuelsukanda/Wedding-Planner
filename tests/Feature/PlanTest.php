@@ -640,6 +640,30 @@ public function test_superadmin_can_save_pro_settings()
         $this->assertMatchesRegularExpression('/<h1[^>]*>\s*Nupsera\s*<\/h1>/', $html);
         $this->assertMatchesRegularExpression('/Wedding\s+&amp;\s+Moments/', $html);
 
+        // Warna diambil dari gradien logo, bukan warna accent lama #5F6F5B
+        // yang dipakai sisa aplikasi. Nilainya dikunci di sini supaya branding
+        // tidak diam-diam balik ke hijau olive.
+        $this->assertStringContainsString('text-[#A23725]', $html);
+        $this->assertStringContainsString('text-[#B4503A]', $html);
+
+        // Kontras di atas background sidebar #FAF7F2: 6.3:1 dan 4.7:1. Baris
+        // kedua hanya 11px, jadi di bawah 4.5:1 teksnya praktis tidak
+        // terbaca - itu sebabnya coral #D97659 yang lebih cantik tapi hanya
+        // 2.9:1 tidak dipakai.
+        $brandOnCream = static function (string $hex): float {
+            [$r, $g, $b] = [hexdec(substr($hex, 0, 2)), hexdec(substr($hex, 2, 2)), hexdec(substr($hex, 4, 2))];
+            $lin = static fn (float $v): float => $v <= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;
+            $lum = 0.2126 * $lin($r / 255) + 0.7152 * $lin($g / 255) + 0.0722 * $lin($b / 255);
+
+            [$br, $bg, $bb] = [0xFA, 0xF7, 0xF2];
+            $blum = 0.2126 * $lin($br / 255) + 0.7152 * $lin($bg / 255) + 0.0722 * $lin($bb / 255);
+
+            return (max($lum, $blum) + 0.05) / (min($lum, $blum) + 0.05);
+        };
+
+        $this->assertGreaterThanOrEqual(4.5, $brandOnCream('A23725'));
+        $this->assertGreaterThanOrEqual(4.5, $brandOnCream('B4503A'));
+
         // "Wedding Planner" tidak boleh lagi jadi baris brand di sidebar.
         // Nama pasangan ($brandName) sudah tampil di header utama, jadi
         // mengulangnya di sidebar cuma memakan ruang.
