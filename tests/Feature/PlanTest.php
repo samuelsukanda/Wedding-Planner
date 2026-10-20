@@ -264,8 +264,9 @@ class PlanTest extends TestCase
     public function test_upgrade_page_is_a_two_step_flow()
     {
         Setting::put('pro_price', '55000');
-        Setting::put('pro_bank', 'BCA 1234567890');
-        Setting::put('admin_whatsapp', '6281234567890');
+        Setting::put('pro_banks', json_encode([
+            ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '1234567890'],
+        ]));
 
         [, $user] = $this->couple();
 
@@ -312,11 +313,10 @@ class PlanTest extends TestCase
             ->assertSee('Rp 149.000');
     }
 
-public function test_pending_state_shows_verification_card_with_refresh_and_contact()
+public function test_pending_state_shows_verification_card_with_refresh_only()
     {
         Storage::fake('public');
         Setting::put('pro_price', '55000');
-        Setting::put('admin_whatsapp', '6281234567890');
 
         [, $user] = $this->couple();
         $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
@@ -328,39 +328,48 @@ public function test_pending_state_shows_verification_card_with_refresh_and_cont
             ->assertSee('Rp 55.000')
             ->assertSee('Menunggu Aktivasi')
             ->assertSee('Refresh Status')
-            ->assertSee('Kontak Admin')
-            ->assertSee('wa.me/6281234567890', false)
+            // Kontak WA admin sengaja dihapus dari semua keadaan halaman.
+            ->assertDontSee('Kontak Admin')
+            ->assertDontSee('wa.me', false)
             // Teks "kamu akan menerima email" dihapus: app ini tidak mengirim email.
             ->assertDontSee('kamu akan menerima email');
     }
 
-    public function test_pending_state_hides_contact_button_when_admin_wa_missing()
-    {
-        Storage::fake('public');
-        Setting::put('pro_price', '55000');
-
-        [, $user] = $this->couple();
-        $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
-
-        $this->actingAs($user)->get('/upgrade')
-            ->assertOk()
-            ->assertSee('Refresh Status')
-            ->assertDontSee('Kontak Admin');
-    }
-
-    public function test_upgrade_page_shows_price_and_bank_from_settings()
+    public function test_upgrade_page_shows_price_and_bank_with_icon_from_settings()
     {
         Setting::put('pro_price', '249000');
-        Setting::put('pro_bank', 'BCA 1234567890 a/n Wedding Planner');
-        Setting::put('admin_whatsapp', '6281234567890');
+        Setting::put('pro_banks', json_encode([
+            ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '1234567890'],
+            ['icon' => 'fa-wallet', 'name' => 'Bank Mitra', 'number' => '9876543210'],
+        ]));
 
         [, $user] = $this->couple();
 
         $this->actingAs($user)->get('/upgrade')
             ->assertOk()
             ->assertSee('249.000')
-            ->assertSee('BCA 1234567890')
-            ->assertSee('wa.me/6281234567890', false);
+            ->assertSee('1234567890')
+            ->assertSee('9876543210')
+            // Bank yang cocok dengan daftar brand tampil sebagai badge warna
+            // brand (kotak biru BCA); ikon generik dari superadmin tetap
+            // dipakai untuk nama bank yang tidak ada di daftar.
+            ->assertSee('#00579C', false)
+            ->assertSee('fa-wallet', false)
+            ->assertDontSee('wa.me', false);
+    }
+
+    /** Data lama berupa teks tetap tampil, supaya halaman bayar tidak kosong. */
+    public function test_legacy_plain_text_bank_setting_still_renders()
+    {
+        Setting::put('pro_price', '55000');
+        Setting::put('pro_bank', "JAGO - 104273096017\nBCA - 5410928045");
+
+        [, $user] = $this->couple();
+
+        $this->actingAs($user)->get('/upgrade')
+            ->assertOk()
+            ->assertSee('104273096017')
+            ->assertSee('5410928045');
     }
 
     public function test_pro_couple_is_redirected_away_from_upgrade_page()
@@ -473,38 +482,69 @@ public function test_pending_state_shows_verification_card_with_refresh_and_cont
         $this->actingAs($user)->get('/admin/pro-settings')->assertForbidden();
     }
 
-    public function test_settings_accept_formatted_money_and_phone_input()
+    public function test_settings_accept_formatted_money_input()
     {
         $this->actingAs($this->superadmin())
             ->put('/admin/pro-settings', [
-                // Persis seperti yang terkirim browser: field uang & telepon
-                // sudah diformat, jadi controller wajib membersihkan sendiri.
+                // Persis seperti yang terkirim browser: field uang sudah
+                // diformat, jadi controller wajib membersihkan sendiri.
                 'pro_price' => 'Rp 249.000',
                 'pro_price_before' => 'Rp 1.500.000',
-                'pro_bank' => 'BCA 1234567890',
-                'admin_whatsapp' => '6281-2345-6789',
+                'banks' => [
+                    ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '1234567890'],
+                ],
                 'moodboard_free_limit' => 5,
             ])
             ->assertSessionHasNoErrors();
 
         $this->assertSame('249000', Setting::get('pro_price'));
         $this->assertSame('1500000', Setting::get('pro_price_before'));
-        $this->assertSame('628123456789', Setting::get('admin_whatsapp'));
+    }
+
+    /** Baris rekening yang dikosongkan tidak boleh memblokir simpan. */
+    public function test_empty_bank_rows_are_dropped_before_validation()
+    {
+        $this->actingAs($this->superadmin())
+            ->put('/admin/pro-settings', [
+                'pro_price' => 55000,
+                'banks' => [
+                    ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '5410928045'],
+                    ['icon' => 'fa-landmark', 'name' => '', 'number' => ''],
+                ],
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertCount(1, json_decode(Setting::get('pro_banks'), true));
+    }
+
+    /** Ikon di luar daftar ditolak, jangan sampai class sembarang masuk ke halaman. */
+    public function test_unknown_bank_icon_is_rejected()
+    {
+        $this->actingAs($this->superadmin())
+            ->put('/admin/pro-settings', [
+                'pro_price' => 55000,
+                'banks' => [['icon' => 'fa-skull', 'name' => 'BCA', 'number' => '123']],
+            ])
+            ->assertSessionHasErrors('banks.0.icon');
     }
 
     public function test_pro_settings_page_renders_formatted_values()
     {
         Setting::put('pro_price', '55000');
         Setting::put('pro_price_before', '150000');
-        Setting::put('admin_whatsapp', '6281234567890');
+        Setting::put('pro_banks', json_encode([
+            ['icon' => 'fa-wallet', 'name' => 'Jago', 'number' => '104273096017'],
+        ]));
 
         $this->actingAs($this->superadmin())
             ->get('/admin/pro-settings')
             ->assertOk()
             ->assertSee('Rp 55.000')
             ->assertSee('Rp 150.000')
-            ->assertSee('6281-2345-6789')
-            ->assertSee('data-format="money"', false);
+            ->assertSee('data-format="money"', false)
+            ->assertSee('104273096017')
+            // Nomor WA admin sudah tidak dikelola dari sini.
+            ->assertDontSee('Nomor WhatsApp Admin');
     }
 
 public function test_reject_button_lives_inside_the_form_holding_the_reason()
@@ -620,13 +660,18 @@ public function test_superadmin_can_save_pro_settings()
         $this->actingAs($this->superadmin())
             ->put('/admin/pro-settings', [
                 'pro_price' => 249000,
-                'pro_bank' => 'BCA 1234567890 a/n Wedding Planner',
-                'admin_whatsapp' => '6281234567890',
+                'banks' => [
+                    ['icon' => 'fa-wallet', 'name' => 'Jago', 'number' => '104273096017'],
+                    ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '5410928045'],
+                ],
             ])
             ->assertRedirect(route('admin.pro-settings.index'));
 
         $this->assertSame('249000', Setting::get('pro_price'));
-        $this->assertSame('6281234567890', Setting::get('admin_whatsapp'));
+        $this->assertSame([
+            ['icon' => 'fa-wallet', 'name' => 'Jago', 'number' => '104273096017'],
+            ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '5410928045'],
+        ], json_decode(Setting::get('pro_banks'), true));
     }
 
     public function test_sidebar_brand_shows_the_product_name_not_the_couple_name()

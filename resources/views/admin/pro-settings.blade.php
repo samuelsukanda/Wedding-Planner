@@ -4,25 +4,38 @@
 
 @section('content')
     @php
-        // Setelan disimpan sebagai angka mentah ("55000", "6281234567890"), tapi
-        // ditampilkan format mata uang / telepon supaya superadmin tidak salah
-        // baca nolnya. Controller membersihkan ulang format ini sebelum menyimpan.
+        // Harga disimpan sebagai angka mentah ("55000") tapi ditampilkan
+        // berformat mata uang supaya superadmin tidak salah baca nolnya.
+        // Controller membersihkan ulang format ini sebelum menyimpan.
         $money = function ($value) {
             $digits = preg_replace('/\D/', '', (string) $value);
 
             return $digits === '' ? '' : 'Rp ' . number_format((int) $digits, 0, ',', '.');
         };
-        $phone = function ($value) {
-            return preg_replace('/(\d{4})(?=\d)/', '$1-', preg_replace('/\D/', '', (string) $value));
-        };
+
+        // old() dipakai supaya isian tidak hilang saat validasi gagal.
+        $rows = [];
+        foreach (array_values((array) old('banks', $banks)) as $i => $row) {
+            $row = is_array($row) ? $row : [];
+            $rows[] = [
+                'id' => $i,
+                'icon' => $row['icon'] ?? 'fa-building-columns',
+                'name' => $row['name'] ?? '',
+                'number' => $row['number'] ?? '',
+            ];
+        }
+
+        if ($rows === []) {
+            $rows = [['id' => 0, 'icon' => 'fa-building-columns', 'name' => '', 'number' => '']];
+        }
     @endphp
 
     <div class="space-y-6">
         <!-- Header -->
         <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Pengaturan Pro</h1>
-            <p class="text-xs text-[#5F6F5B]/70 mt-1">Atur harga, informasi pembayaran, dan detail paket Pro yang ditampilkan
-                pada halaman upgrade pasangan tanpa perlu mengubah kode aplikasi atau melakukan deployment ulang.</p>
+            <p class="text-xs text-[#5F6F5B]/70 mt-1">Atur harga dan rekening tujuan transfer Pro yang ditampilkan pada
+                halaman upgrade pasangan tanpa perlu mengubah kode aplikasi atau melakukan deployment ulang.</p>
         </div>
 
         <form method="POST" action="{{ route('admin.pro-settings.update') }}"
@@ -57,26 +70,119 @@
             </div>
 
             <div>
-                <label for="pro_bank" class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
+                <span class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
                     Rekening Tujuan *
-                </label>
-                <textarea name="pro_bank" id="pro_bank" rows="4" required
-                    class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] focus:border-[#D8A7B1] focus:outline-none transition">{{ old('pro_bank', $values['pro_bank']) }}</textarea>
-                @error('pro_bank')
-                    <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
+                </span>
+                @error('banks')
+                    <p class="mb-2 text-sm text-[#C2757F]">{{ $message }}</p>
                 @enderror
+
+                <div x-data="{
+                    rows: @js($rows),
+                    icons: @js($icons),
+                    nextId: {{ count($rows) }},
+                    // Peta warna brand sama dengan komponen x-bank-badge
+                    // (resources/views/components/bank-badge.blade.php).
+                    // Superadmin mengetik nama rekening di halaman ini, jadi
+                    // pemilihan badge harus terjadi di browser (Alpine),
+                    // bukan di server.
+                    brands: [['BCA', '#00579C'], ['BNI', '#F37021'], ['JAGO', '#16215B']],
+                    badgeFor(name) {
+                        const n = String(name || '').toUpperCase();
+                        const hit = this.brands.find(([key]) => n.includes(key));
+                        return hit ? { label: hit[0], color: hit[1] } : null;
+                    },
+                    add() {
+                        this.rows.push({ id: this.nextId++, icon: 'fa-building-columns', name: '', number: '' });
+                    },
+                    removeRow(i) {
+                        this.rows.splice(i, 1);
+                        if (!this.rows.length) this.add();
+                    },
+                }" x-cloak class="space-y-3">
+                    <template x-for="(row, i) in rows" :key="row.id">
+                        <div class="rounded-xl border border-[#B6ADA3]/35 p-3 space-y-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-9 h-9 shrink-0 rounded-lg flex items-center justify-center">
+                                    <template x-if="badgeFor(row.name)">
+                                        <span :style="`background:${badgeFor(row.name).color};color:#fff`"
+                                            class="w-9 h-9 rounded-lg flex items-center justify-center text-[11px] font-bold tracking-wide select-none"
+                                            x-text="badgeFor(row.name).label"></span>
+                                    </template>
+                                    <template x-if="!badgeFor(row.name)">
+                                        <i :class="'fa-solid ' + row.icon" class="text-[#C2757F] text-sm"></i>
+                                    </template>
+                                </div>
+
+                                <select :name="`banks[${i}][icon]`" x-model="row.icon"
+                                    class="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] focus:border-[#D8A7B1] focus:outline-none transition">
+                                    <template x-for="opt in icons" :key="opt.value">
+                                        <option :value="opt.value" x-text="opt.label"></option>
+                                    </template>
+                                </select>
+
+                                <button type="button" @click="removeRow(i)" aria-label="Hapus rekening"
+                                    class="w-9 h-9 shrink-0 rounded-lg border border-[#B6ADA3]/40 text-[#B6ADA3] hover:text-[#C2757F] hover:border-[#D8A7B1] transition cursor-pointer">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <input type="text" :name="`banks[${i}][name]`" x-model="row.name" required maxlength="40"
+                                    placeholder="Nama bank (BCA)"
+                                    class="block w-full px-3 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
+                                <input type="text" :name="`banks[${i}][number]`" x-model="row.number" required
+                                    maxlength="60" placeholder="Nomor rekening (5410928045)"
+                                    class="block w-full px-3 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm font-bold text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">
+                            </div>
+                        </div>
+                    </template>
+
+                    <button type="button" @click="add()"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#D8A7B1]/60 bg-white text-[#C2757F] text-xs font-semibold hover:bg-[#FAF7F2] transition cursor-pointer">
+                        <i class="fa-solid fa-plus"></i> Tambah Rekening
+                    </button>
+                </div>
             </div>
 
-            <div>
-                <label for="admin_whatsapp" class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
-                    Nomor WhatsApp Admin *
-                </label>
-                <input type="text" name="admin_whatsapp" id="admin_whatsapp" inputmode="numeric" required
-                    data-format="phone" value="{{ old('admin_whatsapp', $phone($values['admin_whatsapp'])) }}"
-                    class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm font-bold text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">
-                @error('admin_whatsapp')
-                    <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
-                @enderror
+            <!-- Kontak sosial untuk kartu "Hubungi Kami" di halaman Profile -->
+            <div class="pt-4 border-t border-[#B6ADA3]/30 space-y-4">
+                <div>
+                    <span class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">Hubungi
+                        Kami</span>
+                </div>
+
+                <div>
+                    <label for="social_whatsapp" class="block text-xs font-bold text-[#5F6F5B] mb-1.5">WhatsApp</label>
+                    <input type="text" name="social_whatsapp" id="social_whatsapp" inputmode="numeric"
+                        value="{{ old('social_whatsapp', $values['social_whatsapp']) }}" placeholder="6281234567890"
+                        class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">
+                    @error('social_whatsapp')
+                        <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="social_instagram" class="block text-xs font-bold text-[#5F6F5B] mb-1.5">Instagram</label>
+                    <input type="text" name="social_instagram" id="social_instagram"
+                        value="{{ old('social_instagram', $values['social_instagram']) }}"
+                        placeholder="https://instagram.com/nupsera"
+                        class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">
+                    @error('social_instagram')
+                        <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="social_tiktok" class="block text-xs font-bold text-[#5F6F5B] mb-1.5">TikTok</label>
+                    <input type="text" name="social_tiktok" id="social_tiktok"
+                        value="{{ old('social_tiktok', $values['social_tiktok']) }}"
+                        placeholder="https://tiktok.com/@nupsera"
+                        class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">
+                    @error('social_tiktok')
+                        <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             <button type="submit" class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer">
@@ -89,21 +195,16 @@
 @push('scripts')
     <script>
         (function() {
-            // Format uang dan telepon memakai helper global yang sama dengan
-            // input telepon di modal Tambah Data (wpPhone), jadi tidak ada
-            // aturan format kedua di aplikasi ini.
-            //
-            // Diformat tiap ketik, supaya sama seperti input telepon di modal
-            // Tambah Data. wpPhone/wpMoney sudah memanggil wpDigits di dalam
-            // dirinya, jadi batas 13 digit ikut terpotong.
-            document.querySelectorAll('input[data-format]').forEach(function(input) {
-                const format = input.dataset.format === 'phone' ? window.wpPhone : window.wpMoney;
-
+            // Format uang memakai helper global yang sama dengan input nominal
+            // di modal Tambah Data (wpMoney), jadi tidak ada aturan format
+            // kedua di aplikasi ini. Diformat tiap ketik, supaya sama seperti
+            // input telepon di modal Tambah Data.
+            document.querySelectorAll('input[data-format="money"]').forEach(function(input) {
                 input.addEventListener('input', function() {
-                    input.value = format(input.value);
+                    input.value = window.wpMoney(input.value);
                 });
 
-                input.value = format(input.value);
+                input.value = window.wpMoney(input.value);
             });
         })();
     </script>

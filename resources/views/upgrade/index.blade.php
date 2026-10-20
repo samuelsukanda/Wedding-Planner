@@ -41,20 +41,11 @@
                 </dl>
 
                 {{-- Refresh Status sengaja link GET ke halaman ini: cukup klik
-                     ulang setelah admin menyetujui, dan status terupdate.
-                     Kontak Admin disembunyikan kalau nomor WA belum diisi admin. --}}
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <a href="{{ route('upgrade.index') }}"
-                        class="btn-primary-rose flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs">
-                        <i class="fa-solid fa-rotate-right"></i> Refresh Status
-                    </a>
-                    @if ($adminWa)
-                        <a href="https://wa.me/{{ preg_replace('/\D/', '', $adminWa) }}" target="_blank" rel="noopener"
-                            class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FAF7F2] transition">
-                            <i class="fa-brands fa-whatsapp"></i> Kontak Admin
-                        </a>
-                    @endif
-                </div>
+                     ulang setelah admin menyetujui, dan status terupdate. --}}
+                <a href="{{ route('upgrade.index') }}"
+                    class="btn-primary-rose inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs w-full sm:w-auto">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh Status
+                </a>
             </div>
         @else
             {{-- checkout = false Initially: nomor rekening dan form upload sengaja
@@ -154,16 +145,28 @@
                             <h4 class="text-xs font-bold uppercase tracking-wider text-[#5F6F5B] flex items-center gap-2">
                                 <i class="fa-solid fa-building-columns text-[#D8A7B1]"></i> Rekening Tujuan
                             </h4>
-                            <p class="mt-2 text-sm text-[#5F6F5B]/90 whitespace-pre-line leading-relaxed">
-                                {{ $bank ?: 'Belum diatur. Hubungi admin.' }}</p>
 
-                            @if ($adminWa)
-                                <a href="https://wa.me/{{ preg_replace('/\D/', '', $adminWa) }}" target="_blank"
-                                    rel="noopener"
-                                    class="mt-3 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FBF2F4] transition">
-                                    <i class="fa-brands fa-whatsapp"></i> {{ $adminWa }}
-                                </a>
-                            @endif
+                            <div class="mt-3 space-y-2">
+                                @forelse ($banks as $account)
+                                    <div
+                                        class="flex items-center gap-3 rounded-xl bg-white border border-[#B6ADA3]/35 px-3.5 py-2.5">
+                                        <x-bank-badge :name="$account['name']"
+                                            :icon="$account['icon'] ?: 'fa-building-columns'" />
+                                        <div class="min-w-0">
+                                            @if ($account['name'] !== '')
+                                                <div class="text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">
+                                                    {{ $account['name'] }}
+                                                </div>
+                                            @endif
+                                            <div class="text-sm font-semibold text-[#5F6F5B] break-words">
+                                                {{ $account['number'] }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-sm text-[#5F6F5B]/90">Belum diatur.</p>
+                                @endforelse
+                            </div>
                         </div>
 
                         <!-- Kirim bukti -->
