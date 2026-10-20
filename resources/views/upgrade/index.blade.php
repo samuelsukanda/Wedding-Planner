@@ -181,10 +181,15 @@
 
                         @if (trim($qrisPath) !== '')
                             <div class="rounded-xl bg-[#FAF7F2] p-4 flex justify-center" x-data="{ open: false }">
-                                <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}"
-                                    x-on:click="open = true" alt="Kode QRIS"
-                                    class="h-40 w-40 rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1 cursor-zoom-in"
-                                    title="Klik untuk memperbesar">
+                                <div class="flex flex-col items-center gap-2">
+                                    <h4 class="text-xs font-bold uppercase tracking-wider text-[#5F6F5B] flex items-center gap-2">
+                                        <i class="fa-solid fa-qrcode text-[#D8A7B1]"></i> Bayar Lewat QRIS
+                                    </h4>
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}"
+                                        x-on:click="open = true" alt="Kode QRIS"
+                                        class="h-40 w-40 rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1 cursor-zoom-in"
+                                        title="Klik untuk memperbesar">
+                                </div>
 
                                 <!-- Tampilan besar: ukuran terbatas, tutup lewat
                                      tombol X di pojok atau klik area gelap -->
