@@ -340,7 +340,6 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         Setting::put('pro_price', '249000');
         Setting::put('pro_banks', json_encode([
             ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '1234567890'],
-            ['icon' => 'fa-wallet', 'name' => 'Bank Mitra', 'number' => '9876543210'],
         ]));
 
         [, $user] = $this->couple();
@@ -348,13 +347,10 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         $this->actingAs($user)->get('/upgrade')
             ->assertOk()
             ->assertSee('249.000')
+            ->assertSee('BCA')
             ->assertSee('1234567890')
-            ->assertSee('9876543210')
-            // Bank yang cocok dengan daftar brand tampil sebagai badge warna
-            // brand (kotak biru BCA); ikon generik dari superadmin tetap
-            // dipakai untuk nama bank yang tidak ada di daftar.
-            ->assertSee('#00579C', false)
-            ->assertSee('fa-wallet', false)
+            // Ikon dipilih superadmin per rekening, bukan class tetap di Blade.
+            ->assertSee('fa-landmark', false)
             ->assertDontSee('wa.me', false);
     }
 

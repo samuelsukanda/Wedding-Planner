@@ -150,8 +150,11 @@
                                 @forelse ($banks as $account)
                                     <div
                                         class="flex items-center gap-3 rounded-xl bg-white border border-[#B6ADA3]/35 px-3.5 py-2.5">
-                                        <x-bank-badge :name="$account['name']"
-                                            :icon="$account['icon'] ?: 'fa-building-columns'" />
+                                        <div
+                                            class="w-9 h-9 shrink-0 rounded-lg bg-[#D8A7B1]/20 flex items-center justify-center">
+                                            <i
+                                                class="fa-solid {{ $account['icon'] ?: 'fa-building-columns' }} text-[#C2757F] text-sm"></i>
+                                        </div>
                                         <div class="min-w-0">
                                             @if ($account['name'] !== '')
                                                 <div class="text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">

@@ -81,17 +81,6 @@
                     rows: @js($rows),
                     icons: @js($icons),
                     nextId: {{ count($rows) }},
-                    // Peta warna brand sama dengan komponen x-bank-badge
-                    // (resources/views/components/bank-badge.blade.php).
-                    // Superadmin mengetik nama rekening di halaman ini, jadi
-                    // pemilihan badge harus terjadi di browser (Alpine),
-                    // bukan di server.
-                    brands: [['BCA', '#00579C'], ['BNI', '#F37021'], ['JAGO', '#16215B']],
-                    badgeFor(name) {
-                        const n = String(name || '').toUpperCase();
-                        const hit = this.brands.find(([key]) => n.includes(key));
-                        return hit ? { label: hit[0], color: hit[1] } : null;
-                    },
                     add() {
                         this.rows.push({ id: this.nextId++, icon: 'fa-building-columns', name: '', number: '' });
                     },
@@ -103,15 +92,8 @@
                     <template x-for="(row, i) in rows" :key="row.id">
                         <div class="rounded-xl border border-[#B6ADA3]/35 p-3 space-y-2">
                             <div class="flex items-center gap-2">
-                                <div class="w-9 h-9 shrink-0 rounded-lg flex items-center justify-center">
-                                    <template x-if="badgeFor(row.name)">
-                                        <span :style="`background:${badgeFor(row.name).color};color:#fff`"
-                                            class="w-9 h-9 rounded-lg flex items-center justify-center text-[11px] font-bold tracking-wide select-none"
-                                            x-text="badgeFor(row.name).label"></span>
-                                    </template>
-                                    <template x-if="!badgeFor(row.name)">
-                                        <i :class="'fa-solid ' + row.icon" class="text-[#C2757F] text-sm"></i>
-                                    </template>
+                                <div class="w-9 h-9 shrink-0 rounded-lg bg-[#D8A7B1]/20 flex items-center justify-center">
+                                    <i :class="'fa-solid ' + row.icon" class="text-[#C2757F] text-sm"></i>
                                 </div>
 
                                 <select :name="`banks[${i}][icon]`" x-model="row.icon"
@@ -142,46 +124,6 @@
                         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#D8A7B1]/60 bg-white text-[#C2757F] text-xs font-semibold hover:bg-[#FAF7F2] transition cursor-pointer">
                         <i class="fa-solid fa-plus"></i> Tambah Rekening
                     </button>
-                </div>
-            </div>
-
-            <!-- Kontak sosial untuk kartu "Hubungi Kami" di halaman Profile -->
-            <div class="pt-4 border-t border-[#B6ADA3]/30 space-y-4">
-                <div>
-                    <span class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">Hubungi
-                        Kami</span>
-                </div>
-
-                <div>
-                    <label for="social_whatsapp" class="block text-xs font-bold text-[#5F6F5B] mb-1.5">WhatsApp</label>
-                    <input type="text" name="social_whatsapp" id="social_whatsapp" inputmode="numeric"
-                        value="{{ old('social_whatsapp', $values['social_whatsapp']) }}" placeholder="6281234567890"
-                        class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">
-                    @error('social_whatsapp')
-                        <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="social_instagram" class="block text-xs font-bold text-[#5F6F5B] mb-1.5">Instagram</label>
-                    <input type="text" name="social_instagram" id="social_instagram"
-                        value="{{ old('social_instagram', $values['social_instagram']) }}"
-                        placeholder="https://instagram.com/nupsera"
-                        class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">
-                    @error('social_instagram')
-                        <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="social_tiktok" class="block text-xs font-bold text-[#5F6F5B] mb-1.5">TikTok</label>
-                    <input type="text" name="social_tiktok" id="social_tiktok"
-                        value="{{ old('social_tiktok', $values['social_tiktok']) }}"
-                        placeholder="https://tiktok.com/@nupsera"
-                        class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">
-                    @error('social_tiktok')
-                        <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
-                    @enderror
                 </div>
             </div>
 
