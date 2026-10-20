@@ -14,6 +14,9 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(self.clients.claim());
 });
 
-// Hanya mendaftarkan listener; tanpa respondWith, browser lanjut
-// memakai jaringan seperti biasa.
-self.addEventListener('fetch', () => {});
+// Hanya meneruskan ke jaringan, tanpa cache. respondWith dipanggil
+// eksplisit: sebagian versi Chrome menghitung kelayakan instal dari
+// adanya handler yang benar-benar merespons, bukan listener kosong.
+self.addEventListener('fetch', (event) => {
+    event.respondWith(fetch(event.request));
+});
