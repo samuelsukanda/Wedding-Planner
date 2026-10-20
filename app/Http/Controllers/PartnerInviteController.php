@@ -140,8 +140,10 @@ class PartnerInviteController extends Controller
      * Ketiganya dibedakan karena jalannya berbeda: "tidak ditemukan" berarti
      * tautannya salah, "sudah dipakai" berarti orangnya mungkin sudah punya
      * akun, "kedaluwarsa" berarti harus minta tautan baru.
-     */
-    private function inviteProblem(?WeddingInvite $invite): ?Response
+     *
+     * Public karena dipakai ulang oleh GoogleAuthController: login Google di
+     * halaman undangan harus lolos cek yang sama sebelum ikut memakai undangan. */
+    public function inviteProblem(?WeddingInvite $invite): ?Response
     {
         if (! $invite) {
             return $this->problemPage(

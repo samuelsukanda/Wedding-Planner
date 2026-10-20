@@ -6,11 +6,25 @@ use App\Models\User;
 use App\Models\Wedding;
 use App\Models\WeddingInvite;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Socialite\Facades\Socialite;
 use Tests\TestCase;
 
 class PartnerInviteTest extends TestCase
 {
     use RefreshDatabase;
+
+    /** Mock Socialite untuk satu login Google (email tanpa foto profil). */
+    private function fakeGoogleCallback(string $email, string $name = 'Gugel User'): void
+    {
+        $googleUser = new \Laravel\Socialite\Two\User();
+        $googleUser->map(['id' => 'g-1', 'name' => $name, 'email' => $email]);
+
+        $provider = \Mockery::mock(\Laravel\Socialite\Two\GoogleProvider::class);
+        $provider->shouldReceive('user')->andReturn($googleUser);
+        $provider->shouldReceive('redirect')->andReturn('https://accounts.google.com/fake');
+
+        Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
+    }
 
     /** @return array{0: Wedding, 1: User} */
     private function couple(string $plan = 'pro'): array
@@ -143,7 +157,7 @@ class PartnerInviteTest extends TestCase
 
         $this->get(route('invite.accept', $invite->token))
             ->assertOk()
-            ->assertSee('Kamu Diundang')
+            ->assertSee('Anda diundang')
             // Nama lengkap tidak ikut tampil, karena link bisa saja terbawa
             // ke orang lain tanpa sengaja.
             ->assertDontSee('Siti')
@@ -314,7 +328,7 @@ class PartnerInviteTest extends TestCase
 
         $this->get(route('invite.accept', $invite->token))
             ->assertOk()
-            ->assertSee('Kamu Diundang')
+            ->assertSee('Anda diundang')
             ->assertSee('name="password_confirmation"', false);
     }
 
@@ -353,6 +367,59 @@ class PartnerInviteTest extends TestCase
             ->assertRedirect(route('profile.partner-invites.index'));
 
         $this->get(route('invite.accept', $invite->token))->assertNotFound();
+    }
+
+    public function test_google_signup_from_the_invite_joins_the_same_wedding()
+    {
+        [$wedding, $owner] = $this->couple();
+        $invite = $this->inviteFor($wedding, $owner);
+        $this->fakeGoogleCallback('gadis@example.com', 'Gadis Pasangan');
+        config(['services.google.client_id' => 'test-client']);
+
+        $this->get("/auth/google/redirect?invite={$invite->token}");
+        $this->get('/auth/google/callback')->assertRedirect(route('dashboard'));
+
+        $partner = User::where('email', 'gadis@example.com')->firstOrFail();
+        $this->assertSame($wedding->id, $partner->wedding_id);
+        $this->assertSame('google', $partner->auth_provider);
+        $this->assertAuthenticatedAs($partner);
+
+        $invite->refresh();
+        $this->assertNotNull($invite->accepted_at);
+        $this->assertSame($partner->id, $invite->accepted_user_id);
+    }
+
+    public function test_google_login_from_the_invite_does_not_move_an_existing_account()
+    {
+        [$wedding, $owner] = $this->couple();
+        $invite = $this->inviteFor($wedding, $owner);
+
+        // Akun Google ini sudah punya Wedding Kit lain: undangan tidak boleh
+        // memindahkannya, sama seperti alur email yang menolak email lama.
+        [$otherWedding, $oldUser] = $this->couple();
+        $this->fakeGoogleCallback($oldUser->email);
+        config(['services.google.client_id' => 'test-client']);
+
+        $this->get("/auth/google/redirect?invite={$invite->token}");
+        $this->get('/auth/google/callback')->assertRedirect(route('dashboard'));
+
+        $this->assertSame($otherWedding->id, $oldUser->fresh()->wedding_id);
+
+        $invite->refresh();
+        $this->assertNull($invite->accepted_at);
+        $this->assertNull($invite->accepted_user_id);
+    }
+
+    public function test_google_callback_with_a_dead_invite_shows_the_friendly_page()
+    {
+        $this->fakeGoogleCallback('baru@example.com');
+        config(['services.google.client_id' => 'test-client']);
+
+        $this->get('/auth/google/redirect?invite=tok-salah');
+        $this->get('/auth/google/callback')->assertNotFound();
+
+        $this->assertGuest();
+        $this->assertDatabaseMissing('users', ['email' => 'baru@example.com']);
     }
 
     public function test_reset_wedding_data_also_clears_invites()

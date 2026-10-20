@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\PartnerInviteController;
 use App\Models\User;
+use App\Models\WeddingInvite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,12 +16,19 @@ use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
 {
-    public function redirect()
+    public function redirect(Request $request)
     {
         if (! config('services.google.client_id')) {
             return redirect()->route('login')->withErrors([
                 'email' => 'Login dengan Google belum dikonfigurasi. Silakan hubungi admin.',
             ]);
+        }
+
+        // Tombol Google di halaman undangan pasangan membawa token di URL.
+        // Token tidak boleh jalan lewat state OAuth karena itu punya Socialite;
+        // disimpan di sesi dan diambil satu kali di callback.
+        if ($request->query('invite')) {
+            $request->session()->put('pending_invite_token', (string) $request->query('invite'));
         }
 
         return Socialite::driver('google')->redirect();
@@ -49,6 +58,19 @@ class GoogleAuthController extends Controller
             ]);
         }
 
+        // Token undangan dari tombol Google di halaman undangan, dipakai
+        // satu kali di sini supaya tidak menghantui login Google berikutnya.
+        $pendingInviteToken = (string) $request->session()->pull('pending_invite_token', '');
+        $invite = null;
+
+        if ($pendingInviteToken !== '') {
+            $invite = WeddingInvite::with('wedding')->where('token', $pendingInviteToken)->first();
+
+            if ($problem = app(PartnerInviteController::class)->inviteProblem($invite)) {
+                return $problem;
+            }
+        }
+
         // Google menjamin email terverifikasi, jadi email cukup sebagai identitas.
         $user = User::where('email', $email)->first();
 
@@ -58,7 +80,24 @@ class GoogleAuthController extends Controller
                 'email' => $email,
                 'password' => Hash::make(Str::random(40)),
                 'auth_provider' => 'google',
+                // Akun baru lewat undangan langsung masuk ke Wedding Kit yang
+                // sama - ekuivalen dengan mengisi form Daftar & Bergabung.
+                'wedding_id' => $invite?->wedding_id,
             ]);
+
+            if ($invite) {
+                $invite->update([
+                    'accepted_at' => now(),
+                    'accepted_user_id' => $user->id,
+                ]);
+            }
+        } elseif ($invite) {
+            // Akun sudah ada: jangan pindahkan ke Wedding Kit lain, sama
+            // seperti alur email yang menolak email yang sudah terdaftar.
+            // Undangan biarkan tetap hidup dan cukup dipakai lewat email.
+            $invite = null;
+            $request->session()->flash('error',
+                'Kamu masuk dengan akun yang sudah terdaftar, jadi tautan undangan tidak dipakai. Minta tautan baru kalau ingin bergabung dengan email Google ini.');
         }
 
         // Akun yang awalnya daftar via email pun ikut ditandai Google, supaya

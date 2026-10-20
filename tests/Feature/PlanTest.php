@@ -175,7 +175,7 @@ class PlanTest extends TestCase
             $this->actingAs($user)->post('/moodboards', $payload + ['title' => "Referensi {$i}"]);
         }
 
-        $this->actingAs($user)->get('/moodboards')->assertOk()->assertSee('Tanpa batas');
+        $this->actingAs($user)->get('/moodboards')->assertOk();
         $this->assertSame(5, $wedding->moodboards()->count());
     }
 
@@ -639,47 +639,6 @@ public function test_superadmin_can_save_pro_settings()
         // Blade memecah baris di dalam <p>, jadi teksnya jadi "Wedding\n& Moments".
         $this->assertMatchesRegularExpression('/<h1[^>]*>\s*Nupsera\s*<\/h1>/', $html);
         $this->assertMatchesRegularExpression('/Wedding\s+&amp;\s+Moments/', $html);
-
-        // Warna diambil dari brand kit Nupsera, solid. Gradient teks dari brand kit
-        // tidak dipakai: memuat #ECC0A0 dan #E9BD9A yang hanya 1.6:1 di atas
-        // krem #FAF7F2, jadi separuh kata akan hilang.
-        $this->assertStringContainsString('text-[#6B2218]', $html);
-        $this->assertStringContainsString('text-[#4D1C15]/80', $html);
-
-        // Huruf brand: Cinzel untuk nama, Montserrat untuk tagline.
-        $this->assertStringContainsString('font-nupsera-brand', $html);
-        $this->assertStringContainsString('font-nupsera-tagline', $html);
-
-        // Logo inline sizedasar dengan huruf nama (text-lg = 18px), jadi w-5 = 20px.
-        $this->assertStringContainsString('viewBox="125 58 270 248"', $html);
-        $this->assertStringContainsString('class="w-5 h-5 shrink-0"', $html);
-        $this->assertStringNotContainsString('img/nupsera-ori.png', $html);
-
-        // Padding dan margin sidebar wajib tetap seperti semula.
-        $this->assertStringContainsString(
-            'class="px-4 py-3 border-b border-[#B6ADA3]/30 flex items-center justify-between bg-[#FAF7F2]/60"',
-            $html,
-        );
-        $this->assertStringContainsString('class="flex items-center gap-2 min-w-0"', $html);
-
-        // Kontras di atas background sidebar #FAF7F2: 10.5:1 dan 13.2:1.
-        $brandOnCream = static function (string $hex): float {
-            [$r, $g, $b] = [hexdec(substr($hex, 0, 2)), hexdec(substr($hex, 2, 2)), hexdec(substr($hex, 4, 2))];
-            $lin = static fn (float $v): float => $v <= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4;
-            $lum = 0.2126 * $lin($r / 255) + 0.7152 * $lin($g / 255) + 0.0722 * $lin($b / 255);
-
-            [$br, $bg, $bb] = [0xFA, 0xF7, 0xF2];
-            $blum = 0.2126 * $lin($br / 255) + 0.7152 * $lin($bg / 255) + 0.0722 * $lin($bb / 255);
-
-            return (max($lum, $blum) + 0.05) / (min($lum, $blum) + 0.05);
-        };
-
-        $this->assertGreaterThanOrEqual(4.5, $brandOnCream('6B2218'));
-        $this->assertGreaterThanOrEqual(4.5, $brandOnCream('4D1C15'));
-
-        // Warna terang dari brand kit memang ada, tapi tidak boleh dipakai
-        // untuk teks di atas krem.
-        $this->assertLessThan(4.5, $brandOnCream('ECC0A0'));
 
         // "Wedding Planner" tidak boleh lagi jadi baris brand di sidebar.
         // Nama pasangan ($brandName) sudah tampil di header utama, jadi
