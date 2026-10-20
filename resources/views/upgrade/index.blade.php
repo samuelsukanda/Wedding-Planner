@@ -102,9 +102,9 @@
                 </button>
 
                 <!-- ================= MODAL RINGKASAN PEMBELIAN =================
-                                                 Struktur, warna, dan cara menutupnya mengikuti modal
-                                                 "Tambah Data" di modul lain (x-show + x-outside + Escape),
-                                                 supaya tidak ada gaya modal ketiga di aplikasi ini. -->
+                                                     Struktur, warna, dan cara menutupnya mengikuti modal
+                                                     "Tambah Data" di modul lain (x-show + x-outside + Escape),
+                                                     supaya tidak ada gaya modal ketiga di aplikasi ini. -->
                 <div x-show="modalOpen" x-transition.opacity x-cloak @keydown.escape.window="modalOpen = false"
                     class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
                     <div x-outside="modalOpen = false"
@@ -139,6 +139,32 @@
                                 </dd>
                             </div>
                         </dl>
+
+                        <!-- Petunjuk pembayaran: narasi singkat dari superadmin,
+                             tampil di atas semua cara bayar (QRIS & rekening). -->
+                        @if (trim($paymentNote) !== '')
+                            <p class="text-xs text-[#5F6F5B]/75 leading-relaxed">
+                                {{ trim($paymentNote) }}
+                            </p>
+                        @endif
+
+                        @if (trim($qrisPath) !== '')
+                            <!-- QRIS: scan memakai e-wallet / m-banking apa saja -->
+                            <div class="rounded-xl bg-[#FAF7F2] p-4 flex items-center gap-4">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}" alt="Kode QRIS"
+                                    class="h-40 w-40 shrink-0 rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1">
+                                <div class="min-w-0">
+                                    <h4
+                                        class="text-xs font-bold uppercase tracking-wider text-[#5F6F5B] flex items-center gap-2">
+                                        <i class="fa-solid fa-qrcode text-[#D8A7B1]"></i> Bayar lewat QRIS
+                                    </h4>
+                                    <p class="text-xs text-[#5F6F5B]/70 mt-1.5 leading-relaxed">
+                                        Scan kode QR ini memakai e-wallet atau m-banking apa saja. Setelah bayar, unggah
+                                        bukti transfernya di form di bawah.
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- Rekening tujuan -->
                         <div class="rounded-xl bg-[#FAF7F2] p-4">
@@ -194,7 +220,7 @@
 
                             <button type="submit"
                                 class="btn-primary-rose w-full px-6 py-3.5 rounded-xl text-sm cursor-pointer">
-                                Kirim Bukti · Rp {{ number_format($price, 0, ',', '.') }}
+                                Kirim Bukti
                             </button>
                         </form>
                     </div>

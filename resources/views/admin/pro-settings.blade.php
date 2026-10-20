@@ -38,7 +38,7 @@
                 halaman upgrade pasangan tanpa perlu mengubah kode aplikasi atau melakukan deployment ulang.</p>
         </div>
 
-        <form method="POST" action="{{ route('admin.pro-settings.update') }}"
+        <form method="POST" action="{{ route('admin.pro-settings.update') }}" enctype="multipart/form-data"
             class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-5 max-w-2xl">
             @csrf
             @method('PUT')
@@ -65,6 +65,23 @@
                     class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm font-bold text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition"
                     placeholder="Kosongkan kalau tidak ada diskon">
                 @error('pro_price_before')
+                    <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Narasi singkat pembayaran, tampil di atas QRIS & rekening
+                 pada halaman upgrade pasangan. -->
+            <div>
+                <label for="pro_payment_note"
+                    class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
+                    Deskripsi Pembayaran (Opsional)
+                </label>
+                <textarea name="pro_payment_note" id="pro_payment_note" rows="2" maxlength="300"
+                    placeholder="Misal: Transfer sesuai nominal lalu unggah bukti di sini..."
+                    class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">{{ old('pro_payment_note', $values['pro_payment_note']) }}</textarea>
+                <p class="mt-1.5 text-[11px] text-[#5F6F5B]/60">Tampil di atas rekening &amp; kode QRIS pada halaman
+                    upgrade. Maksimal 300 karakter.</p>
+                @error('pro_payment_note')
                     <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
                 @enderror
             </div>
@@ -124,6 +141,24 @@
                         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#D8A7B1]/60 bg-white text-[#C2757F] text-xs font-semibold hover:bg-[#FAF7F2] transition cursor-pointer">
                         <i class="fa-solid fa-plus"></i> Tambah Rekening
                     </button>
+                </div>
+
+                <!-- Foto QRIS opsional: mengunggah baru menimpa gambar lama -->
+                <div class="rounded-xl border border-[#B6ADA3]/35 p-3 space-y-2">
+                    <label for="pro_qris" class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B]">
+                        Foto QRIS (Opsional)
+                    </label>
+                    @if (trim($qrisPath) !== '')
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}" alt="QRIS saat ini"
+                            class="h-32 w-32 rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1">
+                    @endif
+                    <input type="file" name="pro_qris" id="pro_qris" accept="image/jpeg,image/png,image/webp"
+                        class="block w-full text-sm text-[#5F6F5B] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-[#FAF7F2] file:text-[#5F6F5B] file:text-xs file:font-semibold file:cursor-pointer hover:file:bg-[#F2EDE4] transition">
+                    <p class="text-[11px] text-[#5F6F5B]/60">Tampil di halaman upgrade sebagai cara bayar selain transfer
+                        rekening. Format JPG/PNG/WEBP, maksimal 2 MB.</p>
+                    @error('pro_qris')
+                        <p class="text-sm text-[#C2757F]">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 

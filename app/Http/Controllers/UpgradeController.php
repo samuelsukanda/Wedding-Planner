@@ -31,8 +31,11 @@ class UpgradeController extends Controller
             'rejected' => $wedding?->upgradeRequests()->where('status', 'rejected')->latest()->first(),
             'price' => (int) Setting::get('pro_price', 0),
             'priceBefore' => (int) Setting::get('pro_price_before', 0),
-            'bank' => (string) Setting::get('pro_bank', ''),
-            'adminWa' => (string) Setting::get('admin_whatsapp', ''),
+            'banks' => Setting::proBanks(),
+            // Narasi singkat yang ditulis superadmin, tampil di atas
+            // rekening/QRIS sebagai petunjuk pembayaran.
+            'paymentNote' => Setting::get('pro_payment_note', ''),
+            'qrisPath' => Setting::get('pro_qris_path', ''),
         ]);
     }
 

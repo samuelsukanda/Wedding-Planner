@@ -497,6 +497,65 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         $this->assertSame('1500000', Setting::get('pro_price_before'));
     }
 
+    public function test_superadmin_can_upload_qris_and_payment_note()
+    {
+        Storage::fake('public');
+
+        $banks = [
+            ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '1234567890'],
+        ];
+
+        $this->actingAs($this->superadmin())
+            ->put('/admin/pro-settings', [
+                'pro_price' => 249000,
+                'banks' => $banks,
+                'pro_payment_note' => 'Kirim sesuai nominal lalu unggah bukti di sini.',
+                'pro_qris' => UploadedFile::fake()->image('qris.png'),
+            ])
+            ->assertRedirect(route('admin.pro-settings.index'));
+
+        $path = Setting::get('pro_qris_path');
+        $this->assertStringStartsWith('qris/', $path);
+        Storage::disk('public')->assertExists($path);
+        $this->assertSame('Kirim sesuai nominal lalu unggah bukti di sini.', Setting::get('pro_payment_note'));
+
+        // Unggah kedua menimpa file pertama supaya disk tidak menumpuk.
+        $this->actingAs($this->superadmin())
+            ->put('/admin/pro-settings', [
+                'pro_price' => 249000,
+                'banks' => $banks,
+                'pro_qris' => UploadedFile::fake()->image('qris-lagi.png'),
+            ])
+            ->assertRedirect(route('admin.pro-settings.index'));
+
+        Storage::disk('public')->assertMissing($path);
+        $this->assertStringStartsWith('qris/', Setting::get('pro_qris_path'));
+    }
+
+    public function test_upgrade_page_shows_payment_note_and_qris_above_the_banks()
+    {
+        Storage::fake('public');
+        Setting::put('pro_price', '55000');
+        Setting::put('pro_banks', json_encode([
+            ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '5410928045'],
+        ]));
+        Setting::put('pro_payment_note', 'Kirim sesuai nominal lalu unggah bukti di sini.');
+        Setting::put('pro_qris_path', 'qris/demo.png');
+
+        [, $user] = $this->couple();
+
+        $html = $this->actingAs($user)->get('/upgrade')->assertOk()->getContent();
+
+        $this->assertStringContainsString('Kirim sesuai nominal lalu unggah bukti di sini.', $html);
+        $this->assertStringContainsString('storage/qris/demo.png', $html);
+
+        // Narasi dan QRIS berada di ATAS blok Rekening Tujuan.
+        $this->assertLessThan(
+            mb_strpos($html, 'Rekening Tujuan'),
+            mb_strpos($html, 'qris/demo.png'),
+        );
+    }
+
     /** Baris rekening yang dikosongkan tidak boleh memblokir simpan. */
     public function test_empty_bank_rows_are_dropped_before_validation()
     {
