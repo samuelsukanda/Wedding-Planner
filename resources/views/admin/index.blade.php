@@ -435,6 +435,50 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ================= HUBUNGI KAMI ================= -->
+                        {{-- Kartu selalu ada; WhatsApp hanya jika nomor tersedia --}}
+                        <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-3">
+                            <h3 class="text-sm font-bold text-[#5F6F5B]">Hubungi Kami</h3>
+                            <p class="text-xs text-[#5F6F5B]/70">Ada pertanyaan atau saran? Follow & Sapa kami di:</p>
+
+                            <div class="grid grid-cols-3 gap-2.5">
+                                @if ($contact['whatsapp'])
+                                    <a href="https://wa.me/{{ $contact['whatsapp'] }}" target="_blank" rel="noopener"
+                                        class="group flex flex-col items-center gap-2 p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#25D366]/60 hover:shadow-xs transition">
+                                        {{-- Warna brand pakai inline style, bukan
+                                             kelas Tailwind: kelas arbitrary baru
+                                             ada di CSS hasil npm run build,
+                                             sedangkan warna ini harus tampil
+                                             walau build masih versi lama. --}}
+                                        <span
+                                            style="background:#25D366;color:#fff;transition:transform .2s;"
+                                            class="w-10 h-10 rounded-full flex items-center justify-center group-hover:scale-105">
+                                            <i class="fa-brands fa-whatsapp text-lg" style="color:#fff;"></i>
+                                        </span>
+                                        <span class="text-[11px] font-semibold text-[#5F6F5B]">WhatsApp</span>
+                                    </a>
+                                @endif
+                                <a href="{{ $contact['instagram'] }}" target="_blank" rel="noopener"
+                                    class="group flex flex-col items-center gap-2 p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#C2757F]/60 hover:shadow-xs transition">
+                                    <span
+                                        style="background:linear-gradient(45deg,#F9CE34 0%,#DE6162 45%,#CB44A4 100%);color:#fff;transition:transform .2s;"
+                                        class="w-10 h-10 rounded-full flex items-center justify-center group-hover:scale-105">
+                                        <i class="fa-brands fa-instagram text-lg" style="color:#fff;"></i>
+                                    </span>
+                                    <span class="text-[11px] font-semibold text-[#5F6F5B]">Instagram</span>
+                                </a>
+                                <a href="{{ $contact['tiktok'] }}" target="_blank" rel="noopener"
+                                    class="group flex flex-col items-center gap-2 p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#5F6F5B]/60 hover:shadow-xs transition">
+                                    <span
+                                        style="background:#010101;color:#fff;transition:transform .2s;"
+                                        class="w-10 h-10 rounded-full flex items-center justify-center group-hover:scale-105">
+                                        <i class="fa-brands fa-tiktok text-lg" style="color:#fff;"></i>
+                                    </span>
+                                    <span class="text-[11px] font-semibold text-[#5F6F5B]">TikTok</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
