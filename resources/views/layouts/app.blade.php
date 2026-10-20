@@ -12,6 +12,14 @@
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 
     <link rel="shortcut icon" href="{{ asset('img/nupsera-ori.jpg') }}" type="image/x-icon">
+    {{-- PWA: manifest + ikon iOS (Safari tidak membaca manifest ikon) --}}
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#D8A7B1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Nupsera">
+    <link rel="apple-touch-icon" href="{{ asset('img/icon-192.png') }}">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -645,6 +653,12 @@
                     <span>Request Upgrade Pro</span>
                 </a>
 
+                <a href="{{ route('admin.social-media.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.social-media.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
+                    <i class="fa-solid fa-share-nodes w-5 text-center text-[#D8A7B1]"></i>
+                    <span>Social Media</span>
+                </a>
+
                 <a href="{{ route('admin.pro-settings.index') }}"
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.pro-settings.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
                     <i class="fa-solid fa-sliders w-5 text-center text-[#D8A7B1]"></i>
@@ -742,6 +756,25 @@
     </main>
 
     @stack('scripts')
+
+    {{-- PWA: daftarkan service worker dan simpan event instal di window
+         supaya tombol di halaman berapa pun bisa membaca kondisi saat
+         itu juga diklik, tanpa tergantung urutan event. --}}
+    <script>
+        (function () {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function () {
+                    navigator.serviceWorker.register('/sw.js');
+                });
+            }
+
+            window.__pwaPrompt = null;
+            window.addEventListener('beforeinstallprompt', function (e) {
+                e.preventDefault();
+                window.__pwaPrompt = e;
+            });
+        })();
+    </script>
 </body>
 
 </html>

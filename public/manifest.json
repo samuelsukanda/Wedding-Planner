@@ -1,0 +1,26 @@
+{
+    "name": "Nupsera Wedding & Moments",
+    "short_name": "Nupsera",
+    "description": "Wedding planner: checklist, budget, tamu, vendor, dan rundown dalam satu aplikasi.",
+    "start_url": "/?source=pwa",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#FAF7F2",
+    "theme_color": "#D8A7B1",
+    "lang": "id",
+    "icons": [
+        {
+            "src": "/img/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/img/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

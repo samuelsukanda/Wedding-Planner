@@ -436,6 +436,69 @@
                             </div>
                         </div>
 
+                        <!-- ================= INSTAL PWA ================= -->
+                        {{-- Tombol membaca window.__pwaPrompt saat diklik
+                             (berisi event beforeinstallprompt yang dicapture
+                             layout), bukan saat halaman dimuat, supaya tidak
+                             kehilangan event yang datang belakangan. --}}
+                        @php $pwaRootAsset = asset('img/icon-192.png') @endphp
+                        <div class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs"
+                            x-data="{
+                                open: false,
+                                out: false,
+                                fallback: '',
+                                install() {
+                                    const prompt = window.__pwaPrompt;
+                                    if (prompt) {
+                                        prompt.prompt();
+                                        this.open = false;
+                                        return;
+                                    }
+                                    // iOS/Safari & browser tanpa dukungan:
+                                    // beri langkah manualnya, jangan diam.
+                                    const ua = navigator.userAgent;
+                                    this.fallback = /iPhone|iPad|iPod/.test(ua)
+                                        ? 'Di iPhone/iPad: ketuk ikon Bagikan di Safari, lalu pilih Tambahkan ke Layar Utama.'
+                                        : 'Browser ini belum mendukung pemasangan otomatis. Gunakan Chrome atau Edge terbaru.';
+                                },
+                            }"
+                            x-init="
+                                if (navigator.getInstalledRelatedApps) {
+                                    navigator.getInstalledRelatedApps().then((r) => {
+                                        if (r.length) out = true;
+                                    });
+                                }
+                                window.addEventListener('appinstalled', () => { out = true; open = false });
+                            ">
+                            <div x-show="!out" class="w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/35 text-sm font-semibold text-[#5F6F5B] hover:bg-[#F2EDE4] transition cursor-pointer"
+                                @click="open = true" role="button" tabindex="0"
+                                @keydown.enter.prevent="open = true">
+                                <i class="fa-solid fa-download text-[#C2757F]"></i> Install App ke HP atau Desktop
+                            </div>
+
+                            <!-- Popup konfirmasi instal -->
+                            <div x-show="open" x-cloak
+                                class="fixed inset-x-4 bottom-6 z-50 max-w-md mx-auto bg-white rounded-2xl border border-[#B6ADA3]/30 shadow-2xl p-4 flex items-start gap-3">
+                                <img src="{{ $pwaRootAsset }}"
+                                    class="w-10 h-10 rounded-xl border border-[#B6ADA3]/25 object-cover shrink-0" alt="Nupsera">
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm font-bold text-[#5F6F5B]">Tambahkan Nupsera ke Layar Utama</p>
+                                    <p class="text-xs text-[#5F6F5B]/70 mt-0.5">Akses lebih cepat dari perangkat Anda.</p>
+                                    <p x-show="fallback" x-cloak class="text-xs text-[#B65E51] mt-1" x-text="fallback"></p>
+                                </div>
+                                <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+                                    <button type="button" @click="install()"
+                                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#C2757F] text-white text-xs font-bold hover:bg-[#B0666E] transition cursor-pointer">
+                                        <i class="fa-solid fa-download text-[10px]"></i> Instal
+                                    </button>
+                                    <button type="button" @click="open = false" aria-label="Tutup"
+                                        class="w-7 h-7 rounded-full flex items-center justify-center text-[#B6ADA3] hover:bg-[#FAF7F2] transition cursor-pointer">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- ================= HUBUNGI KAMI ================= -->
                         {{-- Kartu selalu ada; WhatsApp hanya jika nomor tersedia --}}
                         <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-3">
