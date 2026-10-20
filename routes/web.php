@@ -29,6 +29,7 @@ use App\Http\Controllers\AdminPanelController;
 use App\Http\Controllers\UpgradeController;
 use App\Http\Controllers\AdminUpgradeController;
 use App\Http\Controllers\ProSettingsController;
+use App\Http\Controllers\SocialMediaController;
 
 // ========== LOGIN (tanpa middleware auth) ==========
 Route::get('login', fn () => redirect()->route('dashboard'))->name('login');
@@ -216,5 +217,9 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
 
         Route::get('admin/pro-settings', [ProSettingsController::class, 'edit'])->name('admin.pro-settings.index');
         Route::put('admin/pro-settings', [ProSettingsController::class, 'update'])->name('admin.pro-settings.update');
+
+        // Kontak sosial "Hubungi Kami" (kartu di halaman Profile).
+        Route::get('admin/social-media', [SocialMediaController::class, 'edit'])->name('admin.social-media.index');
+        Route::put('admin/social-media', [SocialMediaController::class, 'update'])->name('admin.social-media.update');
     });
 });

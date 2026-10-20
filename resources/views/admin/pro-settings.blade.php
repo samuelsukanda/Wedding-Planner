@@ -70,7 +70,7 @@
             </div>
 
             <!-- Narasi singkat pembayaran, tampil di atas QRIS & rekening
-                 pada halaman upgrade pasangan. -->
+                                     pada halaman upgrade pasangan. -->
             <div>
                 <label for="pro_payment_note"
                     class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">
@@ -79,8 +79,6 @@
                 <textarea name="pro_payment_note" id="pro_payment_note" rows="2" maxlength="300"
                     placeholder="Misal: Transfer sesuai nominal lalu unggah bukti di sini..."
                     class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">{{ old('pro_payment_note', $values['pro_payment_note']) }}</textarea>
-                <p class="mt-1.5 text-[11px] text-[#5F6F5B]/60">Tampil di atas rekening &amp; kode QRIS pada halaman
-                    upgrade. Maksimal 300 karakter.</p>
                 @error('pro_payment_note')
                     <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
                 @enderror
@@ -144,26 +142,26 @@
                 </div>
 
                 <!-- Foto QRIS opsional: mengunggah baru menimpa gambar lama -->
-                <div class="rounded-xl border border-[#B6ADA3]/35 p-3 space-y-2"
-                    x-data="{
-                        existing: @js(trim($qrisPath) !== '' ? \Illuminate\Support\Facades\Storage::url($qrisPath) : ''),
-                        live: '',
-                        preview() {
-                            const f = $refs.file.files[0];
-                            if (this.live) URL.revokeObjectURL(this.live);
-                            this.live = f ? URL.createObjectURL(f) : '';
-                        },
-                    }">
+                <div class="rounded-xl border border-[#B6ADA3]/35 p-3 space-y-2" x-data="{
+                    existing: @js(trim($qrisPath) !== '' ? \Illuminate\Support\Facades\Storage::url($qrisPath) : ''),
+                    live: '',
+                    preview() {
+                        const f = $refs.file.files[0];
+                        if (this.live) URL.revokeObjectURL(this.live);
+                        this.live = f ? URL.createObjectURL(f) : '';
+                    },
+                }">
                     <label for="pro_qris" class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B]">
-                        Foto QRIS @if (trim($qrisPath) !== '') <span class="normal-case">(saat ini)</span>@endif
+                        Foto QRIS @if (trim($qrisPath) !== '')
+                            <span class="normal-case">(saat ini)</span>
+                        @endif
                     </label>
                     <img x-show="live || existing" :src="live || existing" alt="QRIS"
                         class="h-40 w-40 shrink-0 rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1">
                     <input x-ref="file" x-on:change="preview()" type="file" name="pro_qris" id="pro_qris"
                         accept="image/jpeg,image/png,image/webp"
                         class="block w-full text-sm text-[#5F6F5B] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-[#FAF7F2] file:text-[#5F6F5B] file:text-xs file:font-semibold file:cursor-pointer hover:file:bg-[#F2EDE4] transition">
-                    <p class="text-[11px] text-[#5F6F5B]/60">Tampil di halaman upgrade sebagai cara bayar selain transfer
-                        rekening. Format JPG/PNG/WEBP, maksimal 2 MB.</p>
+                    <p class="text-[11px] text-[#5F6F5B]/60">Format JPG/PNG/WEBP, maksimal 2 MB.</p>
                     @error('pro_qris')
                         <p class="text-sm text-[#C2757F]">{{ $message }}</p>
                     @enderror

@@ -26,30 +26,18 @@
             }
         }
     })">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+        <div
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Payment Tracker</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Pantau jadwal pembayaran, uang muka, dan sisa tagihan agar tidak ada
+                <p class="text-xs text-[#5F6F5B]/70 mt-1">Pantau jadwal pembayaran, uang muka, dan sisa tagihan agar tidak
+                    ada
                     pembayaran yang terlewat.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
                 <i class="fa-solid fa-plus"></i> Catat Pembayaran
             </button>
-        </div>
-
-        <!-- Reminder Alert Banner -->
-        <div
-            class="p-4 rounded-2xl bg-gradient-to-r from-[#FAF7F2] to-[#D8A7B1]/20 border border-[#B6ADA3]/40 flex items-center gap-4">
-            <div
-                class="w-10 h-10 rounded-xl bg-[#D8A7B1]/30 flex items-center justify-center text-[#5F6F5B] text-lg shrink-0">
-                <i class="fa-solid fa-bell"></i>
-            </div>
-            <div class="text-xs space-y-0.5">
-                <div class="font-bold text-[#5F6F5B]">Pengingat Pembayaran Otomatis Aktif</div>
-                <div class="text-[#5F6F5B]/80">Sistem mengirimkan pengingat notifikasi pada H-7, H-3, dan Hari H tanggal
-                    jatuh tempo pembayaran vendor.</div>
-            </div>
         </div>
 
         <!-- Filter Bar -->

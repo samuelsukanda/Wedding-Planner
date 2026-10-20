@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Wedding;
 use App\Models\DropdownOption;
+use App\Models\Setting;
 use App\Models\User;
 use App\Support\ChecklistTemplate;
 use Illuminate\Http\Request;
@@ -19,6 +20,20 @@ class AdminPanelController extends Controller
         // weddings, dan view sudah menampilkan empty state kalau null.
         $wedding = Wedding::current();
 
+        // Kontak sosial untuk kartu "Hubungi Kami" di halaman Profile.
+        // Kartunya selalu tampil supaya couple selalu punya jalur menghubungi
+        // admin: preferensi dari Pengaturan Pro, dengan fallback legacy WA
+        // admin untuk WhatsApp.
+        $waDigits = preg_replace('/\D/', '', (string) (
+            Setting::get('social_whatsapp', '') ?: Setting::get('admin_whatsapp', '')
+        ));
+
+        $contact = [
+            'whatsapp' => $waDigits,
+            'instagram' => Setting::get('social_instagram', '') ?: 'https://www.instagram.com/',
+            'tiktok' => Setting::get('social_tiktok', '') ?: 'https://www.tiktok.com/',
+        ];
+
         return view('admin.index', [
             'wedding' => $wedding,
             'me' => auth()->user(),
@@ -28,6 +43,7 @@ class AdminPanelController extends Controller
             'upgradeRequests' => $wedding
                 ? $wedding->upgradeRequests()->latest()->get()
                 : collect(),
+            'contact' => $contact,
         ]);
     }
 

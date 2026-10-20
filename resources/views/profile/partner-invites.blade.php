@@ -72,7 +72,7 @@
                                 <i class="fa-solid fa-copy mr-1"></i> Salin Link
                             </button>
 
-                            <a href="https://wa.me/?text={{ rawurlencode('Halo, kamu Capitan undangan untuk Wedding Kit kami. Buka link ini untuk membuat akun dan bergabung: ' . $inviteUrl($pending)) }}&api=wa"
+                            <a href="https://wa.me/?text={{ rawurlencode('Halo, Anda diundang untuk mengakses Worksheet kami. Silakan klik tautan di bawah ini untuk membuat akun dan bergabung: ' . $inviteUrl($pending)) }}&api=wa"
                                 target="_blank" rel="noopener"
                                 class="px-4 py-2.5 rounded-xl btn-primary-rose text-xs flex items-center justify-center">
                                 <i class="fa-brands fa-whatsapp mr-1"></i> Bagikan ke WhatsApp

@@ -259,11 +259,15 @@
             <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo Nupsera"
                 style="height:56px;width:auto;object-fit:contain;display:block;">
             <div style="text-align:center;line-height:1;">
-                <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
+                <div
+                    style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
                     background:linear-gradient(135deg,#8B4513 0%,#C07830 35%,#D4A96A 60%,#B8762A 100%);
-                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Nupsera</div>
-                <div style="font-family:'Outfit',sans-serif;font-size:9px;font-weight:600;
-                    letter-spacing:0.18em;text-transform:uppercase;color:#4A5240;margin-top:2px;">Wedding &amp; Moments</div>
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+                    Nupsera</div>
+                <div
+                    style="font-family:'Outfit',sans-serif;font-size:9px;font-weight:600;
+                    letter-spacing:0.18em;text-transform:uppercase;color:#4A5240;margin-top:2px;">
+                    Wedding &amp; Moments</div>
             </div>
         </div>
         <p class="subtitle">Masuk untuk mengelola acara pernikahan</p>
@@ -372,10 +376,6 @@
         @unless (config('services.google.client_id'))
             <p class="google-note">Login Google belum aktif. Admin perlu mengisi kredensial OAuth.</p>
         @endunless
-
-        <div class="footer-text">
-            &copy; {{ date('Y') }} Nupsera
-        </div>
     </div>
 
     <script>
