@@ -140,39 +140,20 @@
                             </div>
                         </dl>
 
-                        <!-- Petunjuk pembayaran: narasi singkat dari superadmin,
-                             tampil di atas semua cara bayar (QRIS & rekening). -->
-                        @if (trim($paymentNote) !== '')
-                            <p class="text-xs text-[#5F6F5B]/75 leading-relaxed">
-                                {{ trim($paymentNote) }}
-                            </p>
-                        @endif
-
-                        @if (trim($qrisPath) !== '')
-                            <!-- QRIS: scan memakai e-wallet / m-banking apa saja -->
-                            <div class="rounded-xl bg-[#FAF7F2] p-4 flex items-center gap-4">
-                                <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}" alt="Kode QRIS"
-                                    class="h-40 w-40 shrink-0 rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1">
-                                <div class="min-w-0">
-                                    <h4
-                                        class="text-xs font-bold uppercase tracking-wider text-[#5F6F5B] flex items-center gap-2">
-                                        <i class="fa-solid fa-qrcode text-[#D8A7B1]"></i> Bayar lewat QRIS
-                                    </h4>
-                                    <p class="text-xs text-[#5F6F5B]/70 mt-1.5 leading-relaxed">
-                                        Scan kode QR ini memakai e-wallet atau m-banking apa saja. Setelah bayar, unggah
-                                        bukti transfernya di form di bawah.
-                                    </p>
-                                </div>
-                            </div>
-                        @endif
-
                         <!-- Rekening tujuan -->
                         <div class="rounded-xl bg-[#FAF7F2] p-4">
                             <h4 class="text-xs font-bold uppercase tracking-wider text-[#5F6F5B] flex items-center gap-2">
                                 <i class="fa-solid fa-building-columns text-[#D8A7B1]"></i> Rekening Tujuan
                             </h4>
 
-                            <div class="mt-3 space-y-2">
+                            @if (trim($paymentNote) !== '')
+                                <!-- Deskripsi pembayaran dari superadmin, di bawah judul -->
+                                <p class="mt-2 text-xs text-[#5F6F5B]/75 leading-relaxed">
+                                    {{ trim($paymentNote) }}
+                                </p>
+                            @endif
+
+                            <div class="space-y-2 mt-3">
                                 @forelse ($banks as $account)
                                     <div
                                         class="flex items-center gap-3 rounded-xl bg-white border border-[#B6ADA3]/35 px-3.5 py-2.5">
@@ -197,6 +178,31 @@
                                 @endforelse
                             </div>
                         </div>
+
+                        @if (trim($paymentNote) !== '')
+                            <!-- Deskripsi pembayaran dari superadmin -->
+                            <p class="-mt-2 text-xs text-[#5F6F5B]/75 leading-relaxed">
+                                {{ trim($paymentNote) }}
+                            </p>
+                        @endif
+
+                        @if (trim($qrisPath) !== '')
+                            <div class="rounded-xl bg-[#FAF7F2] p-4"
+                                x-data="{ open: false }">
+                                <img
+                                    src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}"
+                                    x-on:click="open = true" alt="Kode QRIS"
+                                    class="h-40 w-40 rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1 cursor-zoom-in"
+                                    title="Klik untuk memperbesar">
+
+                                <!-- Tampilan besar, tutup dengan klik di mana saja -->
+                                <div x-show="open" x-on:click="open = false" x-cloak
+                                    class="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6 cursor-zoom-out">
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}" alt="Kode QRIS"
+                                        class="max-h-full max-w-full rounded-xl bg-white p-3">
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- Kirim bukti -->
                         <form method="POST" action="{{ route('upgrade.store') }}" enctype="multipart/form-data"

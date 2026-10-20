@@ -532,7 +532,7 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         $this->assertStringStartsWith('qris/', Setting::get('pro_qris_path'));
     }
 
-    public function test_upgrade_page_shows_payment_note_and_qris_above_the_banks()
+    public function test_upgrade_page_shows_payment_note_and_qris_below_the_banks_heading()
     {
         Storage::fake('public');
         Setting::put('pro_price', '55000');
@@ -549,11 +549,17 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         $this->assertStringContainsString('Kirim sesuai nominal lalu unggah bukti di sini.', $html);
         $this->assertStringContainsString('storage/qris/demo.png', $html);
 
-        // Narasi dan QRIS berada di ATAS blok Rekening Tujuan.
+        // Urutan: judul Rekening Tujuan -> deskripsi -> QRIS, ditampilkan
+        // tanpa judul "Bayar lewat QRIS" (gambar QRIS saja).
         $this->assertLessThan(
+            mb_strpos($html, 'Kirim sesuai nominal'),
             mb_strpos($html, 'Rekening Tujuan'),
-            mb_strpos($html, 'qris/demo.png'),
         );
+        $this->assertLessThan(
+            mb_strpos($html, 'qris/demo.png'),
+            mb_strpos($html, 'Kirim sesuai nominal'),
+        );
+        $this->assertStringNotContainsString('Bayar lewat QRIS', $html);
     }
 
     /** Baris rekening yang dikosongkan tidak boleh memblokir simpan. */
