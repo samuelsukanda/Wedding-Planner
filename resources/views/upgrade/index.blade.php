@@ -198,7 +198,8 @@
                                         </button>
                                         <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}"
                                             alt="Kode QRIS"
-                                            class="max-w-sm max-h-[80vh] w-auto h-auto rounded-xl bg-white p-3 shadow-xl">
+                                            style="max-width:22.5rem;max-height:80vh;width:auto;height:auto"
+                                            class="rounded-xl bg-white p-3 shadow-xl">
                                     </div>
                                 </div>
                             </div>
