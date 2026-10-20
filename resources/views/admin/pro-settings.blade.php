@@ -158,7 +158,7 @@
                         Foto QRIS @if (trim($qrisPath) !== '') <span class="normal-case">(saat ini)</span>@endif
                     </label>
                     <img x-show="live || existing" :src="live || existing" alt="QRIS"
-                        class="max-h-48 w-auto rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1">
+                        class="h-40 w-40 shrink-0 rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1">
                     <input x-ref="file" x-on:change="preview()" type="file" name="pro_qris" id="pro_qris"
                         accept="image/jpeg,image/png,image/webp"
                         class="block w-full text-sm text-[#5F6F5B] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-[#FAF7F2] file:text-[#5F6F5B] file:text-xs file:font-semibold file:cursor-pointer hover:file:bg-[#F2EDE4] transition">
