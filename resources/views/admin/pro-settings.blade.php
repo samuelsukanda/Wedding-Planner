@@ -144,15 +144,23 @@
                 </div>
 
                 <!-- Foto QRIS opsional: mengunggah baru menimpa gambar lama -->
-                <div class="rounded-xl border border-[#B6ADA3]/35 p-3 space-y-2">
+                <div class="rounded-xl border border-[#B6ADA3]/35 p-3 space-y-2"
+                    x-data="{
+                        existing: @js(trim($qrisPath) !== '' ? \Illuminate\Support\Facades\Storage::url($qrisPath) : ''),
+                        live: '',
+                        preview() {
+                            const f = $refs.file.files[0];
+                            if (this.live) URL.revokeObjectURL(this.live);
+                            this.live = f ? URL.createObjectURL(f) : '';
+                        },
+                    }">
                     <label for="pro_qris" class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B]">
-                        Foto QRIS (Opsional)
+                        Foto QRIS @if (trim($qrisPath) !== '') <span class="normal-case">(saat ini)</span>@endif
                     </label>
-                    @if (trim($qrisPath) !== '')
-                        <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}" alt="QRIS saat ini"
-                            class="h-32 w-32 rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1">
-                    @endif
-                    <input type="file" name="pro_qris" id="pro_qris" accept="image/jpeg,image/png,image/webp"
+                    <img x-show="live || existing" :src="live || existing" alt="QRIS"
+                        class="max-h-48 w-auto rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1">
+                    <input x-ref="file" x-on:change="preview()" type="file" name="pro_qris" id="pro_qris"
+                        accept="image/jpeg,image/png,image/webp"
                         class="block w-full text-sm text-[#5F6F5B] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-[#FAF7F2] file:text-[#5F6F5B] file:text-xs file:font-semibold file:cursor-pointer hover:file:bg-[#F2EDE4] transition">
                     <p class="text-[11px] text-[#5F6F5B]/60">Tampil di halaman upgrade sebagai cara bayar selain transfer
                         rekening. Format JPG/PNG/WEBP, maksimal 2 MB.</p>
