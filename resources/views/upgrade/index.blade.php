@@ -102,9 +102,9 @@
                 </button>
 
                 <!-- ================= MODAL RINGKASAN PEMBELIAN =================
-                                                     Struktur, warna, dan cara menutupnya mengikuti modal
-                                                     "Tambah Data" di modul lain (x-show + x-outside + Escape),
-                                                     supaya tidak ada gaya modal ketiga di aplikasi ini. -->
+                                                         Struktur, warna, dan cara menutupnya mengikuti modal
+                                                         "Tambah Data" di modul lain (x-show + x-outside + Escape),
+                                                         supaya tidak ada gaya modal ketiga di aplikasi ini. -->
                 <div x-show="modalOpen" x-transition.opacity x-cloak @keydown.escape.window="modalOpen = false"
                     class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
                     <div x-outside="modalOpen = false"
@@ -179,27 +179,27 @@
                             </div>
                         </div>
 
-                        @if (trim($paymentNote) !== '')
-                            <!-- Deskripsi pembayaran dari superadmin -->
-                            <p class="-mt-2 text-xs text-[#5F6F5B]/75 leading-relaxed">
-                                {{ trim($paymentNote) }}
-                            </p>
-                        @endif
-
                         @if (trim($qrisPath) !== '')
-                            <div class="rounded-xl bg-[#FAF7F2] p-4"
-                                x-data="{ open: false }">
-                                <img
-                                    src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}"
+                            <div class="rounded-xl bg-[#FAF7F2] p-4 flex justify-center" x-data="{ open: false }">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}"
                                     x-on:click="open = true" alt="Kode QRIS"
                                     class="h-40 w-40 rounded-xl border border-[#B6ADA3]/30 object-contain bg-white p-1 cursor-zoom-in"
                                     title="Klik untuk memperbesar">
 
-                                <!-- Tampilan besar, tutup dengan klik di mana saja -->
+                                <!-- Tampilan besar: ukuran terbatas, tutup lewat
+                                     tombol X di pojok atau klik area gelap -->
                                 <div x-show="open" x-on:click="open = false" x-cloak
                                     class="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6 cursor-zoom-out">
-                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}" alt="Kode QRIS"
-                                        class="max-h-full max-w-full rounded-xl bg-white p-3">
+                                    <div class="relative flex items-center justify-center max-w-full max-h-full">
+                                        <button type="button" x-on:click.stop="open = false"
+                                            class="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-white text-[#5F6F5B] shadow-md flex items-center justify-center cursor-pointer hover:bg-[#FAF7F2] transition"
+                                            aria-label="Tutup">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}"
+                                            alt="Kode QRIS"
+                                            class="max-w-sm max-h-[80vh] w-auto h-auto rounded-xl bg-white p-3 shadow-xl">
+                                    </div>
                                 </div>
                             </div>
                         @endif
