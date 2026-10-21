@@ -186,8 +186,9 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
                     <!-- Left: Form Input Data Pernikahan (7 Cols on Desktop) -->
-                    <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-5">
-                        <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-5">
+                            <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                             <h2 class="text-base font-bold font-serif-title text-[#5F6F5B] flex items-center gap-2">
                                 <i class="fa-solid fa-pen-to-square text-[#D8A7B1]"></i> Edit Detail Acara Pernikahan
                             </h2>
@@ -273,92 +274,166 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
 
-                        <!-- ================= INSTAL PWA ================= -->
-                        {{-- Tombol membaca window.__pwaPrompt saat diklik
-                             (berisi event beforeinstallprompt yang dicapture
-                             layout), bukan saat halaman dimuat, supaya tidak
-                             kehilangan event yang datang belakangan. --}}
-                        @php $pwaRootAsset = asset('img/icon-192.png') @endphp
-                        <div class="mt-3"
-                            x-data="{
-                                open: false,
-                                out: false,
-                                fallback: '',
-                                waiting: false,
-                                fire() {
-                                    window.__pwaPrompt.prompt();
-                                    this.open = false;
+                    <!-- ================= INSTAL PWA ================= -->
+                    {{-- Tombol membaca window.__pwaPrompt saat diklik
+                         (berisi event beforeinstallprompt yang dicapture
+                         layout), bukan saat halaman dimuat, supaya tidak
+                         kehilangan event yang datang belakangan. --}}
+                    @php $pwaRootAsset = asset('img/icon-192.png') @endphp
+                    <style>
+                        .btn-pwa-install {
+                            background-color: #ffffff;
+                            color: #5F6F5B;
+                            border: 1px solid rgba(182, 173, 163, 0.4);
+                            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+                            transition: all 0.25s ease;
+                        }
+                        .btn-pwa-install .btn-pwa-icon {
+                            color: #C2757F;
+                            transition: color 0.25s ease;
+                        }
+                        .btn-pwa-install:hover {
+                            background: linear-gradient(135deg, #D8A7B1 0%, #C4919B 100%) !important;
+                            color: #ffffff !important;
+                            border-color: #C4919B !important;
+                            box-shadow: 0 4px 15px rgba(216, 167, 177, 0.45) !important;
+                        }
+                        .btn-pwa-install:hover .btn-pwa-icon {
+                            color: #ffffff !important;
+                        }
+                    </style>
+                    <script>
+                        // Toast gagal-pemasangan: satu elemen, gaya & posisi
+                        // sama dengan komponen flash-toast, tapi kartu merah;
+                        // hilang sendiri setelah 4 detik atau lewat tombol ×.
+                        // Semua warna pakai inline style: kelas Tailwind
+                        // arbitrary di sini tidak ikut ter-compile npm build.
+                        function pwaFallbackToast(pesan) {
+                            const shell = document.createElement('div');
+                            shell.style.cssText = 'position:fixed;top:1rem;left:50%;transform:translateX(-50%);z-index:100;width:calc(100% - 2rem);max-width:36rem';
+
+                            const card = document.createElement('div');
+                            card.setAttribute('data-flash', '');
+                            card.style.cssText = 'display:flex;align-items:flex-start;gap:0.75rem;border:1px solid rgba(182,94,81,0.5);background:#F9E7E4;border-radius:1rem;padding:0.875rem 1rem;box-shadow:0 10px 15px -3px rgba(182,94,81,0.15);font-size:0.875rem;color:#7A382E';
+
+                            const icon = document.createElement('i');
+                            icon.className = 'fa-solid fa-circle-exclamation';
+                            icon.style.cssText = 'margin-top:0.125rem;color:#B65E51';
+
+                            const text = document.createElement('span');
+                            text.textContent = pesan;
+
+                            const close = document.createElement('button');
+                            close.type = 'button';
+                            close.setAttribute('aria-label', 'Tutup');
+                            close.style.cssText = 'cursor:pointer;border:0;background:none;color:rgba(122,56,46,0.6);transition:color .3s';
+                            close.addEventListener('mouseenter', () => close.style.color = '#7A382E');
+                            close.addEventListener('mouseleave', () => close.style.color = 'rgba(122,56,46,0.6)');
+                            const closeIcon = document.createElement('i');
+                            closeIcon.className = 'fa-solid fa-xmark';
+                            close.appendChild(closeIcon);
+
+                            card.append(icon, text, close);
+                            shell.appendChild(card);
+                            document.body.appendChild(shell);
+
+                            const dismiss = () => {
+                                if (card.dataset.closing) return;
+                                card.dataset.closing = '1';
+                                card.style.animation = 'flash-toast-out 260ms ease-in forwards';
+                                setTimeout(() => shell.remove(), 280);
+                            };
+
+                            close.addEventListener('click', dismiss);
+                            setTimeout(dismiss, 4000);
+                        }
+                    </script>
+                    <div x-data="{
+                        open: false,
+                        out: false,
+                        waiting: false,
+                        fire() {
+                            window.__pwaPrompt.prompt();
+                            this.open = false;
+                            this.waiting = false;
+                        },
+                        install() {
+                            if (this.waiting) return;
+                            if (window.__pwaPrompt) {
+                                this.fire();
+                                return;
+                            }
+                            // Chrome/Edge bisa baru menyiapkan prompt
+                            // beberapa detik setelah service worker
+                            // aktif; tunggu dulu, jangan langsung
+                            // menyimpulkan tidak didukung.
+                            this.waiting = true;
+                            let tries = 0;
+                            const attempt = setInterval(() => {
+                                if (window.__pwaPrompt) {
+                                    clearInterval(attempt);
                                     this.waiting = false;
-                                },
-                                install() {
-                                    if (this.waiting) return;
-                                    this.fallback = '';
-                                    if (window.__pwaPrompt) {
-                                        this.fire();
-                                        return;
-                                    }
-                                    // Chrome/Edge bisa baru menyiapkan prompt
-                                    // beberapa detik setelah service worker
-                                    // aktif; tunggu dulu, jangan langsung
-                                    // menyimpulkan tidak didukung.
-                                    this.waiting = true;
-                                    let tries = 0;
-                                    const attempt = setInterval(() => {
-                                        if (window.__pwaPrompt) {
-                                            clearInterval(attempt);
-                                            this.waiting = false;
-                                            this.fire();
-                                            return;
-                                        }
-                                        if (++tries >= 16) {
-                                            clearInterval(attempt);
-                                            this.waiting = false;
-                                            const ua = navigator.userAgent;
-                                            // iOS/Safari menolak prompt otomatis;
-                                            // beri langkah manualnya, jangan diam.
-                                            this.fallback = /iPhone|iPad|iPod/.test(ua)
-                                                ? 'Di iPhone/iPad: ketuk ikon Bagikan di Safari, lalu pilih Tambahkan ke Layar Utama.'
-                                                : 'Browser ini belum mendukung pemasangan otomatis. Gunakan Chrome atau Edge terbaru. Bila kamu pakai Chrome: buka menu titik tiga pada alamat bar, lalu pilih Instal.';
-                                        }
-                                    }, 250);
-                                },
-                            }"
-                            x-init="
-                                if (navigator.getInstalledRelatedApps) {
-                                    navigator.getInstalledRelatedApps().then((r) => {
-                                        if (r.length) out = true;
-                                    });
+                                    this.fire();
+                                    return;
                                 }
-                                window.addEventListener('appinstalled', () => { out = true; open = false });
-                            ">
-                            <div x-show="!out" class="w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/35 text-sm font-semibold text-[#5F6F5B] hover:bg-[#F2EDE4] transition cursor-pointer"
-                                @click="open = true" role="button" tabindex="0"
-                                @keydown.enter.prevent="open = true">
-                                <i class="fa-solid fa-download text-[#C2757F]"></i> Install App ke HP atau Desktop
-                            </div>
+                                if (++tries >= 16) {
+                                    clearInterval(attempt);
+                                    this.waiting = false;
+                                    const ua = navigator.userAgent;
+                                    // iOS/Safari menolak prompt otomatis;
+                                    // beri langkah manualnya, jangan diam.
+                                    // Diagnosis urut: insecure context (SW
+                                    // ditolak) -> gagal registrasi SW ->
+                                    // Chrome belum menilai situs layak instal.
+                                    let pesan;
+                                    if (/iPhone|iPad|iPod/.test(ua)) {
+                                        pesan = 'Di iPhone/iPad: ketuk ikon Bagikan di Safari, lalu pilih Tambahkan ke Layar Utama.';
+                                    } else if (!window.isSecureContext) {
+                                        pesan = 'Situs ini belum HTTPS, jadi browser menolak mendaftarkan service worker PWA. Uji lokal: akses via localhost atau herd secure. Di produksi pastikan domain memakai https.';
+                                    } else if (window.__pwaError) {
+                                        pesan = 'Service worker gagal terdaftar: ' + window.__pwaError;
+                                    } else {
+                                        pesan = 'Chrome belum menganggap situs ini layak dipasang (biasanya butuh kunjungan ulang setelah service worker aktif). Buka ulang halaman ini sekali, atau instal via menu titik tiga di address bar lalu pilih Instal.';
+                                    }
+                                    this.open = false;
+                                    pwaFallbackToast(pesan);
+                                }
+                            }, 250);
+                        },
+                    }" x-init="if (navigator.getInstalledRelatedApps) {
+                        navigator.getInstalledRelatedApps().then((r) => {
+                            if (r.length) out = true;
+                        });
+                    }
+                    window.addEventListener('appinstalled', () => { out = true;
+                        open = false });">
+                        <div x-show="!out"
+                            class="btn-pwa-install w-full flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-2xl text-sm font-semibold cursor-pointer"
+                            @click="open = true" role="button" tabindex="0" @keydown.enter.prevent="open = true">
+                            <i class="btn-pwa-icon fa-solid fa-download"></i> Install App ke HP atau Desktop
+                        </div>
 
                             <!-- Popup konfirmasi instal: posisi & animasi sama
-                                 dengan toast flash (atas, flash-toast-in/out) -->
+                                     dengan toast flash (atas, flash-toast-in/out) -->
                             <div x-show="open" x-cloak x-ref="card" data-flash
-                                class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-2rem)] max-w-xl">
+                                class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-auto max-w-[calc(100%-1.5rem)] sm:max-w-md">
                                 <div
-                                    class="bg-white rounded-2xl border border-[#B6ADA3]/30 shadow-lg shadow-[#5F6F5B]/10 p-4 flex items-start gap-3">
-                                    <img src="{{ $pwaRootAsset }}"
-                                        class="w-10 h-10 rounded-xl border border-[#B6ADA3]/25 object-cover shrink-0"
-                                        alt="Nupsera">
-                                    <div class="min-w-0 flex-1">
-                                        <p class="text-sm font-bold text-[#5F6F5B]">Tambahkan Nupsera ke Layar Utama</p>
-                                        <p class="text-xs text-[#5F6F5B]/70 mt-0.5">Akses lebih cepat dari perangkat Anda.
-                                        </p>
-                                        <p x-show="waiting" x-cloak
-                                            class="text-xs text-[#5F6F5B]/70 mt-1">Menyiapkan pemasangan…</p>
-                                        <p x-show="fallback" x-cloak class="text-xs text-[#B65E51] mt-1"
-                                            x-text="fallback"></p>
+                                    class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xl shadow-[#5F6F5B]/15 px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center gap-3">
+                                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-[#B6ADA3]/25 bg-[#FAF7F2] flex items-center justify-center p-1 shrink-0">
+                                        <img src="{{ asset('img/nupsera-ori.png') }}"
+                                            class="w-full h-full object-contain"
+                                            alt="Logo Nupsera">
                                     </div>
-                                    <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+                                    <div class="min-w-0 pr-1">
+                                        <p class="text-xs sm:text-sm font-bold text-[#5F6F5B] leading-snug whitespace-nowrap">Tambahkan Nupsera ke Layar Utama</p>
+                                        <p class="text-[11px] sm:text-xs text-[#5F6F5B]/70 mt-0.5 leading-snug">Akses lebih cepat dari perangkat Anda.</p>
+                                        <p x-show="waiting" x-cloak class="text-xs text-[#5F6F5B]/70 mt-1">Menyiapkan pemasangan…</p>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 shrink-0 ml-1">
                                         <button type="button" @click="install()" :disabled="waiting"
-                                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#C2757F] text-white text-xs font-bold hover:bg-[#B0666E] disabled:opacity-50 transition cursor-pointer">
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#C2757F] text-white text-xs font-bold hover:bg-[#B0666E] disabled:opacity-50 shadow-xs transition cursor-pointer">
                                             <i class="fa-solid fa-download text-[10px]"></i> Instal
                                         </button>
                                         <button type="button"
@@ -369,9 +444,10 @@
                                                     node.style.animation = 'flash-toast-out 260ms ease-in forwards';
                                                     setTimeout(() => { open = false; node.style.animation = ''; delete node.dataset.closing; }, 280);
                                                 }
-                                            " aria-label="Tutup"
-                                            class="w-7 h-7 rounded-full flex items-center justify-center text-[#B6ADA3] hover:bg-[#FAF7F2] transition cursor-pointer">
-                                            <i class="fa-solid fa-xmark"></i>
+                                            "
+                                            aria-label="Tutup"
+                                            class="w-6 h-6 rounded-full flex items-center justify-center text-[#B6ADA3] hover:bg-[#FAF7F2] hover:text-[#5F6F5B] transition cursor-pointer">
+                                            <i class="fa-solid fa-xmark text-xs"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -557,8 +633,7 @@
                                              ada di CSS hasil npm run build,
                                              sedangkan warna ini harus tampil
                                              walau build masih versi lama. --}}
-                                        <span
-                                            style="background:#25D366;color:#fff;transition:transform .2s;"
+                                        <span style="background:#25D366;color:#fff;transition:transform .2s;"
                                             class="w-10 h-10 rounded-full flex items-center justify-center group-hover:scale-105">
                                             <i class="fa-brands fa-whatsapp text-lg" style="color:#fff;"></i>
                                         </span>
@@ -576,8 +651,7 @@
                                 </a>
                                 <a href="{{ $contact['tiktok'] }}" target="_blank" rel="noopener"
                                     class="group flex flex-col items-center gap-2 p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#5F6F5B]/60 hover:shadow-xs transition">
-                                    <span
-                                        style="background:#010101;color:#fff;transition:transform .2s;"
+                                    <span style="background:#010101;color:#fff;transition:transform .2s;"
                                         class="w-10 h-10 rounded-full flex items-center justify-center group-hover:scale-105">
                                         <i class="fa-brands fa-tiktok text-lg" style="color:#fff;"></i>
                                     </span>

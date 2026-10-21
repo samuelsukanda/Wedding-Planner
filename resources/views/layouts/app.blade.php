@@ -762,16 +762,25 @@
          itu juga diklik, tanpa tergantung urutan event. --}}
     <script>
         (function () {
+            window.__pwaPrompt = null;
+            window.__pwaError = null;
+
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function () {
-                    navigator.serviceWorker.register('/sw.js');
+                    navigator.serviceWorker.register('/sw.js').catch(function (err) {
+                        // Kegagalan paling umum: bukan secure context (http
+                        // selain localhost), jadi browser menolak SW.
+                        window.__pwaError = (err && err.message) ? err.message : String(err);
+                    });
                 });
+            } else {
+                window.__pwaError = 'Browser tidak mendukung service worker.';
             }
 
-            window.__pwaPrompt = null;
             window.addEventListener('beforeinstallprompt', function (e) {
                 e.preventDefault();
                 window.__pwaPrompt = e;
+                window.__pwaError = null;
             });
         })();
     </script>
