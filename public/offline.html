@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline — Nupsera</title>
+    <meta name="theme-color" content="#D8A7B1">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Playfair+Display:wght@600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #FAF7F2;
+            color: #5F6F5B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 420px;
+        }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: .7;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: .75rem;
+            color: #5F6F5B;
+        }
+
+        p {
+            font-size: .95rem;
+            color: #B6ADA3;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        button {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: .9rem;
+            padding: .75rem 2rem;
+            border: none;
+            border-radius: 12px;
+            background: #D8A7B1;
+            color: #fff;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        button:hover { background: #c4919d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📶</div>
+        <h1>Anda Sedang Offline</h1>
+        <p>Sepertinya koneksi internet Anda terputus. Pastikan Wi-Fi atau data seluler aktif, lalu coba lagi.</p>
+        <button onclick="location.reload()">Coba Lagi</button>
+    </div>
+</body>
+</html>

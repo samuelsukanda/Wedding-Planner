@@ -764,24 +764,67 @@
         (function () {
             window.__pwaPrompt = null;
             window.__pwaError = null;
+            window.__pwaInstalled = false;
+
+            // Tangkap event beforeinstallprompt SEAWAL mungkin (sebelum SW
+            // selesai register), karena browser bisa mengirimnya kapan saja
+            // begitu manifest valid.
+            window.addEventListener('beforeinstallprompt', function (e) {
+                e.preventDefault();
+                window.__pwaPrompt = e;
+                window.__pwaError = null;
+                // Dispatch custom event agar komponen UI bisa bereaksi
+                window.dispatchEvent(new Event('pwa-ready'));
+            });
+
+            // Deteksi jika PWA sudah terinstall
+            window.addEventListener('appinstalled', function () {
+                window.__pwaInstalled = true;
+                window.__pwaPrompt = null;
+            });
+
+            // Cek display-mode standalone (sudah dibuka sebagai PWA)
+            if (window.matchMedia('(display-mode: standalone)').matches ||
+                window.navigator.standalone === true) {
+                window.__pwaInstalled = true;
+            }
 
             if ('serviceWorker' in navigator) {
+                // Gunakan load event: memastikan halaman sudah selesai load
+                // sehingga SW register tidak bersaing dengan resource utama.
                 window.addEventListener('load', function () {
-                    navigator.serviceWorker.register('/sw.js').catch(function (err) {
-                        // Kegagalan paling umum: bukan secure context (http
-                        // selain localhost), jadi browser menolak SW.
+                    navigator.serviceWorker.register('/sw.js', {
+                        scope: '/',
+                        updateViaCache: 'none'   // selalu ambil sw.js fresh
+                    }).then(function (reg) {
+                        // Force check update setiap kali halaman dibuka
+                        reg.update();
+
+                        // Jika SW baru sedang waiting (update tersedia),
+                        // aktifkan langsung agar tidak perlu close/reopen tab.
+                        if (reg.waiting) {
+                            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        }
+
+                        reg.addEventListener('updatefound', function () {
+                            var newSW = reg.installing;
+                            if (newSW) {
+                                newSW.addEventListener('statechange', function () {
+                                    if (newSW.state === 'activated') {
+                                        // SW baru aktif → reload halaman agar
+                                        // prompt install muncul di-load berikutnya
+                                        // (hanya jika bukan first-install)
+                                    }
+                                });
+                            }
+                        });
+                    }).catch(function (err) {
                         window.__pwaError = (err && err.message) ? err.message : String(err);
                     });
                 });
             } else {
                 window.__pwaError = 'Browser tidak mendukung service worker.';
             }
-
-            window.addEventListener('beforeinstallprompt', function (e) {
-                e.preventDefault();
-                window.__pwaPrompt = e;
-                window.__pwaError = null;
-            });
         })();
     </script>
 </body>

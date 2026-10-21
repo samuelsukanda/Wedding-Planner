@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@source '../views/**/*.blade.php';
+@source '../../resources/views/**/*.blade.php';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
@@ -136,6 +138,31 @@ body {
 .romantic-card:hover {
     border-color: rgba(216, 167, 177, 0.7);
     box-shadow: 0 6px 25px rgba(216, 167, 177, 0.12);
+}
+
+.btn-pwa-install {
+    background-color: #ffffff;
+    color: #5F6F5B;
+    border: 1px solid rgba(182, 173, 163, 0.4);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.25s ease;
+}
+
+.btn-pwa-install .btn-pwa-icon {
+    color: #C2757F;
+    transition: color 0.25s ease;
+}
+
+.btn-pwa-install:hover {
+    background: linear-gradient(135deg, #D8A7B1 0%, #C4919B 100%) !important;
+    color: #ffffff !important;
+    border-color: #C4919B !important;
+    box-shadow: 0 4px 15px rgba(216, 167, 177, 0.45) !important;
+}
+
+.btn-pwa-install:hover .btn-pwa-icon,
+.btn-pwa-install:hover i {
+    color: #ffffff !important;
 }
 
 /* Custom Scrollbar */

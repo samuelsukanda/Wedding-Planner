@@ -23,3 +23,14 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# PWA: Service Worker harus selalu fresh (tidak boleh di-cache browser)
+<IfModule mod_headers.c>
+    <Files "sw.js">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Service-Worker-Allowed "/"
+    </Files>
+    <Files "manifest.json">
+        Header set Cache-Control "no-cache"
+    </Files>
+</IfModule>

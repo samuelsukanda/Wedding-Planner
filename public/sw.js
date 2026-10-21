@@ -8,15 +8,57 @@
  * halaman biasa; sw.js punya syarat sama (https, di-root) demi
  * beforeinstallprompt Chrome/Edge.
  */
-self.addEventListener('install', () => self.skipWaiting());
 
-self.addEventListener('activate', (event) => {
-    event.waitUntil(self.clients.claim());
+const CACHE_NAME = 'nupsera-v2';
+
+self.addEventListener('install', (event) => {
+    // Pre-cache halaman offline sederhana agar ada respons offline
+    // (syarat Chrome agar PWA dianggap installable).
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.addAll([
+                '/offline.html'
+            ]);
+        })
+    );
+    self.skipWaiting();
 });
 
-// Hanya meneruskan ke jaringan, tanpa cache. respondWith dipanggil
-// eksplisit: sebagian versi Chrome menghitung kelayakan instal dari
-// adanya handler yang benar-benar merespons, bukan listener kosong.
+self.addEventListener('activate', (event) => {
+    // Hapus cache lama jika ada versi baru
+    event.waitUntil(
+        caches.keys().then((names) => {
+            return Promise.all(
+                names
+                    .filter((name) => name !== CACHE_NAME)
+                    .map((name) => caches.delete(name))
+            );
+        }).then(() => self.clients.claim())
+    );
+});
+
 self.addEventListener('fetch', (event) => {
-    event.respondWith(fetch(event.request));
+    // Hanya intercept request http/https — abaikan chrome-extension://,
+    // data:, blob:, dll. yang menyebabkan fetch() error.
+    if (!event.request.url.startsWith('http')) {
+        return;
+    }
+
+    // Strategi network-first: coba jaringan dulu, kalau gagal tampilkan
+    // halaman offline untuk navigasi (bukan aset).
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request).catch(() => {
+                return caches.match('/offline.html');
+            })
+        );
+        return;
+    }
+
+    // Request non-navigasi: langsung teruskan ke jaringan tanpa cache.
+    event.respondWith(
+        fetch(event.request).catch(() => {
+            return new Response('', { status: 408, statusText: 'Offline' });
+        })
+    );
 });
