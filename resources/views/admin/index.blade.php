@@ -412,7 +412,7 @@
                                         } else if (window.__pwaError) {
                                             pesan = 'Service worker gagal terdaftar: ' + window.__pwaError;
                                         } else {
-                                            pesan = 'Aplikasi belum bisa dipasang otomatis. Buka menu browser Anda (titik tiga di kanan atas) lalu pilih Instal Aplikasi atau Tambahkan ke Layar Utama.';
+                                            pesan = 'Aplikasi belum bisa dipasang otomatis. Refresh halaman ini atau Buka menu browser Anda (titik tiga di kanan atas) lalu pilih Instal Aplikasi atau Tambahkan ke Layar Utama.';
                                         }
                                         this.open = false;
                                         pwaFallbackToast(pesan);
@@ -436,7 +436,7 @@
                             </div>
 
                             <!-- Popup konfirmasi instal: posisi & animasi sama
-                                                 dengan toast flash (atas, flash-toast-in/out) -->
+                                                     dengan toast flash (atas, flash-toast-in/out) -->
                             <div x-show="open" x-cloak x-ref="card" data-flash
                                 class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-auto max-w-[calc(100%-1.5rem)] sm:max-w-md">
                                 <div
@@ -641,6 +641,15 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ================= LOGOUT ================= -->
+                        <form method="POST" action="{{ route('logout') }}" data-turbo="false">
+                            @csrf
+                            <button type="submit"
+                                class="w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-2xl bg-white border border-[#B6ADA3]/35 shadow-xs text-sm font-semibold text-[#5F6F5B] hover:bg-[#FBF2F4] hover:text-[#C2757F] transition cursor-pointer">
+                                <i class="fa-solid fa-right-from-bracket text-[#C2757F]"></i> Keluar
+                            </button>
+                        </form>
 
                         <!-- ================= HUBUNGI KAMI ================= -->
                         {{-- Kartu selalu ada; WhatsApp hanya jika nomor tersedia --}}
