@@ -52,6 +52,16 @@ class DocumentTest extends TestCase
             ->assertSee('Persyaratan Nikah');
     }
 
+    public function test_add_document_form_does_not_show_contact_field(): void
+    {
+        $user = $this->makeUser();
+
+        $this->actingAs($user)->get('/documents')
+            ->assertOk()
+            ->assertDontSee('name="phone"', false)
+            ->assertDontSee('>Kontak</label>', false);
+    }
+
     public function test_document_can_be_created(): void
     {
         $user = $this->makeUser();
@@ -59,7 +69,6 @@ class DocumentTest extends TestCase
         $this->actingAs($user)->post('/documents', [
             'name' => 'Akta Lahir Suami',
             'pic_name' => 'Bpk. Budi',
-            'phone' => '08123456789',
             'deadline' => '2026-12-01',
             'status' => 'Belum Lengkap',
         ])->assertRedirect(route('documents.index'));

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use App\Models\Wedding;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Checkout paket Pro lewat transfer manual.
@@ -47,23 +48,25 @@ class UpgradeController extends Controller
 
         // Satu request yang menunggu konfirmasi saja. Tanpa ini user bisa
         // menumpuk bukti transfer dan antrean admin jadi tidak terbaca.
-        if ($wedding->upgradeRequests()->where('status', 'pending')->exists()) {
-            return back()->with('error', 'Kamu sudah mengirim bukti transfer dan masih menunggu konfirmasi admin.');
-        }
-
         $validated = $request->validate([
             'proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
         ]);
 
-        $wedding->upgradeRequests()->create([
+        $created = DB::transaction(function () use ($wedding, $request, $validated) {
+            $wedding = $wedding->newQuery()->lockForUpdate()->findOrFail($wedding->id);
+            if ($wedding->upgradeRequests()->where('status', 'pending')->exists()) return false;
+            $wedding->upgradeRequests()->create([
             'user_id' => $request->user()->id,
             'plan' => 'pro',
             // Harga direkam saat request dibuat supaya riwayat audit tetap
             // konsisten bila nanti superadmin menaikkan harga.
             'amount' => (int) Setting::get('pro_price', 0),
-            'proof_path' => $validated['proof']->store('upgrade-proofs', 'public'),
+            'proof_path' => $validated['proof']->store('upgrade-proofs', 'local'),
             'status' => 'pending',
-        ]);
+            ]);
+            return true;
+        });
+        if (! $created) return back()->with('error', 'Kamu sudah mengirim bukti transfer dan masih menunggu konfirmasi admin.');
 
         return redirect()->route('upgrade.index')
             ->with('success', 'Bukti transfer terkirim. Menunggu konfirmasi admin.');

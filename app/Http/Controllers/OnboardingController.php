@@ -6,6 +6,7 @@ use App\Models\Wedding;
 use App\Support\ChecklistTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OnboardingController extends Controller
 {
@@ -44,15 +45,17 @@ class OnboardingController extends Controller
             'total_budget.min' => 'Target anggaran harus lebih dari 0.',
         ]);
 
-        $wedding = Wedding::create([
-            'groom_name' => $validated['user_name'],
-            'bride_name' => $validated['partner_name'],
-            'wedding_date' => $validated['wedding_date'],
-            'total_budget' => $validated['total_budget'],
-        ]);
-
-        ChecklistTemplate::seedFor($wedding);
-        $user->update(['wedding_id' => $wedding->id]);
+        $wedding = DB::transaction(function () use ($user, $validated) {
+            $user = $user->newQuery()->lockForUpdate()->findOrFail($user->id);
+            if ($user->wedding_id) return Wedding::findOrFail($user->wedding_id);
+            $wedding = Wedding::create([
+                'groom_name' => $validated['user_name'], 'bride_name' => $validated['partner_name'],
+                'wedding_date' => $validated['wedding_date'], 'total_budget' => $validated['total_budget'],
+            ]);
+            ChecklistTemplate::seedFor($wedding);
+            $user->update(['wedding_id' => $wedding->id]);
+            return $wedding;
+        });
 
         $request->session()->forget('onboarding');
         $request->session()->forget('onboarding_step');

@@ -18,7 +18,7 @@
                     </div>
                     <div class="min-w-0">
                         <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Pembayaran Sedang Diverifikasi</h2>
-                        <p class="text-xs text-[#5F6F5B]/70 mt-0.5">Admin sedang memeriksa pembayaran Pro kamu.</p>
+                        <p class="text-xs text-[#5F6F5B]/70 mt-0.5">Admin sedang memeriksa pembayaran kamu.</p>
                     </div>
                 </div>
 
@@ -102,9 +102,9 @@
                 </button>
 
                 <!-- ================= MODAL RINGKASAN PEMBELIAN =================
-                                                                 Struktur, warna, dan cara menutupnya mengikuti modal
-                                                                 "Tambah Data" di modul lain (x-show + x-outside + Escape),
-                                                                 supaya tidak ada gaya modal ketiga di aplikasi ini. -->
+                                                                     Struktur, warna, dan cara menutupnya mengikuti modal
+                                                                     "Tambah Data" di modul lain (x-show + x-outside + Escape),
+                                                                     supaya tidak ada gaya modal ketiga di aplikasi ini. -->
                 <div x-show="modalOpen" x-transition.opacity x-cloak @keydown.escape.window="modalOpen = false"
                     class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
                     <div x-outside="modalOpen = false"
@@ -193,7 +193,7 @@
                                 </div>
 
                                 <!-- Tampilan besar: ukuran terbatas, tutup lewat
-                                             tombol X di pojok atau klik area gelap -->
+                                                 tombol X di pojok atau klik area gelap -->
                                 <div x-show="open" x-on:click="open = false" x-cloak
                                     class="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6 cursor-zoom-out">
                                     <div class="relative flex items-center justify-center max-w-full max-h-full">

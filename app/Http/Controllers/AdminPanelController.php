@@ -282,6 +282,8 @@ class AdminPanelController extends Controller
         $partner = User::where('email', $email)->first();
 
         if ($partner) {
+            abort_if($partner->is_superadmin, 403, 'Akun superadmin tidak bisa dijadikan pasangan.');
+            abort_if($partner->wedding_id && $partner->wedding_id !== $user->wedding_id, 409, 'Akun sudah terhubung ke Wedding Kit lain.');
             $partner->update(['wedding_id' => $user->wedding_id]);
 
             if (! empty($name)) {

@@ -8,6 +8,7 @@ use App\Models\WeddingInvite;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -104,6 +105,9 @@ class PartnerInviteController extends Controller
             'password' => 'password',
         ]);
 
+        $user = DB::transaction(function () use ($invite, $validated) {
+        $invite = WeddingInvite::query()->lockForUpdate()->findOrFail($invite->id);
+        abort_if($invite->accepted_at || $invite->expires_at->isPast(), 410, 'Link undangan sudah tidak berlaku.');
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -115,6 +119,8 @@ class PartnerInviteController extends Controller
             'accepted_at' => now(),
             'accepted_user_id' => $user->id,
         ]);
+        return $user;
+        });
 
         Auth::login($user);
         $request->session()->regenerate();

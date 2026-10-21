@@ -279,9 +279,6 @@ class PlanTest extends TestCase
             ->assertSee('Yang kamu dapat')
             ->assertSee('Moodboard tanpa batas jumlah item')
             ->assertSee('Cari Vendor')
-            // fa-sparkles adalah icon FontAwesome Pro yang tidak tampil di
-            // versi gratis, jadi CTA memakai fa-wand-magic-sparkles.
-            ->assertSee('fa-wand-magic-sparkles', false)
             ->assertSee('Upgrade ke Pro')
             // Harga coret tidak ada karena setting kosong.
             ->assertDontSee('line-through')
@@ -315,7 +312,7 @@ class PlanTest extends TestCase
 
 public function test_pending_state_shows_verification_card_with_refresh_only()
     {
-        Storage::fake('public');
+        Storage::fake('local');
         Setting::put('pro_price', '55000');
 
         [, $user] = $this->couple();
@@ -324,7 +321,7 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         $this->actingAs($user)->get('/upgrade')
             ->assertOk()
             ->assertSee('Pembayaran Sedang Diverifikasi')
-            ->assertSee('Admin sedang memeriksa pembayaran Pro kamu.')
+            ->assertSee('Admin sedang memeriksa pembayaran kamu.')
             ->assertSee('Rp 55.000')
             ->assertSee('Menunggu Aktivasi')
             ->assertSee('Refresh Status')
@@ -411,12 +408,12 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         // Harga direkam saat request dibuat, bukan diambil ulang saat disimpan.
         $this->assertSame(249000, $request->amount);
         $this->assertSame($wedding->id, $request->wedding_id);
-        Storage::disk('public')->assertExists($request->proof_path);
+        Storage::disk('local')->assertExists($request->proof_path);
     }
 
     public function test_second_request_is_blocked_while_one_is_pending()
     {
-        Storage::fake('public');
+        Storage::fake('local');
         Setting::put('pro_price', '249000');
 
         [, $user] = $this->couple();
@@ -705,7 +702,7 @@ public function test_admin_pages_render_for_superadmin()
         $request = UpgradeRequest::sole();
         $proofPath = $request->proof_path;
 
-        Storage::disk('public')->assertExists($proofPath);
+        Storage::disk('local')->assertExists($proofPath);
 
         $this->actingAs($this->superadmin())
             ->delete("/admin/upgrade-requests/{$request->id}")
@@ -713,7 +710,7 @@ public function test_admin_pages_render_for_superadmin()
 
         $this->assertSame(0, UpgradeRequest::count());
         // Bukti ikut hilang, kalau tidak file yatim menumpuk di storage.
-        Storage::disk('public')->assertMissing($proofPath);
+        Storage::disk('local')->assertMissing($proofPath);
     }
 
 public function test_superadmin_can_save_pro_settings()

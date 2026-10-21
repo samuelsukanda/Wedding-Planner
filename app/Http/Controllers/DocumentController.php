@@ -141,7 +141,6 @@ class DocumentController extends Controller
         return $request->validate([
             'name' => $required . '|string|max:255',
             'pic_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:50',
             'deadline' => 'nullable|date',
             'status' => 'nullable|string|max:50',
             'document_file' => 'nullable|string|max:255',

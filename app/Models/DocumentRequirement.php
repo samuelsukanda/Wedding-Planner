@@ -27,7 +27,6 @@ class DocumentRequirement extends Model
         'document_template_id',
         'name',
         'pic_name',
-        'phone',
         'deadline',
         'status',
         'document_file',

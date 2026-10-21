@@ -212,6 +212,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
         // Paket Pro — antrean persetujuan upgrade + setelan harga/rekening/WA.
         Route::get('admin/upgrade-requests', [AdminUpgradeController::class, 'index'])->name('admin.upgrade-requests.index');
         Route::post('admin/upgrade-requests/{upgradeRequest}/approve', [AdminUpgradeController::class, 'approve'])->name('admin.upgrade-requests.approve');
+        Route::get('admin/upgrade-requests/{upgradeRequest}/proof', [AdminUpgradeController::class, 'proof'])->name('admin.upgrade-requests.proof');
         Route::post('admin/upgrade-requests/{upgradeRequest}/reject', [AdminUpgradeController::class, 'reject'])->name('admin.upgrade-requests.reject');
         Route::delete('admin/upgrade-requests/{upgradeRequest}', [AdminUpgradeController::class, 'destroy'])->name('admin.upgrade-requests.destroy');
 

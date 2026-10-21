@@ -83,15 +83,15 @@
                             <p class="text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B]/60 mb-1.5">Bukti
                                 Transfer</p>
                             @if (str_ends_with(strtolower($request->proof_path), '.pdf'))
-                                <a href="{{ \Illuminate\Support\Facades\Storage::url($request->proof_path) }}"
+                                <a href="{{ route('admin.upgrade-requests.proof', $request) }}"
                                     target="_blank" rel="noopener"
                                     class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#B6ADA3]/40 text-[#5F6F5B] text-sm font-medium hover:bg-[#FAF7F2] transition">
                                     <i class="fa-solid fa-file-pdf text-[#D8A7B1]"></i> Lihat Bukti (PDF)
                                 </a>
                             @else
-                                <a href="{{ \Illuminate\Support\Facades\Storage::url($request->proof_path) }}"
+                                <a href="{{ route('admin.upgrade-requests.proof', $request) }}"
                                     target="_blank" rel="noopener" class="inline-block">
-                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($request->proof_path) }}"
+                                    <img src="{{ route('admin.upgrade-requests.proof', $request) }}"
                                         alt="Bukti transfer {{ $request->wedding?->couple_name }}" loading="lazy"
                                         class="max-h-56 rounded-xl border border-[#B6ADA3]/35 hover:opacity-90 transition">
                                 </a>

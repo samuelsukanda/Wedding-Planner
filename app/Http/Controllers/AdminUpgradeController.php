@@ -6,6 +6,8 @@ use App\Models\DropdownOption;
 use App\Models\UpgradeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
  * Antrean persetujuan upgrade Pro. Semua route di controller ini ada di dalam
@@ -13,6 +15,11 @@ use Illuminate\Support\Facades\Storage;
  */
 class AdminUpgradeController extends Controller
 {
+    public function proof(UpgradeRequest $upgradeRequest): BinaryFileResponse
+    {
+        abort_unless($upgradeRequest->proof_path && Storage::disk('local')->exists($upgradeRequest->proof_path), 404);
+        return response()->file(Storage::disk('local')->path($upgradeRequest->proof_path));
+    }
     /** Alasan bawaan kalau superadmin belum mengisi group Master Data. */
     private const DEFAULT_REJECT_REASONS = [
         'Bukti transfer tidak terbaca, silakan kirim ulang yang lebih jelas',
@@ -39,6 +46,10 @@ class AdminUpgradeController extends Controller
     {
         $wedding = $upgradeRequest->wedding;
 
+        DB::transaction(function () use ($upgradeRequest) {
+        $upgradeRequest = UpgradeRequest::query()->lockForUpdate()->findOrFail($upgradeRequest->id);
+        abort_if($upgradeRequest->status !== 'pending', 409, 'Request upgrade sudah diproses.');
+        $wedding = $upgradeRequest->wedding()->lockForUpdate()->firstOrFail();
         $wedding->update(['plan' => $upgradeRequest->plan]);
 
         $upgradeRequest->update([
@@ -52,6 +63,7 @@ class AdminUpgradeController extends Controller
             'message' => 'Wedding Kit kamu sudah aktif Pro. Semua fitur Pro sekarang terbuka, tanpa batas waktu.',
             'type' => 'info',
         ]);
+        });
 
         return back()->with('success', 'Pro diaktifkan untuk ' . $wedding->couple_name . '.');
     }
@@ -77,7 +89,7 @@ class AdminUpgradeController extends Controller
         // Bukti transfer ikut dihapus. Kalau dibiarkan, file yang sudah tidak
         // dirujuk siapa pun akan menumpuk di storage.
         if ($upgradeRequest->proof_path) {
-            Storage::disk('public')->delete($upgradeRequest->proof_path);
+            Storage::disk('local')->delete($upgradeRequest->proof_path);
         }
 
         $upgradeRequest->delete();

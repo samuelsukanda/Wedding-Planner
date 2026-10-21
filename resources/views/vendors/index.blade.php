@@ -63,7 +63,7 @@
             @endphp
             <a href="{{ $directoryLocked ? route('upgrade.index') : route('vendor-directory.index') }}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 w-full md:w-auto shrink-0">
-                <i class="fa-solid {{ $directoryLocked ? 'fa-crown' : 'fa-magnifying-glass' }}"></i>
+                <i class="fa-solid {{ $directoryLocked ? 'fa-gem' : 'fa-magnifying-glass' }}"></i>
                 {{ $directoryLocked ? 'Upgrade ke Pro' : 'Cari Vendor' }}
             </a>
         </div>

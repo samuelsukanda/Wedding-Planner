@@ -67,7 +67,6 @@
                             class="bg-[#FAF7F2] text-xs text-[#5F6F5B] uppercase tracking-wider border-b border-[#B6ADA3]/30">
                             <th class="p-4">Dokumen</th>
                             <th class="p-4">PIC</th>
-                            <th class="p-4">Kontak</th>
                             <th class="p-4">Deadline</th>
                             <th class="p-4">Status</th>
                             <th class="p-4 text-right">Aksi</th>
@@ -87,7 +86,6 @@
                                     @endif
                                 </td>
                                 <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->pic_name ?: '-' }}</td>
-                                <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->phone ?: '-' }}</td>
                                 <td @class([
                                     'p-4 text-xs',
                                     'text-[#C2757F] font-semibold' => $item->isOverdue(),
@@ -189,15 +187,9 @@
                             placeholder="mis. Akta Lahir Suami" class="form-input">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="form-label">PIC</label>
-                            <input type="text" name="pic_name" x-model="currentItem.pic_name" class="form-input">
-                        </div>
-                        <div>
-                            <label class="form-label">Kontak</label>
-                            <input type="text" name="phone" x-model="currentItem.phone" class="form-input">
-                        </div>
+                    <div>
+                        <label class="form-label">PIC</label>
+                        <input type="text" name="pic_name" x-model="currentItem.pic_name" class="form-input">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
