@@ -201,17 +201,6 @@
 
                                 <!-- Bride & Groom Name Grid -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-xs font-bold text-[#5F6F5B] mb-1">
-                                            <i class="fa-solid fa-venus text-[#D8A7B1] mr-1"></i> Nama Pengantin Wanita
-                                            (Bride)
-                                            *
-                                        </label>
-                                        <input type="text" name="bride_name"
-                                            value="{{ old('bride_name', $wedding->bride_name) }}" required
-                                            placeholder="Juliet Capulet"
-                                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
-                                    </div>
 
                                     <div>
                                         <label class="block text-xs font-bold text-[#5F6F5B] mb-1">
@@ -221,6 +210,18 @@
                                         <input type="text" name="groom_name"
                                             value="{{ old('groom_name', $wedding->groom_name) }}" required
                                             placeholder="Romeo Montague"
+                                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-[#5F6F5B] mb-1">
+                                            <i class="fa-solid fa-venus text-[#D8A7B1] mr-1"></i> Nama Pengantin Wanita
+                                            (Bride)
+                                            *
+                                        </label>
+                                        <input type="text" name="bride_name"
+                                            value="{{ old('bride_name', $wedding->bride_name) }}" required
+                                            placeholder="Juliet Capulet"
                                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none transition-all">
                                     </div>
                                 </div>
@@ -434,7 +435,7 @@
                             </div>
 
                             <!-- Popup konfirmasi instal: posisi & animasi sama
-                                                         dengan toast flash (atas, flash-toast-in/out) -->
+                                                                     dengan toast flash (atas, flash-toast-in/out) -->
                             <div x-show="open" x-cloak x-ref="card" data-flash
                                 class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-auto max-w-[calc(100%-1.5rem)] sm:max-w-md">
                                 <div
@@ -612,7 +613,7 @@
                                         </p>
                                     </div>
 
-                                    <form method="POST" action="{{ route('profile.reset-data') }}">
+                                    <form method="POST" action="{{ route('profile.reset-data') }}" data-turbo="false">
                                         @csrf
                                         @method('DELETE')
                                         <label for="reset-confirm" class="block text-xs font-bold text-[#5F6F5B] mb-1.5">

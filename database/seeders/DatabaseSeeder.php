@@ -46,6 +46,14 @@ class DatabaseSeeder extends Seeder
      */
     private function seedSuperadmin(): void
     {
+        $legacy = User::where('email', 'admin@weddingplanner.web.id')
+            ->where('is_superadmin', true)
+            ->first();
+
+        if ($legacy && ! User::where('email', 'admin@nupsera.my.id')->exists()) {
+            $legacy->update(['email' => 'admin@nupsera.my.id']);
+        }
+
         User::updateOrCreate(
             ['email' => 'admin@nupsera.my.id'],
             [

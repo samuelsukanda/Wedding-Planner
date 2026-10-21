@@ -107,7 +107,7 @@ class ResetWeddingDataTest extends TestCase
 
         $this->actingAs($user)
             ->delete('/profile/reset-data', ['confirm' => 'RESET'])
-            ->assertRedirect(route('admin.index'));
+            ->assertRedirect(route('onboarding.index'));
 
         foreach ([Checklist::class, Budget::class, Guest::class, Moodboard::class, RundownEvent::class,
             Souvenir::class, DocumentRequirement::class, SavingsGoal::class, SavingsTransaction::class,
@@ -115,17 +115,11 @@ class ResetWeddingDataTest extends TestCase
             $this->assertSame(0, $model::count(), $model.' masih punya data setelah reset.');
         }
 
-        $fresh = $wedding->fresh();
-        $this->assertNull($fresh->bride_name);
-        $this->assertNull($fresh->groom_name);
-        $this->assertNull($fresh->wedding_date);
-        $this->assertNull($fresh->location);
-        $this->assertNull($fresh->notes);
-        $this->assertNull($fresh->wa_template);
-        $this->assertEquals(0, $fresh->total_budget);
+        $this->assertDatabaseMissing('weddings', ['id' => $wedding->id]);
+        $this->assertNull($user->fresh()->wedding_id);
     }
 
-    public function test_reset_keeps_accounts_partner_plan_and_purchase_history()
+    public function test_reset_keeps_accounts_but_removes_the_wedding_kit()
     {
         [$wedding, $user] = $this->couple();
         $this->seedWorksheets($wedding);
@@ -136,22 +130,13 @@ class ResetWeddingDataTest extends TestCase
             'wedding_id' => $wedding->id,
         ]);
 
-        $wedding->upgradeRequests()->create([
-            'user_id' => $user->id,
-            'plan' => 'pro',
-            'amount' => 55000,
-            'proof_path' => 'upgrade-proofs/bukti.jpg',
-            'status' => 'approved',
-        ]);
-
         $this->actingAs($user)->delete('/profile/reset-data', ['confirm' => 'RESET']);
 
         $this->assertNotNull(User::find($user->id));
         $this->assertNotNull(User::find($partner->id));
-        $this->assertSame(1, UpgradeRequest::count());
-
-        // Paket yang sudah dibeli tidak hilang karena reset.
-        $this->assertTrue($wedding->fresh()->isPro());
+        $this->assertNull(User::find($user->id)->wedding_id);
+        $this->assertNull(User::find($partner->id)->wedding_id);
+        $this->assertDatabaseMissing('weddings', ['id' => $wedding->id]);
     }
 
     public function test_reset_does_not_touch_the_global_vendor_catalog()
@@ -206,6 +191,7 @@ class ResetWeddingDataTest extends TestCase
             ->assertSee('tidak bisa dibatalkan')
             ->assertSee('Tetap aman:')
             ->assertSee(route('profile.reset-data'))
+            ->assertSee('data-turbo="false"', false)
             ->assertSee('Ketik', false);
     }
 

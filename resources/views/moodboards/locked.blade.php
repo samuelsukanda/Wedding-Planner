@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Inspirasi - Moodboard')
+@section('title', 'Kreatif - Moodboard')
 
 @section('content')
     {{-- Halaman terkunci untuk paket Free.

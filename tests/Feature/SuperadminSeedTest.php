@@ -59,4 +59,22 @@ class SuperadminSeedTest extends TestCase
             User::where('email', 'admin@nupsera.my.id')->first()->is_superadmin
         );
     }
+
+    public function test_reseeding_migrates_legacy_superadmin_email(): void
+    {
+        $legacy = User::factory()->create([
+            'email' => 'admin@weddingplanner.web.id',
+            'is_superadmin' => true,
+            'wedding_id' => null,
+        ]);
+
+        $this->seed(DatabaseSeeder::class);
+
+        $this->assertDatabaseMissing('users', ['email' => 'admin@weddingplanner.web.id']);
+        $this->assertDatabaseHas('users', [
+            'id' => $legacy->id,
+            'email' => 'admin@nupsera.my.id',
+            'is_superadmin' => 1,
+        ]);
+    }
 }

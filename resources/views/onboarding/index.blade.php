@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Mulai Perjalanan — Wedding Planner</title>
+    <title>Nupsera - Wedding &amp; Moments</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="shortcut icon" href="{{ asset('img/icon.jpg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('img/nupsera-ori.jpg') }}" type="image/x-icon">
     {{-- Flatpickr dipakai di langkah tanggal agar konsisten dengan form lain. --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     @vite(['resources/css/app.css'])
@@ -211,7 +211,9 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .dot { transition: none; }
+            .dot {
+                transition: none;
+            }
         }
     </style>
 </head>
@@ -238,8 +240,8 @@
                 <div class="step-emoji">👋</div>
                 <h1>Siapa nama kamu?</h1>
                 <p class="subtitle">Kami akan menyimpanmu dengan nama ini.</p>
-                <input type="text" class="field" :class="{ 'is-invalid': errors.user_name }" x-model="form.user_name"
-                    readonly aria-label="Nama kamu">
+                <input type="text" class="field" :class="{ 'is-invalid': errors.user_name }"
+                    x-model="form.user_name" readonly aria-label="Nama kamu">
                 <div class="actions">
                     <button type="button" class="btn btn-primary btn-block" @click="next(1)">Lanjut</button>
                 </div>
@@ -250,8 +252,9 @@
                 <div class="step-emoji">💑</div>
                 <h1>Siapa nama pasanganmu?</h1>
                 <p class="subtitle">Kalian akan merencanakan bersama.</p>
-                <input type="text" class="field" :class="{ 'is-invalid': errors.partner_name }" x-model="form.partner_name"
-                    placeholder="Contoh: Nabila" x-ref="partner" @keydown.enter.prevent="next(2)">
+                <input type="text" class="field" :class="{ 'is-invalid': errors.partner_name }"
+                    x-model="form.partner_name" placeholder="Contoh: Nabila" x-ref="partner"
+                    @keydown.enter.prevent="next(2)">
                 <div class="actions">
                     <button type="button" class="btn btn-secondary" @click="step = 1">Kembali</button>
                     <button type="button" class="btn btn-primary" @click="next(2)">Lanjut</button>
@@ -342,10 +345,11 @@
 
             const toast = document.createElement('div');
             toast.setAttribute('data-toast', '');
-            toast.className = 'flex items-start gap-3 rounded-2xl border border-[#D8A7B1]/70 bg-[#FBF2F4] px-4 py-3.5 text-sm text-[#5F6F5B] shadow-lg shadow-[#D8A7B1]/15';
-            toast.innerHTML = '<i class="fa-solid fa-circle-exclamation mt-0.5 text-[#D8A7B1]"></i>'
-                + '<span class="flex-1"></span>'
-                + '<button type="button" class="cursor-pointer text-[#5F6F5B]/70 transition hover:text-[#5F6F5B]"><i class="fa-solid fa-xmark"></i></button>';
+            toast.className =
+                'flex items-start gap-3 rounded-2xl border border-[#D8A7B1]/70 bg-[#FBF2F4] px-4 py-3.5 text-sm text-[#5F6F5B] shadow-lg shadow-[#D8A7B1]/15';
+            toast.innerHTML = '<i class="fa-solid fa-circle-exclamation mt-0.5 text-[#D8A7B1]"></i>' +
+                '<span class="flex-1"></span>' +
+                '<button type="button" class="cursor-pointer text-[#5F6F5B]/70 transition hover:text-[#5F6F5B]"><i class="fa-solid fa-xmark"></i></button>';
             toast.querySelector('span').textContent = message;
             host.appendChild(toast);
 
@@ -383,7 +387,10 @@
                 },
 
                 persist() {
-                    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ step: this.step, form: this.form }));
+                    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+                        step: this.step,
+                        form: this.form
+                    }));
                 },
 
                 initDatepicker() {
@@ -447,15 +454,20 @@
                 // dihapus supaya tetap terlihat saat user mengetik.
                 formatBudget(event) {
                     const digits = String(event.target.value).replace(/\D/g, '');
-                    this.form.total_budget = digits ? `Rp ${Number(digits).toLocaleString('id-ID')}` : '';
+                    this.form.total_budget = digits ? `Rp ${Number(digits).toLocaleString('id-ID')}` :
+                        '';
                 },
 
                 get formattedDate() {
                     if (!this.form.wedding_date) return '';
                     const date = new Date(this.form.wedding_date);
-                    return Number.isNaN(date.getTime())
-                        ? this.form.wedding_date
-                        : date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                    return Number.isNaN(date.getTime()) ?
+                        this.form.wedding_date :
+                        date.toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                        });
                 },
             }));
         });

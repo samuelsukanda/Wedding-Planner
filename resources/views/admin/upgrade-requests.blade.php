@@ -111,10 +111,7 @@
                                         </button>
                                     </form>
 
-                                    <button type="submit" form="reject-form-{{ $request->id }}"
-                                        class="w-full px-5 py-2.5 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FBF2F4] transition cursor-pointer shadow-xs flex items-center justify-center gap-1.5">
-                                        <i class="fa-solid fa-xmark"></i> Tolak
-                                    </button>
+                                    <span></span>
                                 </div>
 
                                 <form id="reject-form-{{ $request->id }}" method="POST"
@@ -130,9 +127,13 @@
                                             @endforeach
                                         </select>
 
-                                        <input type="text" id="reject-note-{{ $request->id }}" name="admin_note"
+                                         <input type="text" id="reject-note-{{ $request->id }}" name="admin_note"
                                             required maxlength="500" placeholder="Alasan ditolak (wajib)"
-                                            class="flex-1 px-3.5 py-2 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-xs text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
+                                             class="flex-1 px-3.5 py-2 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-xs text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
+                                        <button type="submit"
+                                            class="px-5 py-2.5 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FBF2F4] transition cursor-pointer shadow-xs flex items-center justify-center gap-1.5">
+                                            <i class="fa-solid fa-xmark"></i> Tolak
+                                        </button>
                                     </div>
                                 </form>
                             </div>

@@ -62,7 +62,7 @@ Route::post('undangan/{token}', [PartnerInviteController::class, 'accept'])->nam
 // Seluruh langkah wizard berjalan di client (Alpine), jadi hanya ada dua
 // route: buka halaman wizard dan simpan hasil akhirnya.
 Route::middleware('auth')->group(function () {
-    Route::get('onboarding', fn () => redirect()->route('dashboard'))->name('onboarding.index');
+    Route::get('onboarding', [OnboardingController::class, 'index'])->name('onboarding.index');
     Route::post('onboarding/finish', [OnboardingController::class, 'finish'])->name('onboarding.finish');
 });
 

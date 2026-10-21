@@ -34,7 +34,7 @@
             ],
         ])
     <script type="application/ld+json">{!! json_encode($seoSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
-    <title>Nupsera — Aplikasi Wedding Planner Indonesia</title>
+    <title>Nupsera - Wedding &amp; Moments</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload"

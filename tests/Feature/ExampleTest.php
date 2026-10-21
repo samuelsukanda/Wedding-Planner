@@ -20,4 +20,10 @@ class ExampleTest extends TestCase
     {
         $this->get('/login')->assertRedirect(route('dashboard'));
     }
+    public function test_pwa_manifest_uses_single_app_title(): void
+    {
+        $manifest = json_decode(file_get_contents(public_path('manifest.json')), true);
+
+        $this->assertSame('Nupsera - Wedding & Moments', $manifest['name']);
+    }
 }

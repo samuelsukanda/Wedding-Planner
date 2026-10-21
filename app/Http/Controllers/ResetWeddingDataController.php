@@ -62,24 +62,12 @@ class ResetWeddingDataController extends Controller
         ]);
 
         DB::transaction(function () use ($wedding) {
-            foreach (self::WIPE as $table) {
-                DB::table($table)->where('wedding_id', $wedding->id)->delete();
-            }
-
-            // Profil pernikahan ikut dikosongkan, tapi plan (status Pro) tetap
-            // utuh: paket yang sudah dibeli tidak hilang karena reset.
-            $wedding->update([
-                'bride_name' => null,
-                'groom_name' => null,
-                'wedding_date' => null,
-                'total_budget' => 0,
-                'location' => null,
-                'notes' => null,
-                'wa_template' => null,
-            ]);
+            // Reset membuat Wedding Kit baru; akun tetap ada agar user masuk onboarding.
+            $wedding->users()->update(['wedding_id' => null]);
+            $wedding->delete();
         });
 
-        return redirect()->route('admin.index')
-            ->with('success', 'Semua worksheet dan profil pernikahan berhasil dihapus.');
+        return redirect()->route('onboarding.index')
+            ->with('success', 'Semua data pernikahan berhasil dihapus. Silakan isi ulang onboarding.');
     }
 }

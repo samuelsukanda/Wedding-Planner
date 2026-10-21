@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- Halaman dinamis: jangan pernah tampilkan snapshot basi saat kembali/back. --}}
     <meta name="turbo-cache-control" content="no-cache">
-    <title>@yield('title', 'Wedding Planner') — {{ $brandName ?? 'Wedding Planner' }}</title>
+    <title>Nupsera - Wedding &amp; Moments</title>
     <link rel="canonical" href="{{ url()->current() }}">
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
@@ -479,7 +479,7 @@
         :class="[sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0', sidebarCollapsed ?
             'is-collapsed md:w-16' : 'md:w-64'
         ]"
-        class="sidebar {{ ($isSuper ?? false) ? 'flex' : 'hidden' }} md:flex fixed md:relative inset-y-0 left-0 z-50 w-64 md:transition-[width,transform] duration-300 ease-in-out bg-white border-r border-[#B6ADA3]/35 flex-col shadow-lg md:shadow-none">
+        class="sidebar {{ $isSuper ?? false ? 'flex' : 'hidden' }} md:flex fixed md:relative inset-y-0 left-0 z-50 w-64 md:transition-[width,transform] duration-300 ease-in-out bg-white border-r border-[#B6ADA3]/35 flex-col shadow-lg md:shadow-none">
 
         <!-- Logo & Header. Baris di bawah logo adalah merek, bukan nama pasangan:
                  nama pasangan sudah tampil di header utama, jadi mengulangnya
@@ -490,13 +490,13 @@
                 {{-- Logo ikon: nupsera-ori.png ditampilkan seukuran tinggi teks
                      (h-8 / 32px) agar proporsional. object-contain memastikan
                      seluruh logo tampil tanpa terpotong. --}}
-                <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo Nupsera"
-                    class="shrink-0 object-contain"
+                <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo Nupsera" class="shrink-0 object-contain"
                     style="height:2rem;width:auto;max-width:2.5rem;">
                 <div class="sidebar-label min-w-0 leading-none">
                     {{-- "Nupsera" — gold/copper gradient sesuai logo-brand.jpg --}}
                     <h1 class="font-serif-title font-bold text-[1.1rem] leading-tight truncate"
-                        style="background:linear-gradient(135deg,#8B4513 0%,#C07830 35%,#D4A96A 60%,#B8762A 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Nupsera</h1>
+                        style="background:linear-gradient(135deg,#8B4513 0%,#C07830 35%,#D4A96A 60%,#B8762A 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+                        Nupsera</h1>
                     {{-- "WEDDING & MOMENTS" — sans-serif, uppercase kecil, warna gelap sesuai referensi --}}
                     <p class="whitespace-nowrap font-semibold uppercase tracking-widest"
                         style="font-size:0.55rem;color:#4A5240;letter-spacing:0.18em;">Wedding &amp; Moments</p>
@@ -566,7 +566,7 @@
                 </a>
 
                 <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">
-                    Inspirasi
+                    Kreatif
                 </div>
 
                 <a href="{{ route('moodboards.index') }}"
@@ -712,11 +712,10 @@
 
     @unless (auth()->user()?->is_superadmin)
         <div data-mobile-bottom-nav x-data="{ sheet: null }" class="mobile-bottom-nav md:hidden">
-            <div x-show="sheet" x-cloak x-transition.opacity @click="sheet = null"
-                class="mobile-nav-scrim"></div>
+            <div x-show="sheet" x-cloak x-transition.opacity @click="sheet = null" class="mobile-nav-scrim"></div>
 
-            <div x-show="sheet" x-cloak x-transition:enter="mobile-sheet-enter"
-                x-transition:leave="mobile-sheet-leave" class="mobile-nav-sheet">
+            <div x-show="sheet" x-cloak x-transition:enter="mobile-sheet-enter" x-transition:leave="mobile-sheet-leave"
+                class="mobile-nav-sheet">
                 <div class="mobile-sheet-grabber"></div>
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="font-serif-title text-lg font-bold text-[#5F6F5B]"
@@ -730,24 +729,108 @@
                 <div class="space-y-1.5 max-h-[60vh] overflow-y-auto">
                     @php
                         $mobilePlanning = [
-                            ['route' => 'checklists.index', 'match' => 'checklists.*', 'icon' => 'fa-list-check', 'title' => 'Checklist', 'subtitle' => 'Daftar tugas persiapan'],
-                            ['route' => 'vendors.index', 'match' => 'vendors.*', 'icon' => 'fa-store', 'title' => 'Vendor Management', 'subtitle' => 'Data vendor & katalog'],
-                            ['route' => 'guests.index', 'match' => 'guests.*', 'icon' => 'fa-users', 'title' => 'Guest Management', 'subtitle' => 'Daftar tamu & RSVP'],
-                            ['route' => 'rundowns.index', 'match' => 'rundowns.*', 'icon' => 'fa-clock', 'title' => 'Rundown Acara', 'subtitle' => 'Jadwal hari H'],
-                            ['route' => 'proposals.index', 'match' => 'proposals.*', 'icon' => 'fa-ring', 'title' => 'Lamaran', 'subtitle' => 'Rencana acara lamaran'],
-                            ['route' => 'souvenirs.index', 'match' => 'souvenirs.*', 'icon' => 'fa-gift', 'title' => 'Seserahan', 'subtitle' => 'Daftar seserahan'],
-                            ['route' => 'documents.index', 'match' => 'documents.*', 'icon' => 'fa-file-circle-check', 'title' => 'Persyaratan Nikah', 'subtitle' => 'Berkas & kelengkapan'],
+                            [
+                                'route' => 'checklists.index',
+                                'match' => 'checklists.*',
+                                'icon' => 'fa-list-check',
+                                'title' => 'Checklist',
+                                'subtitle' => 'Daftar tugas persiapan',
+                            ],
+                            [
+                                'route' => 'vendors.index',
+                                'match' => 'vendors.*',
+                                'icon' => 'fa-store',
+                                'title' => 'Vendor Management',
+                                'subtitle' => 'Data vendor & katalog',
+                            ],
+                            [
+                                'route' => 'guests.index',
+                                'match' => 'guests.*',
+                                'icon' => 'fa-users',
+                                'title' => 'Guest Management',
+                                'subtitle' => 'Daftar tamu & RSVP',
+                            ],
+                            [
+                                'route' => 'rundowns.index',
+                                'match' => 'rundowns.*',
+                                'icon' => 'fa-clock',
+                                'title' => 'Rundown Acara',
+                                'subtitle' => 'Jadwal hari H',
+                            ],
+                            [
+                                'route' => 'proposals.index',
+                                'match' => 'proposals.*',
+                                'icon' => 'fa-ring',
+                                'title' => 'Lamaran',
+                                'subtitle' => 'Rencana acara lamaran',
+                            ],
+                            [
+                                'route' => 'souvenirs.index',
+                                'match' => 'souvenirs.*',
+                                'icon' => 'fa-gift',
+                                'title' => 'Seserahan',
+                                'subtitle' => 'Daftar seserahan',
+                            ],
+                            [
+                                'route' => 'documents.index',
+                                'match' => 'documents.*',
+                                'icon' => 'fa-file-circle-check',
+                                'title' => 'Persyaratan Nikah',
+                                'subtitle' => 'Berkas & kelengkapan',
+                            ],
                         ];
                         $mobileFinance = [
-                            ['route' => 'budgets.index', 'match' => 'budgets.*', 'icon' => 'fa-wallet', 'title' => 'Budget Planner', 'subtitle' => 'Rencana anggaran'],
-                            ['route' => 'contracts.index', 'match' => 'contracts.*', 'icon' => 'fa-file-contract', 'title' => 'Vendor Contract', 'subtitle' => 'Kontrak vendor'],
-                            ['route' => 'payments.index', 'match' => 'payments.*', 'icon' => 'fa-credit-card', 'title' => 'Payment Tracker', 'subtitle' => 'Angsuran & pembayaran'],
-                            ['route' => 'savings.index', 'match' => 'savings.*', 'icon' => 'fa-piggy-bank', 'title' => 'Tabungan', 'subtitle' => 'Rencana menabung'],
-                            ['route' => 'gifts.index', 'match' => 'gifts.*', 'icon' => 'fa-gift', 'title' => 'Gift Management', 'subtitle' => 'Daftar hadiah'],
+                            [
+                                'route' => 'budgets.index',
+                                'match' => 'budgets.*',
+                                'icon' => 'fa-wallet',
+                                'title' => 'Budget Planner',
+                                'subtitle' => 'Rencana anggaran',
+                            ],
+                            [
+                                'route' => 'contracts.index',
+                                'match' => 'contracts.*',
+                                'icon' => 'fa-file-contract',
+                                'title' => 'Vendor Contract',
+                                'subtitle' => 'Kontrak vendor',
+                            ],
+                            [
+                                'route' => 'payments.index',
+                                'match' => 'payments.*',
+                                'icon' => 'fa-credit-card',
+                                'title' => 'Payment Tracker',
+                                'subtitle' => 'Angsuran & pembayaran',
+                            ],
+                            [
+                                'route' => 'savings.index',
+                                'match' => 'savings.*',
+                                'icon' => 'fa-piggy-bank',
+                                'title' => 'Tabungan',
+                                'subtitle' => 'Rencana menabung',
+                            ],
+                            [
+                                'route' => 'gifts.index',
+                                'match' => 'gifts.*',
+                                'icon' => 'fa-gift',
+                                'title' => 'Gift Management',
+                                'subtitle' => 'Daftar hadiah',
+                            ],
                         ];
                         $mobileMe = [
-                            ['route' => 'reports.index', 'match' => 'reports.*', 'icon' => 'fa-file-invoice-dollar', 'title' => 'Laporan & Export', 'subtitle' => 'Ringkasan dan export'],
-                            ['route' => 'admin.index', 'match' => 'admin.index,admin.wedding.*', 'icon' => 'fa-user-gear', 'title' => 'Profile', 'subtitle' => 'Profil akun & pasangan'],
+                            [
+                                'route' => 'reports.index',
+                                'match' => 'reports.*',
+                                'icon' => 'fa-file-invoice-dollar',
+                                'title' => 'Laporan & Export',
+                                'subtitle' => 'Ringkasan dan export',
+                            ],
+                            [
+                                'route' => 'admin.index',
+                                'match' => 'admin.index,admin.wedding.*',
+                                'icon' => 'fa-user-gear',
+                                'title' => 'Profile',
+                                'subtitle' => 'Profil akun & pasangan',
+                            ],
                         ];
                     @endphp
 
@@ -757,7 +840,8 @@
                                 @foreach ($items as $item)
                                     <a href="{{ route($item['route']) }}"
                                         class="mobile-sheet-item {{ request()->routeIs($item['match']) ? 'mobile-sheet-item-active' : '' }}">
-                                        <span class="mobile-sheet-icon"><i class="fa-solid {{ $item['icon'] }}"></i></span>
+                                        <span class="mobile-sheet-icon"><i
+                                                class="fa-solid {{ $item['icon'] }}"></i></span>
                                         <span class="min-w-0 flex-1">
                                             <strong>{{ $item['title'] }}</strong>
                                             <small>{{ $item['subtitle'] }}</small>
@@ -772,22 +856,24 @@
             </div>
 
             <nav class="mobile-bottom-pill" aria-label="Navigasi utama mobile">
-                <a href="{{ route('dashboard') }}" class="mobile-tab {{ request()->routeIs('dashboard') ? 'mobile-tab-active' : '' }}">
+                <a href="{{ route('dashboard') }}"
+                    class="mobile-tab {{ request()->routeIs('dashboard') ? 'mobile-tab-active' : '' }}">
                     <i class="fa-solid fa-house"></i><span>Home</span><b></b>
                 </a>
                 <button type="button" @click="sheet = sheet === 'planning' ? null : 'planning'"
-                    class="mobile-tab {{ request()->routeIs('checklists.*','vendors.*','vendor-directory.*','guests.*','rundowns.*','proposals.*','souvenirs.*','documents.*') ? 'mobile-tab-active' : '' }}">
+                    class="mobile-tab {{ request()->routeIs('checklists.*', 'vendors.*', 'vendor-directory.*', 'guests.*', 'rundowns.*', 'proposals.*', 'souvenirs.*', 'documents.*') ? 'mobile-tab-active' : '' }}">
                     <i class="fa-solid fa-list-check"></i><span>Planning</span><b></b>
                 </button>
-                <a href="{{ route('moodboards.index') }}" class="mobile-tab {{ request()->routeIs('moodboards.*') ? 'mobile-tab-active' : '' }}">
-                    <i class="fa-solid fa-palette"></i><span>Inspirasi</span><b></b>
+                <a href="{{ route('moodboards.index') }}"
+                    class="mobile-tab {{ request()->routeIs('moodboards.*') ? 'mobile-tab-active' : '' }}">
+                    <i class="fa-solid fa-palette"></i><span>Kreatif</span><b></b>
                 </a>
                 <button type="button" @click="sheet = sheet === 'finance' ? null : 'finance'"
-                    class="mobile-tab {{ request()->routeIs('budgets.*','contracts.*','payments.*','savings.*','gifts.*') ? 'mobile-tab-active' : '' }}">
+                    class="mobile-tab {{ request()->routeIs('budgets.*', 'contracts.*', 'payments.*', 'savings.*', 'gifts.*') ? 'mobile-tab-active' : '' }}">
                     <i class="fa-solid fa-wallet"></i><span>Keuangan</span><b></b>
                 </button>
                 <button type="button" @click="sheet = sheet === 'me' ? null : 'me'"
-                    class="mobile-tab {{ request()->routeIs('reports.*','admin.index','admin.wedding.*') ? 'mobile-tab-active' : '' }}">
+                    class="mobile-tab {{ request()->routeIs('reports.*', 'admin.index', 'admin.wedding.*') ? 'mobile-tab-active' : '' }}">
                     <i class="fa-solid fa-user"></i><span>Saya</span><b></b>
                 </button>
             </nav>
@@ -848,7 +934,7 @@
          supaya tombol di halaman berapa pun bisa membaca kondisi saat
          itu juga diklik, tanpa tergantung urutan event. --}}
     <script>
-        (function () {
+        (function() {
             window.__pwaPrompt = null;
             window.__pwaError = null;
             window.__pwaInstalled = false;
@@ -856,7 +942,7 @@
             // Tangkap event beforeinstallprompt SEAWAL mungkin (sebelum SW
             // selesai register), karena browser bisa mengirimnya kapan saja
             // begitu manifest valid.
-            window.addEventListener('beforeinstallprompt', function (e) {
+            window.addEventListener('beforeinstallprompt', function(e) {
                 e.preventDefault();
                 window.__pwaPrompt = e;
                 window.__pwaError = null;
@@ -865,7 +951,7 @@
             });
 
             // Deteksi jika PWA sudah terinstall
-            window.addEventListener('appinstalled', function () {
+            window.addEventListener('appinstalled', function() {
                 window.__pwaInstalled = true;
                 window.__pwaPrompt = null;
             });
@@ -879,24 +965,26 @@
             if ('serviceWorker' in navigator) {
                 // Gunakan load event: memastikan halaman sudah selesai load
                 // sehingga SW register tidak bersaing dengan resource utama.
-                window.addEventListener('load', function () {
+                window.addEventListener('load', function() {
                     navigator.serviceWorker.register('/sw.js', {
                         scope: '/',
-                        updateViaCache: 'none'   // selalu ambil sw.js fresh
-                    }).then(function (reg) {
+                        updateViaCache: 'none' // selalu ambil sw.js fresh
+                    }).then(function(reg) {
                         // Force check update setiap kali halaman dibuka
                         reg.update();
 
                         // Jika SW baru sedang waiting (update tersedia),
                         // aktifkan langsung agar tidak perlu close/reopen tab.
                         if (reg.waiting) {
-                            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                            reg.waiting.postMessage({
+                                type: 'SKIP_WAITING'
+                            });
                         }
 
-                        reg.addEventListener('updatefound', function () {
+                        reg.addEventListener('updatefound', function() {
                             var newSW = reg.installing;
                             if (newSW) {
-                                newSW.addEventListener('statechange', function () {
+                                newSW.addEventListener('statechange', function() {
                                     if (newSW.state === 'activated') {
                                         // SW baru aktif → reload halaman agar
                                         // prompt install muncul di-load berikutnya
@@ -905,7 +993,7 @@
                                 });
                             }
                         });
-                    }).catch(function (err) {
+                    }).catch(function(err) {
                         window.__pwaError = (err && err.message) ? err.message : String(err);
                     });
                 });
