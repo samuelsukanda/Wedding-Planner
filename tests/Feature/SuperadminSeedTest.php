@@ -21,7 +21,7 @@ class SuperadminSeedTest extends TestCase
     {
         $this->seed(DatabaseSeeder::class);
 
-        $admin = User::where('email', 'admin@weddingplanner.web.id')->first();
+        $admin = User::where('email', 'admin@nupsera.my.id')->first();
 
         $this->assertNotNull($admin);
         $this->assertTrue($admin->is_superadmin);
@@ -33,7 +33,7 @@ class SuperadminSeedTest extends TestCase
     {
         $this->seed(DatabaseSeeder::class);
 
-        $admin = User::where('email', 'admin@weddingplanner.web.id')->first();
+        $admin = User::where('email', 'admin@nupsera.my.id')->first();
         $admin->update(['password' => 'PasswordYangBerubah']);
         $this->assertFalse(Hash::check('lopyu', $admin->fresh()->password));
 
@@ -50,13 +50,13 @@ class SuperadminSeedTest extends TestCase
     {
         $this->seed(DatabaseSeeder::class);
 
-        User::where('email', 'admin@weddingplanner.web.id')
+        User::where('email', 'admin@nupsera.my.id')
             ->update(['is_superadmin' => false]);
 
         $this->seed(DatabaseSeeder::class);
 
         $this->assertTrue(
-            User::where('email', 'admin@weddingplanner.web.id')->first()->is_superadmin
+            User::where('email', 'admin@nupsera.my.id')->first()->is_superadmin
         );
     }
 }

@@ -12,7 +12,7 @@ use Tests\TestCase;
  *
  * URL publik app ini sengaja dibuat bersih (selalu "/"), dan modul baru
  * sebelumnya sempat menulis filter ke URL sehingga muncul
- * "https://weddingplanner.web.id/?status=Todo&priority=Low".
+ * "https://nupsera.my.id/?status=Todo&priority=Low".
  *
  * Test ini memeriksa sisi server: view tidak lagi membaca filter dari query
  * string, jadi filter yang ketemu di URL diabaikan dan daftar tetap utuh.

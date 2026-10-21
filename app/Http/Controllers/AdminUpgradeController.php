@@ -75,11 +75,15 @@ class AdminUpgradeController extends Controller
             'admin_note' => ['required', 'string', 'max:500'],
         ]);
 
-        $upgradeRequest->update($validated + [
-            'status' => 'rejected',
-            'reviewed_by' => auth()->id(),
-            'reviewed_at' => now(),
-        ]);
+        DB::transaction(function () use ($upgradeRequest, $validated) {
+            $upgradeRequest = UpgradeRequest::query()->lockForUpdate()->findOrFail($upgradeRequest->id);
+            abort_if($upgradeRequest->status !== 'pending', 409, 'Request upgrade sudah diproses.');
+            $upgradeRequest->update($validated + [
+                'status' => 'rejected',
+                'reviewed_by' => auth()->id(),
+                'reviewed_at' => now(),
+            ]);
+        });
 
         return back()->with('success', 'Request ditolak. Pasangan bisa mengirim ulang bukti transfer.');
     }

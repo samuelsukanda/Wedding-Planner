@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
     private function seedSuperadmin(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@weddingplanner.web.id'],
+            ['email' => 'admin@nupsera.my.id'],
             [
                 'name' => 'Superadmin',
                 // cast 'password' => 'hashed' di model User otomatis meng-hash nilai ini

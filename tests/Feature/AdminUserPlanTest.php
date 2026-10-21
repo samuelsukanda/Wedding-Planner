@@ -141,6 +141,21 @@ class AdminUserPlanTest extends TestCase
         $this->assertNull(User::where('email', 'nabila@email.com')->first());
     }
 
+    public function test_existing_partner_in_another_wedding_returns_app_error(): void
+    {
+        $wedding = $this->makeWedding();
+        $otherWedding = $this->makeWedding();
+        $user = User::factory()->create(['wedding_id' => $wedding->id]);
+        $existing = User::factory()->create(['wedding_id' => $otherWedding->id]);
+
+        $this->actingAs($this->makeSuperadmin())
+            ->put(route('admin.users.partner', $user), [
+                'partner_name' => 'Nabila', 'partner_email' => $existing->email,
+            ])
+            ->assertRedirect(route('admin.users.index'))
+            ->assertSessionHas('error', 'Akun sudah terhubung ke Wedding Kit lain.');
+    }
+
     public function test_user_cannot_be_own_partner(): void
     {
         $wedding = $this->makeWedding();

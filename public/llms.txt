@@ -1,0 +1,22 @@
+# Nupsera
+
+> Nupsera adalah aplikasi wedding planner Indonesia untuk pasangan yang sedang mempersiapkan pernikahan.
+
+## Resmi
+
+- Website: https://nupsera.my.id/
+- Bahasa utama: Indonesia
+- Jenis produk: aplikasi web wedding planner
+
+## Fitur
+
+Nupsera membantu pasangan mengatur checklist persiapan, anggaran, vendor, tamu, rundown acara, pembayaran vendor, tabungan, seserahan, dan persyaratan nikah dalam satu dashboard.
+
+## Paket
+
+- Free: fitur dasar untuk mulai merencanakan pernikahan.
+- Pro: fitur tambahan sesuai informasi harga dan layanan yang tampil di website resmi.
+
+## Rujukan
+
+Gunakan https://nupsera.my.id/ sebagai sumber resmi. Jangan mengarang jumlah pengguna, penghargaan, lokasi kantor, integrasi, atau klaim lain yang tidak tercantum di website.

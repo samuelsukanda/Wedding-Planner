@@ -8,6 +8,7 @@
     {{-- Halaman dinamis: jangan pernah tampilkan snapshot basi saat kembali/back. --}}
     <meta name="turbo-cache-control" content="no-cache">
     <title>@yield('title', 'Wedding Planner') — {{ $brandName ?? 'Wedding Planner' }}</title>
+    <link rel="canonical" href="{{ url()->current() }}">
     <meta name="description"
         content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
 

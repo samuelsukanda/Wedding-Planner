@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -64,34 +65,36 @@ class GoogleAuthController extends Controller
         $invite = null;
 
         if ($pendingInviteToken !== '') {
-            $invite = WeddingInvite::with('wedding')->where('token', $pendingInviteToken)->first();
-
-            if ($problem = app(PartnerInviteController::class)->inviteProblem($invite)) {
+            $candidate = WeddingInvite::with('wedding')->where('token', $pendingInviteToken)->first();
+            if ($problem = app(PartnerInviteController::class)->inviteProblem($candidate)) {
                 return $problem;
             }
         }
 
         // Google menjamin email terverifikasi, jadi email cukup sebagai identitas.
-        $user = User::where('email', $email)->first();
+        [$user, $invite, $created] = DB::transaction(function () use ($pendingInviteToken, $email, $googleUser) {
+            $invite = $pendingInviteToken !== ''
+                ? WeddingInvite::with('wedding')->where('token', $pendingInviteToken)->lockForUpdate()->first()
+                : null;
+            $user = User::where('email', $email)->first();
+            $created = false;
 
-        if (! $user) {
-            $user = User::create([
-                'name' => $googleUser->getName() ?: Str::before($email, '@'),
-                'email' => $email,
-                'password' => Hash::make(Str::random(40)),
-                'auth_provider' => 'google',
-                // Akun baru lewat undangan langsung masuk ke Wedding Kit yang
-                // sama - ekuivalen dengan mengisi form Daftar & Bergabung.
-                'wedding_id' => $invite?->wedding_id,
-            ]);
-
-            if ($invite) {
-                $invite->update([
-                    'accepted_at' => now(),
-                    'accepted_user_id' => $user->id,
+            if (! $user) {
+                $created = true;
+                $user = User::create([
+                    'name' => $googleUser->getName() ?: Str::before($email, '@'),
+                    'email' => $email, 'password' => Hash::make(Str::random(40)),
+                    'auth_provider' => 'google', 'wedding_id' => $invite?->wedding_id,
                 ]);
+                if ($invite) {
+                    abort_if($invite->accepted_at || $invite->expires_at->isPast(), 410, 'Link undangan sudah tidak berlaku.');
+                    $invite->update(['accepted_at' => now(), 'accepted_user_id' => $user->id]);
+                }
             }
-        } elseif ($invite) {
+            return [$user, $invite, $created];
+        });
+
+        if ($invite && ! $created) {
             // Akun sudah ada: jangan pindahkan ke Wedding Kit lain, sama
             // seperti alur email yang menolak email yang sudah terdaftar.
             // Undangan biarkan tetap hidup dan cukup dipakai lewat email.

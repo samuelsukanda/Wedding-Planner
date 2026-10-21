@@ -74,7 +74,7 @@ class GuestWaTemplateTest extends TestCase
         $this->assertStringStartsWith('https://api.whatsapp.com/send?phone=628123456789&text=', $target);
         parse_str(parse_url($target, PHP_URL_QUERY), $q);
         $this->assertSame(
-            'Hai Bpk. Budi, 07 October 2027 di Jakarta. Info: weddingplanner.web.id jam 17:00.',
+            'Hai Bpk. Budi, 07 October 2027 di Jakarta. Info: nupsera.my.id jam 17:00.',
             $q['text']
         );
     }

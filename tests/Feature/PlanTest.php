@@ -475,6 +475,31 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         $this->actingAs($user)->get('/admin/pro-settings')->assertForbidden();
     }
 
+    public function test_admin_cannot_reject_an_already_approved_request(): void
+    {
+        Storage::fake('local');
+        [$wedding, $user] = $this->couple();
+        $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
+        $request = UpgradeRequest::sole();
+        $request->update(['status' => 'approved']);
+
+        $this->actingAs($this->superadmin())
+            ->post("/admin/upgrade-requests/{$request->id}/reject", ['admin_note' => 'Tidak valid'])
+            ->assertStatus(409);
+        $this->assertSame('approved', $request->fresh()->status);
+    }
+
+    public function test_superadmin_can_read_proof_but_regular_user_cannot(): void
+    {
+        Storage::fake('local');
+        [, $user] = $this->couple();
+        $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
+        $request = UpgradeRequest::sole();
+
+        $this->actingAs($user)->get(route('admin.upgrade-requests.proof', $request))->assertForbidden();
+        $this->actingAs($this->superadmin())->get(route('admin.upgrade-requests.proof', $request))->assertOk();
+    }
+
     public function test_settings_accept_formatted_money_input()
     {
         $this->actingAs($this->superadmin())

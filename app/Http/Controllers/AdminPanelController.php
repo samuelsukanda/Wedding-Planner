@@ -256,7 +256,9 @@ class AdminPanelController extends Controller
             ],
         ]);
 
-        $this->syncPartner($user, $validated['partner_email'], $validated['partner_name'] ?? null);
+        if ($error = $this->syncPartner($user, $validated['partner_email'], $validated['partner_name'] ?? null)) {
+            return redirect()->route('admin.users.index')->with('error', $error);
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'Pasangan berhasil ditambahkan!');
     }
@@ -269,28 +271,32 @@ class AdminPanelController extends Controller
      * dibuatkan akun baru dengan password acak -- pasangan memakai fitur
      * "Lupa Password" untuk mengganti passwordnya sendiri.
      */
-    private function syncPartner(User $user, ?string $email, ?string $name): void
+    private function syncPartner(User $user, ?string $email, ?string $name): ?string
     {
         $email = trim((string) $email);
 
         // Tidak bisa dipasangkan ke dirinya sendiri, dan tanpa Wedding Kit
         // tidak ada workspace yang bisa dibagi.
         if ($email === '' || $email === $user->email || ! $user->wedding_id) {
-            return;
+            return null;
         }
 
         $partner = User::where('email', $email)->first();
 
         if ($partner) {
-            abort_if($partner->is_superadmin, 403, 'Akun superadmin tidak bisa dijadikan pasangan.');
-            abort_if($partner->wedding_id && $partner->wedding_id !== $user->wedding_id, 409, 'Akun sudah terhubung ke Wedding Kit lain.');
+            if ($partner->is_superadmin) {
+                return 'Akun superadmin tidak bisa dijadikan pasangan.';
+            }
+            if ($partner->wedding_id && $partner->wedding_id !== $user->wedding_id) {
+                return 'Akun sudah terhubung ke Wedding Kit lain.';
+            }
             $partner->update(['wedding_id' => $user->wedding_id]);
 
             if (! empty($name)) {
                 $partner->update(['name' => $name]);
             }
 
-            return;
+            return null;
         }
 
         User::create([
@@ -299,6 +305,8 @@ class AdminPanelController extends Controller
             'password' => Str::password(16),
             'wedding_id' => $user->wedding_id,
         ]);
+
+        return null;
     }
 
     public function destroyUser(Request $request, User $user)

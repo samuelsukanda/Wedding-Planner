@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\GoogleAuthController;
@@ -30,6 +31,14 @@ use App\Http\Controllers\UpgradeController;
 use App\Http\Controllers\AdminUpgradeController;
 use App\Http\Controllers\ProSettingsController;
 use App\Http\Controllers\SocialMediaController;
+
+Route::get('robots.txt', fn () => response(file_get_contents(public_path('robots.txt')), 200, ['Content-Type' => 'text/plain']))
+    ->name('seo.robots');
+Route::get('sitemap.xml', fn () => response(file_get_contents(public_path('sitemap.xml')), 200, ['Content-Type' => 'application/xml']))
+    ->name('seo.sitemap');
+Route::get('llms.txt', fn () => response(file_get_contents(public_path('llms.txt')), 200, ['Content-Type' => 'text/plain']))
+    ->name('seo.llms');
+
 
 // ========== LOGIN (tanpa middleware auth) ==========
 Route::get('login', fn () => redirect()->route('dashboard'))->name('login');

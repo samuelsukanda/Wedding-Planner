@@ -285,7 +285,7 @@ class GuestController extends Controller
                 $wedding->wedding_date ? $wedding->wedding_date->format('d F Y') : '—',
                 '17:00',
                 $wedding->location ?: 'Bandung',
-                'weddingplanner.web.id',
+                'nupsera.my.id',
             ],
             $template
         );

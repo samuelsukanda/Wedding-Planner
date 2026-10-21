@@ -5,13 +5,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login — Wedding Planner</title>
+    <meta name="description" content="Masuk ke Nupsera untuk mengelola persiapan pernikahan, vendor, anggaran, dan tamu dalam satu tempat.">
+    <link rel="canonical" href="https://nupsera.my.id/">
+    <link rel="author" href="https://nupsera.my.id/llms.txt">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Nupsera">
+    <meta property="og:title" content="Nupsera — Aplikasi Wedding Planner Indonesia">
+    <meta property="og:description" content="Rencanakan pernikahan dengan checklist, budget, vendor, tamu, dan rundown dalam satu aplikasi.">
+    <meta property="og:url" content="https://nupsera.my.id/">
+    <meta property="og:image" content="https://nupsera.my.id/img/logo-brand.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Nupsera — Aplikasi Wedding Planner Indonesia">
+    <meta name="twitter:description" content="Rencanakan pernikahan dengan checklist, budget, vendor, tamu, dan rundown dalam satu aplikasi.">
+    <meta name="twitter:image" content="https://nupsera.my.id/img/logo-brand.jpg">
+    @php($seoSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebApplication',
+            'name' => 'Nupsera',
+            'alternateName' => 'Nupsera Wedding & Moments',
+            'url' => 'https://nupsera.my.id/',
+            'applicationCategory' => 'LifestyleApplication',
+            'operatingSystem' => 'Web',
+            'inLanguage' => 'id-ID',
+            'description' => 'Aplikasi wedding planner Indonesia untuk mengatur checklist, budget, vendor, tamu, dan rundown pernikahan.',
+            'offers' => [
+                ['@type' => 'Offer', 'name' => 'Free', 'price' => '0', 'priceCurrency' => 'IDR'],
+                ['@type' => 'Offer', 'name' => 'Pro', 'priceCurrency' => 'IDR'],
+            ],
+        ])
+    <script type="application/ld+json">{!! json_encode($seoSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    <title>Nupsera — Aplikasi Wedding Planner Indonesia</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
+    <link rel="preload"
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap"></noscript>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
     <link rel="shortcut icon" href="{{ asset('img/nupsera-ori.jpg') }}" type="image/x-icon">
     @vite(['resources/css/app.css'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -256,8 +289,9 @@
     <div class="login-card" x-data="{ tab: '{{ old('_form') === 'register' || ($errors->any() && old('password_confirmation')) ? 'register' : 'login' }}' }">
         {{-- Logo Nupsera: ikon + nama brand sesuai desain sidebar --}}
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:18px;">
-            <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo Nupsera"
-                style="height:56px;width:auto;object-fit:contain;display:block;">
+            <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo Nupsera" width="56" height="56"
+                fetchpriority="high" decoding="async"
+                style="height:56px;width:56px;object-fit:contain;display:block;">
             <div style="text-align:center;line-height:1;">
                 <div
                     style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
