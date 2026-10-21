@@ -124,6 +124,10 @@ class SavingsController extends Controller
      */
     public function storeTransaction(Request $request, SavingsGoal $savingsGoal)
     {
+        // Nominal terkirim terformat ("Rp 1.000") dari input modal, angka
+        // polosnya harus dipisah dulu sebelum validasi numeric.
+        $this->normalizeDigitInputs($request, ['amount']);
+
         $validated = $request->validate([
             'type' => 'required|in:' . SavingsGoal::TYPE_SETORAN . ',' . SavingsGoal::TYPE_PENARIKAN,
             'amount' => $this->moneyRule(),

@@ -405,7 +405,9 @@
 
                     <div>
                         <label class="form-label">Nominal (Rp) *</label>
-                        <input type="number" name="amount" x-model="txAmount" required min="1" step="1"
+                        <input type="text" name="amount" inputmode="numeric" required
+                            :value="wpMoney(txAmount)"
+                            @input="txAmount = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                             class="form-input form-input-number">
                     </div>
 

@@ -78,6 +78,22 @@ class SavingsTest extends TestCase
         $this->assertSame(85000000.0, $goal->shortfall());
     }
 
+    /** Input modal kini terkirim terformat ("Rp 500.000") seperti target nominal. */
+    public function test_setoran_accepts_formatted_amount(): void
+    {
+        $user = $this->makeUser();
+        $goal = $this->makeGoal($user, ['initial_balance' => 10000000]);
+
+        $this->actingAs($user)->post("/savings/{$goal->id}/transactions", [
+            'type' => 'setoran',
+            'amount' => 'Rp 500.000',
+            'transaction_date' => '2026-10-10',
+        ])->assertSessionHasNoErrors();
+
+        $goal->refresh();
+        $this->assertSame('10500000.00', $goal->current_balance);
+    }
+
     public function test_penarikan_more_than_balance_is_rejected(): void
     {
         $user = $this->makeUser();
