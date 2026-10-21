@@ -751,4 +751,23 @@ public function test_superadmin_can_save_pro_settings()
         // mengulangnya di sidebar cuma memakan ruang.
         $this->assertDoesNotMatchRegularExpression('/Wedding\s+Planner<\/p>/', $html);
     }
+
+    public function test_mobile_bottom_navigation_groups_app_menus(): void
+    {
+        [, $user] = $this->couple();
+
+        $html = $this->actingAs($user)->get('/')->assertOk()->getContent();
+
+        $this->assertStringContainsString('data-mobile-bottom-nav', $html);
+        $this->assertStringContainsString('Home', $html);
+        $this->assertStringContainsString('Planning', $html);
+        $this->assertStringContainsString('Inspirasi', $html);
+        $this->assertStringContainsString('Keuangan', $html);
+        $this->assertStringContainsString('Saya', $html);
+        $this->assertStringContainsString('Laporan &amp; Export', $html);
+        $this->assertStringContainsString('Profile', $html);
+        $mobileNav = substr($html, strpos($html, 'data-mobile-bottom-nav'));
+        $this->assertStringNotContainsString('Keluar', $mobileNav);
+        $this->assertStringNotContainsString('Buka Menu Navigation', $mobileNav);
+    }
 }

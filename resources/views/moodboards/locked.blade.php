@@ -22,7 +22,7 @@
             {{-- ================= PIL FITUR ================= --}}
             <span
                 class="inline-flex items-center gap-1.5 rounded-full border border-[#D8A7B1]/50 bg-[#D8A7B1]/10 px-3 py-1 text-[11px] font-bold tracking-wide text-[#C2757F]">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> FITUR PRO
+                <i class="fa-solid fa-gem"></i> FITUR PRO
             </span>
 
             <h1
@@ -113,7 +113,7 @@
             {{-- ================= CTA ================= --}}
             <a href="{{ route('upgrade.index') }}"
                 class="btn-primary-rose mt-4 inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold cursor-pointer">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Upgrade ke Pro Sekarang
+                <i class="fa-solid fa-gem"></i> Upgrade ke Pro Sekarang
             </a>
 
             {{-- Paket Pro di aplikasi ini dibeli sekali, bukan berlangganan, jadi

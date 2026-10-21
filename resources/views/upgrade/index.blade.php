@@ -61,7 +61,7 @@
 
                     <span
                         class="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Recommended
+                        <i class="fa-solid fa-gem"></i> Recommended
                     </span>
 
                     <h2 class="mt-4 text-2xl md:text-3xl font-bold font-serif-title text-white">Nupsera Pro</h2>
@@ -98,13 +98,13 @@
                 <!-- ================= CTA PEMBUKA CHECKOUT ================= -->
                 <button type="button" @click="modalOpen = true"
                     class="btn-primary-rose w-full px-6 py-4 rounded-2xl text-sm cursor-pointer">
-                    <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Upgrade ke Pro
+                    <i class="fa-solid fa-gem mr-2"></i> Upgrade ke Pro
                 </button>
 
                 <!-- ================= MODAL RINGKASAN PEMBELIAN =================
-                                                         Struktur, warna, dan cara menutupnya mengikuti modal
-                                                         "Tambah Data" di modul lain (x-show + x-outside + Escape),
-                                                         supaya tidak ada gaya modal ketiga di aplikasi ini. -->
+                                                                 Struktur, warna, dan cara menutupnya mengikuti modal
+                                                                 "Tambah Data" di modul lain (x-show + x-outside + Escape),
+                                                                 supaya tidak ada gaya modal ketiga di aplikasi ini. -->
                 <div x-show="modalOpen" x-transition.opacity x-cloak @keydown.escape.window="modalOpen = false"
                     class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
                     <div x-outside="modalOpen = false"
@@ -182,7 +182,8 @@
                         @if (trim($qrisPath) !== '')
                             <div class="rounded-xl bg-[#FAF7F2] p-4 flex justify-center" x-data="{ open: false }">
                                 <div class="flex flex-col items-center gap-2">
-                                    <h4 class="text-xs font-bold uppercase tracking-wider text-[#5F6F5B] flex items-center gap-2">
+                                    <h4
+                                        class="text-xs font-bold uppercase tracking-wider text-[#5F6F5B] flex items-center gap-2">
                                         <i class="fa-solid fa-qrcode text-[#D8A7B1]"></i> Bayar Lewat QRIS
                                     </h4>
                                     <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}"
@@ -192,7 +193,7 @@
                                 </div>
 
                                 <!-- Tampilan besar: ukuran terbatas, tutup lewat
-                                     tombol X di pojok atau klik area gelap -->
+                                             tombol X di pojok atau klik area gelap -->
                                 <div x-show="open" x-on:click="open = false" x-cloak
                                     class="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6 cursor-zoom-out">
                                     <div class="relative flex items-center justify-center max-w-full max-h-full">
@@ -202,8 +203,7 @@
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
                                         <img src="{{ \Illuminate\Support\Facades\Storage::url($qrisPath) }}"
-                                            alt="Kode QRIS"
-                                            style="max-width:22.5rem;max-height:80vh;width:auto;height:auto"
+                                            alt="Kode QRIS" style="max-width:22.5rem;max-height:80vh;width:auto;height:auto"
                                             class="rounded-xl bg-white p-3 shadow-xl">
                                     </div>
                                 </div>

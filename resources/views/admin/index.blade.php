@@ -17,13 +17,13 @@
         <!-- ================= FOTO PROFIL ================= -->
         <div class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div class="flex flex-col sm:flex-row sm:items-center gap-6">
-                <div class="relative shrink-0">
+                <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0">
                     @if ($me->avatarUrl())
                         <img src="{{ $me->avatarUrl() }}" alt="Foto {{ $me->name }}"
-                            class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-[#D8A7B1]/50">
+                            class="w-full h-full rounded-full object-cover border-2 border-[#D8A7B1]/50">
                     @else
                         <div
-                            class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#A855A0] text-white flex items-center justify-center text-3xl font-bold">
+                            class="w-full h-full rounded-full bg-[#A855A0] text-white flex items-center justify-center text-3xl font-bold">
                             {{ $me->initial() }}
                         </div>
                     @endif
@@ -121,7 +121,7 @@
                         </p>
                         <a href="{{ route('upgrade.index') }}"
                             class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center inline-flex items-center justify-center">
-                            <i class="fa-solid fa-star mr-2"></i> Upgrade ke Pro
+                            <i class="fa-solid fa-gem mr-2"></i> Upgrade ke Pro
                         </a>
                     </div>
                 @endif
@@ -303,14 +303,12 @@
                             }
 
                             .btn-pwa-install:hover {
-                                background: linear-gradient(135deg, #D8A7B1 0%, #C4919B 100%) !important;
-                                color: #ffffff !important;
-                                border-color: #C4919B !important;
-                                box-shadow: 0 4px 15px rgba(216, 167, 177, 0.45) !important;
+                                background-color: #FBF2F4 !important;
+                                color: #C2757F !important;
                             }
 
                             .btn-pwa-install:hover .btn-pwa-icon {
-                                color: #ffffff !important;
+                                color: #C2757F !important;
                             }
                         </style>
                         <script>
@@ -436,7 +434,7 @@
                             </div>
 
                             <!-- Popup konfirmasi instal: posisi & animasi sama
-                                                     dengan toast flash (atas, flash-toast-in/out) -->
+                                                         dengan toast flash (atas, flash-toast-in/out) -->
                             <div x-show="open" x-cloak x-ref="card" data-flash
                                 class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-auto max-w-[calc(100%-1.5rem)] sm:max-w-md">
                                 <div
@@ -478,7 +476,14 @@
                             </div>
                         </div>
 
-
+                        <!-- ================= LOGOUT (DESKTOP) ================= -->
+                        <form method="POST" action="{{ route('logout') }}" data-turbo="false" class="hidden lg:block">
+                            @csrf
+                            <button type="submit"
+                                class="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-2xl bg-white border border-[#B6ADA3]/35 shadow-xs text-sm font-semibold text-[#5F6F5B] hover:bg-[#FBF2F4] hover:text-[#C2757F] transition cursor-pointer">
+                                <i class="fa-solid fa-right-from-bracket text-[#C2757F]"></i> Keluar
+                            </button>
+                        </form>
                     </div>
 
                     <!-- Right: Preview Ringkasan Card (5 Cols on Desktop) -->
@@ -642,14 +647,6 @@
                             </div>
                         </div>
 
-                        <!-- ================= LOGOUT ================= -->
-                        <form method="POST" action="{{ route('logout') }}" data-turbo="false">
-                            @csrf
-                            <button type="submit"
-                                class="w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-2xl bg-white border border-[#B6ADA3]/35 shadow-xs text-sm font-semibold text-[#5F6F5B] hover:bg-[#FBF2F4] hover:text-[#C2757F] transition cursor-pointer">
-                                <i class="fa-solid fa-right-from-bracket text-[#C2757F]"></i> Keluar
-                            </button>
-                        </form>
 
                         <!-- ================= HUBUNGI KAMI ================= -->
                         {{-- Kartu selalu ada; WhatsApp hanya jika nomor tersedia --}}
@@ -692,6 +689,15 @@
                                 </a>
                             </div>
                         </div>
+
+                        <!-- ================= LOGOUT (MOBILE) ================= -->
+                        <form method="POST" action="{{ route('logout') }}" data-turbo="false" class="block lg:hidden">
+                            @csrf
+                            <button type="submit"
+                                class="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-2xl bg-white border border-[#B6ADA3]/35 shadow-xs text-sm font-semibold text-[#5F6F5B] hover:bg-[#FBF2F4] hover:text-[#C2757F] transition cursor-pointer">
+                                <i class="fa-solid fa-right-from-bracket text-[#C2757F]"></i> Keluar
+                            </button>
+                        </form>
                     </div>
 
                 </div>

@@ -445,11 +445,13 @@
     <header
         class="md:hidden flex items-center justify-between px-4 py-3 bg-[#FAF7F2]/95 border-b border-[#B6ADA3]/40 backdrop-blur sticky top-0 z-40 shadow-sm">
         <div class="flex items-center gap-3">
-            <button @click="sidebarOpen = true"
-                class="text-[#5F6F5B] hover:text-[#5F6F5B] p-2 rounded-xl border border-[#B6ADA3]/30 bg-white cursor-pointer"
-                aria-label="Buka Menu Navigation">
-                <i class="fa-solid fa-bars text-lg"></i>
-            </button>
+            @if ($isSuper ?? false)
+                <button @click="sidebarOpen = true"
+                    class="text-[#5F6F5B] hover:text-[#5F6F5B] p-2 rounded-xl border border-[#B6ADA3]/30 bg-white cursor-pointer"
+                    aria-label="Buka Menu Navigation">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            @endif
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
                 <i class="fa-solid fa-heart text-[#D8A7B1] text-lg"></i>
                 <span
@@ -469,14 +471,14 @@
 
     <!-- Sidebar Backdrop for Mobile -->
     <div x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false"
-        class="fixed inset-0 bg-[#5F6F5B]/50 backdrop-blur-sm z-50 md:hidden" x-cloak></div>
+        class="hidden fixed inset-0 bg-[#5F6F5B]/50 backdrop-blur-sm z-50 md:hidden" x-cloak></div>
 
     <!-- Sidebar Navigation -->
     <aside
         :class="[sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0', sidebarCollapsed ?
             'is-collapsed md:w-16' : 'md:w-64'
         ]"
-        class="sidebar fixed md:relative inset-y-0 left-0 z-50 w-64 md:transition-[width,transform] duration-300 ease-in-out bg-white border-r border-[#B6ADA3]/35 flex flex-col shadow-lg md:shadow-none">
+        class="sidebar {{ ($isSuper ?? false) ? 'flex' : 'hidden' }} md:flex fixed md:relative inset-y-0 left-0 z-50 w-64 md:transition-[width,transform] duration-300 ease-in-out bg-white border-r border-[#B6ADA3]/35 flex-col shadow-lg md:shadow-none">
 
         <!-- Logo & Header. Baris di bawah logo adalah merek, bukan nama pasangan:
                  nama pasangan sudah tampil di header utama, jadi mengulangnya
@@ -706,6 +708,90 @@
             <i class="fa-solid text-[10px]" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
         </button>
     </aside>
+
+    @unless (auth()->user()?->is_superadmin)
+        <div data-mobile-bottom-nav x-data="{ sheet: null }" class="mobile-bottom-nav md:hidden">
+            <div x-show="sheet" x-cloak x-transition.opacity @click="sheet = null"
+                class="mobile-nav-scrim"></div>
+
+            <div x-show="sheet" x-cloak x-transition:enter="mobile-sheet-enter"
+                x-transition:leave="mobile-sheet-leave" class="mobile-nav-sheet">
+                <div class="mobile-sheet-grabber"></div>
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="font-serif-title text-lg font-bold text-[#5F6F5B]"
+                        x-text="sheet === 'planning' ? 'Planning' : (sheet === 'finance' ? 'Keuangan' : 'Saya')"></h2>
+                    <button type="button" @click="sheet = null" aria-label="Tutup menu"
+                        class="w-9 h-9 rounded-full text-[#B6ADA3] hover:bg-[#FAF7F2] cursor-pointer">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-1.5 max-h-[60vh] overflow-y-auto">
+                    @php
+                        $mobilePlanning = [
+                            ['route' => 'checklists.index', 'match' => 'checklists.*', 'icon' => 'fa-list-check', 'title' => 'Checklist', 'subtitle' => 'Daftar tugas persiapan'],
+                            ['route' => 'vendors.index', 'match' => 'vendors.*', 'icon' => 'fa-store', 'title' => 'Vendor Management', 'subtitle' => 'Data vendor & katalog'],
+                            ['route' => 'guests.index', 'match' => 'guests.*', 'icon' => 'fa-users', 'title' => 'Guest Management', 'subtitle' => 'Daftar tamu & RSVP'],
+                            ['route' => 'rundowns.index', 'match' => 'rundowns.*', 'icon' => 'fa-clock', 'title' => 'Rundown Acara', 'subtitle' => 'Jadwal hari H'],
+                            ['route' => 'proposals.index', 'match' => 'proposals.*', 'icon' => 'fa-ring', 'title' => 'Lamaran', 'subtitle' => 'Rencana acara lamaran'],
+                            ['route' => 'souvenirs.index', 'match' => 'souvenirs.*', 'icon' => 'fa-gift', 'title' => 'Seserahan', 'subtitle' => 'Daftar seserahan'],
+                            ['route' => 'documents.index', 'match' => 'documents.*', 'icon' => 'fa-file-circle-check', 'title' => 'Persyaratan Nikah', 'subtitle' => 'Berkas & kelengkapan'],
+                        ];
+                        $mobileFinance = [
+                            ['route' => 'budgets.index', 'match' => 'budgets.*', 'icon' => 'fa-wallet', 'title' => 'Budget Planner', 'subtitle' => 'Rencana anggaran'],
+                            ['route' => 'contracts.index', 'match' => 'contracts.*', 'icon' => 'fa-file-contract', 'title' => 'Vendor Contract', 'subtitle' => 'Kontrak vendor'],
+                            ['route' => 'payments.index', 'match' => 'payments.*', 'icon' => 'fa-credit-card', 'title' => 'Payment Tracker', 'subtitle' => 'Angsuran & pembayaran'],
+                            ['route' => 'savings.index', 'match' => 'savings.*', 'icon' => 'fa-piggy-bank', 'title' => 'Tabungan', 'subtitle' => 'Rencana menabung'],
+                            ['route' => 'gifts.index', 'match' => 'gifts.*', 'icon' => 'fa-gift', 'title' => 'Gift Management', 'subtitle' => 'Daftar hadiah'],
+                        ];
+                        $mobileMe = [
+                            ['route' => 'reports.index', 'match' => 'reports.*', 'icon' => 'fa-file-invoice-dollar', 'title' => 'Laporan & Export', 'subtitle' => 'Ringkasan dan export'],
+                            ['route' => 'admin.index', 'match' => 'admin.index,admin.wedding.*', 'icon' => 'fa-user-gear', 'title' => 'Profile', 'subtitle' => 'Profil akun & pasangan'],
+                        ];
+                    @endphp
+
+                    @foreach (['planning' => $mobilePlanning, 'finance' => $mobileFinance, 'me' => $mobileMe] as $group => $items)
+                        <template x-if="sheet === '{{ $group }}'">
+                            <div class="space-y-1.5">
+                                @foreach ($items as $item)
+                                    <a href="{{ route($item['route']) }}"
+                                        class="mobile-sheet-item {{ request()->routeIs($item['match']) ? 'mobile-sheet-item-active' : '' }}">
+                                        <span class="mobile-sheet-icon"><i class="fa-solid {{ $item['icon'] }}"></i></span>
+                                        <span class="min-w-0 flex-1">
+                                            <strong>{{ $item['title'] }}</strong>
+                                            <small>{{ $item['subtitle'] }}</small>
+                                        </span>
+                                        <i class="fa-solid fa-chevron-right text-[10px] text-[#B6ADA3]"></i>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </template>
+                    @endforeach
+                </div>
+            </div>
+
+            <nav class="mobile-bottom-pill" aria-label="Navigasi utama mobile">
+                <a href="{{ route('dashboard') }}" class="mobile-tab {{ request()->routeIs('dashboard') ? 'mobile-tab-active' : '' }}">
+                    <i class="fa-solid fa-house"></i><span>Home</span><b></b>
+                </a>
+                <button type="button" @click="sheet = sheet === 'planning' ? null : 'planning'"
+                    class="mobile-tab {{ request()->routeIs('checklists.*','vendors.*','vendor-directory.*','guests.*','rundowns.*','proposals.*','souvenirs.*','documents.*') ? 'mobile-tab-active' : '' }}">
+                    <i class="fa-solid fa-list-check"></i><span>Planning</span><b></b>
+                </button>
+                <a href="{{ route('moodboards.index') }}" class="mobile-tab {{ request()->routeIs('moodboards.*') ? 'mobile-tab-active' : '' }}">
+                    <i class="fa-solid fa-palette"></i><span>Inspirasi</span><b></b>
+                </a>
+                <button type="button" @click="sheet = sheet === 'finance' ? null : 'finance'"
+                    class="mobile-tab {{ request()->routeIs('budgets.*','contracts.*','payments.*','savings.*','gifts.*') ? 'mobile-tab-active' : '' }}">
+                    <i class="fa-solid fa-wallet"></i><span>Keuangan</span><b></b>
+                </button>
+                <button type="button" @click="sheet = sheet === 'me' ? null : 'me'"
+                    class="mobile-tab {{ request()->routeIs('reports.*','admin.index','admin.wedding.*') ? 'mobile-tab-active' : '' }}">
+                    <i class="fa-solid fa-user"></i><span>Saya</span><b></b>
+                </button>
+            </nav>
+        </div>
+    @endunless
 
     <!-- Main Content Body -->
     <main id="main-content" class="flex-1 flex flex-col min-w-0 overflow-y-auto">
