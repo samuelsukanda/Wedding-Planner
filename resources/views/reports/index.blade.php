@@ -4,26 +4,26 @@
 
 @section('content')
     {{-- Print Header: hidden on screen, shown only when printing --}}
-    <div class="print-header" style="display:none;">
+    <div class="print-header hidden print:block">
         <h1>Laporan Rekapitulasi Pernikahan &mdash; {{ $wedding?->couple_name }}</h1>
         <p>Dicetak pada: {{ now()->format('d F Y, H:i') }} WIB</p>
     </div>
 
     <div id="report-content" class="space-y-8" x-data="{}">
-        <div class="no-print flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+        <div class="no-print flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white text-[#5F6F5B] p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Laporan & Rekap Pernikahan</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Lihat ringkasan persiapan, anggaran, pembayaran, dan kebutuhan
+                <p class="text-xs text-[#5F6F5B] mt-1">Lihat ringkasan persiapan, anggaran, pembayaran, dan kebutuhan
                     pernikahan dalam satu laporan.</p>
             </div>
             <div class="no-print grid grid-cols-2 gap-3 w-full md:w-auto sm:flex sm:items-center sm:gap-3">
                 <button onclick="window.print()"
                     class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm flex items-center justify-center gap-2 shadow-xs font-semibold cursor-pointer w-full sm:w-auto">
-                    <i class="fa-solid fa-print text-[#D8A7B1]"></i> Cetak Laporan
+                    <i class="fa-solid fa-print text-[#D8A7B1]" aria-hidden="true"></i> Cetak Laporan
                 </button>
                 <a href="{{ route('reports.export') }}" data-turbo="false"
-                    class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 w-full sm:w-auto">
-                    <i class="fa-solid fa-file-excel"></i> Export Excel
+                    class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 w-full sm:w-auto font-semibold">
+                    <i class="fa-solid fa-file-excel" aria-hidden="true"></i> Export Excel
                 </a>
             </div>
         </div>
@@ -42,7 +42,7 @@
                 </div>
                 <div class="text-[11px] opacity-80 mt-1">Budget Terpakai</div>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-center">
+            <div class="bg-white text-[#5F6F5B] p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-center">
                 <div class="text-xs text-[#5F6F5B] mb-1">Sisa Anggaran</div>
                 <div class="text-lg sm:text-xl font-bold text-[#5F6F5B]">
                     Rp {{ number_format($totalBudget - $totalActual, 0, ',', '.') }}
@@ -51,9 +51,9 @@
                     {{ $totalBudget > 0 ? number_format((($totalBudget - $totalActual) / $totalBudget) * 100, 1) : 0 }}%
                     Efisiensi</div>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-center">
+            <div class="bg-white text-[#5F6F5B] p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-center">
                 <div class="text-xs text-[#5F6F5B] mb-1">Jumlah Tamu Hadir</div>
-                <div class="text-2xl sm:text-3xl font-bold">{{ $guestAttend }}</div>
+                <div class="text-2xl sm:text-3xl font-bold text-[#5F6F5B]">{{ $guestAttend }}</div>
                 <div class="text-xs text-[#5F6F5B] mt-1 font-medium">dari {{ $totalGuests }} Undangan</div>
             </div>
         </div>
@@ -61,10 +61,10 @@
         <!-- 2-column report blocks -->
         <div class="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6">
             <!-- Checklist Progress -->
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
-                    <i class="fa-solid fa-list-check text-[#D8A7B1]"></i> Progress Checklist
-                </h3>
+            <div class="bg-white text-[#5F6F5B] p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h2 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-[#D8A7B1]" aria-hidden="true"></i> Progress Checklist
+                </h2>
                 <div>
                     <div class="flex justify-between text-xs text-[#5F6F5B] mb-2">
                         <span>{{ $checklistDone }} dari {{ $totalChecklists }} task selesai</span>
@@ -94,10 +94,10 @@
             </div>
 
             <!-- Budget Breakdown by Category -->
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
-                    <i class="fa-solid fa-chart-pie text-[#D8A7B1]"></i> Rekap Anggaran Per Kategori
-                </h3>
+            <div class="bg-white text-[#5F6F5B] p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h2 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-[#D8A7B1]" aria-hidden="true"></i> Rekap Anggaran Per Kategori
+                </h2>
                 <div class="space-y-3">
                     @forelse($budgetByCategory as $cat)
                         <div>
@@ -113,16 +113,16 @@
                             </div>
                         </div>
                     @empty
-                        <div class="text-xs text-[#B6ADA3] text-center py-4">Belum ada data anggaran.</div>
+                        <div class="text-xs text-[#5F6F5B] text-center py-4">Belum ada data anggaran.</div>
                     @endforelse
                 </div>
             </div>
 
             <!-- Vendor Summary -->
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
-                    <i class="fa-solid fa-handshake text-[#D8A7B1]"></i> Rekap Status Vendor
-                </h3>
+            <div class="bg-white text-[#5F6F5B] p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h2 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-handshake text-[#D8A7B1]" aria-hidden="true"></i> Rekap Status Vendor
+                </h2>
                 <div class="grid grid-cols-3 gap-3">
                     @foreach ($vendorStatusSummary as $status => $count)
                         <div class="p-3 sm:p-4 rounded-xl border text-center bg-[#FAF7F2] border-[#B6ADA3]/30">
@@ -136,10 +136,10 @@
             </div>
 
             <!-- Guest Summary -->
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
-                    <i class="fa-solid fa-users text-[#D8A7B1]"></i> Rekap Status Tamu
-                </h3>
+            <div class="bg-white text-[#5F6F5B] p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h2 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-users text-[#D8A7B1]" aria-hidden="true"></i> Rekap Status Tamu
+                </h2>
                 <div class="grid grid-cols-3 gap-3">
                     <div class="p-3 sm:p-4 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 text-center">
                         <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $guestAttend }}</div>
@@ -154,17 +154,17 @@
                         <div class="text-xs text-[#5F6F5B] mt-1">Decline</div>
                     </div>
                 </div>
-                <div class="text-xs text-center text-[#5F6F5B]/80 pt-2">
+                <div class="text-xs text-center text-[#5F6F5B] pt-2">
                     Total Pax tamu hadir: <strong class="text-[#5F6F5B]">{{ $totalPax }} orang</strong>
                 </div>
             </div>
         </div>
 
         <!-- Payment Summary -->
-        <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-            <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2 mb-4">
-                <i class="fa-solid fa-money-bill-transfer text-[#D8A7B1]"></i> Rekap Total Pembayaran Vendor Tercatat
-            </h3>
+        <div class="report-print-card bg-white text-[#5F6F5B] p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+            <h2 class="font-bold text-[#5F6F5B] flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-money-bill-transfer text-[#D8A7B1]" aria-hidden="true"></i> Rekap Total Pembayaran Vendor Tercatat
+            </h2>
             <div class="grid grid-cols-2 md:grid-cols-4 print:grid-cols-4 gap-3 sm:gap-4">
                 @foreach ($paymentStatusSummary as $status => $total)
                     <div class="p-4 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 text-center">
@@ -179,10 +179,10 @@
         <!-- Tambahan modul: Tabungan, Lamaran, Seserahan, Persyaratan -->
         <div class="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6">
             <!-- Tabungan -->
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
-                    <i class="fa-solid fa-piggy-bank text-[#D8A7B1]"></i> Rekap Tabungan
-                </h3>
+            <div class="bg-white text-[#5F6F5B] p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h2 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-piggy-bank text-[#D8A7B1]" aria-hidden="true"></i> Rekap Tabungan
+                </h2>
                 <div>
                     <div class="flex justify-between text-xs text-[#5F6F5B] mb-2">
                         <span>Terkumpul Rp {{ number_format($savingsBalance, 0, ',', '.') }}</span>
@@ -215,10 +215,10 @@
             </div>
 
             <!-- Lamaran -->
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
-                    <i class="fa-solid fa-ring text-[#D8A7B1]"></i> Rekap Lamaran
-                </h3>
+            <div class="bg-white text-[#5F6F5B] p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h2 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-ring text-[#D8A7B1]" aria-hidden="true"></i> Rekap Lamaran
+                </h2>
                 @if ($proposalEvent)
                     <div class="text-xs text-[#5F6F5B]">
                         {{ $proposalEvent->event_date ? $proposalEvent->event_date->format('d M Y') : 'Tanggal belum ditentukan' }}
@@ -230,7 +230,7 @@
                         @endif
                     </div>
                 @else
-                    <div class="text-xs text-[#B6ADA3]">Belum ada data acara lamaran.</div>
+                    <div class="text-xs text-[#5F6F5B]">Belum ada data acara lamaran.</div>
                 @endif
                 <div class="grid grid-cols-3 gap-3 text-center">
                     <div class="p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
@@ -252,10 +252,10 @@
             </div>
 
             <!-- Seserahan Progress -->
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
-                    <i class="fa-solid fa-gift text-[#D8A7B1]"></i> Progress Seserahan
-                </h3>
+            <div class="bg-white text-[#5F6F5B] p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h2 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-gift text-[#D8A7B1]" aria-hidden="true"></i> Progress Seserahan
+                </h2>
                 <div>
                     <div class="flex justify-between text-xs text-[#5F6F5B] mb-2">
                         <span>{{ $souvenirReceived }} dari {{ $souvenirTotal }} item diterima</span>
@@ -286,10 +286,10 @@
             </div>
 
             <!-- Persyaratan Nikah Progress -->
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                <h3 class="font-bold text-[#5F6F5B] flex items-center gap-2">
-                    <i class="fa-solid fa-file-circle-check text-[#D8A7B1]"></i> Progress Persyaratan Nikah
-                </h3>
+            <div class="bg-white text-[#5F6F5B] p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
+                <h2 class="font-bold text-[#5F6F5B] flex items-center gap-2">
+                    <i class="fa-solid fa-file-circle-check text-[#D8A7B1]" aria-hidden="true"></i> Progress Persyaratan Nikah
+                </h2>
                 <div>
                     <div class="flex justify-between text-xs text-[#5F6F5B] mb-2">
                         <span>{{ $documentComplete }} dari {{ $documentTotal }} dokumen lengkap</span>

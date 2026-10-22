@@ -29,12 +29,12 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Vendor Contract Management</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Simpan dan kelola kontrak vendor untuk memastikan setiap kesepakatan
+                <p class="text-xs text-[#5F6F5B] mt-1">Simpan dan kelola kontrak vendor untuk memastikan setiap kesepakatan
                     terdokumentasi dengan baik.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
-                class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
-                <i class="fa-solid fa-plus"></i> Tambah Kontrak Baru
+                class="btn-primary-rose min-h-[44px] px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto font-semibold">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah Kontrak Baru
             </button>
         </div>
 
@@ -56,7 +56,7 @@
                 </select>
             </div>
             <div class="flex items-center gap-3 shrink-0">
-                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#B6ADA3] whitespace-nowrap">
+                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#5F6F5B] whitespace-nowrap">
                     <span x-text="visibleCount()"></span>/<span x-text="rows.length"></span> kontrak
                 </span>
                 <button x-show="hasActiveFilter()" x-cloak @click="reset()" type="button"
@@ -92,9 +92,9 @@
                                 </td>
                                 <td class="p-4 text-xs text-[#5F6F5B]">Rp {{ number_format($c->dp_amount, 0, ',', '.') }}
                                 </td>
-                                <td class="p-4 text-xs text-[#5F6F5B]/80">Rp
+                                <td class="p-4 text-xs text-[#5F6F5B]">Rp
                                     {{ number_format($c->final_amount, 0, ',', '.') }}</td>
-                                <td class="p-4 text-xs text-[#5F6F5B]/80">
+                                <td class="p-4 text-xs text-[#5F6F5B]">
                                     <i
                                         class="fa-solid fa-calendar mr-1"></i>{{ $c->due_date ? $c->due_date->format('d M Y') : '—' }}
                                 </td>
@@ -121,30 +121,30 @@
                                                 'status' => $c->status,
                                                 'notes' => $c->notes,
                                             ]) }}"
-                                            title="Edit" class="btn-icon"><i
-                                                class="fa-solid fa-pen-to-square"></i></button>
+                                            title="Edit" aria-label="Edit kontrak {{ $c->contract_number }}" class="btn-icon"><i
+                                                class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>
                                         <form id="del-contract-{{ $c->id }}"
                                             action="{{ route('contracts.destroy', $c->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" title="Hapus"
+                                            <button type="button" title="Hapus" aria-label="Hapus kontrak {{ $c->contract_number }}"
                                                 onclick="confirmDelete('del-contract-{{ $c->id }}', '{{ addslashes($c->contract_name ?? $c->vendor_name) }}')"
-                                                class="btn-icon"><i class="fa-solid fa-trash"></i></button>
+                                                class="btn-icon"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                    <i class="fa-solid fa-file-signature text-[#B6ADA3] text-2xl mb-3"></i>
+                                <td colspan="8" class="text-center py-10 text-[#5F6F5B] text-sm">
+                                    <i class="fa-solid fa-file-signature text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
                                     <div>Belum ada kontrak vendor tersimpan.</div>
                                 </td>
                             </tr>
                         @endforelse
                         <tr x-show="hasActiveFilter() && visibleCount() === 0" x-cloak>
-                            <td colspan="8" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                <i class="fa-solid fa-file-signature text-[#B6ADA3] text-2xl mb-3"></i>
+                            <td colspan="8" class="text-center py-10 text-[#5F6F5B] text-sm">
+                                <i class="fa-solid fa-file-signature text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
                                 <div>Tidak ada kontrak yang cocok dengan filter.</div>
                             </td>
                         </tr>
@@ -157,11 +157,11 @@
         <div x-show="modalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div x-outside="modalOpen = false"
-                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                class="bg-white text-[#5F6F5B] w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
                         x-text="editMode ? 'Edit Kontrak Vendor' : 'Tambah Kontrak Vendor Baru'"></h2>
-                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal"><i
+                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer" aria-label="Tutup modal"><i
                             class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <form :action="editMode ? '/contracts/' + currentItem.id : '{{ route('contracts.store') }}'" method="POST"
@@ -169,8 +169,8 @@
                     @csrf
                     <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Vendor *</label>
-                        <select name="vendor_id" x-model="currentItem.vendor_id" required
+                        <label for="contract_vendor_id" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Vendor *</label>
+                        <select id="contract_vendor_id" name="vendor_id" x-model="currentItem.vendor_id" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             <option value="">-- Pilih Vendor --</option>
                             @foreach ($vendors as $v)
@@ -180,14 +180,14 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nomor Kontrak *</label>
-                            <input type="text" name="contract_number" x-model="currentItem.contract_number" required
+                            <label for="contract_number" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nomor Kontrak *</label>
+                            <input type="text" id="contract_number" name="contract_number" x-model="currentItem.contract_number" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"
                                 placeholder="CTR/SA/2026/001">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status Kontrak *</label>
-                            <select name="status" x-model="currentItem.status" required
+                            <label for="contract_status" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status Kontrak *</label>
+                            <select id="contract_status" name="status" x-model="currentItem.status" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 @foreach ($statuses as $st)
                                     <option value="{{ $st }}">{{ $st }}</option>
@@ -197,40 +197,40 @@
                     </div>
                     <div class="grid grid-cols-3 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal Total *</label>
-                            <input type="text" name="nominal" inputmode="numeric" required
+                            <label for="contract_nominal" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal Total *</label>
+                            <input type="text" id="contract_nominal" name="nominal" inputmode="numeric" required
                                 :value="wpMoney(currentItem.nominal)"
                                 @input="currentItem.nominal = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">DP *</label>
-                            <input type="text" name="dp_amount" inputmode="numeric" required
+                            <label for="contract_dp_amount" class="block text-xs font-semibold text-[#5F6F5B] mb-1">DP *</label>
+                            <input type="text" id="contract_dp_amount" name="dp_amount" inputmode="numeric" required
                                 :value="wpMoney(currentItem.dp_amount)"
                                 @input="currentItem.dp_amount = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Pelunasan *</label>
-                            <input type="text" name="final_amount" inputmode="numeric" required
+                            <label for="contract_final_amount" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Pelunasan *</label>
+                            <input type="text" id="contract_final_amount" name="final_amount" inputmode="numeric" required
                                 :value="wpMoney(currentItem.final_amount)"
                                 @input="currentItem.final_amount = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Jatuh Tempo</label>
-                        <input type="text" name="due_date" x-model="currentItem.due_date" placeholder="DD-MM-YYYY"
+                        <label for="contract_due_date" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Jatuh Tempo</label>
+                        <input type="text" id="contract_due_date" name="due_date" x-model="currentItem.due_date" placeholder="DD-MM-YYYY"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan Perjanjian</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="2"
+                        <label for="contract_notes" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan Perjanjian</label>
+                        <textarea id="contract_notes" name="notes" x-model="currentItem.notes" rows="2"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modalOpen = false"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#2D372E] font-medium cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             Kontrak</button>
                     </div>

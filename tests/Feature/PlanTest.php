@@ -88,12 +88,13 @@ class PlanTest extends TestCase
     {
         [, $user] = $this->couple('pro');
 
+        // Menu Photobooth terbuka untuk semua paket: photobooth adalah add-on
+        // berdiri sendiri, jadi belum aktif pun halamannya harus tampil.
         $this->actingAs($user)
             ->get('/photobooth')
             ->assertOk()
-            ->assertSee('Photobooth')
-            ->assertSee('QR universal')
-            ->assertSee('Kelola Photobooth');
+            ->assertSee('Add-on Photobooth')
+            ->assertSee('Bukti Transfer');
     }
 
     public function test_photobooth_sits_under_moodboard_in_creative_sidebar(): void

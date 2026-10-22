@@ -98,6 +98,19 @@ class ReportModulesTest extends TestCase
             ->assertSee('1 dari 2 dokumen lengkap');
     }
 
+    public function test_report_print_styles_allow_content_to_span_pages_and_hide_mobile_navigation(): void
+    {
+        $user = $this->makeUser();
+
+        $this->actingAs($user)->get('/reports')
+            ->assertOk()
+            ->assertSee('id="report-content"', false)
+            ->assertSee('#page-content>div:not(#report-content)', false)
+            ->assertSee('#report-content>.grid>div', false)
+            ->assertSee('.report-print-card', false)
+            ->assertSee('.mobile-bottom-nav', false);
+    }
+
     public function test_export_contains_new_sheets(): void
     {
         $user = $this->makeUser('export@example.com');

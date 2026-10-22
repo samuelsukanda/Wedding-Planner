@@ -75,8 +75,7 @@ Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 // ========== SEMUA HALAMAN UTAMA (wajib login) ==========
 Route::middleware('auth')->group(function () {
 
-// Foto profil. Halamannya sendiri reusing "Akun - Profile" (admin.index),
-// jadi tidak ada halaman profile terpisah.
+// URL lama profil diarahkan ke route utama Profile.
 Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::post('profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
     Route::delete('profile/photo', [ProfileController::class, 'destroyPhoto'])->name('profile.photo.destroy');

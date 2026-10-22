@@ -38,6 +38,7 @@ class ProfileTest extends TestCase
 
         $this->actingAs($user)->get('/admin')
             ->assertOk()
+            ->assertSee('Profile')
             ->assertDontSee('Login dengan Google');
     }
 

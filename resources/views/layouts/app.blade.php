@@ -100,7 +100,8 @@
             aside,
             header,
             footer,
-            .no-print {
+            .no-print,
+            .mobile-bottom-nav {
                 display: none !important;
                 visibility: hidden !important;
             }
@@ -178,7 +179,9 @@
             }
 
             /* ---- Prevent page breaks inside cards/rows ---- */
-            #page-content>div,
+            #page-content>div:not(#report-content),
+            #report-content>.grid>div,
+            #report-content>.report-print-card,
             tr {
                 break-inside: avoid;
                 page-break-inside: avoid;
@@ -671,6 +674,12 @@
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.pro-settings.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
                     <i class="fa-solid fa-sliders w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Pengaturan Pro</span>
+                </a>
+
+                <a href="{{ route('admin.photobooth-settings.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.photobooth-settings.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-camera-retro w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
+                    <span>Pengaturan Photobooth</span>
                 </a>
             @endif
         </nav>

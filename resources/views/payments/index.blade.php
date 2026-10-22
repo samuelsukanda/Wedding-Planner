@@ -30,13 +30,11 @@
             class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Payment Tracker</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Pantau jadwal pembayaran, uang muka, dan sisa tagihan agar tidak
-                    ada
-                    pembayaran yang terlewat.</p>
+                <p class="text-xs text-[#5F6F5B] mt-1">Pantau jadwal pembayaran, uang muka, dan sisa tagihan agar tidak ada pembayaran yang terlewat.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
-                class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
-                <i class="fa-solid fa-plus"></i> Catat Pembayaran
+                class="btn-primary-rose min-h-[44px] px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto font-semibold">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Catat Pembayaran
             </button>
         </div>
 
@@ -58,7 +56,7 @@
                 </select>
             </div>
             <div class="flex items-center gap-3 shrink-0">
-                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#B6ADA3] whitespace-nowrap">
+                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#5F6F5B] whitespace-nowrap">
                     <span x-text="visibleCount()"></span>/<span x-text="rows.length"></span> pembayaran
                 </span>
                 <button x-show="hasActiveFilter()" x-cloak @click="reset()" type="button"
@@ -90,11 +88,11 @@
                                     {{ $p->vendor->name ?? 'Vendor #' . $p->vendor_id }}</td>
                                 <td class="p-4 font-bold text-[#5F6F5B]">Rp {{ number_format($p->nominal, 0, ',', '.') }}
                                 </td>
-                                <td class="p-4 text-xs text-[#5F6F5B]/80">
+                                <td class="p-4 text-xs text-[#5F6F5B]">
                                     <i
                                         class="fa-solid fa-calendar mr-1 text-[#D8A7B1]"></i>{{ $p->payment_date ? $p->payment_date->format('d M Y') : '—' }}
                                 </td>
-                                <td class="p-4 text-xs text-[#5F6F5B]/80">{{ $p->payment_method ?? '—' }}</td>
+                                <td class="p-4 text-xs text-[#5F6F5B]">{{ $p->payment_method ?? '—' }}</td>
                                 <td class="p-4 text-xs">
                                     @if ($p->reminder_date)
                                         <span
@@ -128,30 +126,30 @@
                                                 'reminder_date' => $p->reminder_date?->format('Y-m-d'),
                                                 'notes' => $p->notes,
                                             ]) }}"
-                                            title="Edit" class="btn-icon"><i
-                                                class="fa-solid fa-pen-to-square"></i></button>
+                                            title="Edit" aria-label="Edit pembayaran {{ $p->vendor?->name ?? 'vendor' }}" class="btn-icon"><i
+                                                class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>
                                         <form id="del-payment-{{ $p->id }}"
                                             action="{{ route('payments.destroy', $p->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" title="Hapus"
+                                            <button type="button" title="Hapus" aria-label="Hapus pembayaran {{ $p->vendor?->name ?? 'vendor' }}"
                                                 onclick="confirmDelete('del-payment-{{ $p->id }}', '{{ addslashes($p->vendor_name) }}')"
-                                                class="btn-icon"><i class="fa-solid fa-trash"></i></button>
+                                                class="btn-icon"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                    <i class="fa-solid fa-receipt text-[#B6ADA3] text-2xl mb-3"></i>
+                                <td colspan="7" class="text-center py-10 text-[#5F6F5B] text-sm">
+                                    <i class="fa-solid fa-receipt text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
                                     <div>Belum ada riwayat pembayaran vendor.</div>
                                 </td>
                             </tr>
                         @endforelse
                         <tr x-show="hasActiveFilter() && visibleCount() === 0" x-cloak>
-                            <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                <i class="fa-solid fa-receipt text-[#B6ADA3] text-2xl mb-3"></i>
+                            <td colspan="7" class="text-center py-10 text-[#5F6F5B] text-sm">
+                                <i class="fa-solid fa-receipt text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
                                 <div>Tidak ada pembayaran yang cocok dengan filter.</div>
                             </td>
                         </tr>
@@ -164,11 +162,11 @@
         <div x-show="modalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div x-outside="modalOpen = false"
-                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                class="bg-white text-[#5F6F5B] w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
                         x-text="editMode ? 'Edit Catatan Pembayaran' : 'Catat Pembayaran Vendor'"></h2>
-                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal"><i
+                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer" aria-label="Tutup modal"><i
                             class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <form :action="editMode ? '/payments/' + currentItem.id : '{{ route('payments.store') }}'" method="POST"
@@ -176,8 +174,8 @@
                     @csrf
                     <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Vendor *</label>
-                        <select name="vendor_id" x-model="currentItem.vendor_id" required
+                        <label for="payment_vendor_id" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Vendor *</label>
+                        <select id="payment_vendor_id" name="vendor_id" x-model="currentItem.vendor_id" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             <option value="">-- Pilih Vendor --</option>
                             @foreach ($vendors as $v)
@@ -187,15 +185,15 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal (Rp) *</label>
-                            <input type="text" name="nominal" inputmode="numeric" required
+                            <label for="payment_nominal" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal (Rp) *</label>
+                            <input type="text" id="payment_nominal" name="nominal" inputmode="numeric" required
                                 :value="wpMoney(currentItem.nominal)"
                                 @input="currentItem.nominal = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status Pembayaran *</label>
-                            <select name="status" x-model="currentItem.status" required
+                            <label for="payment_status" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status Pembayaran *</label>
+                            <select id="payment_status" name="status" x-model="currentItem.status" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 @foreach ($statuses as $st)
                                     <option value="{{ $st }}">{{ $st }}</option>
@@ -205,32 +203,32 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Bayar</label>
-                            <input type="text" name="payment_date" x-model="currentItem.payment_date"
+                            <label for="payment_date" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Bayar</label>
+                            <input type="text" id="payment_date" name="payment_date" x-model="currentItem.payment_date"
                                 placeholder="DD-MM-YYYY"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Reminder</label>
-                            <input type="text" name="reminder_date" x-model="currentItem.reminder_date"
+                            <label for="payment_reminder_date" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tanggal Reminder</label>
+                            <input type="text" id="payment_reminder_date" name="reminder_date" x-model="currentItem.reminder_date"
                                 placeholder="DD-MM-YYYY"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Metode Pembayaran</label>
-                        <input type="text" name="payment_method" x-model="currentItem.payment_method"
+                        <label for="payment_method" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Metode Pembayaran</label>
+                        <input type="text" id="payment_method" name="payment_method" x-model="currentItem.payment_method"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"
                             placeholder="Bank Transfer BCA / Mandiri / Cash">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="2"
+                        <label for="payment_notes" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan</label>
+                        <textarea id="payment_notes" name="notes" x-model="currentItem.notes" rows="2"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modalOpen = false"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#2D372E] font-medium cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             Pembayaran</button>
                     </div>

@@ -183,7 +183,11 @@
                 <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                     <div>
                         <h2 class="font-semibold text-[#2D372E]">Semua foto</h2>
-                        <p class="mt-1 text-xs text-[#5F6F5B]">{{ count($photos) }} foto tersimpan di event ini.</p>
+                        <p class="mt-1 text-xs text-[#5F6F5B]">{{ count($photos) }} foto tersimpan di event ini.
+                            @if (! empty($event['photo_quota']))
+                                Sisa kuota: {{ max(0, (int) $event['photo_quota'] - (int) ($event['photos_used'] ?? 0)) }} dari {{ (int) $event['photo_quota'] }} foto.
+                            @endif
+                        </p>
                     </div>
                     <a href="{{ route('photobooth.photos.export') }}" class="inline-flex w-fit items-center gap-2 rounded-full bg-[#3F4A3B] hover:bg-[#2D372E] px-4 py-2 text-sm font-semibold text-white transition shadow-xs">
                         <i class="fa-solid fa-file-zipper" aria-hidden="true"></i> Unduh semua ZIP

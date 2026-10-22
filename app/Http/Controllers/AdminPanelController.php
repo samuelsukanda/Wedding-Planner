@@ -35,7 +35,7 @@ class AdminPanelController extends Controller
             'tiktok' => Setting::get('social_tiktok', '') ?: 'https://www.tiktok.com/',
         ];
 
-        return view('admin.index', [
+        return view('profile.index', [
             'wedding' => $wedding,
             'me' => auth()->user(),
             // Riwayat pembelian paket Pro, ditampilkan di kartu Status Akun.

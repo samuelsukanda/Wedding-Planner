@@ -6,10 +6,10 @@
     <div class="space-y-6">
         <!-- Page Title & Header -->
         <div
-            class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white text-[#5F6F5B] p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Profile</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Kelola informasi pribadi, detail akun, dan pengaturan profil untuk
+                <p class="text-xs text-[#5F6F5B] mt-1">Kelola informasi pribadi, detail akun, dan pengaturan profil untuk
                     memastikan data akun tetap akurat dan terkini.</p>
             </div>
         </div>
@@ -36,19 +36,19 @@
 
                 <div class="min-w-0 flex-1">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <h3 class="text-lg font-bold text-[#5F6F5B]">{{ $me->name }}</h3>
+                        <h2 class="text-lg font-bold text-[#5F6F5B]">{{ $me->name }}</h2>
 
                         {{-- Badge hanya untuk akun yang masuk lewat Google.
                              Akun daftar email tidak menampilkan apa pun. --}}
                         @if ($me->isGoogle())
                             <span
-                                class="inline-flex items-center gap-1.5 rounded-full border border-[#D8A7B1]/60 bg-[#D8A7B1]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#C2757F]">
-                                <i class="fa-brands fa-google"></i>
+                                class="inline-flex items-center gap-1.5 rounded-full border border-[#8B3A47]/30 bg-[#8B3A47]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#8B3A47]">
+                                <i class="fa-brands fa-google" aria-hidden="true"></i>
                                 Login dengan Google
                             </span>
                         @endif
                     </div>
-                    <p class="text-sm text-[#B6ADA3] break-all">{{ $me->email }}</p>
+                    <p class="text-sm text-[#5F6F5B] break-all">{{ $me->email }}</p>
 
                     <div class="mt-4 flex flex-wrap items-center gap-3">
                         {{-- Satu form dipakai oleh tombol pena dan tombol "Ganti Foto". --}}
@@ -56,7 +56,7 @@
                             @csrf
                             <input type="file" name="photo" id="photo-input" accept="image/*" class="hidden">
                             <button type="button" data-photo-trigger
-                                class="px-4 py-2 rounded-xl border border-[#D8A7B1]/60 text-[#C2757F] text-sm font-medium hover:bg-[#D8A7B1]/10 transition cursor-pointer">
+                                class="px-4 py-2 rounded-xl border border-[#8B3A47]/40 text-[#8B3A47] text-sm font-medium hover:bg-[#8B3A47]/10 transition cursor-pointer">
                                 Ganti Foto
                             </button>
                         </form>
@@ -66,7 +66,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
-                                    class="px-4 py-2 rounded-xl border border-[#C2757F]/60 text-[#C2757F] text-sm font-medium hover:bg-[#C2757F]/10 transition cursor-pointer">
+                                    class="px-4 py-2 rounded-xl border border-[#8B3A47]/40 text-[#8B3A47] text-sm font-medium hover:bg-[#8B3A47]/10 transition cursor-pointer">
                                     Hapus Foto
                                 </button>
                             </form>
@@ -74,7 +74,7 @@
                     </div>
 
                     @error('photo')
-                        <p class="mt-4 text-sm text-[#C2757F]">{{ $message }}</p>
+                        <p class="mt-4 text-sm text-[#8B3A47]">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -91,12 +91,12 @@
                     @if ($wedding->isPro())
                         <span
                             class="inline-flex items-center gap-1.5 rounded-full border border-[#A3B7A6]/60 bg-[#F1F5F0] px-2.5 py-1 text-[11px] font-bold text-[#5F6F5B]">
-                            <i class="fa-solid fa-circle-check text-[#A3B7A6]"></i>
+                            <i class="fa-solid fa-circle-check text-[#5F6F5B]" aria-hidden="true"></i>
                             PRO
                         </span>
                     @else
                         <span
-                            class="inline-flex items-center gap-1.5 rounded-full border border-[#B6ADA3]/50 bg-[#FAF7F2] px-2.5 py-1 text-[11px] font-bold text-[#5F6F5B]/70">
+                            class="inline-flex items-center gap-1.5 rounded-full border border-[#B6ADA3]/50 bg-[#FAF7F2] px-2.5 py-1 text-[11px] font-bold text-[#5F6F5B]">
                             FREE
                         </span>
                     @endif
@@ -104,24 +104,24 @@
 
                 @if ($wedding->isPro())
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <p class="text-sm text-[#5F6F5B]/80 leading-relaxed">
+                        <p class="text-sm text-[#5F6F5B] leading-relaxed">
                             Semua fitur Pro aktif untuk akun ini dan akun pasangan, berlaku seumur akun tanpa biaya
                             berlangganan tambahan.
                         </p>
                         <a href="{{ route('profile.partner-invites.index') }}"
-                            class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center inline-flex items-center justify-center">
-                            <i class="fa-solid fa-link mr-2"></i> Tambah Pasangan
+                            class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center inline-flex items-center justify-center font-semibold">
+                            <i class="fa-solid fa-link mr-2" aria-hidden="true"></i> Tambah Pasangan
                         </a>
                     </div>
                 @else
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <p class="text-sm text-[#5F6F5B]/80 leading-relaxed">
+                        <p class="text-sm text-[#5F6F5B] leading-relaxed">
                             Semua fitur Pro aktif untuk akun ini dan akun pasangan, berlaku seumur akun tanpa biaya
                             berlangganan tambahan.
                         </p>
                         <a href="{{ route('upgrade.index') }}"
-                            class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center inline-flex items-center justify-center">
-                            <i class="fa-solid fa-gem mr-2"></i> Upgrade ke Pro
+                            class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer whitespace-nowrap text-center inline-flex items-center justify-center font-semibold">
+                            <i class="fa-solid fa-gem mr-2" aria-hidden="true"></i> Upgrade ke Pro
                         </a>
                     </div>
                 @endif
@@ -131,7 +131,7 @@
                      masih diproses, rejected supaya jelas kenapa tidak jadi Pro. --}}
                 @if ($upgradeRequests->isNotEmpty())
                     <div class="border-t border-[#B6ADA3]/30 pt-4">
-                        <h3 class="text-[11px] font-bold uppercase tracking-wider text-[#B6ADA3] mb-2.5">
+                        <h3 class="text-[11px] font-bold uppercase tracking-wider text-[#5F6F5B] mb-2.5">
                             Riwayat Pembelian
                         </h3>
 
@@ -141,7 +141,7 @@
                                     $badge = [
                                         'pending' => ['bg-[#FAF7F2] border-[#B6ADA3]/50 text-[#5F6F5B]', 'Menunggu'],
                                         'approved' => ['bg-[#F1F5F0] border-[#A3B7A6]/60 text-[#5F6F5B]', 'Disetujui'],
-                                        'rejected' => ['bg-[#FBF2F4] border-[#D8A7B1]/60 text-[#C2757F]', 'Ditolak'],
+                                        'rejected' => ['bg-[#FBF2F4] border-[#8B3A47]/40 text-[#8B3A47]', 'Ditolak'],
                                     ][$purchase->status] ?? [
                                         'bg-[#FAF7F2] border-[#B6ADA3]/50 text-[#5F6F5B]',
                                         $purchase->status,
@@ -160,7 +160,7 @@
                                             Paket {{ strtoupper($purchase->plan) }} &middot;
                                             Rp {{ number_format($purchase->amount, 0, ',', '.') }}
                                         </div>
-                                        <div class="text-[11px] text-[#B6ADA3]">
+                                        <div class="text-[11px] text-[#5F6F5B]">
                                             {{ $date->translatedFormat('d M Y') }}
                                             @if ($purchase->status === 'rejected' && $purchase->admin_note)
                                                 &middot; {{ $purchase->admin_note }}
@@ -493,9 +493,9 @@
                         <div class="bg-[#5F6F5B] text-white p-6 rounded-2xl shadow-md space-y-5 border border-[#4F5E4B]">
                             <div class="flex items-center justify-between border-b border-white/20 pb-3">
                                 <span
-                                    class="text-[10px] uppercase font-bold tracking-widest bg-white/20 text-white px-2.5 py-1 rounded-full">Pratinjau
+                                    class="text-[10px] uppercase font-bold tracking-widest bg-black/30 text-white border border-white/20 px-2.5 py-1 rounded-full">Pratinjau
                                     Dashboard</span>
-                                <i class="fa-solid fa-heart text-base text-[#D8A7B1]"></i>
+                                <i class="fa-solid fa-heart text-base text-[#D8A7B1]" aria-hidden="true"></i>
                             </div>
 
                             <div class="space-y-1">
@@ -507,14 +507,14 @@
 
                             <div class="grid grid-cols-2 gap-3 pt-3 border-t border-white/20 text-xs">
                                 <div class="bg-black/20 p-3 rounded-xl border border-white/15">
-                                    <span class="text-[#D8A7B1] block text-[10px] uppercase font-bold mb-0.5">TANGGAL HARI
+                                    <span class="text-[#FAF7F2] block text-[10px] uppercase font-bold mb-0.5">TANGGAL HARI
                                         H</span>
                                     <span class="font-bold text-white text-xs sm:text-sm">
                                         {{ $wedding->wedding_date ? $wedding->wedding_date->format('d M Y') : '—' }}
                                     </span>
                                 </div>
                                 <div class="bg-black/20 p-3 rounded-xl border border-white/15">
-                                    <span class="text-[#D8A7B1] block text-[10px] uppercase font-bold mb-0.5">TARGET
+                                    <span class="text-[#FAF7F2] block text-[10px] uppercase font-bold mb-0.5">TARGET
                                         BUDGET</span>
                                     <span class="font-bold text-white text-xs sm:text-sm">
                                         Rp {{ number_format($wedding->total_budget, 0, ',', '.') }}
@@ -555,9 +555,9 @@
                             // tidak cocok dan tombolnya tidak pernah hidup.
                             get ready() { return this.typed.trim().toUpperCase() === 'RESET' }
                         }"
-                            class="bg-white p-5 rounded-2xl border border-[#D8A7B1]/50 bg-[#FBF2F4] shadow-xs space-y-3 text-xs">
+                            class="bg-[#FBF2F4] p-5 rounded-2xl border border-[#8B3A47]/30 shadow-xs space-y-3 text-xs">
                             <div class="flex items-center gap-2 font-bold text-[#5F6F5B] text-sm">
-                                <i class="fa-solid fa-rotate-left text-[#C2757F]"></i>
+                                <i class="fa-solid fa-rotate-left text-[#8B3A47]" aria-hidden="true"></i>
                                 <span>Reset Semua Data</span>
                             </div>
                             <p class="text-[#5F6F5B] leading-relaxed">
@@ -567,8 +567,8 @@
                             </p>
 
                             <button type="button" @click="open = true; typed = ''"
-                                class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#C2757F]/60 text-[#C2757F] font-semibold hover:bg-[#FBF2F4] transition cursor-pointer">
-                                <i class="fa-solid fa-rotate-left mr-1"></i> Reset Semua Data
+                                class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#8B3A47]/40 text-[#8B3A47] font-semibold hover:bg-[#8B3A47]/10 transition cursor-pointer">
+                                <i class="fa-solid fa-rotate-left mr-1" aria-hidden="true"></i> Reset Semua Data
                             </button>
 
                             {{-- Modal mengikuti pola modal Tambah Data: x-show + x-outside + Escape.
@@ -651,9 +651,9 @@
 
                         <!-- ================= HUBUNGI KAMI ================= -->
                         {{-- Kartu selalu ada; WhatsApp hanya jika nomor tersedia --}}
-                        <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-3">
-                            <h3 class="text-sm font-bold text-[#5F6F5B]">Hubungi Kami</h3>
-                            <p class="text-xs text-[#5F6F5B]/70">Ada pertanyaan atau saran? Follow & Sapa kami di:</p>
+                        <div class="bg-white text-[#5F6F5B] p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-3">
+                            <h2 class="text-sm font-bold text-[#5F6F5B]">Hubungi Kami</h2>
+                            <p class="text-xs text-[#5F6F5B]">Ada pertanyaan atau saran? Follow & Sapa kami di:</p>
 
                             <div class="grid grid-cols-3 gap-2.5">
                                 @if ($contact['whatsapp'])

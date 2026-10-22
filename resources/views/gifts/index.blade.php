@@ -10,18 +10,18 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Wedding Gifts & Souvenir</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Kelola daftar hadiah dan suvenir pernikahan, mulai dari jumlah,
+                <p class="text-xs text-[#5F6F5B] mt-1">Kelola daftar hadiah dan suvenir pernikahan, mulai dari jumlah,
                     kebutuhan, hingga distribusinya.</p>
             </div>
             <div class="grid grid-cols-2 gap-3 w-full md:w-auto md:flex md:items-center md:gap-3">
                 <a href="{{ route('gifts.export') }}" data-turbo="false"
-                    class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm flex items-center justify-center gap-2 shadow-xs font-semibold w-full md:w-auto">
-                    <i class="fa-solid fa-file-excel text-[#D8A7B1]"></i> Export Excel
+                    class="min-h-[44px] px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm flex items-center justify-center gap-2 shadow-xs font-semibold w-full md:w-auto">
+                    <i class="fa-solid fa-file-excel text-[#8B3A47]" aria-hidden="true"></i> Export Excel
                 </a>
                 <button
                     @click="modalOpen = true; editMode = false; currentItem = { gift_type: @js(collect($giftTypes)->first()), is_thank_you_sent: 0 }"
-                    class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
-                    <i class="fa-solid fa-plus"></i> Catat Hadiah Baru
+                    class="btn-primary-rose min-h-[44px] px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto font-semibold">
+                    <i class="fa-solid fa-plus" aria-hidden="true"></i> Catat Hadiah Baru
                 </button>
             </div>
         </div>
@@ -30,7 +30,7 @@
         <div class="grid grid-cols-3 gap-3">
             <div class="bg-white p-3 sm:p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs text-center">
                 <div class="text-xs text-[#5F6F5B] mb-1">Total Hadiah Tercatat</div>
-                <div class="text-xl sm:text-2xl font-bold">{{ $gifts->count() }}</div>
+                <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $gifts->count() }}</div>
                 <div class="text-xs text-[#5F6F5B] font-medium mt-1">Item Terdaftar</div>
             </div>
             <div class="bg-white p-3 sm:p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs text-center">
@@ -94,12 +94,12 @@
                                         {{ $g->gift_type }}
                                     </span>
                                 </td>
-                                <td class="p-4 text-xs text-[#5F6F5B]/80 max-w-xs truncate">
+                                <td class="p-4 text-xs text-[#5F6F5B] max-w-xs truncate">
                                     {{ $g->description ?? '—' }}</td>
                                 <td class="p-4 font-bold text-[#5F6F5B]">
                                     {{ $g->nominal ? 'Rp ' . number_format($g->nominal, 0, ',', '.') : '—' }}
                                 </td>
-                                <td class="p-4 text-xs text-[#5F6F5B]/80 font-mono">
+                                <td class="p-4 text-xs text-[#5F6F5B] font-mono">
                                     {{ $g->created_at ? $g->created_at->format('d M Y') : '—' }}
                                 </td>
                                 <td class="p-4">
@@ -116,23 +116,23 @@
                                     <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($g) }}"
-                                            title="Edit" class="btn-icon"><i
-                                                class="fa-solid fa-pen-to-square"></i></button>
+                                            title="Edit" aria-label="Edit catatan hadiah dari {{ $g->giver_name }}" class="btn-icon"><i
+                                                class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>
                                         <form id="del-gift-{{ $g->id }}"
                                             action="{{ route('gifts.destroy', $g->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" title="Hapus"
+                                            <button type="button" title="Hapus" aria-label="Hapus catatan hadiah dari {{ $g->giver_name }}"
                                                 onclick="confirmDelete('del-gift-{{ $g->id }}', '{{ addslashes($g->giver_name) }}')"
-                                                class="btn-icon"><i class="fa-solid fa-trash"></i></button>
+                                                class="btn-icon"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                    <i class="fa-solid fa-gift text-[#B6ADA3] text-2xl mb-3"></i>
+                                <td colspan="7" class="text-center py-10 text-[#5F6F5B] text-sm">
+                                    <i class="fa-solid fa-gift text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
                                     <div>Belum ada hadiah yang tercatat.</div>
                                 </td>
                             </tr>
@@ -146,26 +146,26 @@
         <div x-show="modalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div x-outside="modalOpen = false"
-                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                class="bg-white text-[#5F6F5B] w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
                         x-text="editMode ? 'Edit Catatan Hadiah' : 'Catat Hadiah Baru'"></h2>
-                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal"><i
+                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer" aria-label="Tutup modal"><i
                             class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
-                <form :action="editMode ? '{{ url('gifts') }}/' + currentItem.id : '{{ route('gifts.store') }}'""
+                <form :action="editMode ? '{{ url('gifts') }}/' + currentItem.id : '{{ route('gifts.store') }}'"
                     method="POST" class="space-y-4">
                     @csrf
                     <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Pemberi Hadiah *</label>
-                        <input type="text" name="giver_name" x-model="currentItem.giver_name" required
+                        <label for="gift_giver_name" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Pemberi Hadiah *</label>
+                        <input type="text" id="gift_giver_name" name="giver_name" x-model="currentItem.giver_name" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Jenis Hadiah *</label>
-                            <select name="gift_type" x-model="currentItem.gift_type" required
+                            <label for="gift_type" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Jenis Hadiah *</label>
+                            <select id="gift_type" name="gift_type" x-model="currentItem.gift_type" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 @foreach ($giftTypes as $gt)
                                     <option value="{{ $gt }}">{{ $gt }}</option>
@@ -173,16 +173,16 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal / Estimasi Harga</label>
-                            <input type="text" name="nominal" inputmode="numeric" placeholder="Rp"
+                            <label for="gift_nominal" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nominal / Estimasi Harga</label>
+                            <input type="text" id="gift_nominal" name="nominal" inputmode="numeric" placeholder="Rp"
                                 :value="wpMoney(currentItem.nominal)"
                                 @input="currentItem.nominal = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Deskripsi Hadiah</label>
-                        <textarea name="description" x-model="currentItem.description" rows="2"
+                        <label for="gift_description" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Deskripsi Hadiah</label>
+                        <textarea id="gift_description" name="description" x-model="currentItem.description" rows="2"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
                     <div class="flex items-center gap-3 p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30">
@@ -195,7 +195,7 @@
                     </div>
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modalOpen = false"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#2D372E] font-medium cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             Catatan Hadiah</button>
                     </div>

@@ -70,7 +70,7 @@
                             </span>
                             <span
                                 class="rounded-full bg-[#FAF7F2] border border-[#B6ADA3]/35 px-2 py-0.5 text-[11px] font-semibold text-[#5F6F5B]/80 uppercase">
-                                {{ $request->plan }}
+                                {{ $request->feature === 'photobooth' ? 'photobooth' : $request->plan }}
                             </span>
                             @if ($request->wedding?->isPro())
                                 <span class="text-[11px] font-semibold text-[#5F6F5B]/70">

@@ -372,14 +372,16 @@
                             <span class="font-bold text-base text-[#5F6F5B]"
                                 x-text="detailVendor ? 'Rp ' + Number(detailVendor.price).toLocaleString('id-ID') : 'Rp 0'"></span>
                         </div>
-                        <div x-show="detailVendor && detailVendor.contact">
-                            <span class="text-[#5F6F5B] font-semibold block">Kontak / WhatsApp:</span>
-                            <a :href="'https://wa.me/' + (detailVendor ? detailVendor.contact : '')" target="_blank"
-                                class="font-semibold text-[#5F6F5B] hover:underline inline-flex items-center gap-1">
-                                <i class="fa-brands fa-whatsapp text-[#5F6F5B]" aria-hidden="true"></i> <span
-                                    x-text="detailVendor ? detailVendor.contact : ''"></span>
-                            </a>
-                        </div>
+                        <template x-if="detailVendor && detailVendor.contact">
+                            <div>
+                                <span class="text-[#5F6F5B] font-semibold block">Kontak / WhatsApp:</span>
+                                <a :href="'https://wa.me/' + detailVendor.contact" target="_blank" rel="noopener noreferrer"
+                                    class="font-semibold text-[#5F6F5B] hover:underline inline-flex items-center gap-1">
+                                    <i class="fa-brands fa-whatsapp text-[#5F6F5B]" aria-hidden="true"></i> <span
+                                        x-text="detailVendor.contact"></span>
+                                </a>
+                            </div>
+                        </template>
                     </div>
                     <div class="space-y-2">
                         <div>
@@ -396,12 +398,14 @@
                             <span class="text-[#5F6F5B] font-semibold block">Alamat:</span>
                             <span x-text="detailVendor ? detailVendor.address : ''"></span>
                         </div>
-                        <div x-show="detailVendor && detailVendor.google_maps_url">
-                            <a :href="detailVendor ? detailVendor.google_maps_url : '#'" target="_blank"
-                                class="inline-flex items-center gap-1 text-[#5F6F5B] hover:underline font-semibold mt-1">
-                                <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Lihat di Google Maps &rarr;
-                            </a>
-                        </div>
+                        <template x-if="detailVendor && detailVendor.google_maps_url">
+                            <div>
+                                <a :href="detailVendor.google_maps_url" target="_blank" rel="noopener noreferrer"
+                                    class="inline-flex items-center gap-1 text-[#5F6F5B] hover:underline font-semibold mt-1">
+                                    <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Lihat di Google Maps &rarr;
+                                </a>
+                            </div>
+                        </template>
                     </div>
                 </div>
 

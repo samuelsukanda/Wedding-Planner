@@ -25,34 +25,34 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Tabungan Pernikahan</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Rencanakan target tabungan dan pantau perkembangan dana untuk
+                <p class="text-xs text-[#5F6F5B] mt-1">Rencanakan target tabungan dan pantau perkembangan dana untuk
                     mewujudkan pernikahan impian.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = { frequency: null, status: 'Aktif' }"
-                class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer">
-                <i class="fa-solid fa-plus"></i> Target Tabungan Baru
+                class="btn-primary-rose min-h-[44px] px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer font-semibold">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Target Tabungan Baru
             </button>
         </div>
 
         {{-- Ringkasan (PRD: Saldo saat ini, Target, Estimasi kekurangan dana) --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <div class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-                <div class="text-xs text-[#5F6F5B]/80 mb-1">Total Saldo Tabungan</div>
+                <div class="text-xs text-[#5F6F5B] mb-1">Total Saldo Tabungan</div>
                 <div class="text-lg font-bold text-[#5F6F5B]">Rp {{ number_format($summary['totalBalance'], 0, ',', '.') }}
                 </div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-                <div class="text-xs text-[#5F6F5B]/80 mb-1">Total Target</div>
+                <div class="text-xs text-[#5F6F5B] mb-1">Total Target</div>
                 <div class="text-lg font-bold text-[#5F6F5B]">Rp {{ number_format($summary['totalTarget'], 0, ',', '.') }}
                 </div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-[#D8A7B1]/50 shadow-xs">
-                <div class="text-xs text-[#5F6F5B]/80 mb-1">Estimasi Kekurangan Dana</div>
-                <div class="text-lg font-bold text-[#C2757F]">Rp
+                <div class="text-xs text-[#5F6F5B] mb-1">Estimasi Kekurangan Dana</div>
+                <div class="text-lg font-bold text-[#8B3A47]">Rp
                     {{ number_format($summary['totalShortfall'], 0, ',', '.') }}</div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-                <div class="text-xs text-[#5F6F5B]/80 mb-1">Target Aktif</div>
+                <div class="text-xs text-[#5F6F5B] mb-1">Target Aktif</div>
                 <div class="text-lg font-bold text-[#5F6F5B]">{{ $summary['activeGoals'] }} Target</div>
             </div>
         </div>
@@ -75,7 +75,7 @@
 
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
-                    <thead class="bg-[#FAF7F2] text-[10px] uppercase tracking-wider text-[#B6ADA3]">
+                    <thead class="bg-[#FAF7F2] text-[10px] uppercase tracking-wider text-[#5F6F5B]">
                         <tr>
                             <th class="text-left px-4 py-3 font-bold">Target</th>
                             <th class="text-left px-4 py-3 font-bold">Saldo Saat Ini</th>
@@ -90,10 +90,10 @@
                             <tr class="border-t border-[#B6ADA3]/20">
                                 <td class="px-4 py-3">
                                     <div class="font-semibold text-[#5F6F5B]">{{ $goal->name }}</div>
-                                    <div class="text-xs text-[#B6ADA3]">
+                                    <div class="text-xs text-[#5F6F5B]">
                                         Target Rp {{ number_format((float) $goal->target_amount, 0, ',', '.') }}
                                         @if ($goal->target_date)
-                                            · {{ $goal->target_date->format('d M Y') }}
+                                             · {{ $goal->target_date->format('d M Y') }}
                                         @endif
                                     </div>
                                     <span
@@ -101,8 +101,8 @@
                                         {{ $goal->status === 'Tercapai'
                                             ? 'bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40'
                                             : ($goal->status === 'Ditunda'
-                                                ? 'bg-[#B6ADA3]/25 text-[#6B7280] border border-[#B6ADA3]/40'
-                                                : 'bg-[#D8A7B1]/20 text-[#C2757F] border border-[#D8A7B1]/40') }}">
+                                                ? 'bg-[#B6ADA3]/25 text-[#5F6F5B] border border-[#B6ADA3]/40'
+                                                : 'bg-[#D8A7B1]/20 text-[#8B3A47] border border-[#D8A7B1]/40') }}">
                                         {{ $goal->status }}
                                     </span>
                                 </td>
@@ -111,7 +111,7 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="w-32">
-                                        <div class="flex justify-between text-[10px] text-[#B6ADA3] mb-1">
+                                        <div class="flex justify-between text-[10px] text-[#5F6F5B] mb-1 font-medium">
                                             <span>{{ $goal->progressPercent() }}%</span>
                                             <span>{{ $goal->transactions_count }} txn</span>
                                         </div>
@@ -124,11 +124,11 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     @if ($goal->shortfall() > 0)
-                                        <span class="text-[#C2757F] font-semibold">
+                                        <span class="text-[#8B3A47] font-semibold">
                                             Rp {{ number_format($goal->shortfall(), 0, ',', '.') }}
                                         </span>
                                     @else
-                                        <span class="text-[#A3B7A6] font-semibold">Tercukup</span>
+                                        <span class="text-emerald-700 font-semibold">Tercukup</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 text-xs">
@@ -138,13 +138,13 @@
                                             / {{ $goal->frequency }}
                                         </div>
                                         @if ($goal->nextDueDate())
-                                            <div class="text-[#B6ADA3] mt-0.5">
+                                            <div class="text-[#5F6F5B] mt-0.5">
                                                 Jatuh tempo
                                                 {{ \Carbon\Carbon::parse($goal->nextDueDate())->format('d M Y') }}
                                             </div>
                                         @endif
                                     @else
-                                        <span class="text-[#B6ADA3]">Belum diatur</span>
+                                        <span class="text-[#5F6F5B]">Belum diatur</span>
                                     @endif
                                 </td>
                                 <td class="p-4 text-right">
@@ -152,8 +152,9 @@
                                         <button
                                             @click="txOpen = true; selectedGoalId = {{ $goal->id }}; selectedGoal = @js($goal->only(['id', 'name', 'current_balance', 'target_amount']))"
                                             title="Catat setoran / penarikan"
-                                            class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#D8A7B1]/15 text-[#C2757F] border border-[#D8A7B1]/40 hover:bg-[#D8A7B1]/25 cursor-pointer whitespace-nowrap">
-                                            <i class="fa-solid fa-arrow-right-arrow-left text-[10px]"></i> Transaksi
+                                            aria-label="Catat setoran atau penarikan untuk target {{ $goal->name }}"
+                                            class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#D8A7B1]/15 text-[#8B3A47] border border-[#D8A7B1]/40 hover:bg-[#D8A7B1]/25 cursor-pointer whitespace-nowrap">
+                                            <i class="fa-solid fa-arrow-right-arrow-left text-[10px]" aria-hidden="true"></i> Transaksi
                                         </button>
                                         <button title="Edit"
                                             @click="modalOpen = true; editMode = true; currentItem = {{ Js::from([
@@ -168,17 +169,19 @@
                                                 'status' => $goal->status,
                                                 'notes' => $goal->notes,
                                             ]) }}"
+                                            aria-label="Edit target {{ $goal->name }}"
                                             class="btn-icon">
-                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
                                         </button>
                                         <form id="del-savings-{{ $goal->id }}"
                                             action="{{ route('savings.destroy', $goal->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
+                                                aria-label="Hapus target {{ $goal->name }}"
                                                 onclick="confirmDelete('del-savings-{{ $goal->id }}', '{{ addslashes($goal->name) }}')"
                                                 class="btn-icon">
-                                                <i class="fa-solid fa-trash"></i>
+                                                <i class="fa-solid fa-trash" aria-hidden="true"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -186,8 +189,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                    <i class="fa-solid fa-piggy-bank text-[#B6ADA3] text-2xl mb-3"></i>
+                                <td colspan="6" class="text-center py-10 text-[#5F6F5B] text-sm">
+                                    <i class="fa-solid fa-piggy-bank text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
                                     <div>Belum ada target tabungan.</div>
                                 </td>
                             </tr>
@@ -204,7 +207,7 @@
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
-                    <thead class="bg-[#FAF7F2] text-[10px] uppercase tracking-wider text-[#B6ADA3]">
+                    <thead class="bg-[#FAF7F2] text-[10px] uppercase tracking-wider text-[#5F6F5B]">
                         <tr>
                             <th class="text-left px-4 py-3 font-bold">Tanggal</th>
                             <th class="text-left px-4 py-3 font-bold">Target</th>
@@ -217,23 +220,23 @@
                     <tbody>
                         @forelse ($allTransactions->sortByDesc('transaction_date') as $tx)
                             <tr class="border-t border-[#B6ADA3]/20">
-                                <td class="px-4 py-3 text-xs">{{ $tx->transaction_date->format('d M Y') }}</td>
+                                <td class="px-4 py-3 text-xs text-[#5F6F5B]">{{ $tx->transaction_date->format('d M Y') }}</td>
                                 <td class="px-4 py-3 font-semibold text-[#5F6F5B]">{{ $tx->goal?->name }}</td>
                                 <td class="px-4 py-3">
                                     <span
                                         class="rounded-full px-2 py-0.5 text-[10px] font-semibold
                                         {{ $tx->isPenarikan()
-                                            ? 'bg-[#C2757F]/15 text-[#C2757F] border border-[#C2757F]/40'
+                                            ? 'bg-[#C2757F]/15 text-[#8B3A47] border border-[#C2757F]/40'
                                             : 'bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40' }}">
                                         {{ $tx->isPenarikan() ? 'Penarikan' : 'Setoran' }}
                                     </span>
                                 </td>
                                 <td
-                                    class="px-4 py-3 font-bold {{ $tx->isPenarikan() ? 'text-[#C2757F]' : 'text-[#5F6F5B]' }}">
+                                    class="px-4 py-3 font-bold {{ $tx->isPenarikan() ? 'text-[#8B3A47]' : 'text-[#5F6F5B]' }}">
                                     {{ $tx->isPenarikan() ? '-' : '+' }}
                                     Rp {{ number_format((float) $tx->amount, 0, ',', '.') }}
                                 </td>
-                                <td class="px-4 py-3 text-xs text-[#B6ADA3]">{{ $tx->notes ?: '—' }}</td>
+                                <td class="px-4 py-3 text-xs text-[#5F6F5B]">{{ $tx->notes ?: '—' }}</td>
                                 <td class="px-4 py-3 text-right">
                                     <form id="del-txn-{{ $tx->id }}"
                                         action="{{ route('savings.transactions.destroy', [$tx->savings_goal_id, $tx->id]) }}"
@@ -241,17 +244,18 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" title="Hapus"
+                                            aria-label="Hapus transaksi {{ $tx->isPenarikan() ? 'penarikan' : 'setoran' }}"
                                             onclick="confirmDelete('del-txn-{{ $tx->id }}', 'transaksi {{ $tx->isPenarikan() ? 'penarikan' : 'setoran' }} Rp {{ number_format((float) $tx->amount, 0, ',', '.') }}')"
                                             class="btn-icon">
-                                            <i class="fa-solid fa-trash"></i>
+                                            <i class="fa-solid fa-trash" aria-hidden="true"></i>
                                         </button>
                                     </form>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                    <i class="fa-solid fa-money-bill-transfer text-[#B6ADA3] text-2xl mb-3"></i>
+                                <td colspan="6" class="text-center py-10 text-[#5F6F5B] text-sm">
+                                    <i class="fa-solid fa-money-bill-transfer text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
                                     <div>Belum ada transaksi.</div>
                                 </td>
                             </tr>
@@ -265,11 +269,11 @@
         <div x-show="modalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div x-outside="modalOpen = false"
-                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+                class="bg-white text-[#5F6F5B] w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
                         x-text="editMode ? 'Edit Target Tabungan' : 'Target Tabungan Baru'"></h2>
-                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal">
+                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer" aria-label="Tutup modal">
                         <i class="fa-solid fa-xmark text-lg" aria-hidden="true"></i>
                     </button>
                 </div>
@@ -280,22 +284,22 @@
                     <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
 
                     <div>
-                        <label class="form-label">Nama Target *</label>
-                        <input type="text" name="name" x-model="currentItem.name" required
+                        <label for="savings_name" class="form-label">Nama Target *</label>
+                        <input type="text" id="savings_name" name="name" x-model="currentItem.name" required
                             placeholder="Contoh: Dana Venue & Catering" class="form-input">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label">Target Nominal (Rp) *</label>
-                            <input type="text" name="target_amount" inputmode="numeric" required
+                            <label for="savings_target_amount" class="form-label">Target Nominal (Rp) *</label>
+                            <input type="text" id="savings_target_amount" name="target_amount" inputmode="numeric" required
                                 :value="wpMoney(currentItem.target_amount)"
                                 @input="currentItem.target_amount = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="form-input form-input-number">
                         </div>
                         <div>
-                            <label class="form-label">Saldo Awal (Rp)</label>
-                            <input type="text" name="initial_balance" inputmode="numeric"
+                            <label for="savings_initial_balance" class="form-label">Saldo Awal (Rp)</label>
+                            <input type="text" id="savings_initial_balance" name="initial_balance" inputmode="numeric"
                                 :value="wpMoney(currentItem.initial_balance)"
                                 @input="currentItem.initial_balance = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 :disabled="editMode && currentItem.transactions_count > 0"
@@ -311,16 +315,16 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label">Nominal Setoran / Periode
+                            <label for="savings_periodic_amount" class="form-label">Nominal Setoran / Periode
                                 (Rp)</label>
-                            <input type="text" name="periodic_amount" inputmode="numeric"
+                            <input type="text" id="savings_periodic_amount" name="periodic_amount" inputmode="numeric"
                                 :value="wpMoney(currentItem.periodic_amount)"
                                 @input="currentItem.periodic_amount = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="form-input">
                         </div>
                         <div>
-                            <label class="form-label">Frekuensi</label>
-                            <select name="frequency" x-model="currentItem.frequency" class="form-input">
+                            <label for="savings_frequency" class="form-label">Frekuensi</label>
+                            <select id="savings_frequency" name="frequency" x-model="currentItem.frequency" class="form-input">
                                 <option value="">-- Pilih Frekuensi --</option>
                                 @foreach ($frequencies as $freq)
                                     <option value="{{ $freq }}">{{ $freq }}</option>
@@ -331,13 +335,13 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label">Target Tanggal</label>
-                            <input type="text" name="target_date" x-model="currentItem.target_date"
+                            <label for="savings_target_date" class="form-label">Target Tanggal</label>
+                            <input type="text" id="savings_target_date" name="target_date" x-model="currentItem.target_date"
                                 class="form-input datepicker">
                         </div>
                         <div>
-                            <label class="form-label">Status</label>
-                            <select name="status" x-model="currentItem.status" class="form-input">
+                            <label for="savings_status" class="form-label">Status</label>
+                            <select id="savings_status" name="status" x-model="currentItem.status" class="form-input">
                                 @foreach ($statuses as $st)
                                     <option value="{{ $st }}">{{ $st }}</option>
                                 @endforeach
@@ -346,8 +350,8 @@
                     </div>
 
                     <div>
-                        <label class="form-label">Catatan</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="2" placeholder="Contoh: Tabungan khusus DP gedung"
+                        <label for="savings_notes" class="form-label">Catatan</label>
+                        <textarea id="savings_notes" name="notes" x-model="currentItem.notes" rows="2" placeholder="Contoh: Tabungan khusus DP gedung"
                             class="form-input resize-none"></textarea>
                     </div>
 
@@ -363,7 +367,7 @@
 
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modalOpen = false"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#2D372E] font-medium cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">
                             Simpan Target
                         </button>
@@ -376,15 +380,15 @@
         <div x-show="txOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div x-outside="txOpen = false"
-                class="bg-white w-full max-w-md p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                class="bg-white text-[#5F6F5B] w-full max-w-md p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Catat Transaksi</h2>
-                    <button @click="txOpen = false" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal">
+                    <button @click="txOpen = false" class="text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer" aria-label="Tutup modal">
                         <i class="fa-solid fa-xmark text-lg" aria-hidden="true"></i>
                     </button>
                 </div>
 
-                <div class="text-xs text-[#B6ADA3]">
+                <div class="text-xs text-[#5F6F5B]/80 font-medium">
                     <span x-text="selectedGoal?.name"></span> ·
                     Saldo saat ini
                     <span class="font-bold text-[#5F6F5B]"
@@ -396,30 +400,30 @@
                     @csrf
 
                     <div>
-                        <label class="form-label">Jenis Transaksi *</label>
-                        <select name="type" x-model="txType" required class="form-input">
+                        <label for="tx_type" class="form-label">Jenis Transaksi *</label>
+                        <select id="tx_type" name="type" x-model="txType" required class="form-input">
                             <option value="setoran">Setoran</option>
                             <option value="penarikan">Penarikan</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="form-label">Nominal (Rp) *</label>
-                        <input type="text" name="amount" inputmode="numeric" required
+                        <label for="tx_amount" class="form-label">Nominal (Rp) *</label>
+                        <input type="text" id="tx_amount" name="amount" inputmode="numeric" required
                             :value="wpMoney(txAmount)"
                             @input="txAmount = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                             class="form-input form-input-number">
                     </div>
 
                     <div>
-                        <label class="form-label">Tanggal Setoran *</label>
-                        <input type="text" name="transaction_date" x-model="txDate" required placeholder="DD-MM-YYYY"
+                        <label for="tx_date" class="form-label">Tanggal Setoran *</label>
+                        <input type="text" id="tx_date" name="transaction_date" x-model="txDate" required placeholder="DD-MM-YYYY"
                             class="form-input datepicker">
                     </div>
 
                     <div>
-                        <label class="form-label">Catatan</label>
-                        <input type="text" name="notes" x-model="txNotes" class="form-input">
+                        <label for="tx_notes" class="form-label">Catatan</label>
+                        <input type="text" id="tx_notes" name="notes" x-model="txNotes" class="form-input">
                     </div>
 
                     @error('amount')
@@ -428,7 +432,7 @@
 
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="txOpen = false"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#2D372E] font-medium cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">
                             Simpan Transaksi
                         </button>
