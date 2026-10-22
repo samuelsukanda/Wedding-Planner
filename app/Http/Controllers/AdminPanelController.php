@@ -6,6 +6,7 @@ use App\Models\Wedding;
 use App\Models\DropdownOption;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\PhotoboothApi;
 use App\Support\ChecklistTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -93,6 +94,19 @@ class AdminPanelController extends Controller
         ]);
 
         $wedding->update($validated);
+
+        // Tanggal acara ikut dicetak di frame photobooth, jadi perubahan di
+        // sini diteruskan ke event photobooth. Kegagalan sinkron tidak boleh
+        // membatalkan penyimpanan data pernikahan.
+        if ($wedding->photobooth_active && $wedding->photoboothApiKey()) {
+            try {
+                app(PhotoboothApi::class)->updateEvent($wedding, [
+                    'wedding_date' => $wedding->wedding_date?->format('Y-m-d'),
+                ]);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
 
         return redirect()->route('admin.index')
             ->with('success', 'Informasi acara pernikahan berhasil diperbarui!');

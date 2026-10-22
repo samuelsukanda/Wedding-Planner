@@ -71,6 +71,63 @@ class PlanTest extends TestCase
             ->assertDontSee('Tambah Moodboard');
     }
 
+    public function test_free_couple_sees_photobooth_purchase_page(): void
+    {
+        [, $user] = $this->couple();
+
+        // Photobooth adalah add-on berdiri sendiri, bukan bagian paket Pro,
+        // jadi paket Free tidak dialihkan ke /upgrade tapi diberi halaman
+        // pembelian.
+        $this->actingAs($user)
+            ->get('/photobooth')
+            ->assertOk()
+            ->assertSee('Bukti Transfer');
+    }
+
+    public function test_pro_couple_can_open_photobooth_menu(): void
+    {
+        [, $user] = $this->couple('pro');
+
+        $this->actingAs($user)
+            ->get('/photobooth')
+            ->assertOk()
+            ->assertSee('Photobooth')
+            ->assertSee('QR universal')
+            ->assertSee('Kelola Photobooth');
+    }
+
+    public function test_photobooth_sits_under_moodboard_in_creative_sidebar(): void
+    {
+        [, $user] = $this->couple('pro');
+        $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
+
+        $this->assertLessThan(
+            strpos($html, '>Photobooth</span>'),
+            strpos($html, '>Keuangan &amp; Dokumen')
+        );
+        $this->assertLessThan(
+            strpos($html, '>Photobooth</span>'),
+            strpos($html, '>Moodboard</span>') + strlen('>Moodboard</span>')
+        );
+    }
+
+    public function test_pro_couple_can_save_photobooth_connection(): void
+    {
+        [$wedding, $user] = $this->couple('pro');
+
+        $this->actingAs($user)
+            ->put('/photobooth', [
+                'event_slug' => 'sa2027',
+                'api_key' => 'test-api-key',
+                'active' => '1',
+            ])
+            ->assertRedirect(route('photobooth.index'));
+
+        $this->assertSame('sa2027', $wedding->fresh()->photobooth_event_slug);
+        $this->assertSame('test-api-key', $wedding->fresh()->photoboothApiKey());
+        $this->assertTrue((bool) $wedding->fresh()->photobooth_active);
+    }
+
     public function test_locked_moodboard_page_sells_the_feature_without_a_lying_price()
     {
         Setting::put('pro_price', '55000');

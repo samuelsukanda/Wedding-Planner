@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'photobooth' => [
+        'url' => env('PHOTOBOOTH_URL', 'https://photobooth.nupsera.my.id'),
+        // Kunci server untuk provisioning event. Hanya dipakai di sisi server,
+        // tidak pernah dikirim ke browser.
+        'server_key' => env('PHOTOBOOTH_SERVER_KEY'),
+    ],
 
     /*
     |--------------------------------------------------------------------------

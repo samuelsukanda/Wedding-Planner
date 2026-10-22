@@ -16,6 +16,7 @@ class UpgradeRequest extends Model
         'wedding_id',
         'user_id',
         'plan',
+        'feature',
         'amount',
         'proof_path',
         'status',

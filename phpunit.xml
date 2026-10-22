@@ -36,6 +36,9 @@
         <server name="PULSE_ENABLED" force="true" value="false"/>
         <server name="TELESCOPE_ENABLED" force="true" value="false"/>
         <server name="NIGHTWATCH_ENABLED" force="true" value="false"/>
+        <!-- APP_CONFIG_CACHE: kalau file cache config produksi ikut terbaca,
+             test bisa terhubung ke MySQL produksi. Test memakai file sendiri. -->
+        <env name="APP_CONFIG_CACHE" force="true" value="bootstrap/cache/testing-config.php"/>
         <env name="APP_ENV" force="true" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" force="true" value="file"/>
         <env name="BCRYPT_ROUNDS" force="true" value="4"/>

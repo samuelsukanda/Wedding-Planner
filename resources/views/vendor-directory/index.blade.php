@@ -6,26 +6,26 @@
     <div class="space-y-6">
         {{-- Header --}}
         <div
-            class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-[#5F6F5B]">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Cari Vendor</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Temukan dan bandingkan vendor pernikahan sesuai kebutuhan,
+                <p class="text-xs text-[#5F6F5B] mt-1">Temukan dan bandingkan vendor pernikahan sesuai kebutuhan,
                     anggaran, dan konsep pernikahan impianmu.</p>
             </div>
             <div class="flex items-center gap-3">
-                <span class="text-xs text-[#B6ADA3]">
+                <span class="text-xs text-[#5F6F5B]">
                     <strong class="text-[#5F6F5B]">{{ number_format($vendors->total()) }}</strong> vendor
                 </span>
                 <a href="{{ route('vendors.index') }}"
                     class="px-4 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold">
-                    <i class="fa-solid fa-arrow-left"></i> Kembali
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Kembali
                 </a>
             </div>
         </div>
 
         {{-- Filter --}}
         <form method="GET" action="{{ route('vendor-directory.index') }}"
-            class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+            class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-[#5F6F5B]">
             <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 items-center">
                 <input type="text" name="q" value="{{ $q }}" placeholder="Cari nama vendor / kota..."
                     aria-label="Cari nama vendor / kota"
@@ -55,9 +55,6 @@
                     id="vendor-dir-sort"
                     aria-label="Urutkan vendor"
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
-                    {{-- Dua option ini sebelumnya sama-sama value="", jadi memilih
-                         "Nama (A–Z)" tidak mengubah apa pun dan browser
-                         selalu menampilkan yang pertama. --}}
                     <option value="">Nama (A–Z)</option>
                     <option value="rating" @selected($sort === 'rating')>Rating Tertinggi</option>
                 </select>
@@ -78,19 +75,20 @@
                         @if ($vendor->photo)
                             <a href="{{ route('vendor-directory.show', $vendor) }}" class="block mb-4">
                                 <img src="{{ $vendor->photo }}" alt="{{ $vendor->name }}" loading="lazy"
+                                    width="400" height="160"
                                     class="w-full h-40 object-cover rounded-xl">
                             </a>
                         @endif
 
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <span
-                                class="px-2.5 py-1 rounded-full bg-[#D8A7B1]/20 text-[10px] font-semibold text-[#C2757F] border border-[#D8A7B1]/40 shrink-0">
+                                class="px-2.5 py-1 rounded-full bg-[#FCE8EC] text-[10px] font-semibold text-[#8B3A47] border border-[#D8A7B1]/60 shrink-0">
                                 {{ $vendor->category }}
                             </span>
                             @if ($vendor->rating > 0)
                                 <span
                                     class="shrink-0 text-[10px] font-bold px-2 py-1 rounded-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-[#5F6F5B]">
-                                    <i class="fa-solid fa-star text-[9px] text-[#C2757F]"></i>
+                                    <i class="fa-solid fa-star text-[9px] text-[#8B3A47]" aria-hidden="true"></i>
                                     {{ number_format($vendor->rating, 1) }}
                                 </span>
                             @endif
@@ -99,19 +97,19 @@
                         <a href="{{ route('vendor-directory.show', $vendor) }}"
                             class="block font-bold text-sm text-[#5F6F5B] hover:underline leading-snug">{{ $vendor->name }}</a>
 
-                        <div class="mt-3 space-y-1.5 text-[11px] text-[#5F6F5B]/80">
+                        <div class="mt-3 space-y-1.5 text-[11px] text-[#5F6F5B]">
                             @if ($vendor->price_label)
                                 <p class="font-bold text-[#5F6F5B]">{{ $vendor->price_label }}</p>
                             @endif
                             @if ($vendor->phone)
                                 <p class="flex items-center gap-1.5">
-                                    <i class="fa-solid fa-phone text-[9px] text-[#B6ADA3] w-3"></i>
+                                    <i class="fa-solid fa-phone text-[9px] text-[#5F6F5B] w-3" aria-hidden="true"></i>
                                     <span class="truncate">{{ $vendor->phone }}</span>
                                 </p>
                             @endif
                             @if ($vendor->city)
                                 <p class="flex items-center gap-1.5">
-                                    <i class="fa-solid fa-location-dot text-[9px] text-[#B6ADA3] w-3"></i>
+                                    <i class="fa-solid fa-location-dot text-[9px] text-[#8B3A47] w-3" aria-hidden="true"></i>
                                     <span class="truncate">{{ $vendor->city }}</span>
                                 </p>
                             @endif
@@ -119,13 +117,13 @@
                     </div>
 
                     <a href="{{ route('vendor-directory.show', $vendor) }}"
-                        class="block text-center px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs font-semibold text-[#5F6F5B] hover:bg-white transition-colors">
+                        class="block text-center px-3 py-2.5 min-h-[44px] flex items-center justify-center rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs font-semibold text-[#5F6F5B] hover:bg-white transition-colors">
                         Lihat Detail
                     </a>
                 </div>
             @empty
                 <div class="col-span-full bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs py-16 text-center">
-                    <i class="fa-solid fa-store text-[#B6ADA3] text-3xl mb-3"></i>
+                    <i class="fa-solid fa-store text-[#5F6F5B] text-3xl mb-3" aria-hidden="true"></i>
                     <p class="text-sm text-[#5F6F5B] font-semibold">Katalog masih kosong.</p>
                 </div>
             @endforelse

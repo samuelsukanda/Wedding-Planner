@@ -267,10 +267,10 @@
             <div x-outside="modalOpen = false"
                 class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
-                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
-                        x-text="editMode ? 'Edit Target Tabungan' : 'Target Tabungan Baru'"></h3>
-                    <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
-                        <i class="fa-solid fa-xmark text-lg"></i>
+                    <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
+                        x-text="editMode ? 'Edit Target Tabungan' : 'Target Tabungan Baru'"></h2>
+                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal">
+                        <i class="fa-solid fa-xmark text-lg" aria-hidden="true"></i>
                     </button>
                 </div>
 
@@ -378,9 +378,9 @@
             <div x-outside="txOpen = false"
                 class="bg-white w-full max-w-md p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
-                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Catat Transaksi</h3>
-                    <button @click="txOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
-                        <i class="fa-solid fa-xmark text-lg"></i>
+                    <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Catat Transaksi</h2>
+                    <button @click="txOpen = false" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal">
+                        <i class="fa-solid fa-xmark text-lg" aria-hidden="true"></i>
                     </button>
                 </div>
 

@@ -46,45 +46,45 @@
     }">
 
         {{-- Header --}}
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-[#5F6F5B]">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Lamaran</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Kelola seluruh persiapan acara lamaran sebelum hari pernikahan.</p>
+                <p class="text-xs text-[#5F6F5B] mt-1">Kelola seluruh persiapan acara lamaran sebelum hari pernikahan.</p>
             </div>
             @if ($event->event_date)
                 <div class="text-right">
-                    <div class="text-xs text-[#B6ADA3]">Tanggal Lamaran</div>
+                    <div class="text-xs text-[#5F6F5B]">Tanggal Lamaran</div>
                     <div class="text-base font-bold text-[#5F6F5B]">{{ $event->event_date->format('d M Y') }}</div>
                 </div>
             @endif
         </div>
 
         {{-- Ringkasan --}}
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-[#5F6F5B]">
             <div class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-                <div class="text-xs text-[#5F6F5B]/80 mb-1">Checklist Selesai</div>
+                <div class="text-xs text-[#5F6F5B] mb-1 font-medium">Checklist Selesai</div>
                 <div class="text-lg font-bold text-[#5F6F5B]"><span id="pcnt-done">{{ $checklistSummary['done'] }}</span> /
                     <span id="pcnt-total">{{ $checklistSummary['total'] }}</span>
                 </div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-                <div class="text-xs text-[#5F6F5B]/80 mb-1">Estimasi Tamu</div>
+                <div class="text-xs text-[#5F6F5B] mb-1 font-medium">Estimasi Tamu</div>
                 <div class="text-lg font-bold text-[#5F6F5B]">{{ $guestSummary['pax'] }} orang</div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-                <div class="text-xs text-[#5F6F5B]/80 mb-1">Rencana Budget Lamaran</div>
+                <div class="text-xs text-[#5F6F5B] mb-1 font-medium">Rencana Budget Lamaran</div>
                 <div class="text-lg font-bold text-[#5F6F5B]">Rp {{ number_format($budgetSummary['planned'], 0, ',', '.') }}
                 </div>
             </div>
             <div class="bg-white p-4 rounded-2xl border border-[#D8A7B1]/50 shadow-xs">
-                <div class="text-xs text-[#5F6F5B]/80 mb-1">Total Biaya Persiapan</div>
-                <div class="text-lg font-bold text-[#C2757F]">Rp {{ number_format($weddingBudgetTotal, 0, ',', '.') }}</div>
-                <div class="text-[10px] text-[#B6ADA3] mt-0.5">Resepsi + lamaran</div>
+                <div class="text-xs text-[#5F6F5B] mb-1 font-medium">Total Biaya Persiapan</div>
+                <div class="text-lg font-bold text-[#8B3A47]">Rp {{ number_format($weddingBudgetTotal, 0, ',', '.') }}</div>
+                <div class="text-[10px] text-[#5F6F5B] mt-0.5">Resepsi + lamaran</div>
             </div>
         </div>
 
         {{-- Tab --}}
-        <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden">
+        <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden text-[#5F6F5B]">
             <div class="flex flex-wrap gap-1 border-b border-[#B6ADA3]/25 px-3 pt-3">
                 @foreach ([
             'info' => 'Informasi Acara',
@@ -110,30 +110,29 @@
                         @method('PUT')
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
-                                <label class="form-label">Tanggal</label>
-                                <input type="text" name="event_date"
+                                <label for="prop_event_date" class="form-label">Tanggal</label>
+                                <input id="prop_event_date" type="text" name="event_date"
                                     value="{{ old('event_date', $event->event_date?->format('Y-m-d')) }}"
-                                    class="form-input datepicker" placeholder="DD-MM-YYYY">
+                                    class="form-input datepicker" placeholder="DD-MM-YYYY" aria-label="Tanggal">
                             </div>
                             <div>
-                                <label class="form-label">Waktu</label>
-                                <input type="time" name="event_time" value="{{ old('event_time', $event->event_time) }}"
-                                    class="form-input">
+                                <label for="prop_event_time" class="form-label">Waktu</label>
+                                <input id="prop_event_time" type="time" name="event_time" value="{{ old('event_time', $event->event_time) }}"
+                                    class="form-input" aria-label="Waktu">
                             </div>
                             <div>
-                                <label class="form-label">Lokasi</label>
-                                <input type="text" name="location" value="{{ old('location', $event->location) }}"
-                                    placeholder="Alamat acara lamaran" class="form-input">
+                                <label for="prop_location" class="form-label">Lokasi</label>
+                                <input id="prop_location" type="text" name="location" value="{{ old('location', $event->location) }}"
+                                    placeholder="Alamat acara lamaran" class="form-input" aria-label="Lokasi">
                             </div>
                             <div>
-                                <label class="form-label">Tema</label>
-                                <input type="text" name="theme" value="{{ old('theme', $event->theme) }}"
-                                    placeholder="Tema acara" class="form-input">
+                                <label for="prop_theme" class="form-label">Tema</label>
+                                <input id="prop_theme" type="text" name="theme" value="{{ old('theme', $event->theme) }}"
+                                    placeholder="Tema acara" class="form-input" aria-label="Tema">
                             </div>
                             <div class="md:col-span-2">
-                                <label class="form-label">Catatan Kebutuhan
-                                    Acara</label>
-                                <textarea name="notes" rows="4" placeholder="Kebutuhan khusus acara lamaran..." class="form-input">{{ old('notes', $event->notes) }}</textarea>
+                                <label for="prop_notes" class="form-label">Catatan Kebutuhan Acara</label>
+                                <textarea id="prop_notes" name="notes" rows="4" placeholder="Kebutuhan khusus acara lamaran..." class="form-input" aria-label="Catatan Kebutuhan Acara">{{ old('notes', $event->notes) }}</textarea>
                             </div>
                         </div>
                         <div class="mt-4 flex justify-end">
@@ -146,9 +145,9 @@
                 {{-- ============ CHECKLIST ============ --}}
                 <div x-show="tab === 'checklist'" x-cloak>
                     <div class="flex items-center justify-between mb-4">
-                        <div class="text-xs text-[#B6ADA3]" id="pcnt-overdue-wrap">
+                        <div class="text-xs text-[#5F6F5B]" id="pcnt-overdue-wrap">
                             @if ($checklistSummary['overdue'] > 0)
-                                <span class="text-[#C2757F] font-semibold"><span
+                                <span class="text-[#8B3A47] font-semibold"><span
                                         id="pcnt-overdue">{{ $checklistSummary['overdue'] }}</span> item melewati
                                     deadline</span>
                             @else
@@ -157,7 +156,7 @@
                         </div>
                         <button @click="modal = 'checklist'; currentItem = { status: 'Todo', priority: 'Medium' }"
                             class="btn-primary-rose px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-plus"></i> Tambah Item
+                            <i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah Item
                         </button>
                     </div>
 
@@ -184,18 +183,18 @@
                                                 :aria-label="'Ubah status checklist'">
                                                 <span data-icon>
                                                     @if ($item->status === 'Done')
-                                                        <i class="fa-solid fa-circle-check text-[#5F6F5B] text-lg"></i>
+                                                        <i class="fa-solid fa-circle-check text-[#5F6F5B] text-lg" aria-hidden="true"></i>
                                                     @elseif($item->status === 'Progress')
-                                                        <i class="fa-solid fa-spinner text-[#D8A7B1] text-lg"></i>
+                                                        <i class="fa-solid fa-spinner text-[#8B3A47] text-lg" aria-hidden="true"></i>
                                                     @else
                                                         <i
-                                                            class="fa-regular fa-circle text-[#B6ADA3] text-lg hover:text-[#5F6F5B]"></i>
+                                                            class="fa-regular fa-circle text-[#5F6F5B] text-lg hover:text-[#8B3A47]" aria-hidden="true"></i>
                                                     @endif
                                                 </span>
                                             </button>
                                         </td>
                                         <td data-title
-                                            class="p-4 font-semibold text-[#5F6F5B] {{ $item->status === 'Done' ? 'line-through text-[#B6ADA3]' : '' }}">
+                                            class="p-4 font-semibold text-[#5F6F5B] {{ $item->status === 'Done' ? 'line-through opacity-70' : '' }}">
                                             {{ $item->title }}
                                         </td>
                                         <td class="p-4">
@@ -220,20 +219,20 @@
                                             <div class="flex items-center justify-end gap-2">
                                                 <button @click="modal = 'checklist'; currentItem = {{ Js::from($item) }}"
                                                     title="Edit" class="btn-icon"><i
-                                                        class="fa-solid fa-pen-to-square"></i></button>
+                                                        class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>
                                                 <form id="del-pchk-{{ $item->id }}" method="POST"
                                                     action="{{ route('proposals.checklists.destroy', $item) }}">
                                                     @csrf @method('DELETE')
                                                     <button type="button" title="Hapus" class="btn-icon"
                                                         onclick="confirmDelete('del-pchk-{{ $item->id }}', '{{ addslashes($item->title) }}')"><i
-                                                            class="fa-solid fa-trash"></i></button>
+                                                            class="fa-solid fa-trash" aria-hidden="true"></i></button>
                                                 </form>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada item
+                                        <td colspan="6" class="text-center py-10 text-[#5F6F5B] text-sm">Belum ada item
                                             checklist.</td>
                                     </tr>
                                 @endforelse
@@ -245,18 +244,18 @@
                 {{-- ============ BUDGET ============ --}}
                 <div x-show="tab === 'budget'" x-cloak>
                     <div class="flex items-center justify-between mb-4">
-                        <div class="text-xs text-[#B6ADA3]">
+                        <div class="text-xs text-[#5F6F5B]">
                             Rencana Rp {{ number_format($budgetSummary['planned'], 0, ',', '.') }} ·
                             Realisasi Rp {{ number_format($budgetSummary['actual'], 0, ',', '.') }} ·
                             <span
-                                class="{{ $budgetSummary['variance'] >= 0 ? 'text-[#5F6F5B] font-semibold' : 'text-[#C2757F] font-semibold' }}">
+                                class="{{ $budgetSummary['variance'] >= 0 ? 'text-[#5F6F5B] font-semibold' : 'text-[#8B3A47] font-semibold' }}">
                                 {{ $budgetSummary['variance'] >= 0 ? 'Hemat' : 'Over' }} Rp
                                 {{ number_format(abs($budgetSummary['variance']), 0, ',', '.') }}
                             </span>
                         </div>
                         <button @click="modal = 'budget'; currentItem = {}"
                             class="btn-primary-rose px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-plus"></i> Tambah Budget
+                            <i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah Budget
                         </button>
                     </div>
 
@@ -287,41 +286,41 @@
                                             </span>
                                         </td>
                                         <td class="p-4 font-medium text-[#5F6F5B]">{{ $item->item_name }}</td>
-                                        <td class="p-4 text-xs text-[#5F6F5B]/80">
+                                        <td class="p-4 text-xs text-[#5F6F5B]">
                                             @if ($item->vendor)
                                                 <span class="font-medium">{{ $item->vendor->name }}</span>
                                             @else
-                                                <span class="text-[#B6ADA3]">-</span>
+                                                <span class="text-[#5F6F5B]">-</span>
                                             @endif
                                         </td>
-                                        <td class="p-4 text-[#5F6F5B]/80">Rp
+                                        <td class="p-4 text-[#5F6F5B]">Rp
                                             {{ number_format($item->planned_budget, 0, ',', '.') }}
                                         </td>
                                         <td class="p-4 font-semibold text-[#5F6F5B]">Rp
                                             {{ number_format($item->actual_cost, 0, ',', '.') }}</td>
-                                        <td class="p-4 font-bold {{ $diff >= 0 ? 'text-[#5F6F5B]' : 'text-[#5F6F5B]' }}">
+                                        <td class="p-4 font-bold {{ $diff >= 0 ? 'text-[#5F6F5B]' : 'text-[#8B3A47]' }}">
                                             Rp {{ number_format($diff, 0, ',', '.') }}
                                         </td>
-                                        <td class="p-4 text-xs text-[#B6ADA3] max-w-xs truncate">{{ $item->notes ?? '-' }}
+                                        <td class="p-4 text-xs text-[#5F6F5B] max-w-xs truncate">{{ $item->notes ?? '-' }}
                                         </td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
                                                 <button @click="modal = 'budget'; currentItem = {{ Js::from($item) }}"
                                                     title="Edit" class="btn-icon"><i
-                                                        class="fa-solid fa-pen-to-square"></i></button>
+                                                        class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>
                                                 <form id="del-pbud-{{ $item->id }}" method="POST"
                                                     action="{{ route('proposals.budgets.destroy', $item) }}">
                                                     @csrf @method('DELETE')
                                                     <button type="button" title="Hapus" class="btn-icon"
                                                         onclick="confirmDelete('del-pbud-{{ $item->id }}', '{{ addslashes($item->item_name) }}')"><i
-                                                            class="fa-solid fa-trash"></i></button>
+                                                            class="fa-solid fa-trash" aria-hidden="true"></i></button>
                                                 </form>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada
+                                        <td colspan="8" class="text-center py-10 text-[#5F6F5B] text-sm">Belum ada
                                             budget lamaran.</td>
                                     </tr>
                                 @endforelse
@@ -333,13 +332,13 @@
                 {{-- ============ KELUARGA & TAMU ============ --}}
                 <div x-show="tab === 'guests'" x-cloak>
                     <div class="flex items-center justify-between mb-4">
-                        <div class="text-xs text-[#B6ADA3]">
+                        <div class="text-xs text-[#5F6F5B]">
                             {{ $guestSummary['rows'] }} nama · {{ $guestSummary['pax'] }} orang ·
                             {{ $guestSummary['attend'] }} hadir
                         </div>
                         <button @click="modal = 'guest'; currentItem = { attendance_status: 'Pending' }"
                             class="btn-primary-rose px-4 py-2 rounded-xl text-xs flex items-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-plus"></i> Tambah Tamu
+                            <i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah Tamu
                         </button>
                     </div>
 
@@ -361,36 +360,34 @@
                                         <td class="p-4 font-medium text-[#5F6F5B]">
                                             {{ $item->title ? $item->title . ' ' : '' }}{{ $item->name }}
                                         </td>
-                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->relation ?: '-' }}</td>
-                                        <td class="p-4 text-xs text-[#B6ADA3]">{{ $item->category ?: '-' }}</td>
+                                        <td class="p-4 text-xs text-[#5F6F5B]">{{ $item->relation ?: '-' }}</td>
+                                        <td class="p-4 text-xs text-[#5F6F5B]">{{ $item->category ?: '-' }}</td>
                                         <td class="p-4">
-                                            <span @class([
-                                                'px-2.5 py-1 rounded-full text-xs font-semibold',
-                                                'bg-[#5F6F5B]/12 text-[#5F6F5B]' => $item->attendance_status === 'Attend',
-                                                'bg-[#C2757F]/15 text-[#C2757F]' => $item->attendance_status === 'Decline',
-                                                'bg-[#B6ADA3]/20 text-[#5F6F5B]' =>
-                                                    $item->attendance_status !== 'Attend' &&
-                                                    $item->attendance_status !== 'Decline',
-                                            ])>{{ $item->attendance_status }}</span>
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold 
+                                            @if ($item->attendance_status === 'Attend') bg-[#EBF2EC] text-[#2E4B33] border border-[#A3B7A6]/60
+                                            @elseif ($item->attendance_status === 'Decline') bg-[#FCE8EC] text-[#8B3A47] border border-[#D8A7B1]/60
+                                            @else bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/40 @endif">
+                                                {{ $item->attendance_status }}
+                                            </span>
                                         </td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
                                                 <button @click="modal = 'guest'; currentItem = {{ Js::from($item) }}"
                                                     title="Edit" class="btn-icon"><i
-                                                        class="fa-solid fa-pen-to-square"></i></button>
+                                                        class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>
                                                 <form id="del-pgst-{{ $item->id }}" method="POST"
                                                     action="{{ route('proposals.guests.destroy', $item) }}">
                                                     @csrf @method('DELETE')
                                                     <button type="button" title="Hapus" class="btn-icon"
                                                         onclick="confirmDelete('del-pgst-{{ $item->id }}', '{{ addslashes($item->name) }}')"><i
-                                                            class="fa-solid fa-trash"></i></button>
+                                                            class="fa-solid fa-trash" aria-hidden="true"></i></button>
                                                 </form>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center py-10 text-[#B6ADA3] text-sm">Belum ada tamu
+                                        <td colspan="5" class="text-center py-10 text-[#5F6F5B] text-sm">Belum ada tamu
                                             lamaran.</td>
                                     </tr>
                                 @endforelse
@@ -401,43 +398,43 @@
 
                 {{-- ============ VENDOR ============ --}}
                 <div x-show="tab === 'vendors'" x-cloak>
-                    <p class="text-xs text-[#B6ADA3] mb-4">Vendor yang ditandai dipakai untuk acara lamaran. Sisanya tetap
+                    <p class="text-xs text-[#5F6F5B] mb-4">Vendor yang ditandai dipakai untuk acara lamaran. Sisanya tetap
                         tersedia di modul Vendor umum.</p>
 
                     <div class="grid md:grid-cols-2 gap-5">
                         <div>
-                            <h3 class="text-xs font-bold text-[#5F6F5B] mb-2 uppercase tracking-wider">Vendor Lamaran
-                                ({{ $lamaranVendors->count() }})</h3>
+                            <h2 class="text-xs font-bold text-[#5F6F5B] mb-2 uppercase tracking-wider">Vendor Lamaran
+                                ({{ $lamaranVendors->count() }})</h2>
                             <div class="space-y-2">
                                 @forelse ($lamaranVendors as $vendor)
                                     <div class="flex items-center justify-between bg-[#5F6F5B]/5 rounded-xl px-3 py-2.5">
                                         <div>
                                             <div class="text-sm font-medium text-[#5F6F5B]">{{ $vendor->name }}</div>
-                                            <div class="text-[10px] text-[#B6ADA3]">{{ $vendor->category }} ·
+                                            <div class="text-[10px] text-[#5F6F5B]">{{ $vendor->category }} ·
                                                 {{ $vendor->booking_status }}</div>
                                         </div>
                                         <form method="POST" action="{{ route('proposals.vendors.toggle', $vendor) }}">
                                             @csrf
                                             <button
-                                                class="text-[10px] text-[#C2757F] hover:underline cursor-pointer">Lepas</button>
+                                                class="text-[10px] text-[#8B3A47] hover:underline cursor-pointer">Lepas</button>
                                         </form>
                                     </div>
                                 @empty
-                                    <div class="text-xs text-[#B6ADA3] py-4">Belum ada vendor lamaran.</div>
+                                    <div class="text-xs text-[#5F6F5B] py-4">Belum ada vendor lamaran.</div>
                                 @endforelse
                             </div>
                         </div>
 
                         <div>
-                            <h3 class="text-xs font-bold text-[#5F6F5B] mb-2 uppercase tracking-wider">Kandidat Vendor
-                                ({{ $otherVendors->count() }})</h3>
+                            <h2 class="text-xs font-bold text-[#5F6F5B] mb-2 uppercase tracking-wider">Kandidat Vendor
+                                ({{ $otherVendors->count() }})</h2>
                             <div class="space-y-2">
                                 @forelse ($otherVendors as $vendor)
                                     <div
                                         class="flex items-center justify-between bg-white border border-[#B6ADA3]/25 rounded-xl px-3 py-2.5">
                                         <div>
                                             <div class="text-sm font-medium text-[#5F6F5B]">{{ $vendor->name }}</div>
-                                            <div class="text-[10px] text-[#B6ADA3]">{{ $vendor->category }} ·
+                                            <div class="text-[10px] text-[#5F6F5B]">{{ $vendor->category }} ·
                                                 {{ $vendor->booking_status }}</div>
                                         </div>
                                         <form method="POST" action="{{ route('proposals.vendors.toggle', $vendor) }}">
@@ -447,7 +444,7 @@
                                         </form>
                                     </div>
                                 @empty
-                                    <div class="text-xs text-[#B6ADA3] py-4">Semua vendor sudah dipakai untuk lamaran.
+                                    <div class="text-xs text-[#5F6F5B] py-4">Semua vendor sudah dipakai untuk lamaran.
                                     </div>
                                 @endforelse
                             </div>
@@ -460,15 +457,15 @@
 
         {{-- ================= MODAL: CHECKLIST ================= --}}
         <div x-show="modal === 'checklist'" x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-[#5F6F5B]/40 backdrop-blur-md p-4"
             @keydown.escape.window="modal = null">
             <div x-outside="modal = null"
-                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4 text-[#5F6F5B]">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
-                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
-                        x-text="currentItem?.id ? 'Edit Item Checklist' : 'Tambah Item Checklist'"></h3>
-                    <button @click="modal = null" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                            class="fa-solid fa-xmark"></i></button>
+                    <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
+                        x-text="currentItem?.id ? 'Edit Item Checklist' : 'Tambah Item Checklist'"></h2>
+                    <button @click="modal = null" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal"><i
+                            class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <form
                     :action="currentItem?.id ? '{{ route('proposals.checklists.update', 0) }}'.replace(/\/0$/, '/' + currentItem
@@ -477,15 +474,15 @@
                     @csrf
                     <template x-if="currentItem?.id"><input type="hidden" name="_method" value="PUT"></template>
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Judul Checklist *</label>
-                        <input type="text" name="title" x-model="currentItem.title" required
+                        <label for="m_chk_title" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Judul Checklist *</label>
+                        <input id="m_chk_title" type="text" name="title" x-model="currentItem.title" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"
-                            placeholder="Misal: Booking Catering">
+                            placeholder="Misal: Booking Catering" aria-label="Judul Checklist">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori *</label>
-                            <select name="category" x-model="currentItem.category" required
+                            <label for="m_chk_category" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori *</label>
+                            <select id="m_chk_category" name="category" x-model="currentItem.category" required aria-label="Kategori"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 <option value="">-- Pilih Kategori --</option>
                                 @foreach (\App\Models\DropdownOption::getOptions('checklist_category') as $opt)
@@ -494,8 +491,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Prioritas *</label>
-                            <select name="priority" x-model="currentItem.priority" required
+                            <label for="m_chk_priority" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Prioritas *</label>
+                            <select id="m_chk_priority" name="priority" x-model="currentItem.priority" required aria-label="Prioritas"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 @foreach (\App\Models\DropdownOption::getOptions('checklist_priority') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
@@ -505,14 +502,14 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tenggat Waktu</label>
-                            <input type="text" name="deadline" x-model="currentItem.deadline"
-                                placeholder="DD-MM-YYYY"
+                            <label for="m_chk_deadline" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tenggat Waktu</label>
+                            <input id="m_chk_deadline" type="text" name="deadline" x-model="currentItem.deadline"
+                                placeholder="DD-MM-YYYY" aria-label="Tenggat Waktu"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status *</label>
-                            <select name="status" x-model="currentItem.status" required
+                            <label for="m_chk_status" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status *</label>
+                            <select id="m_chk_status" name="status" x-model="currentItem.status" required aria-label="Status"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 @foreach (\App\Models\DropdownOption::getOptions('checklist_status') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
@@ -521,13 +518,13 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Deskripsi / Catatan</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="3"
+                        <label for="m_chk_notes" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Deskripsi / Catatan</label>
+                        <textarea id="m_chk_notes" name="notes" x-model="currentItem.notes" rows="3" aria-label="Deskripsi atau Catatan"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modal = null"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             Checklist</button>
                     </div>
@@ -537,15 +534,15 @@
 
         {{-- ================= MODAL: BUDGET ================= --}}
         <div x-show="modal === 'budget'" x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-[#5F6F5B]/40 backdrop-blur-md p-4"
             @keydown.escape.window="modal = null">
             <div x-outside="modal = null"
-                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4 text-[#5F6F5B]">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
-                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
-                        x-text="currentItem?.id ? 'Edit Item Anggaran' : 'Tambah Item Anggaran'"></h3>
-                    <button @click="modal = null" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                            class="fa-solid fa-xmark"></i></button>
+                    <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
+                        x-text="currentItem?.id ? 'Edit Item Anggaran' : 'Tambah Item Anggaran'"></h2>
+                    <button @click="modal = null" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal"><i
+                            class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <form
                     :action="currentItem?.id ? '{{ route('proposals.budgets.update', 0) }}'.replace(/\/0$/, '/' + currentItem
@@ -556,8 +553,8 @@
                     <input type="hidden" name="vendor_id" x-model="currentItem.vendor_id">
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori Budget *</label>
-                        <select name="category" x-model="currentItem.category" @change="selectedVendorId = ''" required
+                        <label for="m_bud_category" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori Budget *</label>
+                        <select id="m_bud_category" name="category" x-model="currentItem.category" @change="selectedVendorId = ''" required aria-label="Kategori Budget"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             <option value="">-- Pilih Kategori --</option>
                             @foreach (\App\Models\DropdownOption::getOptions('checklist_category') as $opt)
@@ -567,8 +564,8 @@
                     </div>
 
                     <div x-show="availableVendors.length > 0" x-cloak>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Pilih Vendor Terkait</label>
-                        <select x-model="selectedVendorId" @change="fillFromVendor()"
+                        <label for="m_bud_vendor" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Pilih Vendor Terkait</label>
+                        <select id="m_bud_vendor" x-model="selectedVendorId" @change="fillFromVendor()" aria-label="Pilih Vendor Terkait"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             <option value="">-- Pilih Vendor --</option>
                             <template x-for="v in availableVendors" :key="v.id">
@@ -578,22 +575,22 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Item / Pengeluaran *</label>
-                        <input type="text" name="item_name" x-model="currentItem.item_name" required
+                        <label for="m_bud_item_name" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Item / Pengeluaran *</label>
+                        <input id="m_bud_item_name" type="text" name="item_name" x-model="currentItem.item_name" required aria-label="Nama Item atau Pengeluaran"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Planned Budget (Rp) *</label>
-                            <input type="text" name="planned_budget" inputmode="numeric" required
+                            <label for="m_bud_planned" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Planned Budget (Rp) *</label>
+                            <input id="m_bud_planned" type="text" name="planned_budget" inputmode="numeric" required aria-label="Planned Budget"
                                 :value="wpMoney(currentItem.planned_budget)"
                                 @input="currentItem.planned_budget = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Actual Cost (Rp) *</label>
-                            <input type="text" name="actual_cost" inputmode="numeric" required
+                            <label for="m_bud_actual" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Actual Cost (Rp) *</label>
+                            <input id="m_bud_actual" type="text" name="actual_cost" inputmode="numeric" required aria-label="Actual Cost"
                                 :value="wpMoney(currentItem.actual_cost)"
                                 @input="currentItem.actual_cost = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
@@ -601,14 +598,14 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan / Invoice Link</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="2"
+                        <label for="m_bud_notes" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan / Invoice Link</label>
+                        <textarea id="m_bud_notes" name="notes" x-model="currentItem.notes" rows="2" aria-label="Catatan atau Invoice Link"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
 
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modal = null"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             Anggaran</button>
                     </div>
@@ -618,14 +615,14 @@
 
         {{-- ================= MODAL: TAMU ================= --}}
         <div x-show="modal === 'guest'" x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-[#5F6F5B]/40 backdrop-blur-md p-4"
             @keydown.escape.window="modal = null">
             <div x-outside="modal = null"
-                class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                class="bg-white rounded-2xl border border-[#B6ADA3]/40 shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto text-[#5F6F5B]">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
-                    <h3 class="font-bold text-[#5F6F5B]" x-text="currentItem?.id ? 'Edit Tamu' : 'Tambah Tamu'"></h3>
-                    <button @click="modal = null" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                            class="fa-solid fa-xmark"></i></button>
+                    <h2 class="font-bold text-[#5F6F5B]" x-text="currentItem?.id ? 'Edit Tamu' : 'Tambah Tamu'"></h2>
+                    <button @click="modal = null" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal"><i
+                            class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <form
                     :action="currentItem?.id ? '{{ route('proposals.guests.update', 0) }}'.replace(/\/0$/, '/' + currentItem.id) : '{{ route('proposals.guests.store') }}'"
@@ -634,8 +631,8 @@
                     <template x-if="currentItem?.id"><input type="hidden" name="_method" value="PUT"></template>
                     <div class="grid grid-cols-[130px_1fr] gap-3">
                         <div>
-                            <label class="form-label">Gelar</label>
-                            <select name="title" x-model="currentItem.title" class="form-input">
+                            <label for="m_gst_title" class="form-label">Gelar</label>
+                            <select id="m_gst_title" name="title" x-model="currentItem.title" class="form-input" aria-label="Gelar">
                                 <option value="">-- Gelar --</option>
                                 @foreach (\App\Models\DropdownOption::getOptions('guest_title') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
@@ -643,19 +640,19 @@
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">Nama <span class="text-[#C2757F]">*</span></label>
-                            <input type="text" name="name" x-model="currentItem.name" required class="form-input">
+                            <label for="m_gst_name" class="form-label">Nama <span class="text-[#8B3A47]">*</span></label>
+                            <input id="m_gst_name" type="text" name="name" x-model="currentItem.name" required class="form-input" aria-label="Nama">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="form-label">Hubungan</label>
-                            <input type="text" name="relation" x-model="currentItem.relation"
-                                placeholder="mis. Keluarga pasangan dekat" class="form-input">
+                            <label for="m_gst_relation" class="form-label">Hubungan</label>
+                            <input id="m_gst_relation" type="text" name="relation" x-model="currentItem.relation"
+                                placeholder="mis. Keluarga pasangan dekat" class="form-input" aria-label="Hubungan">
                         </div>
                         <div>
-                            <label class="form-label">Kategori</label>
-                            <select name="category" x-model="currentItem.category" class="form-input">
+                            <label for="m_gst_category" class="form-label">Kategori</label>
+                            <select id="m_gst_category" name="category" x-model="currentItem.category" class="form-input" aria-label="Kategori">
                                 <option value="">-- Pilih Kategori --</option>
                                 @foreach (\App\Models\DropdownOption::getOptions('guest_category') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
@@ -663,18 +660,18 @@
                             </select>
                         </div>
                         <div class="col-span-2">
-                            <label class="form-label">Kehadiran</label>
-                            <select name="attendance_status" x-model="currentItem.attendance_status" class="form-input">
+                            <label for="m_gst_attendance" class="form-label">Kehadiran</label>
+                            <select id="m_gst_attendance" name="attendance_status" x-model="currentItem.attendance_status" class="form-input" aria-label="Kehadiran">
                                 @foreach (\App\Models\DropdownOption::getOptions('guest_status') as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
-                    <div class="flex justify-end gap-2 pt-2">
+                    <div class="flex justify-end gap-2 pt-2 border-t border-[#B6ADA3]/25">
                         <button type="button" @click="modal = null"
-                            class="px-4 py-2 rounded-xl text-sm bg-[#B6ADA3]/15 text-[#5F6F5B] cursor-pointer">Batal</button>
-                        <button class="btn-primary-rose px-5 py-2 rounded-xl text-sm cursor-pointer">Simpan</button>
+                            class="px-4 py-2 rounded-xl text-xs text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer">Batal</button>
+                        <button class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -703,14 +700,14 @@
                 const d = await res.json();
 
                 btn.querySelector('[data-icon]').innerHTML = d.status === 'Done' ?
-                    '<i class="fa-solid fa-circle-check text-[#5F6F5B] text-lg"></i>' :
-                    '<i class="fa-regular fa-circle text-[#B6ADA3] text-lg hover:text-[#5F6F5B]"></i>';
+                    '<i class="fa-solid fa-circle-check text-[#5F6F5B] text-lg" aria-hidden="true"></i>' :
+                    '<i class="fa-regular fa-circle text-[#5F6F5B] text-lg hover:text-[#8B3A47]" aria-hidden="true"></i>';
 
                 const row = btn.closest('tr');
                 const title = row ? row.querySelector('[data-title]') : null;
                 if (title) {
                     title.classList.toggle('line-through', d.status === 'Done');
-                    title.classList.toggle('text-[#B6ADA3]', d.status === 'Done');
+                    title.classList.toggle('opacity-70', d.status === 'Done');
                 }
 
                 const set = (id, v) => {
@@ -723,7 +720,7 @@
                 const wrap = document.getElementById('pcnt-overdue-wrap');
                 if (wrap) {
                     wrap.innerHTML = d.overdueCount > 0 ?
-                        `<span class="text-[#C2757F] font-semibold">${d.overdueCount} item melewati deadline</span>` :
+                        `<span class="text-[#8B3A47] font-semibold">${d.overdueCount} item melewati deadline</span>` :
                         'Semua item dalam jadwal.';
                 }
             } catch (e) {

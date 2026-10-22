@@ -229,8 +229,8 @@
             <div x-outside="modalOpen = false"
                 class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
-                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
-                        x-text="editMode ? 'Edit Item Checklist' : 'Tambah Item Checklist'"></h3>
+                    <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
+                        x-text="editMode ? 'Edit Item Checklist' : 'Tambah Item Checklist'"></h2>
                     <button @click="modalOpen = false" aria-label="Tutup modal" class="text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer"><i
                             class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>

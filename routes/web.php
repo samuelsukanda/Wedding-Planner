@@ -31,6 +31,8 @@ use App\Http\Controllers\UpgradeController;
 use App\Http\Controllers\AdminUpgradeController;
 use App\Http\Controllers\ProSettingsController;
 use App\Http\Controllers\SocialMediaController;
+use App\Http\Controllers\PhotoboothController;
+use App\Http\Controllers\AdminPhotoboothController;
 
 Route::get('robots.txt', fn () => response(file_get_contents(public_path('robots.txt')), 200, ['Content-Type' => 'text/plain']))
     ->name('seo.robots');
@@ -130,6 +132,18 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     // seperti EnsurePlan.
     Route::resource('moodboards', MoodboardController::class)->except(['create', 'edit', 'show']);
 
+    // Module kreatif - Photobooth. Add-on berdiri sendiri: bukan bagian dari
+    // paket Pro, tapi dibeli terpisah lewat bukti transfer. Jadi tidak memakai
+    // middleware plan:, gate-nya ada di controller (halaman pembelian).
+    Route::get('photobooth', [PhotoboothController::class, 'index'])->name('photobooth.index');
+    Route::post('photobooth/purchase', [PhotoboothController::class, 'purchase'])->name('photobooth.purchase');
+    Route::put('photobooth', [PhotoboothController::class, 'update'])->name('photobooth.update');
+    Route::post('photobooth/activate', [PhotoboothController::class, 'activate'])->name('photobooth.activate');
+    Route::put('photobooth/settings', [PhotoboothController::class, 'settings'])->name('photobooth.settings');
+    Route::post('photobooth/banner', [PhotoboothController::class, 'banner'])->name('photobooth.banner');
+    Route::delete('photobooth/photos/{photo}', [PhotoboothController::class, 'deletePhoto'])->name('photobooth.photos.destroy');
+    Route::get('photobooth/photos/export', [PhotoboothController::class, 'export'])->name('photobooth.photos.export');
+
     // Module 7 - Event Rundown
     Route::resource('rundowns', RundownController::class)->except(['create', 'edit', 'show']);
 
@@ -227,6 +241,10 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
 
         Route::get('admin/pro-settings', [ProSettingsController::class, 'edit'])->name('admin.pro-settings.index');
         Route::put('admin/pro-settings', [ProSettingsController::class, 'update'])->name('admin.pro-settings.update');
+
+        // Add-on Photobooth: harga pembelian & batas jumlah foto per event.
+        Route::get('admin/photobooth-settings', [AdminPhotoboothController::class, 'edit'])->name('admin.photobooth-settings.index');
+        Route::put('admin/photobooth-settings', [AdminPhotoboothController::class, 'update'])->name('admin.photobooth-settings.update');
 
         // Kontak sosial "Hubungi Kami" (kartu di halaman Profile).
         Route::get('admin/social-media', [SocialMediaController::class, 'edit'])->name('admin.social-media.index');

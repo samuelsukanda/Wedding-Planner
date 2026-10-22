@@ -447,13 +447,13 @@
         <div class="flex items-center gap-3">
             @if ($isSuper ?? false)
                 <button @click="sidebarOpen = true"
-                    class="text-[#5F6F5B] hover:text-[#5F6F5B] p-2 rounded-xl border border-[#B6ADA3]/30 bg-white cursor-pointer"
+                    class="text-[#5F6F5B] hover:text-[#2D372E] p-2 rounded-xl border border-[#B6ADA3]/30 bg-white cursor-pointer"
                     aria-label="Buka Menu Navigation">
-                    <i class="fa-solid fa-bars text-lg"></i>
+                    <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
                 </button>
             @endif
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-                <i class="fa-solid fa-heart text-[#D8A7B1] text-lg"></i>
+                <i class="fa-solid fa-heart text-[#8B3A47] text-lg" aria-hidden="true"></i>
                 <span class="font-serif-title font-bold text-lg text-[#5F6F5B]">{{ $brandName ?? 'Nupsera' }}</span>
             </a>
         </div>
@@ -461,8 +461,8 @@
         <!-- Mobile Days Badge -->
         @unless ($isSuper ?? false)
             <div
-                class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D8A7B1]/20 text-[#5F6F5B] text-xs font-semibold border border-[#D8A7B1]/40">
-                <i class="fa-solid fa-calendar-days text-[#D8A7B1]" style="color: #D8A7B1 !important;"></i>
+                class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FCE8EC] text-[#8B3A47] text-xs font-semibold border border-[#D8A7B1]/60">
+                <i class="fa-solid fa-calendar-days text-[#8B3A47]" aria-hidden="true"></i>
                 <span>{{ $daysLeft ?? 0 }} Hari</span>
             </div>
         @endunless
@@ -572,6 +572,12 @@
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('moodboards.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
                     <i class="fa-solid fa-palette w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Moodboard</span>
+                </a>
+
+                <a href="{{ route('photobooth.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('photobooth.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-camera-retro w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
+                    <span>Photobooth</span>
                 </a>
 
                 <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B]">
@@ -719,10 +725,10 @@
                 <div class="mobile-sheet-grabber"></div>
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="font-serif-title text-lg font-bold text-[#5F6F5B]"
-                        x-text="sheet === 'planning' ? 'Planning' : (sheet === 'finance' ? 'Keuangan' : 'Saya')"></h2>
+                        x-text="sheet === 'planning' ? 'Planning' : (sheet === 'finance' ? 'Keuangan' : (sheet === 'creative' ? 'Kreatif' : 'Saya'))"></h2>
                     <button type="button" @click="sheet = null" aria-label="Tutup menu"
-                        class="w-9 h-9 rounded-full text-[#B6ADA3] hover:bg-[#FAF7F2] cursor-pointer">
-                        <i class="fa-solid fa-xmark"></i>
+                        class="w-9 h-9 rounded-full text-[#5F6F5B] hover:bg-[#FAF7F2] cursor-pointer flex items-center justify-center">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                     </button>
                 </div>
 
@@ -816,6 +822,22 @@
                                 'subtitle' => 'Daftar hadiah',
                             ],
                         ];
+                        $mobileCreative = [
+                            [
+                                'route' => 'moodboards.index',
+                                'match' => 'moodboards.*',
+                                'icon' => 'fa-palette',
+                                'title' => 'Moodboard',
+                                'subtitle' => 'Inspirasi visual pernikahan',
+                            ],
+                            [
+                                'route' => 'photobooth.index',
+                                'match' => 'photobooth.*',
+                                'icon' => 'fa-camera-retro',
+                                'title' => 'Photobooth',
+                                'subtitle' => 'QR & galeri foto tamu',
+                            ],
+                        ];
                         $mobileMe = [
                             [
                                 'route' => 'reports.index',
@@ -834,7 +856,7 @@
                         ];
                     @endphp
 
-                    @foreach (['planning' => $mobilePlanning, 'finance' => $mobileFinance, 'me' => $mobileMe] as $group => $items)
+                    @foreach (['planning' => $mobilePlanning, 'creative' => $mobileCreative, 'finance' => $mobileFinance, 'me' => $mobileMe] as $group => $items)
                         <template x-if="sheet === '{{ $group }}'">
                             <div class="space-y-1.5">
                                 @foreach ($items as $item)
@@ -864,10 +886,10 @@
                     class="mobile-tab {{ request()->routeIs('checklists.*', 'vendors.*', 'vendor-directory.*', 'guests.*', 'rundowns.*', 'proposals.*', 'souvenirs.*', 'documents.*') ? 'mobile-tab-active' : '' }}">
                     <i class="fa-solid fa-list-check" aria-hidden="true"></i><span>Planning</span><b></b>
                 </button>
-                <a href="{{ route('moodboards.index') }}"
-                    class="mobile-tab {{ request()->routeIs('moodboards.*') ? 'mobile-tab-active' : '' }}">
+                <button type="button" @click="sheet = sheet === 'creative' ? null : 'creative'"
+                    class="mobile-tab">
                     <i class="fa-solid fa-palette" aria-hidden="true"></i><span>Kreatif</span><b></b>
-                </a>
+                </button>
                 <button type="button" @click="sheet = sheet === 'finance' ? null : 'finance'"
                     class="mobile-tab {{ request()->routeIs('budgets.*', 'contracts.*', 'payments.*', 'savings.*', 'gifts.*') ? 'mobile-tab-active' : '' }}">
                     <i class="fa-solid fa-wallet" aria-hidden="true"></i><span>Keuangan</span><b></b>

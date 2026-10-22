@@ -30,61 +30,61 @@
         }
     })">
         <!-- Top Bar -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-[#5F6F5B]">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Guest Management</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Atur daftar tamu undangan, konfirmasi kehadiran, dan kebutuhan tamu
+                <p class="text-xs text-[#5F6F5B] mt-1">Atur daftar tamu undangan, konfirmasi kehadiran, dan kebutuhan tamu
                     dengan mudah.</p>
             </div>
             <div class="w-full md:w-auto md:flex md:items-center md:gap-2">
                 <div class="grid grid-cols-3 gap-2">
                     <a href="{{ route('guests.wa-all') }}"
                         class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-green-50 border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold">
-                        <i class="fa-brands fa-whatsapp text-green-600"></i> Kirim WA
+                        <i class="fa-brands fa-whatsapp text-green-600" aria-hidden="true"></i> Kirim WA
                     </a>
                     <a href="{{ route('guests.labels') }}" data-turbo="false"
                         class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold">
-                        <i class="fa-solid fa-tag text-[#D8A7B1]"></i> Label
+                        <i class="fa-solid fa-tag text-[#8B3A47]" aria-hidden="true"></i> Label
                     </a>
                     <a href="{{ route('guests.export') }}" data-turbo="false"
                         class="px-3 py-2.5 rounded-xl bg-white text-[#5F6F5B] hover:bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs flex items-center justify-center gap-1.5 shadow-xs font-semibold">
-                        <i class="fa-solid fa-file-excel text-[#D8A7B1]"></i> Excel
+                        <i class="fa-solid fa-file-excel text-[#2E4B33]" aria-hidden="true"></i> Excel
                     </a>
                 </div>
                 <button @click="modalOpen = true; editMode = false; currentItem = {}"
                     class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto mt-2 md:mt-0">
-                    <i class="fa-solid fa-plus"></i> Tambah Tamu
+                    <i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah Tamu
                 </button>
             </div>
         </div>
 
         <!-- Summary Widgets -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
+            <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs text-[#5F6F5B]">
                 <div class="text-xs text-[#5F6F5B]">Total Undangan</div>
                 <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $totalGuests }}</div>
                 <div class="text-xs text-[#5F6F5B] mt-1 font-semibold">{{ $totalPax }} Pax Total</div>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
+            <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs text-[#5F6F5B]">
                 <div class="text-xs text-[#5F6F5B]">Konfirmasi Hadir</div>
                 <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $attendCount }}</div>
-                <div class="text-xs text-[#A3B7A6] mt-1 font-semibold">RSVP Hadir</div>
+                <div class="text-xs text-[#2E4B33] mt-1 font-semibold">RSVP Hadir</div>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
+            <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs text-[#5F6F5B]">
                 <div class="text-xs text-[#5F6F5B]">Menunggu Konfirmasi</div>
                 <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $pendingCount }}</div>
-                <div class="text-xs text-[#D8A7B1] mt-1 font-semibold">Pending</div>
+                <div class="text-xs text-[#8B3A47] mt-1 font-semibold">Pending</div>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs">
+            <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs text-[#5F6F5B]">
                 <div class="text-xs text-[#5F6F5B]">Berhalangan</div>
                 <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">{{ $declineCount }}</div>
-                <div class="text-xs text-[#5F6F5B]/80 mt-1 font-semibold">Decline</div>
+                <div class="text-xs text-[#5F6F5B] mt-1 font-semibold">Decline</div>
             </div>
         </div>
 
         <!-- Search & Filter Bar -->
         <div
-            class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
+            class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between text-[#5F6F5B]">
             <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
                 <input type="text" x-model="filters.search" placeholder="Cari nama tamu..."
                     aria-label="Cari nama tamu"
@@ -111,16 +111,16 @@
                 </div>
             </div>
             <div class="flex items-center gap-3 shrink-0">
-                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#B6ADA3] whitespace-nowrap">
+                <span x-show="hasActiveFilter()" x-cloak class="text-xs text-[#5F6F5B] whitespace-nowrap">
                     <span x-text="visibleCount()"></span>/<span x-text="rows.length"></span> tamu
                 </span>
                 <button x-show="hasActiveFilter()" x-cloak @click="reset()" type="button"
-                    class="text-xs text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline cursor-pointer whitespace-nowrap">Reset</button>
+                    class="text-xs text-[#5F6F5B] hover:text-[#8B3A47] font-semibold hover:underline cursor-pointer whitespace-nowrap">Reset</button>
             </div>
         </div>
 
         <!-- Guest List Table -->
-        <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden">
+        <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden text-[#5F6F5B]">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -150,9 +150,9 @@
                                 <td class="p-4">
                                     <span
                                         class="px-2.5 py-1 rounded-full text-xs font-semibold 
-                                    @if ($g->attendance_status == 'Attend') bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40
+                                    @if ($g->attendance_status == 'Attend') bg-[#EBF2EC] text-[#2E4B33] border border-[#A3B7A6]/60
                                     @elseif($g->attendance_status == 'Pending') bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/40
-                                    @else bg-[#D8A7B1]/25 text-[#5F6F5B] border border-[#D8A7B1]/40 @endif">
+                                    @else bg-[#FCE8EC] text-[#8B3A47] border border-[#D8A7B1]/60 @endif">
                                         {{ $g->attendance_status }}
                                     </span>
                                 </td>
@@ -161,48 +161,48 @@
                                     @if ($g->phone)
                                         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $g->phone) }}"
                                             target="_blank"
-                                            class="inline-flex items-center gap-1 text-[#5F6F5B] hover:text-[#5F6F5B] font-semibold hover:underline">
-                                            <i class="fa-brands fa-whatsapp text-[#D8A7B1]"></i> {{ $g->phone }}
+                                            class="inline-flex items-center gap-1 text-[#5F6F5B] hover:text-[#8B3A47] font-semibold hover:underline">
+                                            <i class="fa-brands fa-whatsapp text-green-600" aria-hidden="true"></i> {{ $g->phone }}
                                         </a>
                                         <span
                                             class="ml-1.5 inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold
-                                        @if ($g->wa_sent) bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40
-                                        @else bg-[#FAF7F2] text-[#B6ADA3] border border-[#B6ADA3]/40 @endif">
+                                        @if ($g->wa_sent) bg-[#EBF2EC] text-[#2E4B33] border border-[#A3B7A6]/60
+                                        @else bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/40 @endif">
                                             {{ $g->wa_sent ? 'WA Terkirim' : 'Belum' }}
                                         </span>
                                     @else
                                         —
                                     @endif
                                 </td>
-                                <td class="p-4 text-xs text-[#5F6F5B]/80 max-w-xs truncate">{{ $g->address ?? '—' }}</td>
+                                <td class="p-4 text-xs text-[#5F6F5B] max-w-xs truncate">{{ $g->address ?? '—' }}</td>
                                 <td class="p-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($g) }}"
                                             title="Edit" class="btn-icon"><i
-                                                class="fa-solid fa-pen-to-square"></i></button>
+                                                class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>
                                         <form id="del-guest-{{ $g->id }}"
                                             action="{{ route('guests.destroy', $g->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
                                                 onclick="confirmDelete('del-guest-{{ $g->id }}', '{{ addslashes($g->name) }}')"
-                                                class="btn-icon"><i class="fa-solid fa-trash"></i></button>
+                                                class="btn-icon"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                    <i class="fa-solid fa-users text-[#B6ADA3] text-2xl mb-3"></i>
+                                <td colspan="7" class="text-center py-10 text-[#5F6F5B] text-sm">
+                                    <i class="fa-solid fa-users text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
                                     <div>Belum ada data tamu.</div>
                                 </td>
                             </tr>
                         @endforelse
                         <tr x-show="hasActiveFilter() && visibleCount() === 0" x-cloak>
-                            <td colspan="7" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                <i class="fa-solid fa-users text-[#B6ADA3] text-2xl mb-3"></i>
+                            <td colspan="7" class="text-center py-10 text-[#5F6F5B] text-sm">
+                                <i class="fa-solid fa-users text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
                                 <div>Tidak ada tamu yang cocok dengan filter.</div>
                             </td>
                         </tr>
@@ -215,12 +215,12 @@
         <div x-show="modalOpen" x-transition.opacity
             class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div x-outside="modalOpen = false"
-                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4 text-[#5F6F5B]">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
-                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
-                        x-text="editMode ? 'Edit Data Tamu' : 'Tambah Tamu Undangan'"></h3>
-                    <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                            class="fa-solid fa-xmark"></i></button>
+                    <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
+                        x-text="editMode ? 'Edit Data Tamu' : 'Tambah Tamu Undangan'"></h2>
+                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal"><i
+                            class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <form :action="editMode ? '/guests/' + currentItem.id : '{{ route('guests.store') }}'" method="POST"
                     class="space-y-4">
@@ -231,6 +231,7 @@
                             *</label>
                         <div class="flex gap-2">
                             <select name="title" x-model="currentItem.title"
+                                aria-label="Gelar tamu"
                                 class="w-36 shrink-0 bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 <option value="">-- Gelar --</option>
                                 <template x-for="t in titles" :key="t">
@@ -238,6 +239,8 @@
                                 </template>
                             </select>
                             <input type="text" name="name" x-model="currentItem.name" required
+                                placeholder="Nama Tamu"
+                                aria-label="Nama tamu"
                                 class="flex-1 bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>
@@ -245,6 +248,7 @@
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori *</label>
                             <select name="category" x-model="currentItem.category" @change="autoFillPax()" required
+                                aria-label="Kategori tamu"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 <option value="">-- Pilih Kategori --</option>
                                 @foreach ($categories as $cat)
@@ -255,6 +259,7 @@
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status Kehadiran *</label>
                             <select name="attendance_status" x-model="currentItem.attendance_status" required
+                                aria-label="Status kehadiran"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 @foreach ($statuses as $st)
                                     <option value="{{ $st }}">{{ $st }}</option>
@@ -267,12 +272,15 @@
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Telepon / WA</label>
                             <input type="text" name="phone" inputmode="numeric" :value="wpPhone(currentItem.phone)"
                                 @input="currentItem.phone = wpDigits($event.target.value); wpClamp($event.target, wpPhone)"
+                                placeholder="08xxxxxxxxxx"
+                                aria-label="Nomor telepon atau WhatsApp"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Jumlah Pax *</label>
                             <input type="number" name="guest_count" :value="currentItem.guest_count" required
                                 min="1" max="999"
+                                aria-label="Jumlah pax"
                                 @input="currentItem.guest_count = wpCap($event.target, 999)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
@@ -280,11 +288,13 @@
                     <div>
                         <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Alamat / Kota</label>
                         <textarea name="address" x-model="currentItem.address" rows="2"
+                            placeholder="Alamat atau kota asal"
+                            aria-label="Alamat atau kota"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modalOpen = false"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             Tamu</button>
                     </div>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 
 class Wedding extends Model
 {
@@ -18,11 +19,15 @@ class Wedding extends Model
         'notes',
         'wa_template',
         'plan',
+        'photobooth_event_slug',
+        'photobooth_api_key',
+        'photobooth_active',
     ];
 
     protected $casts = [
         'wedding_date' => 'date',
         'total_budget' => 'decimal:2',
+        'photobooth_active' => 'boolean',
     ];
 
     /**
@@ -89,6 +94,24 @@ class Wedding extends Model
 
         // Fitur tidak terdaftar di config = fitur gratis.
         return $required === null || $this->plan === $required;
+    }
+
+    public function photoboothApiKey(): ?string
+    {
+        if (! $this->photobooth_api_key) {
+            return null;
+        }
+
+        try {
+            return Crypt::decryptString($this->photobooth_api_key);
+        } catch (\Throwable) {
+            return $this->photobooth_api_key;
+        }
+    }
+
+    public function setPhotoboothApiKeyAttribute(?string $value): void
+    {
+        $this->attributes['photobooth_api_key'] = $value ? Crypt::encryptString($value) : null;
     }
 
     public function upgradeRequests()

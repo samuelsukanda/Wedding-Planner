@@ -379,18 +379,18 @@ body {
     .mobile-bottom-pill { position: absolute; left: 50%; bottom: calc(0.75rem + env(safe-area-inset-bottom)); transform: translateX(-50%); width: min(calc(100% - 1.5rem), 24rem); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; padding: 0.7rem 0.9rem; background: #fff; border-radius: 1.75rem; box-shadow: 0 12px 30px rgba(95, 111, 91, .18); pointer-events: auto; }
     .mobile-tab { position: relative; min-height: 2.75rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .2rem; color: #5F6F5B; font-size: .64rem; font-weight: 600; cursor: pointer; }
     .mobile-tab i { font-size: 1.2rem; line-height: 1; }
-    .mobile-tab b { position: absolute; bottom: -.25rem; width: 1.5rem; height: 3px; border-radius: 999px; background: #C2757F; opacity: 0; transform: scaleX(0); transition: opacity .3s, transform .3s; }
-    .mobile-tab-active { color: #C2757F; }
+    .mobile-tab b { position: absolute; bottom: -.25rem; width: 1.5rem; height: 3px; border-radius: 999px; background: #8B3A47; opacity: 0; transform: scaleX(0); transition: opacity .3s, transform .3s; }
+    .mobile-tab-active { color: #8B3A47; }
     .mobile-tab-active b { opacity: 1; transform: scaleX(1); }
     .mobile-nav-scrim { position: absolute; inset: 0; background: rgba(47, 55, 46, .45); pointer-events: auto; }
     .mobile-nav-sheet { position: absolute; left: 0; right: 0; bottom: 0; max-height: 78vh; padding: .65rem 1rem calc(5.75rem + env(safe-area-inset-bottom)); background: #fff; border-radius: 1.75rem 1.75rem 0 0; box-shadow: 0 -10px 30px rgba(95, 111, 91, .2); pointer-events: auto; }
     .mobile-sheet-grabber { width: 2.5rem; height: .25rem; margin: 0 auto .75rem; border-radius: 999px; background: #D8A7B1; }
     .mobile-sheet-item { display: flex; align-items: center; gap: .75rem; min-height: 3.55rem; padding: .5rem .65rem; border-radius: .85rem; color: #5F6F5B; }
     .mobile-sheet-item:active, .mobile-sheet-item-active { background: rgba(216, 167, 177, .2); border: 1px solid rgba(216, 167, 177, .4); }
-    .mobile-sheet-icon { width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 2rem; border-radius: .6rem; color: #C2757F; background: #FAF7F2; }
+    .mobile-sheet-icon { width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 2rem; border-radius: .6rem; color: #8B3A47; background: #FAF7F2; }
     .mobile-sheet-item strong, .mobile-sheet-item small { display: block; }
     .mobile-sheet-item strong { font-size: .78rem; }
-    .mobile-sheet-item small { margin-top: .1rem; color: rgba(95, 111, 91, .65); font-size: .64rem; }
+    .mobile-sheet-item small { margin-top: .1rem; color: #5F6F5B; font-size: .64rem; }
     .mobile-sheet-enter { animation: mobile-sheet-in .25s ease-out both; }
     .mobile-sheet-leave { animation: mobile-sheet-out .2s ease-in both; }
     @keyframes mobile-sheet-in { from { transform: translateY(100%); } to { transform: translateY(0); } }

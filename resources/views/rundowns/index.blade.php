@@ -18,15 +18,15 @@
             this.editMode = true;
         }
     }">
-        <div class="no-print flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
+        <div class="no-print flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-[#5F6F5B]">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Event Rundown</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Susun urutan acara dan jadwal kegiatan agar seluruh rangkaian
+                <p class="text-xs text-[#5F6F5B] mt-1">Susun urutan acara dan jadwal kegiatan agar seluruh rangkaian
                     pernikahan berjalan lancar.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
-                <i class="fa-solid fa-plus"></i> Tambah Susunan Acara
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah Susunan Acara
             </button>
         </div>
 
@@ -38,14 +38,14 @@
         </div>
 
         <!-- Timeline View -->
-        <div id="rundown-content" class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-6">
+        <div id="rundown-content" class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-6 text-[#5F6F5B]">
             <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-4">
-                <h3 class="font-bold text-[#5F6F5B] text-base sm:text-lg flex items-center gap-2">
-                    <i class="fa-solid fa-timeline text-[#D8A7B1]"></i> Rundown Acara
-                </h3>
+                <h2 class="font-bold text-[#5F6F5B] text-base sm:text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-timeline text-[#8B3A47]" aria-hidden="true"></i> Rundown Acara
+                </h2>
                 <button onclick="window.print()"
                     class="no-print text-xs px-3 py-1.5 rounded-lg bg-[#FAF7F2] text-[#5F6F5B] hover:bg-[#D8A7B1]/20 border border-[#B6ADA3]/40 font-medium cursor-pointer">
-                    <i class="fa-solid fa-print mr-1"></i> Cetak Rundown
+                    <i class="fa-solid fa-print mr-1" aria-hidden="true"></i> Cetak Rundown
                 </button>
             </div>
 
@@ -63,22 +63,22 @@
                         <div class="space-y-1">
                             <div class="flex items-center gap-3">
                                 <span
-                                    class="px-3 py-1 rounded-lg bg-[#D8A7B1]/20 text-[#5F6F5B] border border-[#D8A7B1]/40 text-xs font-bold font-mono">
-                                    <i class="fa-solid fa-clock text-[10px] mr-1"></i> {{ $rd->time }}
+                                    class="px-3 py-1 rounded-lg bg-[#FCE8EC] text-[#8B3A47] border border-[#D8A7B1]/60 text-xs font-bold font-mono">
+                                    <i class="fa-solid fa-clock text-[10px] mr-1" aria-hidden="true"></i> {{ $rd->time }}
                                 </span>
-                                <h4 class="font-bold text-[#5F6F5B] text-base leading-snug">{{ $rd->activity }}</h4>
+                                <h3 class="font-bold text-[#5F6F5B] text-base leading-snug">{{ $rd->activity }}</h3>
                             </div>
-                            <div class="flex flex-wrap items-center gap-4 text-xs text-[#5F6F5B]/80 pt-2">
-                                <span><i class="fa-solid fa-user-gear text-[#D8A7B1] mr-1"></i> PIC: <strong
+                            <div class="flex flex-wrap items-center gap-4 text-xs text-[#5F6F5B] pt-2">
+                                <span><i class="fa-solid fa-user-gear text-[#8B3A47] mr-1" aria-hidden="true"></i> PIC: <strong
                                         class="text-[#5F6F5B]">{{ $rd->pic }}</strong></span>
                                 @if ($rd->location)
-                                    <span><i class="fa-solid fa-location-dot text-[#D8A7B1] mr-1"></i>
+                                    <span><i class="fa-solid fa-location-dot text-[#8B3A47] mr-1" aria-hidden="true"></i>
                                         {{ $rd->location }}</span>
                                 @endif
                             </div>
                             @if ($rd->notes)
                                 <div
-                                    class="text-xs text-[#5F6F5B]/80 mt-2 bg-white p-2.5 rounded-xl border border-[#B6ADA3]/30 italic">
+                                    class="text-xs text-[#5F6F5B] mt-2 bg-white p-2.5 rounded-xl border border-[#B6ADA3]/30 italic">
                                     Catatan: {{ $rd->notes }}
                                 </div>
                             @endif
@@ -86,22 +86,22 @@
 
                         <div class="no-print flex items-center gap-2 self-end md:self-center">
                             <button @click="openEdit(JSON.parse($el.dataset.rundown))" data-rundown="{{ json_encode($rd) }}"
-                                title="Edit" class="btn-icon"><i class="fa-solid fa-pen-to-square"></i></button>
+                                title="Edit" class="btn-icon"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>
                             <form id="del-rundown-{{ $rd->id }}" action="{{ route('rundowns.destroy', $rd->id) }}"
                                 method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" title="Hapus"
                                     onclick="confirmDelete('del-rundown-{{ $rd->id }}', '{{ addslashes($rd->activity) }}')"
-                                    class="btn-icon"><i class="fa-solid fa-trash"></i></button>
+                                    class="btn-icon"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
                             </form>
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-10 text-[#B6ADA3] text-sm">
-                    <i class="fa-solid fa-timeline text-[#B6ADA3] text-2xl mb-3"></i>
-                    <div>Belum ada susunan acara yang dibuat.</div>
-                </div>
+                    <div class="text-center py-10 text-[#5F6F5B] text-sm">
+                        <i class="fa-solid fa-timeline text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
+                        <div>Belum ada susunan acara yang dibuat.</div>
+                    </div>
                 @endforelse
             </div>
         </div>
@@ -110,12 +110,12 @@
         <div x-show="modalOpen" x-transition.opacity
             class="no-print fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
             <div x-outside="modalOpen = false"
-                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
+                class="bg-white w-full max-w-lg p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4 text-[#5F6F5B]">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
-                    <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
-                        x-text="editMode ? 'Edit Susunan Acara' : 'Tambah Susunan Acara'"></h3>
-                    <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                            class="fa-solid fa-xmark"></i></button>
+                    <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
+                        x-text="editMode ? 'Edit Susunan Acara' : 'Tambah Susunan Acara'"></h2>
+                    <button @click="modalOpen = false" class="text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer" aria-label="Tutup modal"><i
+                            class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <form :action="editMode ? '/rundowns/' + currentItem.id : '{{ route('rundowns.store') }}'" method="POST"
                     class="space-y-4">
@@ -125,39 +125,49 @@
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Waktu Mulai *</label>
                             <input type="time" name="start_time" x-model="currentItem.start_time" required
+                                aria-label="Waktu mulai"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Waktu Selesai *</label>
                             <input type="time" name="end_time" x-model="currentItem.end_time" required
+                                aria-label="Waktu selesai"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Kegiatan / Acara *</label>
                         <input type="text" name="activity" x-model="currentItem.activity" required
+                            placeholder="Contoh: Akad Nikah"
+                            aria-label="Nama kegiatan atau acara"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">PIC (Penanggung Jawab) *</label>
                             <input type="text" name="pic" x-model="currentItem.pic" required
+                                placeholder="Nama PIC"
+                                aria-label="Nama penanggung jawab"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Lokasi</label>
                             <input type="text" name="location" x-model="currentItem.location"
+                                placeholder="Lokasi kegiatan"
+                                aria-label="Lokasi"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan Tambahan</label>
                         <textarea name="notes" x-model="currentItem.notes" rows="2"
+                            placeholder="Catatan tambahan (opsional)"
+                            aria-label="Catatan tambahan"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modalOpen = false"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#8B3A47] cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             Rundown</button>
                     </div>

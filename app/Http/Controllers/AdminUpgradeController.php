@@ -50,6 +50,27 @@ class AdminUpgradeController extends Controller
         $upgradeRequest = UpgradeRequest::query()->lockForUpdate()->findOrFail($upgradeRequest->id);
         abort_if($upgradeRequest->status !== 'pending', 409, 'Request upgrade sudah diproses.');
         $wedding = $upgradeRequest->wedding()->lockForUpdate()->firstOrFail();
+
+        // Add-on photobooth berdiri sendiri: yang diaktifkan bukan paket Pro,
+        // tapi event photobooth untuk pasangan ini.
+        if ($upgradeRequest->feature === 'photobooth') {
+            $this->activatePhotobooth($wedding);
+
+            $upgradeRequest->update([
+                'status' => 'approved',
+                'reviewed_by' => auth()->id(),
+                'reviewed_at' => now(),
+            ]);
+
+            $wedding->notifications()->create([
+                'title' => 'Photobooth Disetujui',
+                'message' => 'Photobooth kamu sudah aktif. QR dan pengaturannya sudah siap dipakai.',
+                'type' => 'info',
+            ]);
+
+            return;
+        }
+
         $wedding->update(['plan' => $upgradeRequest->plan]);
 
         $upgradeRequest->update([
@@ -65,7 +86,50 @@ class AdminUpgradeController extends Controller
         ]);
         });
 
-        return back()->with('success', 'Pro diaktifkan untuk ' . $wedding->couple_name . '.');
+        return back()->with('success', $upgradeRequest->feature === 'photobooth'
+            ? 'Photobooth diaktifkan untuk ' . $wedding->couple_name . '.'
+            : 'Pro diaktifkan untuk ' . $wedding->couple_name . '.');
+    }
+
+    /**
+     * Aktifkan photobooth untuk pasangan: buat event di Photobooth lalu simpan
+     * slug & api_key-nya di sini.
+     */
+    private function activatePhotobooth(\App\Models\Wedding $wedding): void
+    {
+        $couple = trim($wedding->groom_name . ' & ' . $wedding->bride_name);
+
+        $payload = [
+            'title' => $couple . ' Wedding',
+            'groom_name' => $wedding->groom_name,
+            'bride_name' => $wedding->bride_name,
+            'wedding_date' => $wedding->wedding_date?->format('Y-m-d'),
+            'frame_text' => $couple,
+            'frame_font' => config('photobooth.default_font'),
+        ];
+
+        if ($wedding->photobooth_event_slug) {
+            $payload['slug'] = $wedding->photobooth_event_slug;
+        }
+
+        try {
+            $response = app(\App\Services\PhotoboothApi::class)->provision($payload)->throw();
+        } catch (\Throwable $e) {
+            report($e);
+            abort(409, 'Gagal membuat event photobooth. Pastikan layanan photobooth aktif, lalu coba approve lagi.');
+        }
+
+        $wedding->update([
+            'photobooth_event_slug' => $response->json('slug'),
+            'photobooth_api_key' => $response->json('api_key'),
+            'photobooth_active' => true,
+        ]);
+
+        $quota = (int) \App\Models\Setting::get('photobooth_photo_quota', 300);
+
+        if ($quota > 0) {
+            app(\App\Services\PhotoboothApi::class)->updateEvent($wedding, ['photo_quota' => $quota])->throw();
+        }
     }
 
     public function reject(Request $request, UpgradeRequest $upgradeRequest)
