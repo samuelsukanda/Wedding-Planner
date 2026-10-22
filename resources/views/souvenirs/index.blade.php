@@ -183,8 +183,8 @@
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="form-label">Vendor</label>
-                            <select name="vendor_id" x-model="currentItem.vendor_id" class="form-input">
+                            <label for="souvenir_vendor_id" class="form-label">Vendor</label>
+                            <select id="souvenir_vendor_id" name="vendor_id" x-model="currentItem.vendor_id" class="form-input">
                                 <option value="">-- Pilih Vendor --</option>
                                 @foreach ($wedding->vendors()->orderBy('name')->get() as $v)
                                     <option value="{{ $v->id }}">{{ $v->name }}</option>
@@ -192,8 +192,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">Status</label>
-                            <select name="status" x-model="currentItem.status" class="form-input">
+                            <label for="souvenir_status" class="form-label">Status</label>
+                            <select id="souvenir_status" name="status" x-model="currentItem.status" class="form-input">
                                 @foreach ($statuses as $opt)
                                     <option value="{{ $opt }}">{{ $opt }}</option>
                                 @endforeach

@@ -28,9 +28,12 @@
             class="bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 items-center">
                 <input type="text" name="q" value="{{ $q }}" placeholder="Cari nama vendor / kota..."
+                    aria-label="Cari nama vendor / kota"
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none sm:col-span-2">
 
                 <select name="category"
+                    id="vendor-dir-category"
+                    aria-label="Filter kategori vendor"
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                     <option value="">Semua Kategori</option>
                     @foreach ($categories as $cat)
@@ -39,6 +42,8 @@
                 </select>
 
                 <select name="city"
+                    id="vendor-dir-city"
+                    aria-label="Filter kota vendor"
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                     <option value="">Semua Kota</option>
                     @foreach ($cities as $kota)
@@ -47,6 +52,8 @@
                 </select>
 
                 <select name="sort"
+                    id="vendor-dir-sort"
+                    aria-label="Urutkan vendor"
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                     {{-- Dua option ini sebelumnya sama-sama value="", jadi memilih
                          "Nama (A–Z)" tidak mengubah apa pun dan browser

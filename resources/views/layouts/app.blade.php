@@ -10,8 +10,7 @@
     <title>Nupsera - Wedding &amp; Moments</title>
     <link rel="canonical" href="{{ url()->current() }}">
     <meta name="description"
-        content="Wedding Planner - Rencanakan pernikahan tanpa ribet. Semua kebutuhan Anda tersusun rapi dalam satu dashboard.">
-
+        content="Nupsera: Aplikasi wedding planner dan photobooth virtual pernikahan. Kelola anggaran, jadwal vendor, dan undangan secara serba otomatis.">
     <link rel="shortcut icon" href="{{ asset('img/nupsera-ori.jpg') }}" type="image/x-icon">
     {{-- PWA: manifest + ikon iOS (Safari tidak membaca manifest ikon) --}}
     <link rel="manifest" href="{{ asset('manifest.json') }}">
@@ -455,8 +454,7 @@
             @endif
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
                 <i class="fa-solid fa-heart text-[#D8A7B1] text-lg"></i>
-                <span
-                    class="font-serif-title font-bold text-lg text-[#5F6F5B]">{{ $brandName ?? 'Wedding Planner' }}</span>
+                <span class="font-serif-title font-bold text-lg text-[#5F6F5B]">{{ $brandName ?? 'Nupsera' }}</span>
             </a>
         </div>
 
@@ -490,181 +488,182 @@
                 {{-- Logo ikon: nupsera-ori.png ditampilkan seukuran tinggi teks
                      (h-8 / 32px) agar proporsional. object-contain memastikan
                      seluruh logo tampil tanpa terpotong. --}}
-                <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo Nupsera" class="shrink-0 object-contain"
-                    style="height:2rem;width:auto;max-width:2.5rem;">
+                <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo Nupsera" width="47" height="32"
+                    class="shrink-0 object-contain" style="height:2rem;width:auto;max-width:2.5rem;">
                 <div class="sidebar-label min-w-0 leading-none">
                     {{-- "Nupsera" — gold/copper gradient sesuai logo-brand.jpg --}}
-                    <h1 class="font-serif-title font-bold text-[1.1rem] leading-tight truncate"
+                    <div class="font-serif-title font-bold text-[1.1rem] leading-tight truncate"
                         style="background:linear-gradient(135deg,#8B4513 0%,#C07830 35%,#D4A96A 60%,#B8762A 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                        Nupsera</h1>
+                        Nupsera</div>
                     {{-- "WEDDING & MOMENTS" — sans-serif, uppercase kecil, warna gelap sesuai referensi --}}
                     <p class="whitespace-nowrap font-semibold uppercase tracking-widest"
                         style="font-size:0.55rem;color:#4A5240;letter-spacing:0.18em;">Wedding &amp; Moments</p>
                 </div>
             </a>
             <button @click="sidebarOpen = false"
-                class="md:hidden text-[#B6ADA3] hover:text-[#5F6F5B] p-1.5 cursor-pointer">
-                <i class="fa-solid fa-xmark text-xl"></i>
+                class="md:hidden text-[#5F6F5B] hover:text-[#2D372E] p-1.5 cursor-pointer"
+                aria-label="Tutup sidebar">
+                <i class="fa-solid fa-xmark text-xl" aria-hidden="true"></i>
             </button>
         </div>
 
         <!-- Navigation Links (All 11 PRD Modules) -->
         <nav class="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
             @unless (auth()->user()?->is_superadmin)
-                <div class="nav-section px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Utama
+                <div class="nav-section px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B]">Utama
                 </div>
 
                 <a href="{{ route('dashboard') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('dashboard') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-chart-pie w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('dashboard') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-chart-pie w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Dashboard</span>
                 </a>
 
-                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">
+                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B]">
                     Perencanaan</div>
 
                 <a href="{{ route('checklists.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('checklists.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-list-check w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('checklists.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-list-check w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Checklist</span>
                 </a>
 
                 <a href="{{ route('vendors.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('vendors.*', 'vendor-directory.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-store w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('vendors.*', 'vendor-directory.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-store w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Vendor Management</span>
                 </a>
 
                 <a href="{{ route('guests.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('guests.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-users w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('guests.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-users w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Guest Management</span>
                 </a>
 
                 <a href="{{ route('rundowns.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('rundowns.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-clock w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('rundowns.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-clock w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Rundown Acara</span>
                 </a>
 
                 <a href="{{ route('proposals.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('proposals.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-ring w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('proposals.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-ring w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Lamaran</span>
                 </a>
 
                 <a href="{{ route('souvenirs.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('souvenirs.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-gift w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('souvenirs.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-gift w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Seserahan</span>
                 </a>
 
                 <a href="{{ route('documents.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('documents.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-file-circle-check w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('documents.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-file-circle-check w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Persyaratan Nikah</span>
                 </a>
 
-                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">
+                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B]">
                     Kreatif
                 </div>
 
                 <a href="{{ route('moodboards.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('moodboards.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-palette w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('moodboards.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-palette w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Moodboard</span>
                 </a>
 
-                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">
+                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B]">
                     Keuangan & Dokumen
                 </div>
 
                 <a href="{{ route('budgets.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('budgets.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-wallet w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('budgets.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-wallet w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Budget Planner</span>
                 </a>
 
                 <a href="{{ route('contracts.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('contracts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-file-contract w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('contracts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-file-contract w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Vendor Contract</span>
                 </a>
 
                 <a href="{{ route('payments.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('payments.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-credit-card w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('payments.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-credit-card w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Payment Tracker</span>
                 </a>
 
                 <a href="{{ route('savings.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('savings.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-piggy-bank w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('savings.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-piggy-bank w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Tabungan</span>
                 </a>
 
                 <a href="{{ route('gifts.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('gifts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-gift w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('gifts.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-gift w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Gift Management</span>
                 </a>
 
-                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">
+                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B]">
                     Laporan</div>
 
                 <a href="{{ route('reports.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('reports.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-file-invoice-dollar w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('reports.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-file-invoice-dollar w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Laporan & Export</span>
                 </a>
 
-                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">Akun
+                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B]">Akun
                 </div>
 
                 <a href="{{ route('admin.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.index', 'admin.wedding.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-user-gear w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.index', 'admin.wedding.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-user-gear w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Profile</span>
                 </a>
             @endunless
 
             @if (auth()->user()?->is_superadmin)
-                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#B6ADA3]">
+                <div class="nav-section px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B]">
                     Admin</div>
 
                 <a href="{{ route('admin.users.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.users.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-users-gear w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.users.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-users-gear w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Admin Panel</span>
                 </a>
 
                 <a href="{{ route('admin.master-data.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.master-data.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-layer-group w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.master-data.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-layer-group w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Master Data</span>
                 </a>
 
                 <a href="{{ route('admin.document-templates.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.document-templates.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-file-lines w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.document-templates.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-file-lines w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Template Dokumen</span>
                 </a>
 
                 <a href="{{ route('admin.upgrade-requests.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.upgrade-requests.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-crown w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.upgrade-requests.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-crown w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Request Upgrade Pro</span>
                 </a>
 
                 <a href="{{ route('admin.social-media.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.social-media.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-share-nodes w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.social-media.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-share-nodes w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Social Media</span>
                 </a>
 
                 <a href="{{ route('admin.pro-settings.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.pro-settings.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#5F6F5B]/80 hover:bg-[#FAF7F2] hover:text-[#5F6F5B]' }}">
-                    <i class="fa-solid fa-sliders w-5 text-center text-[#D8A7B1]"></i>
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.pro-settings.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-sliders w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Pengaturan Pro</span>
                 </a>
             @endif
@@ -678,6 +677,7 @@
             <div class="flex items-center gap-3 px-4 py-3 border-t border-[#B6ADA3]/25">
                 @if (auth()->user()?->avatarUrl())
                     <img src="{{ auth()->user()->avatarUrl() }}" alt="Foto {{ auth()->user()->name }}"
+                        width="36" height="36"
                         class="w-9 h-9 rounded-full object-cover shrink-0">
                 @else
                     <div
@@ -688,14 +688,14 @@
 
                 <div class="sidebar-label min-w-0 flex-1">
                     <div class="text-sm font-bold text-[#5F6F5B] truncate">{{ auth()->user()?->name }}</div>
-                    <div class="text-[11px] text-[#B6ADA3] truncate">{{ auth()->user()?->email }}</div>
+                    <div class="text-[11px] text-[#5F6F5B] truncate">{{ auth()->user()?->email }}</div>
                 </div>
 
                 <form method="POST" action="{{ route('logout') }}" data-turbo="false" class="shrink-0">
                     @csrf
                     <button type="submit" aria-label="Keluar" title="Keluar"
-                        class="w-8 h-8 rounded-lg text-[#B6ADA3] hover:bg-[#FAF7F2] hover:text-[#D8A7B1] cursor-pointer transition-all flex items-center justify-center">
-                        <i class="fa-solid fa-right-from-bracket"></i>
+                        class="w-8 h-8 rounded-lg text-[#5F6F5B] hover:bg-[#FAF7F2] hover:text-[#C2757F] cursor-pointer transition-all flex items-center justify-center">
+                        <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
                     </button>
                 </form>
             </div>
@@ -704,9 +704,9 @@
         {{-- Tombol ciut/buka sidebar, menempel di tepi kanan tengah sidebar. --}}
         <button type="button"
             @click="$dispatch('sidebar-collapsed', ! sidebarCollapsed); document.documentElement.classList.add('sidebar-toggling'); window.setTimeout(() => document.documentElement.classList.remove('sidebar-toggling'), 320)"
-            class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-6 h-12 items-center justify-center rounded-full bg-white border border-[#B6ADA3]/40 text-[#B6ADA3] hover:text-[#D8A7B1] shadow-sm transition-colors cursor-pointer"
+            class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-6 h-12 items-center justify-center rounded-full bg-white border border-[#B6ADA3]/40 text-[#5F6F5B] hover:text-[#C2757F] shadow-sm transition-colors cursor-pointer"
             :aria-label="sidebarCollapsed ? 'Perlebar sidebar' : 'Ciutkan sidebar'">
-            <i class="fa-solid text-[10px]" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+            <i class="fa-solid text-[10px]" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'" aria-hidden="true"></i>
         </button>
     </aside>
 
@@ -841,12 +841,12 @@
                                     <a href="{{ route($item['route']) }}"
                                         class="mobile-sheet-item {{ request()->routeIs($item['match']) ? 'mobile-sheet-item-active' : '' }}">
                                         <span class="mobile-sheet-icon"><i
-                                                class="fa-solid {{ $item['icon'] }}"></i></span>
+                                                class="fa-solid {{ $item['icon'] }}" aria-hidden="true"></i></span>
                                         <span class="min-w-0 flex-1">
                                             <strong>{{ $item['title'] }}</strong>
                                             <small>{{ $item['subtitle'] }}</small>
                                         </span>
-                                        <i class="fa-solid fa-chevron-right text-[10px] text-[#B6ADA3]"></i>
+                                        <i class="fa-solid fa-chevron-right text-[10px] text-[#5F6F5B]" aria-hidden="true"></i>
                                     </a>
                                 @endforeach
                             </div>
@@ -858,23 +858,23 @@
             <nav class="mobile-bottom-pill" aria-label="Navigasi utama mobile">
                 <a href="{{ route('dashboard') }}"
                     class="mobile-tab {{ request()->routeIs('dashboard') ? 'mobile-tab-active' : '' }}">
-                    <i class="fa-solid fa-house"></i><span>Home</span><b></b>
+                    <i class="fa-solid fa-house" aria-hidden="true"></i><span>Home</span><b></b>
                 </a>
                 <button type="button" @click="sheet = sheet === 'planning' ? null : 'planning'"
                     class="mobile-tab {{ request()->routeIs('checklists.*', 'vendors.*', 'vendor-directory.*', 'guests.*', 'rundowns.*', 'proposals.*', 'souvenirs.*', 'documents.*') ? 'mobile-tab-active' : '' }}">
-                    <i class="fa-solid fa-list-check"></i><span>Planning</span><b></b>
+                    <i class="fa-solid fa-list-check" aria-hidden="true"></i><span>Planning</span><b></b>
                 </button>
                 <a href="{{ route('moodboards.index') }}"
                     class="mobile-tab {{ request()->routeIs('moodboards.*') ? 'mobile-tab-active' : '' }}">
-                    <i class="fa-solid fa-palette"></i><span>Kreatif</span><b></b>
+                    <i class="fa-solid fa-palette" aria-hidden="true"></i><span>Kreatif</span><b></b>
                 </a>
                 <button type="button" @click="sheet = sheet === 'finance' ? null : 'finance'"
                     class="mobile-tab {{ request()->routeIs('budgets.*', 'contracts.*', 'payments.*', 'savings.*', 'gifts.*') ? 'mobile-tab-active' : '' }}">
-                    <i class="fa-solid fa-wallet"></i><span>Keuangan</span><b></b>
+                    <i class="fa-solid fa-wallet" aria-hidden="true"></i><span>Keuangan</span><b></b>
                 </button>
                 <button type="button" @click="sheet = sheet === 'me' ? null : 'me'"
                     class="mobile-tab {{ request()->routeIs('reports.*', 'admin.index', 'admin.wedding.*') ? 'mobile-tab-active' : '' }}">
-                    <i class="fa-solid fa-user"></i><span>Saya</span><b></b>
+                    <i class="fa-solid fa-user" aria-hidden="true"></i><span>Saya</span><b></b>
                 </button>
             </nav>
         </div>
@@ -886,7 +886,7 @@
         <header
             class="hidden md:flex items-center justify-between px-8 py-4 bg-white/80 border-b border-[#B6ADA3]/30 backdrop-blur sticky top-0 z-30">
             <div class="flex items-center gap-3">
-                <h2 class="text-xl font-bold font-serif-title text-[#5F6F5B]">@yield('title', 'Wedding Planner')</h2>
+                <div class="text-xl font-bold font-serif-title text-[#5F6F5B]">@yield('title', 'Nupsera')</div>
             </div>
 
             <div class="flex items-center gap-5">
@@ -894,7 +894,7 @@
                 @unless ($isSuper ?? false)
                     <div
                         class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/40 text-xs font-semibold shadow-xs">
-                        <i class="fa-solid fa-hourglass-half text-[#D8A7B1]"></i>
+                        <i class="fa-solid fa-hourglass-half text-[#D8A7B1]" aria-hidden="true"></i>
                         <span>Hari H: {{ $daysLeft ?? 0 }} Hari Lagi</span>
                     </div>
                 @endunless
@@ -902,9 +902,9 @@
                 <!-- Profile Avatar -->
                 <div class="flex items-center gap-3 pl-4 border-l border-[#B6ADA3]/30">
                     <div class="text-xs">
-                        <div class="font-semibold text-[#5F6F5B]">{{ $brandName ?? 'Wedding Planner' }}</div>
+                        <div class="font-semibold text-[#5F6F5B]">{{ $brandName ?? 'Nupsera' }}</div>
                         @unless ($isSuper ?? false)
-                            <div class="text-[#B6ADA3]">Bride &amp; Groom</div>
+                            <div class="text-[#5F6F5B]">Bride &amp; Groom</div>
                         @endunless
                     </div>
                 </div>
@@ -921,8 +921,8 @@
 
         <!-- Footer -->
         <footer
-            class="px-6 md:px-8 py-4 border-t border-[#B6ADA3]/30 bg-white/60 text-xs text-[#B6ADA3] flex flex-col md:flex-row items-center justify-between gap-2">
-            <div>&copy; {{ date('Y') }} Wedding Planner. All rights reserved.</div>
+            class="px-6 md:px-8 py-4 border-t border-[#B6ADA3]/30 bg-white/60 text-xs text-[#5F6F5B] flex flex-col md:flex-row items-center justify-between gap-2">
+            <div>&copy; {{ date('Y') }} Nupsera. All rights reserved.</div>
             <div class="flex items-center gap-4 text-[#5F6F5B]">
             </div>
         </footer>

@@ -210,9 +210,9 @@
                                         <td class="p-4">
                                             <span
                                                 class="text-xs font-semibold px-2.5 py-1 rounded-full
-                                            @if ($item->priority === 'High') bg-[#D8A7B1]/30 text-[#5F6F5B] border border-[#A3B7A6]/40
-                                            @elseif($item->priority === 'Medium') bg-[#FAF7F2] text-[#5F6F5B] border border-[#A3B7A6]/40
-                                            @else bg-[#A3B7A6]/20 text-[#5F6F5B] border border-[#A3B7A6]/40 @endif">
+                                            @if ($item->priority === 'High') bg-[#FCE8EC] text-[#8B3A47] border border-[#D8A7B1]/60
+                                            @elseif($item->priority === 'Medium') bg-[#EBF2EC] text-[#2E4B33] border border-[#A3B7A6]/60
+                                            @else bg-[#F4F0E9] text-[#4E473F] border border-[#B6ADA3]/60 @endif">
                                                 {{ $item->priority }}
                                             </span>
                                         </td>

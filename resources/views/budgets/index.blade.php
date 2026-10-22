@@ -31,12 +31,12 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Budget Planner</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Rencanakan dan pantau anggaran pernikahan agar pengeluaran tetap
+                <p class="text-xs text-[#5F6F5B] mt-1">Rencanakan dan pantau anggaran pernikahan agar pengeluaran tetap
                     sesuai rencana.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
-                <i class="fa-solid fa-plus"></i> Tambah Item Anggaran
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah Item Anggaran
             </button>
         </div>
 
@@ -44,25 +44,25 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs flex items-center justify-between">
                 <div>
-                    <div class="text-xs text-[#5F6F5B ]">Total Direncanakan</div>
+                    <div class="text-xs text-[#5F6F5B]">Total Direncanakan</div>
                     <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">Rp
                         {{ number_format($totalPlanned, 0, ',', '.') }}</div>
                 </div>
                 <div
                     class="w-11 h-11 rounded-xl bg-[#A3B7A6]/20 border border-[#A3B7A6]/40 flex items-center justify-center text-[#5F6F5B] text-lg">
-                    <i class="fa-solid fa-calculator"></i>
+                    <i class="fa-solid fa-calculator" aria-hidden="true"></i>
                 </div>
             </div>
 
             <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs flex items-center justify-between">
                 <div>
-                    <div class="text-xs text-[#5F6F5B ]">Total Biaya Terpakai</div>
+                    <div class="text-xs text-[#5F6F5B]">Total Biaya Terpakai</div>
                     <div class="text-xl sm:text-2xl font-bold text-[#5F6F5B]">Rp
                         {{ number_format($totalActual, 0, ',', '.') }}</div>
                 </div>
                 <div
                     class="w-11 h-11 rounded-xl bg-[#A3B7A6]/20 border border-[#A3B7A6]/40 flex items-center justify-center text-[#5F6F5B] text-lg">
-                    <i class="fa-solid fa-receipt"></i>
+                    <i class="fa-solid fa-receipt" aria-hidden="true"></i>
                 </div>
             </div>
 
@@ -74,7 +74,7 @@
                 </div>
                 <div
                     class="w-11 h-11 rounded-xl bg-[#A3B7A6]/25 border border-[#A3B7A6]/40 flex items-center justify-center text-[#5F6F5B] text-lg">
-                    <i class="fa-solid fa-piggy-bank"></i>
+                    <i class="fa-solid fa-piggy-bank" aria-hidden="true"></i>
                 </div>
             </div>
         </div>
@@ -83,9 +83,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Pie Chart -->
             <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                <h3 class="font-bold text-[#5F6F5B] text-base flex items-center gap-2">
-                    <i class="fa-solid fa-chart-pie text-[#D8A7B1]"></i> Distribusi Budget per Kategori
-                </h3>
+                <h2 class="font-bold text-[#5F6F5B] text-base flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-[#D8A7B1]" aria-hidden="true"></i> Distribusi Budget per Kategori
+                </h2>
                 <div class="h-64 relative flex items-center justify-center">
                     <canvas id="budgetPieChart"></canvas>
                 </div>
@@ -93,9 +93,9 @@
 
             <!-- Bar Chart -->
             <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
-                <h3 class="font-bold text-[#5F6F5B] text-base flex items-center gap-2">
-                    <i class="fa-solid fa-chart-column text-[#D8A7B1]"></i> Perbandingan Planned vs Actual
-                </h3>
+                <h2 class="font-bold text-[#5F6F5B] text-base flex items-center gap-2">
+                    <i class="fa-solid fa-chart-column text-[#D8A7B1]" aria-hidden="true"></i> Perbandingan Planned vs Actual
+                </h2>
                 <div class="h-64 relative flex items-center justify-center">
                     <canvas id="budgetBarChart"></canvas>
                 </div>
@@ -105,7 +105,7 @@
         <!-- Budget Items Table -->
         <div class="bg-white rounded-2xl border border-[#B6ADA3]/35 shadow-xs overflow-hidden space-y-4 p-4">
             <div class="px-2 pt-2">
-                <h3 class="font-bold text-[#5F6F5B] text-base sm:text-lg">Rincian Anggaran Kategori</h3>
+                <h2 class="font-bold text-[#5F6F5B] text-base sm:text-lg">Rincian Anggaran Kategori</h2>
             </div>
 
             <div class="overflow-x-auto">
@@ -135,36 +135,38 @@
                                     </span>
                                 </td>
                                 <td class="p-4 font-medium text-[#5F6F5B]">{{ $b->item_name }}</td>
-                                <td class="p-4 text-xs text-[#5F6F5B]/80">
+                                <td class="p-4 text-xs text-[#5F6F5B]">
                                     @if ($b->vendor)
                                         <span class="font-medium">{{ $b->vendor->name }}</span>
                                     @else
-                                        <span class="text-[#B6ADA3]">—</span>
+                                        <span class="text-[#5F6F5B]">—</span>
                                     @endif
                                 </td>
-                                <td class="p-4 text-[#5F6F5B]/80">Rp {{ number_format($b->planned_budget, 0, ',', '.') }}
+                                <td class="p-4 text-[#5F6F5B]">Rp {{ number_format($b->planned_budget, 0, ',', '.') }}
                                 </td>
                                 <td class="p-4 font-semibold text-[#5F6F5B]">Rp
                                     {{ number_format($b->actual_cost, 0, ',', '.') }}</td>
-                                <td class="p-4 font-bold {{ $diff >= 0 ? 'text-[#5F6F5B]' : 'text-[#5F6F5B]' }}">
+                                <td class="p-4 font-bold text-[#5F6F5B]">
                                     Rp {{ number_format($diff, 0, ',', '.') }}
                                 </td>
-                                <td class="p-4 text-xs text-[#B6ADA3] max-w-xs truncate">{{ $b->notes ?? '—' }}</td>
+                                <td class="p-4 text-xs text-[#5F6F5B] max-w-xs truncate">{{ $b->notes ?? '—' }}</td>
                                 <td class="p-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
                                         <button
                                             @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($b) }}"
+                                            aria-label="Edit item {{ $b->item_name }}"
                                             title="Edit" class="btn-icon">
-                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
                                         </button>
                                         <form id="del-budget-{{ $b->id }}"
                                             action="{{ route('budgets.destroy', $b->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" title="Hapus"
+                                                aria-label="Hapus item {{ $b->item_name }}"
                                                 onclick="confirmDelete('del-budget-{{ $b->id }}', '{{ addslashes($b->item_name) }}')"
                                                 class="btn-icon">
-                                                <i class="fa-solid fa-trash"></i>
+                                                <i class="fa-solid fa-trash" aria-hidden="true"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -172,8 +174,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-10 text-[#B6ADA3] text-sm">
-                                    <i class="fa-solid fa-wallet text-[#B6ADA3] text-2xl mb-3"></i>
+                                <td colspan="8" class="text-center py-10 text-[#5F6F5B] text-sm">
+                                    <i class="fa-solid fa-wallet text-[#5F6F5B] text-2xl mb-3" aria-hidden="true"></i>
                                     <div>Belum ada rincian anggaran.</div>
                                 </td>
                             </tr>
@@ -191,8 +193,8 @@
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
                         x-text="editMode ? 'Edit Item Anggaran' : 'Tambah Item Anggaran'"></h3>
-                    <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                            class="fa-solid fa-xmark"></i></button>
+                    <button @click="modalOpen = false" aria-label="Tutup modal" class="text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer"><i
+                            class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
 
                 <form :action="editMode ? '/budgets/' + currentItem.id : '{{ route('budgets.store') }}'" method="POST"
@@ -204,8 +206,8 @@
                     <input type="hidden" name="vendor_id" x-model="currentItem.vendor_id">
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori Budget *</label>
-                        <select name="category" x-model="currentItem.category" @change="selectedVendorId = ''" required
+                        <label for="budget_modal_category" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori Budget *</label>
+                        <select id="budget_modal_category" name="category" x-model="currentItem.category" @change="selectedVendorId = ''" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             <option value="">-- Pilih Kategori --</option>
                             @foreach ($categories as $cat)
@@ -215,8 +217,8 @@
                     </div>
 
                     <div x-show="availableVendors.length > 0" x-cloak>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Pilih Vendor Terkait</label>
-                        <select x-model="selectedVendorId" @change="fillFromVendor()"
+                        <label for="budget_modal_vendor" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Pilih Vendor Terkait</label>
+                        <select id="budget_modal_vendor" x-model="selectedVendorId" @change="fillFromVendor()"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                             <option value="">-- Pilih Vendor --</option>
                             <template x-for="v in availableVendors" :key="v.id">
@@ -226,22 +228,22 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Item / Pengeluaran *</label>
-                        <input type="text" name="item_name" x-model="currentItem.item_name" required
+                        <label for="budget_modal_item_name" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Nama Item / Pengeluaran *</label>
+                        <input id="budget_modal_item_name" type="text" name="item_name" x-model="currentItem.item_name" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Planned Budget (Rp) *</label>
-                            <input type="text" name="planned_budget" inputmode="numeric" required
+                            <label for="budget_modal_planned" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Planned Budget (Rp) *</label>
+                            <input id="budget_modal_planned" type="text" name="planned_budget" inputmode="numeric" required
                                 :value="wpMoney(currentItem.planned_budget)"
                                 @input="currentItem.planned_budget = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Actual Cost (Rp) *</label>
-                            <input type="text" name="actual_cost" inputmode="numeric" required
+                            <label for="budget_modal_actual" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Actual Cost (Rp) *</label>
+                            <input id="budget_modal_actual" type="text" name="actual_cost" inputmode="numeric" required
                                 :value="wpMoney(currentItem.actual_cost)"
                                 @input="currentItem.actual_cost = wpDigits($event.target.value); wpClamp($event.target, wpMoney)"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
@@ -249,14 +251,14 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan / Invoice Link</label>
-                        <textarea name="notes" x-model="currentItem.notes" rows="2"
+                        <label for="budget_modal_notes" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Catatan / Invoice Link</label>
+                        <textarea id="budget_modal_notes" name="notes" x-model="currentItem.notes" rows="2"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
 
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modalOpen = false"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             Anggaran</button>
                     </div>

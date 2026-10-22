@@ -764,8 +764,10 @@ public function test_superadmin_can_save_pro_settings()
         $html = $this->actingAs($user)->get('/')->assertOk()->getContent();
 
         // Baris di bawah logo adalah merek: "Nupsera" lalu "Wedding & Moments".
-        // Blade memecah baris di dalam <p>, jadi teksnya jadi "Wedding\n& Moments".
-        $this->assertMatchesRegularExpression('/<h1[^>]*>\s*Nupsera\s*<\/h1>/', $html);
+        // "Nupsera" sengaja <div> bukan <h1> agar urutan heading halaman tetap
+        // benar (h1 dipakai judul konten). Blade memecah baris di dalam <p>,
+        // jadi teksnya jadi "Wedding\n& Moments".
+        $this->assertMatchesRegularExpression('/<div[^>]*>\s*Nupsera\s*<\/div>/', $html);
         $this->assertMatchesRegularExpression('/Wedding\s+&amp;\s+Moments/', $html);
 
         // "Wedding Planner" tidak boleh lagi jadi baris brand di sidebar.
@@ -791,5 +793,24 @@ public function test_superadmin_can_save_pro_settings()
         $mobileNav = substr($html, strpos($html, 'data-mobile-bottom-nav'));
         $this->assertStringNotContainsString('Keluar', $mobileNav);
         $this->assertStringNotContainsString('Buka Menu Navigation', $mobileNav);
+    }
+
+    public function test_dashboard_has_sized_logo_and_no_low_contrast_labels(): void
+    {
+        [$wedding, $user] = $this->couple();
+
+        $wedding->checklists()->create(['title' => 'Cek hias', 'category' => 'Lainnya', 'is_completed' => false]);
+
+        $html = $this->actingAs($user)->get('/')->getContent();
+
+        // Logo sidebar harus punya dimensi eksplisit (Lighthouse "Images lack width and height").
+        $this->assertMatchesRegularExpression(
+            '/nupsera-ori\.png[^>]*width="\d+" height="\d+"/',
+            $html
+        );
+
+        // Label 80%-opacity dan sage sangat terang gagal kontras 4.5:1 di atas putih.
+        $this->assertStringNotContainsString('text-[#5F6F5B]/80', $html);
+        $this->assertStringNotContainsString('text-[#A3B7A6]', $html);
     }
 }

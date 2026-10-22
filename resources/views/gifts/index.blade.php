@@ -51,8 +51,9 @@
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
             <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama pemberi..."
+                    aria-label="Cari nama pemberi"
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full sm:w-48">
-                <select name="type" onchange="this.form.submit()"
+                <select name="type" id="filter-gift-type" aria-label="Filter jenis hadiah" onchange="this.form.submit()"
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full sm:w-auto">
                     <option value="">Semua Jenis Hadiah</option>
                     @foreach ($giftTypes as $gt)

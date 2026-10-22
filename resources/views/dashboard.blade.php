@@ -7,12 +7,12 @@
         <!-- Header Banner -->
         <div
             class="relative overflow-hidden rounded-2xl bg-[#5F6F5B] text-white p-6 sm:p-8 shadow-md border border-[#A3B7A6]/30">
-            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
             <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div>
                     <div
-                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-white text-xs font-semibold mb-3 border border-white/30">
-                        <i class="fa-solid fa-heart text-white" style="color: #D8A7B1 !important;"></i> Wedding Planner
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/25 text-white text-xs font-semibold mb-3 border border-white/20">
+                        <i class="fa-solid fa-heart text-[#F8B4C0]" aria-hidden="true"></i> Wedding Planner
                         Dashboard
                     </div>
                     <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold font-serif-title text-white mb-2 leading-tight">
@@ -24,18 +24,18 @@
                 </div>
                 <!-- D-Day Countdown Card -->
                 <div
-                    class="bg-white/20 backdrop-blur-md px-5 py-4 rounded-2xl flex items-center gap-4 border border-white/30 shadow-sm shrink-0 w-full sm:w-auto">
+                    class="bg-black/25 px-5 py-4 rounded-2xl flex items-center gap-4 border border-white/20 shadow-sm shrink-0 w-full sm:w-auto">
                     <div
                         class="w-12 sm:w-14 h-12 sm:h-14 rounded-xl bg-white flex items-center justify-center font-bold text-xl sm:text-2xl shadow-xs">
-                        <i class="fa-solid fa-calendar-days text-[#D8A7B1]" style="color: #D8A7B1 !important;"></i>
+                        <i class="fa-solid fa-calendar-days text-[#8B3A47]" aria-hidden="true"></i>
                     </div>
                     <div>
                         <div class="text-2xl sm:text-3xl font-extrabold text-white">{{ $daysLeft }} Hari</div>
-                        <div class="text-xs text-white/90 font-medium">Menuju Hari H Pernikahan</div>
+                        <div class="text-xs text-white font-medium">Menuju Hari H Pernikahan</div>
                         @if ($wedding->location)
                             {{-- Ikon map hanya tampil kalau lokasivenue diisi. --}}
-                            <div class="flex items-center gap-1 text-[11px] text-white/80 mt-0.5">
-                                <i class="fa-solid fa-location-dot text-[#D8A7B1] shrink-0"></i>
+                            <div class="flex items-center gap-1 text-[11px] text-white mt-0.5">
+                                <i class="fa-solid fa-location-dot text-[#F8B4C0] shrink-0" aria-hidden="true"></i>
                                 <span class="truncate">{{ $wedding->location }}</span>
                             </div>
                         @endif
@@ -49,20 +49,20 @@
             <!-- Progress Tabungan (PRD section 17: Tabungan → Dashboard) -->
             <div class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
-                        <i class="fa-solid fa-piggy-bank text-[#D8A7B1]"></i> Progress Tabungan
-                    </div>
+                    <h2 class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
+                        <i class="fa-solid fa-piggy-bank text-[#D8A7B1]" aria-hidden="true"></i> Progress Tabungan
+                    </h2>
                     <a href="{{ route('savings.index') }}"
-                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#D8A7B1]/20 text-[#C2757F] border border-[#D8A7B1]/40 hover:bg-[#D8A7B1]/30 transition">
+                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#FCE8EC] text-[#8B3A47] border border-[#D8A7B1]/60 hover:bg-[#F8D7DE] transition">
                         Kelola →
                     </a>
                 </div>
 
                 @if ($savingsGoals->isEmpty())
-                    <p class="text-sm text-[#B6ADA3]">Belum ada target tabungan.</p>
+                    <p class="text-sm text-[#6B6258]">Belum ada target tabungan.</p>
                 @else
                     <div>
-                        <div class="flex justify-between text-xs text-[#5F6F5B]/80 mb-2">
+                        <div class="flex justify-between text-xs text-[#6B6258] mb-2">
                             <span>Saldo Rp {{ number_format($savingsBalance, 0, ',', '.') }}</span>
                             <span>Target Rp {{ number_format($savingsTarget, 0, ',', '.') }}</span>
                         </div>
@@ -72,8 +72,8 @@
                         </div>
                     </div>
                     <div class="mt-4 pt-3 border-t border-[#B6ADA3]/25 text-xs flex justify-between items-center">
-                        <span class="text-[#5F6F5B]/80">Estimasi kekurangan</span>
-                        <span class="font-bold {{ $savingsShortfall > 0 ? 'text-[#C2757F]' : 'text-[#A3B7A6]' }}">
+                        <span class="text-[#6B6258]">Estimasi kekurangan</span>
+                        <span class="font-bold {{ $savingsShortfall > 0 ? 'text-[#8B3A47]' : 'text-[#6B6258]' }}">
                             Rp {{ number_format($savingsShortfall, 0, ',', '.') }}
                         </span>
                     </div>
@@ -83,16 +83,16 @@
             <!-- Progress Persiapan Widget -->
             <div class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
-                        <i class="fa-solid fa-tasks text-[#D8A7B1]"></i> Progress Persiapan
-                    </div>
+                    <h2 class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
+                        <i class="fa-solid fa-tasks text-[#D8A7B1]" aria-hidden="true"></i> Progress Persiapan
+                    </h2>
                     <span
-                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#A3B7A6]/20 text-[#5F6F5B] border border-[#A3B7A6]/40">
+                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#EBF2EC] text-[#2E4B33] border border-[#A3B7A6]/60">
                         {{ $progressPercent }}% Selesai
                     </span>
                 </div>
                 <div>
-                    <div class="flex justify-between text-xs text-[#5F6F5B]/80 mb-2">
+                    <div class="flex justify-between text-xs text-[#6B6258] mb-2">
                         <span>{{ $completedChecklists }} checklist selesai</span>
                         <span>Total {{ $totalChecklists }} checklist</span>
                     </div>
@@ -106,7 +106,7 @@
                     <span>Belum selesai: <strong class="text-[#5F6F5B]">{{ $uncompletedChecklists }}</strong></span>
                     <a href="{{ route('checklists.index') }}"
                         class="text-[#5F6F5B] hover:text-[#5F6F5B] hover:underline flex items-center gap-1 font-semibold transition-colors">
-                        Lihat Semua <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        Lihat Semua <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
                     </a>
                 </div>
             </div>
@@ -114,29 +114,29 @@
             <!-- Budget Summary Widget -->
             <div class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
                 <div class="flex items-center justify-between mb-2">
-                    <div class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
-                        <i class="fa-solid fa-wallet text-[#D8A7B1]"></i> Ringkasan Budget
-                    </div>
-                    <span class="text-xs text-[#B6ADA3]">Target Rp {{ number_format($totalBudget, 0, ',', '.') }}</span>
+                    <h2 class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
+                        <i class="fa-solid fa-wallet text-[#D8A7B1]" aria-hidden="true"></i> Ringkasan Budget
+                    </h2>
+                    <span class="text-xs text-[#6B6258]">Target Rp {{ number_format($totalBudget, 0, ',', '.') }}</span>
                 </div>
                 <div class="space-y-2 my-2">
                     <div class="flex justify-between items-baseline">
-                        <span class="text-xs text-[#5F6F5B]/80">Terpakai:</span>
+                        <span class="text-xs text-[#6B6258]">Terpakai:</span>
                         <span class="text-base font-bold text-[#5F6F5B]">Rp
                             {{ number_format($budgetTerpakai, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between items-baseline">
-                        <span class="text-xs text-[#5F6F5B]/80">Sisa Anggaran:</span>
+                        <span class="text-xs text-[#6B6258]">Sisa Anggaran:</span>
                         <span class="text-base font-bold text-[#5F6F5B]">Rp
                             {{ number_format($budgetSisa, 0, ',', '.') }}</span>
                     </div>
                 </div>
                 <div class="pt-3 border-t border-[#B6ADA3]/25 flex items-center justify-between text-xs">
-                    <span class="text-[#5F6F5B]/80">Pengeluaran:
+                    <span class="text-[#6B6258]">Pengeluaran:
                         {{ $totalBudget > 0 ? round(($budgetTerpakai / $totalBudget) * 100) : 0 }}%</span>
                     <a href="{{ route('budgets.index') }}"
                         class="text-[#5F6F5B] hover:text-[#5F6F5B] hover:underline flex items-center gap-1 font-semibold transition-colors">
-                        Kelola Anggaran <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        Kelola Anggaran <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
                     </a>
                 </div>
             </div>
@@ -144,20 +144,20 @@
             <!-- Quick Statistics Widget -->
             <div
                 class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs sm:col-span-2 md:col-span-1">
-                <div class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2 mb-3">
-                    <i class="fa-solid fa-chart-line text-[#D8A7B1]"></i> Statistik
-                </div>
+                <h2 class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-chart-line text-[#D8A7B1]" aria-hidden="true"></i> Statistik
+                </h2>
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-[#FAF7F2] p-3 rounded-xl border border-[#B6ADA3]/30">
-                        <div class="text-xs text-[#B6ADA3]">Total Vendor</div>
+                        <div class="text-xs text-[#6B6258]">Total Vendor</div>
                         <div class="text-lg font-bold text-[#5F6F5B]">{{ $totalVendors }}</div>
-                        <div class="text-[10px] text-[#5F6F5B]/80 mt-1">{{ $vendorsPaid }} Paid &bull;
+                        <div class="text-[10px] text-[#6B6258] mt-1">{{ $vendorsPaid }} Paid &bull;
                             {{ $vendorsUnpaid }} Unpaid</div>
                     </div>
                     <div class="bg-[#FAF7F2] p-3 rounded-xl border border-[#B6ADA3]/30">
-                        <div class="text-xs text-[#B6ADA3]">Total Tamu</div>
+                        <div class="text-xs text-[#6B6258]">Total Tamu</div>
                         <div class="text-lg font-bold text-[#5F6F5B]">{{ $totalGuests }} Pax</div>
-                        <div class="text-[10px] text-[#5F6F5B]/80 mt-1">Undangan Dikonfirmasi</div>
+                        <div class="text-[10px] text-[#6B6258] mt-1">Undangan Dikonfirmasi</div>
                     </div>
                 </div>
                 <div class="mt-3 pt-3 border-t border-[#B6ADA3]/25 flex items-center justify-between text-xs">
@@ -174,16 +174,16 @@
             <div
                 class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
-                        <i class="fa-solid fa-gift text-[#D8A7B1]"></i> Progress Seserahan
-                    </div>
+                    <h2 class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
+                        <i class="fa-solid fa-gift text-[#D8A7B1]" aria-hidden="true"></i> Progress Seserahan
+                    </h2>
                     <a href="{{ route('souvenirs.index') }}"
-                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#D8A7B1]/20 text-[#C2757F] border border-[#D8A7B1]/40 hover:bg-[#D8A7B1]/30 transition">
+                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#FCE8EC] text-[#8B3A47] border border-[#D8A7B1]/60 hover:bg-[#F8D7DE] transition">
                         Kelola →
                     </a>
                 </div>
                 <div>
-                    <div class="flex justify-between text-xs text-[#5F6F5B]/80 mb-2">
+                    <div class="flex justify-between text-xs text-[#6B6258] mb-2">
                         <span>{{ $souvenirReceived }} dari {{ $souvenirTotal }} diterima</span>
                         <span>{{ $souvenirPercent }}%</span>
                     </div>
@@ -193,7 +193,7 @@
                     </div>
                 </div>
                 <div class="mt-4 pt-3 border-t border-[#B6ADA3]/25 text-xs flex justify-between items-center">
-                    <span class="text-[#5F6F5B]/80">Belum diterima</span>
+                    <span class="text-[#6B6258]">Belum diterima</span>
                     <span class="font-bold text-[#5F6F5B]">{{ $souvenirTotal - $souvenirReceived }} item</span>
                 </div>
             </div>
@@ -202,16 +202,16 @@
             <div
                 class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
-                        <i class="fa-solid fa-file-circle-check text-[#D8A7B1]"></i> Progress Persyaratan
-                    </div>
+                    <h2 class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
+                        <i class="fa-solid fa-file-circle-check text-[#D8A7B1]" aria-hidden="true"></i> Progress Persyaratan
+                    </h2>
                     <a href="{{ route('documents.index') }}"
-                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#D8A7B1]/20 text-[#C2757F] border border-[#D8A7B1]/40 hover:bg-[#D8A7B1]/30 transition">
+                        class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#FCE8EC] text-[#8B3A47] border border-[#D8A7B1]/60 hover:bg-[#F8D7DE] transition">
                         Kelola →
                     </a>
                 </div>
                 <div>
-                    <div class="flex justify-between text-xs text-[#5F6F5B]/80 mb-2">
+                    <div class="flex justify-between text-xs text-[#6B6258] mb-2">
                         <span>{{ $documentComplete }} dari {{ $documentTotal }} lengkap</span>
                         <span>{{ $documentPercent }}%</span>
                     </div>
@@ -221,7 +221,7 @@
                     </div>
                 </div>
                 <div class="mt-4 pt-3 border-t border-[#B6ADA3]/25 text-xs flex justify-between items-center">
-                    <span class="text-[#5F6F5B]/80">Belum lengkap</span>
+                    <span class="text-[#6B6258]">Belum lengkap</span>
                     <span class="font-bold text-[#5F6F5B]">{{ $documentTotal - $documentComplete }} dokumen</span>
                 </div>
             </div>
@@ -233,7 +233,7 @@
             <div class="md:col-span-2 bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
                 <div class="flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B] text-lg flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left text-[#D8A7B1]"></i> Checklist Mendatang
+                        <i class="fa-solid fa-clock-rotate-left text-[#D8A7B1]" aria-hidden="true"></i> Checklist Mendatang
                     </h3>
                     <a href="{{ route('checklists.index') }}"
                         class="text-xs text-[#5F6F5B] hover:text-[#5F6F5B] hover:underline font-semibold">Lihat Semua
@@ -247,31 +247,31 @@
                             <div class="flex items-center gap-3 sm:gap-4">
                                 <form action="{{ route('checklists.toggle', $chk->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit"
+                                    <button type="submit" aria-label="Tandai checklist {{ $chk->title }} selesai"
                                         class="w-6 h-6 rounded-md border border-[#B6ADA3] hover:border-[#5F6F5B] flex items-center justify-center text-transparent hover:text-[#5F6F5B] transition-colors cursor-pointer">
-                                        <i class="fa-solid fa-check text-xs"></i>
+                                        <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
                                     </button>
                                 </form>
                                 <div>
                                     <div class="font-semibold text-[#5F6F5B] text-sm">{{ $chk->title }}</div>
-                                    <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-[#5F6F5B]/80 mt-1">
+                                    <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-[#6B6258] mt-1">
                                         <span
                                             class="bg-white text-[#5F6F5B] px-2 py-0.5 rounded border border-[#B6ADA3]/40 font-medium text-[11px]">{{ $chk->category }}</span>
-                                        <span><i class="fa-solid fa-calendar text-[10px]"></i>
+                                        <span><i class="fa-solid fa-calendar text-[10px]" aria-hidden="true"></i>
                                             {{ $chk->deadline ? $chk->deadline->format('d M Y') : 'Tanpa Tenggat' }}</span>
                                     </div>
                                 </div>
                             </div>
                             <span
                                 class="px-2.5 py-1 rounded-full text-xs font-semibold shrink-0
-                            @if ($chk->priority == 'High') bg-[#D8A7B1]/25 text-[#5F6F5B] border border-[#D8A7B1]/40
-                            @elseif($chk->priority == 'Medium') bg-[#A3B7A6]/25 text-[#5F6F5B] border border-[#A3B7A6]/40
-                            @else bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/40 @endif">
+                            @if ($chk->priority == 'High') bg-[#FCE8EC] text-[#8B3A47] border border-[#D8A7B1]/60
+                            @elseif($chk->priority == 'Medium') bg-[#EBF2EC] text-[#2E4B33] border border-[#A3B7A6]/60
+                            @else bg-[#F4F0E9] text-[#4E473F] border border-[#B6ADA3]/60 @endif">
                                 {{ $chk->priority }}
                             </span>
                         </div>
                     @empty
-                        <div class="text-center py-8 text-[#B6ADA3] text-sm">Semua checklist tugas penting sudah selesai! 🎉
+                        <div class="text-center py-8 text-[#6B6258] text-sm">Semua checklist tugas penting sudah selesai! 🎉
                         </div>
                     @endforelse
                 </div>
@@ -280,44 +280,44 @@
             <!-- Quick Access Navigation Panel -->
             <div class="bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
                 <h3 class="font-bold text-[#5F6F5B] text-lg flex items-center gap-2">
-                    <i class="fa-solid fa-compass text-[#D8A7B1]"></i> Pintasan
+                    <i class="fa-solid fa-compass text-[#D8A7B1]" aria-hidden="true"></i> Pintasan
                 </h3>
                 <div class="grid grid-cols-1 gap-2.5 text-sm">
                     <a href="{{ route('moodboards.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
-                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-palette text-[#D8A7B1]"></i>
+                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-palette text-[#D8A7B1]" aria-hidden="true"></i>
                             Moodboard Inspirasi</span>
-                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]"></i>
+                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('rundowns.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
-                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-clock text-[#D8A7B1]"></i>
+                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-clock text-[#D8A7B1]" aria-hidden="true"></i>
                             Rundown Acara</span>
-                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]"></i>
+                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('contracts.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF6F0] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
                         <span class="flex items-center gap-3 font-medium"><i
-                                class="fa-solid fa-file-contract text-[#D8A7B1]"></i> Kontrak Vendor</span>
-                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]"></i>
+                                class="fa-solid fa-file-contract text-[#D8A7B1]" aria-hidden="true"></i> Kontrak Vendor</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('payments.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
                         <span class="flex items-center gap-3 font-medium"><i
-                                class="fa-solid fa-credit-card text-[#D8A7B1]"></i> Payment Tracker</span>
-                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]"></i>
+                                class="fa-solid fa-credit-card text-[#D8A7B1]" aria-hidden="true"></i> Payment Tracker</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('gifts.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
-                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-gift text-[#D8A7B1]"></i>
+                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-gift text-[#D8A7B1]" aria-hidden="true"></i>
                             Gift & Angpao</span>
-                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]"></i>
+                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('reports.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
                         <span class="flex items-center gap-3 font-medium"><i
-                                class="fa-solid fa-file-invoice-dollar text-[#D8A7B1]"></i> Laporan Akhir & Export</span>
-                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]"></i>
+                                class="fa-solid fa-file-invoice-dollar text-[#D8A7B1]" aria-hidden="true"></i> Laporan Akhir & Export</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                 </div>
             </div>

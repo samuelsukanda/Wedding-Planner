@@ -31,12 +31,12 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Checklist</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Pantau dan kelola seluruh tugas persiapan pernikahan agar tidak ada
+                <p class="text-xs text-[#5F6F5B] mt-1">Pantau dan kelola seluruh tugas persiapan pernikahan agar tidak ada
                     yang terlewat.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = {}"
                 class="btn-primary-rose px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto">
-                <i class="fa-solid fa-plus"></i> Tambah Checklist
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah Checklist
             </button>
         </div>
 
@@ -47,28 +47,28 @@
                     <div class="text-xs text-[#5F6F5B]">Total Tugas</div>
                     <div class="text-xl font-bold text-[#5F6F5B]" id="cnt-total">{{ $total }}</div>
                 </div>
-                <i class="fa-solid fa-list-check text-[#5F6F5B] text-xl"></i>
+                <i class="fa-solid fa-list-check text-[#5F6F5B] text-xl" aria-hidden="true"></i>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex items-center justify-between">
                 <div>
                     <div class="text-xs text-[#5F6F5B]">Selesai (Done)</div>
                     <div class="text-xl font-bold text-[#5F6F5B]" id="cnt-done">{{ $doneCount }}</div>
                 </div>
-                <i class="fa-solid fa-circle-check text-[#5F6F5B] text-xl"></i>
+                <i class="fa-solid fa-circle-check text-[#5F6F5B] text-xl" aria-hidden="true"></i>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex items-center justify-between">
                 <div>
                     <div class="text-xs text-[#5F6F5B]">Dalam Proses</div>
                     <div class="text-xl font-bold text-[#5F6F5B]" id="cnt-progress">{{ $progressCount }}</div>
                 </div>
-                <i class="fa-solid fa-spinner text-[#D8A7B1] text-xl"></i>
+                <i class="fa-solid fa-spinner text-[#D8A7B1] text-xl" aria-hidden="true"></i>
             </div>
             <div class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex items-center justify-between">
                 <div>
                     <div class="text-xs text-[#5F6F5B]">Belum Dimulai</div>
                     <div class="text-xl font-bold text-[#5F6F5B]" id="cnt-todo">{{ $todoCount }}</div>
                 </div>
-                <i class="fa-solid fa-hourglass-start text-[#D8A7B1] text-xl"></i>
+                <i class="fa-solid fa-hourglass-start text-[#D8A7B1] text-xl" aria-hidden="true"></i>
             </div>
         </div>
 
@@ -77,10 +77,13 @@
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
             <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
                 <input type="text" x-model="filters.search" placeholder="Cari nama checklist..."
+                    aria-label="Cari nama checklist"
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
 
                 <div class="grid grid-cols-2 gap-3 md:flex md:items-center md:gap-3">
                     <select x-model="filters.status"
+                        id="filter-checklist-status"
+                        aria-label="Filter status checklist"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Status</option>
                         @foreach ($statuses as $st)
@@ -89,6 +92,8 @@
                     </select>
 
                     <select x-model="filters.priority"
+                        id="filter-checklist-priority"
+                        aria-label="Filter prioritas checklist"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Prioritas</option>
                         @foreach ($priorities as $pr)
@@ -159,9 +164,9 @@
                                 <td class="p-4">
                                     <span
                                         class="text-xs font-semibold px-2.5 py-1 rounded-full
-                                    @if ($chk->priority === 'High') bg-[#D8A7B1]/30 text-[#5F6F5B] border border-[#A3B7A6]/40
-                                    @elseif($chk->priority === 'Medium') bg-[#FAF7F2] text-[#5F6F5B] border border-[#A3B7A6]/40
-                                    @else bg-[#A3B7A6]/20 text-[#5F6F5B] border border-[#A3B7A6]/40 @endif">
+                                    @if ($chk->priority === 'High') bg-[#FCE8EC] text-[#8B3A47] border border-[#D8A7B1]/60
+                                    @elseif($chk->priority === 'Medium') bg-[#EBF2EC] text-[#2E4B33] border border-[#A3B7A6]/60
+                                    @else bg-[#F4F0E9] text-[#4E473F] border border-[#B6ADA3]/60 @endif">
                                         {{ $chk->priority }}
                                     </span>
                                 </td>
@@ -226,8 +231,8 @@
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
                     <h3 class="text-lg font-bold font-serif-title text-[#5F6F5B]"
                         x-text="editMode ? 'Edit Item Checklist' : 'Tambah Item Checklist'"></h3>
-                    <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
-                            class="fa-solid fa-xmark"></i></button>
+                    <button @click="modalOpen = false" aria-label="Tutup modal" class="text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer"><i
+                            class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
 
                 <form :action="editMode ? '/checklists/' + currentItem.id : '{{ route('checklists.store') }}'"
@@ -238,16 +243,16 @@
                     </template>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Judul Checklist *</label>
-                        <input type="text" name="title" x-model="currentItem.title" required
+                        <label for="modal_title" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Judul Checklist *</label>
+                        <input type="text" id="modal_title" name="title" x-model="currentItem.title" required
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"
                             placeholder="Misal: Booking Catering">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori *</label>
-                            <select name="category" x-model="currentItem.category" required
+                            <label for="modal_category" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Kategori *</label>
+                            <select id="modal_category" name="category" x-model="currentItem.category" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 <option value="">-- Pilih Kategori --</option>
                                 @foreach ($categories as $cat)
@@ -257,8 +262,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Prioritas *</label>
-                            <select name="priority" x-model="currentItem.priority" required
+                            <label for="modal_priority" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Prioritas *</label>
+                            <select id="modal_priority" name="priority" x-model="currentItem.priority" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 @foreach ($priorities as $pr)
                                     <option value="{{ $pr }}">{{ $pr }}</option>
@@ -269,15 +274,15 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tenggat Waktu</label>
-                            <input type="text" name="deadline" x-model="currentItem.deadline"
+                            <label for="modal_deadline" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Tenggat Waktu</label>
+                            <input type="text" id="modal_deadline" name="deadline" x-model="currentItem.deadline"
                                 placeholder="DD-MM-YYYY"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none datepicker">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status *</label>
-                            <select name="status" x-model="currentItem.status" required
+                            <label for="modal_status" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Status *</label>
+                            <select id="modal_status" name="status" x-model="currentItem.status" required
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                                 @foreach ($statuses as $st)
                                     <option value="{{ $st }}">{{ $st }}</option>
@@ -287,14 +292,14 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1">Deskripsi / Catatan</label>
-                        <textarea name="description" x-model="currentItem.description" rows="3"
+                        <label for="modal_description" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Deskripsi / Catatan</label>
+                        <textarea id="modal_description" name="description" x-model="currentItem.description" rows="3"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none"></textarea>
                     </div>
 
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modalOpen = false"
-                            class="px-4 py-2 text-xs text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#2D372E] font-medium cursor-pointer">Batal</button>
                         <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-xs cursor-pointer">Simpan
                             Checklist</button>
                     </div>

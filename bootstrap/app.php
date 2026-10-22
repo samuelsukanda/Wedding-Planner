@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Http\Middleware\EnsurePlan;
 use App\Http\Middleware\EnsureSuperadmin;
 use App\Http\Middleware\EnsureWedding;
-use App\Http\Middleware\RedirectLegacyDomain;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,7 +16,6 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
-        $middleware->web(prepend: [RedirectLegacyDomain::class]);
         // Cookie ini ditulis oleh app.js sebelum browser refresh. Cookie tidak
         // berisi data sensitif, hanya path menu aktif yang tetap divalidasi di
         // DashboardController sebelum dipakai sebagai redirect.

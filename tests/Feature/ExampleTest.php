@@ -13,7 +13,9 @@ class ExampleTest extends TestCase
             ->assertOk()
             ->assertSee('Masuk')
             ->assertSee('<meta name="description"', false)
-            ->assertSee('width="56" height="56"', false);
+            ->assertSee('width="56" height="56"', false)
+            ->assertSee('<main id="main-content"', false)
+            ->assertSee('color: #6B6258', false);
     }
 
     public function test_legacy_login_url_redirects_to_root(): void

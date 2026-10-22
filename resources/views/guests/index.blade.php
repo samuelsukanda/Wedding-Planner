@@ -87,9 +87,12 @@
             class="bg-white p-4 rounded-xl border border-[#B6ADA3]/35 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
             <div class="w-full md:w-auto md:flex md:flex-row md:items-center md:gap-3 space-y-3 md:space-y-0">
                 <input type="text" x-model="filters.search" placeholder="Cari nama tamu..."
+                    aria-label="Cari nama tamu"
                     class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-56">
                 <div class="grid grid-cols-2 gap-3 md:flex md:items-center md:gap-3">
                     <select x-model="filters.category"
+                        id="filter-guest-category"
+                        aria-label="Filter kategori tamu"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Kategori</option>
                         @foreach ($categories as $cat)
@@ -97,6 +100,8 @@
                         @endforeach
                     </select>
                     <select x-model="filters.status"
+                        id="filter-guest-status"
+                        aria-label="Filter status kehadiran tamu"
                         class="bg-[#FAF7F2] border border-[#B6ADA3]/40 text-xs text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none w-full md:w-auto">
                         <option value="">Semua Kehadiran</option>
                         @foreach ($statuses as $st)
