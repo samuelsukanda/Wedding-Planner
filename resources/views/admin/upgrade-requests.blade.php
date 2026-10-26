@@ -7,7 +7,7 @@
         <!-- Header -->
         <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Request Upgrade Pro</h1>
-            <p class="text-xs text-[#5F6F5B]/70 mt-1">
+            <p class="text-xs text-[#5F6F5B] mt-1">
                 Tinjau bukti pembayaran dan setujui atau tolak permintaan upgrade. Persetujuan akan mengaktifkan paket
                 <strong>Pro</strong>
             </p>
@@ -17,7 +17,7 @@
             <div class="bg-white p-10 rounded-2xl border border-[#B6ADA3]/35 shadow-xs text-center space-y-3">
                 <i class="fa-solid fa-inbox text-3xl text-[#D8A7B1]"></i>
                 <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Belum ada request</h2>
-                <p class="text-sm text-[#5F6F5B]/80 max-w-md mx-auto">
+                <p class="text-sm text-[#5F6F5B] max-w-md mx-auto">
                     Request dari pasangan yang sudah mengunggah bukti transfer akan muncul di sini.
                 </p>
             </div>
@@ -28,7 +28,7 @@
                         $badge = [
                             'pending' => ['bg-[#FAF7F2] border-[#B6ADA3]/50 text-[#5F6F5B]', 'Menunggu'],
                             'approved' => ['bg-[#F1F5F0] border-[#A3B7A6]/60 text-[#5F6F5B]', 'Disetujui'],
-                            'rejected' => ['bg-[#FBF2F4] border-[#D8A7B1]/60 text-[#C2757F]', 'Ditolak'],
+                            'rejected' => ['bg-[#FBF2F4] border-[#D8A7B1]/60 text-[#8B3A47]', 'Ditolak'],
                         ][$request->status] ?? ['bg-[#FAF7F2] border-[#B6ADA3]/50 text-[#5F6F5B]', $request->status];
                     @endphp
 
@@ -38,7 +38,7 @@
                                 <h2 class="text-base font-bold font-serif-title text-[#5F6F5B] truncate">
                                     {{ $request->wedding?->couple_name ?: 'Wedding #' . $request->wedding_id }}
                                 </h2>
-                                <p class="text-xs text-[#5F6F5B]/70 mt-0.5">
+                                <p class="text-xs text-[#5F6F5B] mt-0.5">
                                     {{ $request->user?->name ?? 'Akun dihapus' }} ·
                                     {{ $request->user?->email ?? '-' }} ·
                                     {{ $request->created_at->translatedFormat('d M Y H:i') }}
@@ -69,18 +69,18 @@
                                 Rp {{ number_format($request->amount, 0, ',', '.') }}
                             </span>
                             <span
-                                class="rounded-full bg-[#FAF7F2] border border-[#B6ADA3]/35 px-2 py-0.5 text-[11px] font-semibold text-[#5F6F5B]/80 uppercase">
+                                class="rounded-full bg-[#FAF7F2] border border-[#B6ADA3]/35 px-2 py-0.5 text-[11px] font-semibold text-[#5F6F5B] uppercase">
                                 {{ $request->feature === 'photobooth' ? 'photobooth' : $request->plan }}
                             </span>
                             @if ($request->wedding?->isPro())
-                                <span class="text-[11px] font-semibold text-[#5F6F5B]/70">
+                                <span class="text-[11px] font-semibold text-[#5F6F5B]">
                                     <i class="fa-solid fa-crown text-[#D8A7B1]"></i> Sudah Pro
                                 </span>
                             @endif
                         </div>
 
                         <div>
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B]/60 mb-1.5">Bukti
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">Bukti
                                 Transfer</p>
                             @if (str_ends_with(strtolower($request->proof_path), '.pdf'))
                                 <a href="{{ route('admin.upgrade-requests.proof', $request) }}" target="_blank"
@@ -118,8 +118,10 @@
                                     action="{{ route('admin.upgrade-requests.reject', $request->id) }}">
                                     @csrf
 
-                                    <div class="flex flex-col sm:flex-row gap-2">
-                                        <select data-fill-target="reject-note-{{ $request->id }}"
+                                     <div class="flex flex-col sm:flex-row gap-2">
+                                        <label for="reject-select-{{ $request->id }}" class="sr-only">Pilih template alasan penolakan</label>
+                                        <select id="reject-select-{{ $request->id }}" data-fill-target="reject-note-{{ $request->id }}"
+                                            aria-label="Pilih template alasan penolakan"
                                             class="sm:w-64 shrink-0 px-3 py-2 rounded-xl border border-[#B6ADA3]/40 bg-white text-xs text-[#5F6F5B] focus:border-[#D8A7B1] focus:outline-none transition cursor-pointer">
                                             <option value="">Pilih alasan…</option>
                                             @foreach ($rejectReasons as $reason)
@@ -127,11 +129,13 @@
                                             @endforeach
                                         </select>
 
-                                         <input type="text" id="reject-note-{{ $request->id }}" name="admin_note"
+                                        <label for="reject-note-{{ $request->id }}" class="sr-only">Alasan ditolak (wajib)</label>
+                                        <input type="text" id="reject-note-{{ $request->id }}" name="admin_note"
                                             required maxlength="500" placeholder="Alasan ditolak (wajib)"
-                                             class="flex-1 px-3.5 py-2 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-xs text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
+                                            aria-label="Alasan ditolak (wajib)"
+                                            class="flex-1 px-3.5 py-2 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-xs text-[#5F6F5B] placeholder-[#B6ADA3] focus:border-[#D8A7B1] focus:outline-none transition">
                                         <button type="submit"
-                                            class="px-5 py-2.5 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#C2757F] text-xs font-semibold hover:bg-[#FBF2F4] transition cursor-pointer shadow-xs flex items-center justify-center gap-1.5">
+                                            class="px-5 py-2.5 rounded-xl bg-white border border-[#D8A7B1]/60 text-[#8B3A47] text-xs font-semibold hover:bg-[#FBF2F4] transition cursor-pointer shadow-xs flex items-center justify-center gap-1.5">
                                             <i class="fa-solid fa-xmark"></i> Tolak
                                         </button>
                                     </div>
@@ -139,10 +143,10 @@
                             </div>
 
                             @error('admin_note')
-                                <p class="text-sm text-[#C2757F]">{{ $message }}</p>
+                                <p class="text-sm text-[#8B3A47]">{{ $message }}</p>
                             @enderror
                         @else
-                            <div class="pt-1 border-t border-[#B6ADA3]/25 text-xs text-[#5F6F5B]/70 space-y-1">
+                            <div class="pt-1 border-t border-[#B6ADA3]/25 text-xs text-[#5F6F5B] space-y-1">
                                 @if ($request->admin_note)
                                     <p><span class="font-semibold">Catatan admin:</span> {{ $request->admin_note }}</p>
                                 @endif

@@ -14,7 +14,7 @@
             class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Template Persyaratan Nikah</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Kelola daftar dokumen persyaratan nikah yang dapat digunakan
+                <p class="text-xs text-[#5F6F5B] mt-1">Kelola daftar dokumen persyaratan nikah yang dapat digunakan
                     sebagai acuan oleh seluruh pasangan.</p>
             </div>
             <button @click="modalOpen = true; editMode = false; currentItem = { items: [] }; rawItems = ''"
@@ -30,7 +30,7 @@
                         <div>
                             <h2 class="text-base font-bold text-[#5F6F5B]">{{ $template->name }}</h2>
                             @if ($template->description)
-                                <p class="text-xs text-[#B6ADA3] mt-1">{{ $template->description }}</p>
+                                <p class="text-xs text-[#5F6F5B] mt-1">{{ $template->description }}</p>
                             @endif
                         </div>
                         <span @class([
@@ -40,14 +40,14 @@
                         ])>{{ $template->is_active ? 'Aktif' : 'Nonaktif' }}</span>
                     </div>
 
-                    <div class="text-[10px] text-[#B6ADA3] mt-3">
+                    <div class="text-[10px] text-[#5F6F5B] mt-3">
                         {{ count($template->items ?? []) }} dokumen · dipakai {{ $usage[$template->id] ?? 0 }} pasangan
                     </div>
 
                     <ul class="mt-3 space-y-1 max-h-40 overflow-y-auto">
                         @foreach ($template->items ?? [] as $item)
-                            <li class="text-xs text-[#5F6F5B]/90 flex items-start gap-2">
-                                <i class="fa-solid fa-circle text-[#B6ADA3] text-[4px] mt-1.5 shrink-0"></i>
+                            <li class="text-xs text-[#5F6F5B] flex items-start gap-2">
+                                <i class="fa-solid fa-circle text-[#5F6F5B] text-[4px] mt-1.5 shrink-0"></i>
                                 {{ $item['name'] ?? '—' }}
                             </li>
                         @endforeach
@@ -56,7 +56,7 @@
                     <div class="flex gap-2 mt-4 pt-4 border-t border-[#B6ADA3]/15">
                         <button
                             @click="modalOpen = true; editMode = true; currentItem = {{ Js::from($template) }}; rawItems = {{ Js::from(collect($template->items ?? [])->pluck('name')->implode("\n")) }}"
-                            class="text-xs text-[#5F6F5B] hover:text-[#C2757F] cursor-pointer">
+                            class="text-xs text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer">
                             <i class="fa-solid fa-pen mr-1"></i> Edit
                         </button>
                         <form id="del-tpl-{{ $template->id }}" method="POST"
@@ -64,7 +64,7 @@
                             @csrf @method('DELETE')
                             <button type="button"
                                 onclick="confirmDelete('del-tpl-{{ $template->id }}', '{{ addslashes($template->name) }}')"
-                                class="text-xs text-[#C2757F] hover:text-red-700 cursor-pointer">
+                                class="text-xs text-[#8B3A47] hover:text-red-700 cursor-pointer">
                                 <i class="fa-solid fa-trash mr-1"></i> Hapus
                             </button>
                         </form>
@@ -72,8 +72,8 @@
                 </div>
             @empty
                 <div class="col-span-full py-12 text-center">
-                    <i class="fa-solid fa-file-circle-plus text-[#B6ADA3] text-2xl mb-3"></i>
-                    <div class="text-xs text-[#B6ADA3]">Belum ada template.</div>
+                    <i class="fa-solid fa-file-circle-plus text-[#5F6F5B] text-2xl mb-3"></i>
+                    <div class="text-xs text-[#5F6F5B]">Belum ada template.</div>
                 </div>
             @endforelse
         </div>
@@ -84,8 +84,8 @@
             <div x-outside="modalOpen = false"
                 class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div class="p-5 border-b border-[#B6ADA3]/25 flex items-center justify-between">
-                    <h3 class="font-bold text-[#5F6F5B]" x-text="editMode ? 'Edit Template' : 'Template Baru'"></h3>
-                    <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer"><i
+                    <h2 class="font-bold text-[#5F6F5B]" x-text="editMode ? 'Edit Template' : 'Template Baru'"></h2>
+                    <button @click="modalOpen = false" aria-label="Tutup modal" class="text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer"><i
                             class="fa-solid fa-xmark"></i></button>
                 </div>
 
@@ -97,36 +97,39 @@
                     <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Nama Template <span
-                                class="text-[#C2757F]">*</span></label>
-                        <input type="text" name="name" x-model="currentItem.name" required
+                        <label for="tpl_name" class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Nama Template <span
+                                class="text-[#8B3A47]">*</span></label>
+                        <input type="text" id="tpl_name" name="name" x-model="currentItem.name" required
+                            aria-label="Nama Template"
                             class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Deskripsi</label>
-                        <input type="text" name="description" x-model="currentItem.description"
+                        <label for="tpl_description" class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Deskripsi</label>
+                        <input type="text" id="tpl_description" name="description" x-model="currentItem.description"
+                            aria-label="Deskripsi"
                             class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Daftar Dokumen</label>
-                        <p class="text-[10px] text-[#B6ADA3] mb-1.5">Satu dokumen per baris.</p>
-                        <textarea name="items_raw" x-model="rawItems" rows="8"
+                        <label for="tpl_items_raw" class="block text-xs font-semibold text-[#5F6F5B] mb-1.5">Daftar Dokumen</label>
+                        <p class="text-[10px] text-[#5F6F5B] mb-1.5">Satu dokumen per baris.</p>
+                        <textarea id="tpl_items_raw" name="items_raw" x-model="rawItems" rows="8"
+                            aria-label="Daftar Dokumen"
                             class="form-input w-full rounded-xl border border-[#B6ADA3]/40 px-3 py-2 text-sm font-mono"></textarea>
                     </div>
 
                     <div class="flex items-center gap-2">
                         <input type="hidden" name="is_active" value="0">
                         <input type="checkbox" name="is_active" value="1" x-model="currentItem.is_active"
-                            id="is_active" class="w-4 h-4 rounded border-[#B6ADA3]">
+                            id="is_active" aria-label="Template aktif (bisa dipakai pasangan)" class="w-4 h-4 rounded border-[#B6ADA3]">
                         <label for="is_active" class="text-xs text-[#5F6F5B]">Template aktif (bisa dipakai pasangan)</label>
                     </div>
 
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" @click="modalOpen = false"
                             class="px-4 py-2 rounded-xl text-sm bg-[#B6ADA3]/15 text-[#5F6F5B] cursor-pointer">Batal</button>
-                        <button class="btn-primary-rose px-5 py-2 rounded-xl text-sm cursor-pointer">Simpan</button>
+                        <button type="submit" class="btn-primary-rose px-5 py-2 rounded-xl text-sm cursor-pointer">Simpan</button>
                     </div>
                 </form>
             </div>

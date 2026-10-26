@@ -10,16 +10,16 @@
             class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Kelola Master Dropdown</h1>
-                <p class="text-xs text-[#5F6F5B]/70 mt-1">Atur opsi pilihan yang digunakan bersama di berbagai modul aplikasi
+                <p class="text-xs text-[#5F6F5B] mt-1">Atur opsi pilihan yang digunakan bersama di berbagai modul aplikasi
                     agar data tetap konsisten.</p>
             </div>
         </div>
 
         <!-- Mobile Selector Header (Visible on Small Screens) -->
         <div class="block lg:hidden bg-white p-4 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-2">
-            <label class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B]">Pilih Group Dropdown
+            <label for="group_dropdown_select" class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B]">Pilih Group Dropdown
                 Menu</label>
-            <select onchange="window.location.href = this.value"
+            <select id="group_dropdown_select" aria-label="Pilih Group Dropdown Menu" onchange="window.location.href = this.value"
                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-bold text-[#5F6F5B] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:outline-none">
                 @foreach ($groups as $key => $name)
                     @php $count = $groupCounts[$key] ?? 0; @endphp
@@ -58,7 +58,7 @@
                                 <span class="truncate">{{ $name }}</span>
                             </div>
                             <span
-                                class="px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 {{ $isActive ? 'bg-white/20 text-white' : 'bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/30' }}">
+                                class="px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 {{ $isActive ? 'bg-black/25 text-white border border-white/20' : 'bg-[#FAF7F2] text-[#5F6F5B] border border-[#B6ADA3]/30' }}">
                                 {{ $count }}
                             </span>
                         </a>
@@ -130,7 +130,7 @@
                                             <div class="flex items-center justify-end gap-2">
                                                 <button
                                                     @click="modalOpen = true; editMode = true; currentItem = {{ json_encode($opt) }}"
-                                                    class="btn-icon" title="Edit">
+                                                    class="btn-icon" title="Edit" aria-label="Edit pilihan {{ $opt->option_value }}">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
                                                 <form id="del-dropdown-{{ $opt->id }}"
@@ -138,7 +138,7 @@
                                                     method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button" title="Hapus"
+                                                    <button type="button" title="Hapus" aria-label="Hapus pilihan {{ $opt->option_value }}"
                                                         onclick="confirmDelete('del-dropdown-{{ $opt->id }}', '{{ addslashes($opt->option_value) }}')"
                                                         class="btn-icon">
                                                         <i class="fa-solid fa-trash"></i>
@@ -170,9 +170,9 @@
             <div x-outside="modalOpen = false"
                 class="bg-white w-full max-w-md p-6 rounded-2xl border border-[#B6ADA3]/40 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-[#B6ADA3]/30 pb-3">
-                    <h3 class="text-base font-bold font-serif-title text-[#5F6F5B]"
-                        x-text="editMode ? 'Edit Pilihan Dropdown' : 'Tambah Pilihan Dropdown Baru'"></h3>
-                    <button @click="modalOpen = false" class="text-[#B6ADA3] hover:text-[#5F6F5B] cursor-pointer">
+                    <h2 class="text-base font-bold font-serif-title text-[#5F6F5B]"
+                        x-text="editMode ? 'Edit Pilihan Dropdown' : 'Tambah Pilihan Dropdown Baru'"></h2>
+                    <button @click="modalOpen = false" aria-label="Tutup modal" class="text-[#5F6F5B] hover:text-[#2D372E] cursor-pointer">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
@@ -189,39 +189,43 @@
                     <input type="hidden" name="group_key" :value="currentItem.group_key || '{{ $selectedGroup }}'">
 
                     <div>
-                        <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Group Target</label>
-                        <input type="text" readonly :value="'{{ $groups[$selectedGroup] ?? $selectedGroup }}'"
+                        <label for="md_group_target" class="block text-xs font-bold text-[#5F6F5B] mb-1">Group Target</label>
+                        <input type="text" id="md_group_target" readonly :value="'{{ $groups[$selectedGroup] ?? $selectedGroup }}'"
+                            aria-label="Group Target"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm font-bold text-[#5F6F5B] px-3.5 py-2.5 rounded-xl focus:outline-none">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Nama Pilihan (Option Value) *</label>
-                        <input type="text" name="option_value" x-model="currentItem.option_value" required
+                        <label for="md_option_value" class="block text-xs font-bold text-[#5F6F5B] mb-1">Nama Pilihan (Option Value) *</label>
+                        <input type="text" id="md_option_value" name="option_value" x-model="currentItem.option_value" required
+                            aria-label="Nama Pilihan (Option Value)"
                             placeholder="Contoh: Catering International, High Priority, dll"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none">
                     </div>
 
                     @if ($selectedGroup === 'guest_category')
                         <div>
-                            <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Default Pax</label>
-                            <input type="number" name="meta_value" x-model="currentItem.meta_value" min="1"
+                            <label for="md_meta_value" class="block text-xs font-bold text-[#5F6F5B] mb-1">Default Pax</label>
+                            <input type="number" id="md_meta_value" name="meta_value" x-model="currentItem.meta_value" min="1"
                                 max="999" placeholder="2"
+                                aria-label="Default Pax"
                                 class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none">
-                            <p class="text-[11px] text-[#5F6F5B]/70 mt-1">Jumlah pax default saat pilih kategori ini.</p>
+                            <p class="text-[11px] text-[#5F6F5B] mt-1">Jumlah pax default saat pilih kategori ini.</p>
                         </div>
                     @endif
 
                     <div>
-                        <label class="block text-xs font-bold text-[#5F6F5B] mb-1">Urutan Tampil (Sort Order)</label>
-                        <input type="number" name="sort_order" x-model="currentItem.sort_order" min="0"
+                        <label for="md_sort_order" class="block text-xs font-bold text-[#5F6F5B] mb-1">Urutan Tampil (Sort Order)</label>
+                        <input type="number" id="md_sort_order" name="sort_order" x-model="currentItem.sort_order" min="0"
                             placeholder="0"
+                            aria-label="Urutan Tampil (Sort Order)"
                             class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/50 text-sm font-semibold text-[#2D372E] px-3.5 py-2.5 rounded-xl focus:border-[#D8A7B1] focus:bg-white focus:outline-none">
-                        <p class="text-[11px] text-[#5F6F5B]/70 mt-1">Angka lebih kecil tampil lebih di atas.</p>
+                        <p class="text-[11px] text-[#5F6F5B] mt-1">Angka lebih kecil tampil lebih di atas.</p>
                     </div>
 
                     <div class="flex justify-end gap-3 pt-3 border-t border-[#B6ADA3]/30">
                         <button type="button" @click="modalOpen = false"
-                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#5F6F5B] font-bold cursor-pointer">Batal</button>
+                            class="px-4 py-2 text-xs text-[#5F6F5B] hover:text-[#2D372E] font-bold cursor-pointer">Batal</button>
                         <button type="submit"
                             class="btn-primary-rose px-5 py-2.5 rounded-xl text-xs cursor-pointer font-bold shadow-xs">
                             <i class="fa-solid fa-check mr-1"></i> Simpan Pilihan

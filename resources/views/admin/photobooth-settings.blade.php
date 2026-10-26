@@ -14,7 +14,7 @@
     <div class="space-y-6">
         <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Pengaturan Photobooth</h1>
-            <p class="text-xs text-[#5F6F5B]/70 mt-1">Harga add-on Photobooth dan batas jumlah foto per event.
+            <p class="text-xs text-[#5F6F5B] mt-1">Harga add-on Photobooth dan batas jumlah foto per event.
                 Batas foto langsung disiarkan ke event yang sudah aktif.</p>
         </div>
 
@@ -29,9 +29,10 @@
                 </label>
                 <input type="text" name="photobooth_price" id="photobooth_price" inputmode="numeric" required data-format="money"
                     value="{{ old('photobooth_price', $money($price)) }}" placeholder="Rp 0"
+                    aria-label="Harga Add-on Photobooth"
                     class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm font-bold text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">
                 @error('photobooth_price')
-                    <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
+                    <p class="mt-1.5 text-sm text-[#8B3A47]">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -41,14 +42,15 @@
                 </label>
                 <input type="number" name="photobooth_photo_quota" id="photobooth_photo_quota" min="0" required
                     value="{{ old('photobooth_photo_quota', $quota) }}"
+                    aria-label="Batas Foto per Event"
                     class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm font-bold text-[#5F6F5B] focus:border-[#D8A7B1] focus:outline-none transition">
-                <p class="mt-1.5 text-xs text-[#5F6F5B]/70">0 berarti tanpa batas. Setelah batas tercapai, upload foto baru dari tamu ditolak.</p>
+                <p class="mt-1.5 text-xs text-[#5F6F5B]">0 berarti tanpa batas. Setelah batas tercapai, upload foto baru dari tamu ditolak.</p>
                 @error('photobooth_photo_quota')
-                    <p class="mt-1.5 text-sm text-[#C2757F]">{{ $message }}</p>
+                    <p class="mt-1.5 text-sm text-[#8B3A47]">{{ $message }}</p>
                 @enderror
             </div>
 
-            <button type="submit" class="px-5 py-2.5 rounded-full bg-[#C2757F] hover:bg-[#B56874] text-white text-sm font-bold transition shadow-xs">
+            <button type="submit" class="btn-primary-rose px-5 py-2.5 rounded-xl text-sm cursor-pointer">
                 Simpan Pengaturan
             </button>
         </form>
@@ -56,13 +58,13 @@
         <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
             <h2 class="text-base font-bold font-serif-title text-[#5F6F5B]">Event Photobooth Aktif</h2>
             @if ($events->isEmpty())
-                <p class="mt-2 text-sm text-[#5F6F5B]/70">Belum ada pasangan yang mengaktifkan Photobooth.</p>
+                <p class="mt-2 text-sm text-[#5F6F5B]">Belum ada pasangan yang mengaktifkan Photobooth.</p>
             @else
                 <ul class="mt-3 divide-y divide-[#B6ADA3]/20 text-sm">
                     @foreach ($events as $event)
                         <li class="flex flex-wrap items-center justify-between gap-2 py-2">
                             <span class="font-medium text-[#2D372E]">{{ $event->couple_name }}</span>
-                            <span class="text-xs text-[#5F6F5B]/70">{{ $event->photobooth_event_slug ?? 'belum terhubung' }}</span>
+                            <span class="text-xs text-[#5F6F5B]">{{ $event->photobooth_event_slug ?? 'belum terhubung' }}</span>
                         </li>
                     @endforeach
                 </ul>

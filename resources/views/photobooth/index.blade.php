@@ -68,7 +68,7 @@
                     <input id="photobooth_api_key" name="api_key" aria-label="API key" value="{{ old('api_key') }}" placeholder="X-Api-Key dari Photobooth" required class="w-full rounded-xl border border-[#B6ADA3]/50 bg-white px-3 py-2.5 text-sm text-[#2D372E] focus:outline-none focus:ring-2 focus:ring-[#8B3A47]/40 focus:border-[#8B3A47]">
                 </div>
                 <div class="md:col-span-2 flex items-center gap-2">
-                    <input type="checkbox" id="photobooth_active" name="active" value="1" @checked($wedding?->photobooth_active) class="rounded border-[#B6ADA3]/50 text-[#8B3A47] focus:ring-[#8B3A47]">
+                    <input type="checkbox" id="photobooth_active" name="active" value="1" aria-label="Aktifkan Photobooth untuk event ini" @checked($wedding?->photobooth_active) class="rounded border-[#B6ADA3]/50 text-[#8B3A47] focus:ring-[#8B3A47]">
                     <label for="photobooth_active" class="text-sm font-medium text-[#2D372E] cursor-pointer">
                         Aktifkan Photobooth untuk event ini
                     </label>
@@ -157,7 +157,7 @@
                         @csrf
                         <div>
                             <label for="photobooth_banner_file" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Banner homepage</label>
-                            <input id="photobooth_banner_file" type="file" name="banner" accept="image/jpeg,image/png,image/webp" required class="mt-1 block w-full text-sm text-[#5F6F5B]">
+                            <input id="photobooth_banner_file" type="file" name="banner" aria-label="Banner homepage" accept="image/jpeg,image/png,image/webp" required class="mt-1 block w-full text-sm text-[#5F6F5B]">
                         </div>
                         <button type="submit" class="mt-3 rounded-full border border-[#8B3A47] px-4 py-2 text-sm font-semibold text-[#8B3A47] hover:bg-[#8B3A47] hover:text-white transition">Upload banner</button>
                     </form>

@@ -271,16 +271,38 @@ class PhotoboothTest extends TestCase
         $this->assertFalse((bool) $wedding->fresh()->photobooth_active);
     }
 
-    public function test_couple_without_photobooth_sees_purchase_page(): void
+    public function test_couple_without_photobooth_sees_locked_page(): void
     {
         Setting::put('photobooth_price', '250000');
         [, $user] = $this->couple('free');
 
         $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
 
-        $this->assertStringContainsString('250.000', $html);
-        $this->assertStringContainsString('name="proof"', $html);
-        $this->assertStringContainsString('Bukti Transfer', $html);
+        $this->assertStringContainsString('Buka Akses Add-On Spesial Photobooth!', $html);
+        $this->assertStringNotContainsString('Buka Akses dengan Pembayaran', $html);
+        $this->assertStringNotContainsString('name="proof"', $html);
+    }
+
+    public function test_locked_page_shows_add_on_hero_framework(): void
+    {
+        Setting::put('photobooth_price', '250000');
+        [, $user] = $this->couple('free');
+
+        $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
+
+        // Kerangka hero sesuai mockup: badge, judul, tiga baris fitur, CTA.
+        $this->assertStringContainsString('FITUR ADD-ON', $html);
+        $this->assertStringContainsString('Buka Akses Add-On Spesial Photobooth!', $html);
+        $this->assertStringContainsString('Foto &amp; GIF Tanpa Batas', $html);
+        $this->assertStringContainsString('Frame &amp; Stiker Kustom (PRO)', $html);
+        $this->assertStringContainsString('Unduh Instan &amp; Live Gallery', $html);
+        $this->assertStringContainsString('Buka Akses Add-On Sekarang', $html);
+
+        // Kolase memakai foto lokal dan kartu add-on terkunci.
+        $this->assertStringContainsString('data-photobooth-collage', $html);
+        $this->assertStringContainsString('img/pexels-photo-layout.jpg', $html);
+        $this->assertStringContainsString('img/pexels-bridal-flatlay.jpg', $html);
+        $this->assertStringContainsString('Momenmu bisa difoto langsung', $html);
     }
 
     public function test_photobooth_purchase_creates_pending_request(): void
