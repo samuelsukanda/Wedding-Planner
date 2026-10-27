@@ -315,6 +315,15 @@
                             <option value="pro">Pro</option>
                         </select>
                     </div>
+                    <div>
+                        <label for="edit_user_add_on" class="block text-xs font-semibold text-[#5F6F5B] mb-1">Add-on</label>
+                        <select id="edit_user_add_on" name="add_on" x-model="currentItem.add_on" :disabled="!currentItem.wedding_id"
+                            aria-label="Add-on"
+                            class="w-full bg-[#FAF7F2] border border-[#B6ADA3]/40 text-sm text-[#5F6F5B] px-3 py-2 rounded-xl focus:border-[#D8A7B1] focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed">
+                            <option value="none">Tidak ada add-on</option>
+                            <option value="photobooth">Photobooth</option>
+                        </select>
+                    </div>
                     <div class="rounded-xl border border-[#B6ADA3]/30 bg-[#FAF7F2]/50 p-3 space-y-3">
                         <span class="block text-xs font-semibold text-[#5F6F5B]">Pasangan</span>
                         <div>

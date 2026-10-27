@@ -223,6 +223,7 @@ class AdminPanelController extends Controller
             'wedding_id' => 'nullable|exists:weddings,id',
             'is_superadmin' => 'nullable|boolean',
             'plan' => 'nullable|in:free,pro',
+            'add_on' => 'nullable|in:none,photobooth',
             'partner_name' => 'nullable|string|max:255',
             // Sengaja TANPA unique: email pasangan yang sudah terdaftar justru
             // harus bisa dipakai untuk menautkan akun itu ke Wedding Kit ini.
@@ -247,6 +248,12 @@ class AdminPanelController extends Controller
         // wedding yang benar kalau sekalian user-nya dipindah ke wedding lain.
         if (! empty($validated['plan']) && $user->wedding) {
             $user->wedding->update(['plan' => $validated['plan']]);
+        }
+
+        if (array_key_exists('add_on', $validated) && $user->wedding) {
+            $user->wedding->update([
+                'photobooth_active' => $validated['add_on'] === 'photobooth',
+            ]);
         }
 
         $this->syncPartner($user, $validated['partner_email'] ?? null, $validated['partner_name'] ?? null);

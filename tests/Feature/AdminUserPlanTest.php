@@ -45,6 +45,24 @@ class AdminUserPlanTest extends TestCase
         $this->assertSame('pro', $wedding->fresh()->plan);
     }
 
+    public function test_admin_can_assign_photobooth_add_on_from_edit_user(): void
+    {
+        $wedding = $this->makeWedding(plan: 'free');
+        $user = User::factory()->create(['wedding_id' => $wedding->id, 'is_superadmin' => false]);
+
+        $this->actingAs($this->makeSuperadmin())
+            ->put(route('admin.users.update', $user), [
+                'name' => $user->name,
+                'email' => $user->email,
+                'wedding_id' => $wedding->id,
+                'plan' => 'free',
+                'add_on' => 'photobooth',
+            ])
+            ->assertRedirect(route('admin.users.index'));
+
+        $this->assertTrue($wedding->fresh()->photobooth_active);
+    }
+
     public function test_admin_can_change_pro_back_to_free(): void
     {
         $wedding = $this->makeWedding(plan: 'pro');

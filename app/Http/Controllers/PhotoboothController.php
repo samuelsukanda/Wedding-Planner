@@ -66,6 +66,10 @@ class PhotoboothController extends Controller
     public function update(Request $request)
     {
         $wedding = Wedding::current();
+        if (! $wedding?->photobooth_active) {
+            return $this->lockedResponse();
+        }
+
         $validated = $request->validate([
             'event_slug' => ['required', 'string', 'max:120', 'regex:/^[a-z0-9-]+$/'],
             'api_key' => ['required', 'string', 'max:255'],
@@ -90,6 +94,9 @@ class PhotoboothController extends Controller
     public function activate()
     {
         $wedding = Wedding::current();
+        if (! $wedding?->photobooth_active) {
+            return $this->lockedResponse();
+        }
 
         $couple = trim($wedding->groom_name . ' & ' . $wedding->bride_name);
 
@@ -172,6 +179,10 @@ class PhotoboothController extends Controller
     public function settings(Request $request)
     {
         $wedding = Wedding::current();
+        if (! $wedding?->photobooth_active) {
+            return $this->lockedResponse();
+        }
+
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -193,6 +204,10 @@ class PhotoboothController extends Controller
 
     public function banner(Request $request)
     {
+        if (! Wedding::current()?->photobooth_active) {
+            return $this->lockedResponse();
+        }
+
         $request->validate(['banner' => 'required|image|max:5120']);
         $wedding = Wedding::current();
 
@@ -206,6 +221,10 @@ class PhotoboothController extends Controller
 
     public function deletePhoto(int $photo)
     {
+        if (! Wedding::current()?->photobooth_active) {
+            return $this->lockedResponse();
+        }
+
         return $this->guard(
             fn () => $this->api->for(Wedding::current())->delete("/api/admin/photos/{$photo}")->throw(),
             'Foto dihapus.'
@@ -214,6 +233,10 @@ class PhotoboothController extends Controller
 
     public function export()
     {
+        if (! Wedding::current()?->photobooth_active) {
+            return $this->lockedResponse();
+        }
+
         try {
             $response = $this->api->for(Wedding::current())->get('/api/admin/photos/export.zip')->throw();
         } catch (\Throwable $e) {
@@ -242,6 +265,12 @@ class PhotoboothController extends Controller
         }
 
         return back()->with('success', $successMessage);
+    }
+
+    private function lockedResponse()
+    {
+        return redirect()->route('photobooth.index')
+            ->with('error', 'Photobooth belum bisa digunakan. Beli add-on Photobooth Digital terlebih dahulu.');
     }
 
     private function snapshotKey(Wedding $wedding): string

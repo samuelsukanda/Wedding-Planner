@@ -34,11 +34,16 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $appends = ['plan', 'partner_name', 'partner_email'];
+    protected $appends = ['plan', 'partner_name', 'partner_email', 'add_on'];
 
     public function getPlanAttribute(): ?string
     {
         return $this->wedding?->plan;
+    }
+
+    public function getAddOnAttribute(): string
+    {
+        return $this->wedding?->photobooth_active ? 'photobooth' : 'none';
     }
 
     public function getPartnerNameAttribute(): ?string

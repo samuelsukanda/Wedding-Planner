@@ -39,6 +39,7 @@ class PhotoboothTest extends TestCase
     private function connected(): array
     {
         [$wedding, $user] = $this->couple();
+        $wedding->update(['photobooth_active' => true]);
 
         $this->actingAs($user)
             ->put('/photobooth', [
@@ -80,6 +81,49 @@ class PhotoboothTest extends TestCase
 
         // Tanggal diambil dari data pernikahan, bukan diketik manual.
         $this->assertStringContainsString('12 - 12 - 2026', $html);
+    }
+
+    public function test_photo_delete_uses_sweetalert_confirm(): void
+    {
+        config(['services.photobooth.url' => 'https://photobooth.test']);
+        [, $user] = $this->connected();
+
+        Http::fake([
+            'https://photobooth.test/api/admin/event' => Http::response(['title' => 'Samuel & Angela Wedding']),
+            'https://photobooth.test/api/admin/photos' => Http::response([
+                ['id' => 11, 'thumbnail_url' => '', 'image_url' => 'https://photobooth.test/p/11.jpg'],
+                ['id' => 12, 'thumbnail_url' => '', 'image_url' => 'https://photobooth.test/p/12.jpg'],
+            ]),
+        ]);
+
+        $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
+
+        // Dialog hapus foto memakai helper SweetAlert global (confirmDelete),
+        // sama seperti modul lain; confirm() bawaan browser tidak boleh lagi.
+        $this->assertStringNotContainsString('onsubmit="return confirm(', $html);
+        $this->assertStringContainsString('id="del-photo-11"', $html);
+        $this->assertStringContainsString("confirmDelete('del-photo-11'", $html);
+    }
+
+    public function test_frame_preview_shows_couple_name_and_date(): void
+    {
+        config(['services.photobooth.url' => 'https://photobooth.test']);
+        [, $user] = $this->connected();
+
+        Http::fake([
+            'https://photobooth.test/api/admin/event' => Http::response(['title' => 'Samuel & Angela Wedding']),
+            'https://photobooth.test/api/admin/photos' => Http::response([]),
+        ]);
+
+        $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
+
+        // Panel preview bingkai dengan nama & tanggal terisi, memakai font
+        // frame aktif, dan ikut berubah saat form di isi ulang.
+        $this->assertStringContainsString('Preview Bingkai', $html);
+        $this->assertStringContainsString('id="frame-preview"', $html);
+        $this->assertStringContainsString("font-family:'Great Vibes', cursive", $html);
+        $this->assertStringContainsString('x-model="text"', $html);
+        $this->assertStringContainsString('x-model="font"', $html);
     }
 
     public function test_saving_settings_sends_frame_text_font_and_wedding_date(): void
@@ -230,6 +274,7 @@ class PhotoboothTest extends TestCase
             'services.photobooth.server_key' => 'server-key',
         ]);
         [$wedding, $user] = $this->couple();
+        $wedding->update(['photobooth_active' => true]);
 
         Http::fake(['https://photobooth.test/*' => Http::response([
             'slug' => 'sa2027',
@@ -278,9 +323,67 @@ class PhotoboothTest extends TestCase
 
         $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
 
-        $this->assertStringContainsString('Buka Akses Add-On Spesial Photobooth!', $html);
+        $this->assertStringContainsString('Photobooth', $html);
         $this->assertStringNotContainsString('Buka Akses dengan Pembayaran', $html);
         $this->assertStringNotContainsString('name="proof"', $html);
+    }
+
+    public function test_unpurchased_photobooth_cannot_activate_add_on_directly(): void
+    {
+        [$wedding, $user] = $this->couple('free');
+
+        $this->actingAs($user)
+            ->post('/photobooth/activate')
+            ->assertRedirect(route('photobooth.index'));
+
+        $this->assertFalse((bool) $wedding->fresh()->photobooth_active);
+        $this->assertStringContainsString('beli add-on', strtolower((string) session('error')));
+    }
+
+    public function test_activation_card_hides_manual_connection_form(): void
+    {
+        // Pemilik add-on yang event-nya belum ter-provisioning melihat kartu
+        // aktivasi, tapi tanpa form hubungkan manual (slug/API key): pembeli
+        // biasa cukup klik "Aktifkan Photobooth". PUT /photobooth tetap hidup
+        // untuk jalur admin/API.
+        [$wedding, $user] = $this->couple('pro');
+        $wedding->update(['photobooth_active' => true]);
+
+        $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('Hubungkan manual', $html);
+        $this->assertStringNotContainsString('name="event_slug"', $html);
+        $this->assertStringNotContainsString('name="api_key"', $html);
+        $this->assertStringNotContainsString('Kelola Photobooth', $html);
+        $this->assertStringContainsString('Aktifkan Photobooth', $html);
+    }
+
+    public function test_activation_card_does_not_repeat_success_flash(): void
+    {
+        // Interior flash sukses sudah tampil sebagai toast global; jangan
+        // diduplikasi di dalam kartu di atas tombol aktivasi.
+        config([
+            'services.photobooth.url' => 'https://photobooth.test',
+            'services.photobooth.server_key' => 'server-key',
+        ]);
+        [$wedding, $user] = $this->couple();
+        $wedding->update(['photobooth_active' => true]);
+
+        // Handler kondisional per-URL: pola wildcard yang didefinisikan
+        // belakangan bisa mengoverride stub spesifik di versi ini.
+        Http::fake(fn ($request) => str_contains($request->url(), '/api/provision')
+            ? Http::response(['slug' => 'sa2027', 'api_key' => 'generated-key'])
+            : throw new \Illuminate\Http\Client\ConnectionException('timeout'));
+
+        $html = $this->followingRedirects()->actingAs($user)
+            ->post('/photobooth/activate')
+            ->assertOk()
+            ->getContent();
+
+        // Satu-satunya tampilan pesan sukses adalah toast global di layout;
+        // teks yang sama tidak boleh diulang di dalam kartu aktivasi.
+        $this->assertSame(1, substr_count($html, 'QR dan pengaturan sudah siap'));
+        $this->assertStringContainsString('Aktifkan Photobooth', $html);
     }
 
     public function test_locked_page_shows_add_on_hero_framework(): void
@@ -290,19 +393,19 @@ class PhotoboothTest extends TestCase
 
         $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
 
-        // Kerangka hero sesuai mockup: badge, judul, tiga baris fitur, CTA.
-        $this->assertStringContainsString('FITUR ADD-ON', $html);
-        $this->assertStringContainsString('Buka Akses Add-On Spesial Photobooth!', $html);
+        // Struktur mengikuti locked Moodboard: centered hero, visual cards, benefits, CTA.
+        $this->assertStringContainsString('Photobooth', $html);
         $this->assertStringContainsString('Foto &amp; GIF Tanpa Batas', $html);
-        $this->assertStringContainsString('Frame &amp; Stiker Kustom (PRO)', $html);
-        $this->assertStringContainsString('Unduh Instan &amp; Live Gallery', $html);
-        $this->assertStringContainsString('Buka Akses Add-On Sekarang', $html);
+        $this->assertStringContainsString('Frame &amp; Stiker Kustom', $html);
+        $this->assertStringContainsString('Live Gallery untuk Tamu', $html);
+        $this->assertStringContainsString('Buka Akses Photobooth Sekarang', $html);
 
-        // Kolase memakai foto lokal dan kartu add-on terkunci.
-        $this->assertStringContainsString('data-photobooth-collage', $html);
-        $this->assertStringContainsString('img/pexels-photo-layout.jpg', $html);
-        $this->assertStringContainsString('img/pexels-bridal-flatlay.jpg', $html);
-        $this->assertStringContainsString('Momenmu bisa difoto langsung', $html);
+        // Empat foto portrait mengitari lock card dalam busur setengah lingkaran.
+        $this->assertStringContainsString('Buka Akses Photobooth Sekarang', $html);
+        $this->assertStringContainsString('FITUR ADD-ON', $html);
+        foreach (['img-1.jpg', 'img-2.jpg', 'img-3.jpg', 'img-4.jpg'] as $image) {
+            $this->assertStringContainsString('img/' . $image, $html);
+        }
     }
 
     public function test_photobooth_purchase_creates_pending_request(): void
@@ -370,6 +473,7 @@ class PhotoboothTest extends TestCase
         Http::fake(['https://photobooth.test/*' => Http::response(['ok' => true])]);
 
         [, $user] = $this->couple('pro');
+        $user->wedding->update(['photobooth_active' => true]);
         $this->actingAs($user)->put('/photobooth', [
             'event_slug' => 'sa2027',
             'api_key' => 'test-key',

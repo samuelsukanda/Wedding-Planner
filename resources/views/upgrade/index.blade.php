@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Upgrade ke Pro')
+@section('title', $isPhotobooth ? 'Beli Add-On Photobooth' : 'Upgrade ke Pro')
 
 @section('content')
     <div class="space-y-6">
@@ -17,7 +17,7 @@
                         <i class="fa-solid fa-clock text-white text-xl"></i>
                     </div>
                     <div class="min-w-0">
-                        <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Pembayaran Sedang Diverifikasi</h2>
+                        <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Pembayaran {{ $isPhotobooth ? 'Photobooth' : 'Pro' }} Sedang Diverifikasi</h2>
                         <p class="text-xs text-[#5F6F5B]/70 mt-0.5">Admin sedang memeriksa pembayaran kamu.</p>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
 
                 {{-- Refresh Status sengaja link GET ke halaman ini: cukup klik
                      ulang setelah admin menyetujui, dan status terupdate. --}}
-                <a href="{{ route('upgrade.index') }}"
+                <a href="{{ route('upgrade.index', $isPhotobooth ? ['feature' => 'photobooth'] : []) }}"
                     class="btn-primary-rose inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs w-full sm:w-auto">
                     <i class="fa-solid fa-rotate-right"></i> Refresh Status
                 </a>
@@ -61,11 +61,11 @@
 
                     <span
                         class="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                        <i class="fa-solid fa-gem"></i> Recommended
+                        <i class="fa-solid {{ $isPhotobooth ? 'fa-camera-retro' : 'fa-gem' }}"></i> {{ $isPhotobooth ? 'Add-On Photobooth' : 'Recommended' }}
                     </span>
 
-                    <h2 class="mt-4 text-2xl md:text-3xl font-bold font-serif-title text-white">Nupsera Pro</h2>
-                    <p class="mt-1.5 text-sm text-white/85">Upgrade sekali, nikmati Pro selamanya.</p>
+                    <h2 class="mt-4 text-2xl md:text-3xl font-bold font-serif-title text-white">{{ $isPhotobooth ? 'Photobooth Digital' : 'Nupsera Pro' }}</h2>
+                    <p class="mt-1.5 text-sm text-white/85">{{ $isPhotobooth ? 'Aktifkan Photobooth untuk seluruh tamu di acaramu.' : 'Upgrade sekali, nikmati Pro selamanya.' }}</p>
 
                     <div class="mt-5 flex items-end flex-wrap gap-x-3 gap-y-1">
                         {{-- Harga coret hanya muncul kalau superadmin mengisinya dan
@@ -78,7 +78,7 @@
                         <span class="text-3xl md:text-4xl font-bold font-serif-title text-white leading-none">
                             Rp {{ number_format($price, 0, ',', '.') }}
                         </span>
-                        <span class="text-sm text-white/80 pb-1">/ Lifetime</span>
+                        <span class="text-sm text-white/80 pb-1">{{ $isPhotobooth ? '/ Add-On' : '/ Lifetime' }}</span>
                     </div>
                 </div>
 
@@ -86,7 +86,7 @@
                 <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
                     <h3 class="text-sm font-bold text-[#5F6F5B]">Yang kamu dapat</h3>
                     <ul class="mt-4 space-y-3">
-                        @foreach (['Moodboard tanpa batas jumlah item', 'Cari Vendor — katalog vendor weddings lengkap', 'Berlaku selamanya, tanpa biaya bulanan', 'Berlaku juga untuk akun pasangan di Workspace yang sama', 'Bisa diakses dari HP maupun desktop'] as $benefit)
+                        @foreach (($isPhotobooth ? ['Foto & GIF tanpa batas', 'Frame dan stiker sesuai tema', 'Live gallery untuk seluruh tamu', 'Bisa diakses dari HP maupun desktop'] : ['Moodboard tanpa batas jumlah item', 'Cari Vendor — katalog vendor weddings lengkap', 'Berlaku selamanya, tanpa biaya bulanan', 'Berlaku juga untuk akun pasangan di Workspace yang sama', 'Bisa diakses dari HP maupun desktop']) as $benefit)
                             <li class="flex items-center gap-3 text-sm text-[#5F6F5B]/85">
                                 <i class="fa-solid fa-circle-check text-[#C2757F]"></i>
                                 <span>{{ $benefit }}</span>
@@ -98,7 +98,7 @@
                 <!-- ================= CTA PEMBUKA CHECKOUT ================= -->
                 <button type="button" @click="modalOpen = true"
                     class="btn-primary-rose w-full px-6 py-4 rounded-2xl text-sm cursor-pointer">
-                    <i class="fa-solid fa-gem mr-2"></i> Upgrade ke Pro
+                    <i class="fa-solid {{ $isPhotobooth ? 'fa-camera-retro' : 'fa-gem' }} mr-2"></i> {{ $isPhotobooth ? 'Beli Add-On Photobooth' : 'Upgrade ke Pro' }}
                 </button>
 
                 <!-- ================= MODAL RINGKASAN PEMBELIAN =================
@@ -122,7 +122,7 @@
                         <dl class="text-sm divide-y divide-[#B6ADA3]/25">
                             <div class="flex items-center justify-between gap-4 py-2.5">
                                 <dt class="text-[#5F6F5B]/70">Paket</dt>
-                                <dd class="font-semibold text-[#5F6F5B]">Pro</dd>
+                                <dd class="font-semibold text-[#5F6F5B]">{{ $isPhotobooth ? 'Photobooth Digital' : 'Pro' }}</dd>
                             </div>
                             @if ($priceBefore > $price && $price > 0)
                                 <div class="flex items-center justify-between gap-4 py-2.5">
@@ -211,9 +211,12 @@
                         @endif
 
                         <!-- Kirim bukti -->
-                        <form method="POST" action="{{ route('upgrade.store') }}" enctype="multipart/form-data"
+                        <form method="POST" action="{{ $isPhotobooth ? route('photobooth.purchase') : route('upgrade.store') }}" enctype="multipart/form-data"
                             class="space-y-4">
                             @csrf
+                            @if ($isPhotobooth)
+                                <input type="hidden" name="feature" value="photobooth">
+                            @endif
                             <div>
                                 <label for="proof"
                                     class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">

@@ -81,7 +81,7 @@ class PlanTest extends TestCase
         $this->actingAs($user)
             ->get('/photobooth')
             ->assertOk()
-            ->assertSee('Bukti Transfer');
+            ->assertSee('Buka Akses Photobooth Sekarang');
     }
 
     public function test_pro_couple_can_open_photobooth_menu(): void
@@ -93,8 +93,8 @@ class PlanTest extends TestCase
         $this->actingAs($user)
             ->get('/photobooth')
             ->assertOk()
-            ->assertSee('Add-on Photobooth')
-            ->assertSee('Bukti Transfer');
+            ->assertSee('Buka Akses Photobooth Sekarang')
+            ->assertSee('TERKUNCI');
     }
 
     public function test_photobooth_sits_under_moodboard_in_creative_sidebar(): void
@@ -115,6 +115,7 @@ class PlanTest extends TestCase
     public function test_pro_couple_can_save_photobooth_connection(): void
     {
         [$wedding, $user] = $this->couple('pro');
+        $wedding->update(['photobooth_active' => true]);
 
         $this->actingAs($user)
             ->put('/photobooth', [
@@ -378,7 +379,7 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
 
         $this->actingAs($user)->get('/upgrade')
             ->assertOk()
-            ->assertSee('Pembayaran Sedang Diverifikasi')
+            ->assertSee('Pembayaran Pro Sedang Diverifikasi')
             ->assertSee('Admin sedang memeriksa pembayaran kamu.')
             ->assertSee('Rp 55.000')
             ->assertSee('Menunggu Aktivasi')
@@ -763,7 +764,7 @@ public function test_reject_field_offers_default_reason_templates()
             ->assertDontSee('Nominal transfer tidak sesuai dengan harga paket Pro');
     }
 
-public function test_admin_pages_render_for_superadmin()
+    public function test_admin_pages_render_for_superadmin()
     {
         $this->actingAs($this->superadmin())
             ->get('/admin/upgrade-requests')
@@ -774,6 +775,19 @@ public function test_admin_pages_render_for_superadmin()
             ->get('/admin/pro-settings')
             ->assertOk()
             ->assertSee('Pengaturan Pro');
+    }
+
+    public function test_admin_sidebar_groups_add_on_settings_in_dropdown(): void
+    {
+        $html = $this->actingAs($this->superadmin())
+            ->get('/admin/pro-settings')
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('>Add-on</span>', $html);
+        $this->assertStringContainsString('Pengaturan Pro', $html);
+        $this->assertStringContainsString('Pengaturan Photobooth', $html);
+        $this->assertStringContainsString('x-collapse', $html);
     }
 
     public function test_superadmin_can_delete_a_request_and_its_proof_file()
