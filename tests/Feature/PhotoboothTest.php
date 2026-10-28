@@ -103,7 +103,7 @@ class PhotoboothTest extends TestCase
         $this->assertStringContainsString('visibility: hidden !important;', $html);
         $this->assertStringContainsString('requestAnimationFrame(() => window.print())', $html);
         $this->assertStringContainsString('.photobooth-qr-print-button', $html);
-        $this->assertStringContainsString('Unduh QR PNG', $html);
+        $this->assertMatchesRegularExpression('#Unduh\s+QR PNG#', $html);
         $this->assertStringContainsString('downloadPhotoboothQr()', $html);
         $this->assertStringContainsString("link.download = 'qr-code-sa2027.png'", $html);
         $this->assertStringContainsString('image.data[i + 3] = 0;', $html);
@@ -489,7 +489,7 @@ class PhotoboothTest extends TestCase
         // Empat foto portrait mengitari lock card dalam busur setengah lingkaran.
         $this->assertStringContainsString('Buka Akses Photobooth Sekarang', $html);
         $this->assertStringContainsString('FITUR ADD-ON', $html);
-        foreach (['img-1.jpg', 'img-2.jpg', 'img-3.jpg', 'img-4.jpg'] as $image) {
+        foreach (['img-2.jpg', 'img-3.jpg', 'img-4.jpg', 'img-5.jpg'] as $image) {
             $this->assertStringContainsString('img/'.$image, $html);
         }
     }

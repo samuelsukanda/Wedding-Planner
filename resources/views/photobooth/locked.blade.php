@@ -57,8 +57,7 @@
                 <li class="flex items-center gap-2 text-sm text-[#5F6F5B]"><i class="fa-solid fa-camera text-[#C2757F]"
                         aria-hidden="true"></i><span>Foto &amp; GIF Tanpa Batas</span></li>
                 <li class="flex items-center gap-2 text-sm text-[#5F6F5B]"><i
-                        class="fa-solid fa-wand-magic-sparkles text-[#C2757F]" aria-hidden="true"></i><span>Frame &amp;
-                        Stiker Kustom</span></li>
+                        class="fa-solid fa-wand-magic-sparkles text-[#C2757F]" aria-hidden="true"></i><span>Frame &amp; Stiker Kustom</span></li>
                 <li class="flex items-center gap-2 text-sm text-[#5F6F5B]"><i class="fa-solid fa-images text-[#C2757F]"
                         aria-hidden="true"></i><span>Live Gallery untuk Tamu</span></li>
             </ul>
