@@ -11,12 +11,11 @@ use Illuminate\Support\Facades\DB;
 
 class PhotoboothController extends Controller
 {
-    /** Data terakhir yang berhasil diambil, dipakai saat API sedang mati. */
+    private const FRESH_SNAPSHOT_TTL = 60;
+
     private const SNAPSHOT_TTL = 600;
 
-    public function __construct(private readonly PhotoboothApi $api)
-    {
-    }
+    public function __construct(private readonly PhotoboothApi $api) {}
 
     public function index()
     {
@@ -43,20 +42,39 @@ class PhotoboothController extends Controller
         $offline = false;
 
         if ($wedding?->photobooth_active && $wedding->photobooth_event_slug && $wedding->photoboothApiKey()) {
-            try {
-                $event = $this->api->for($wedding)->get('/api/admin/event')->json();
-                $photos = $this->api->for($wedding)->get('/api/admin/photos')->json() ?: [];
+            $freshSnapshot = Cache::get($this->freshSnapshotKey($wedding));
 
-                Cache::put($this->snapshotKey($wedding), ['event' => $event, 'photos' => $photos], self::SNAPSHOT_TTL);
-            } catch (\Throwable $e) {
-                // Photobooth yang sedang mati tidak boleh membuat halaman ini
-                // ikut mati: pakai data tersimpan terakhir kalau ada.
-                report($e);
-                $offline = true;
+            if ($freshSnapshot) {
+                $event = $freshSnapshot['event'];
+                $photos = $freshSnapshot['photos'];
+            } else {
+                try {
+                    $responses = $this->api->dashboard($wedding);
 
-                $snapshot = Cache::get($this->snapshotKey($wedding)) ?: [];
-                $event = $snapshot['event'] ?? null;
-                $photos = $snapshot['photos'] ?? [];
+                    if ($responses['event'] instanceof \Throwable) {
+                        throw $responses['event'];
+                    }
+                    if ($responses['photos'] instanceof \Throwable) {
+                        throw $responses['photos'];
+                    }
+
+                    $responses['event']->throw();
+                    $responses['photos']->throw();
+
+                    $event = $responses['event']->json();
+                    $photos = $responses['photos']->json() ?: [];
+                    $snapshot = ['event' => $event, 'photos' => $photos];
+
+                    Cache::put($this->snapshotKey($wedding), $snapshot, self::SNAPSHOT_TTL);
+                    Cache::put($this->freshSnapshotKey($wedding), $snapshot, self::FRESH_SNAPSHOT_TTL);
+                } catch (\Throwable $e) {
+                    report($e);
+                    $offline = true;
+
+                    $snapshot = Cache::get($this->snapshotKey($wedding)) ?: [];
+                    $event = $snapshot['event'] ?? null;
+                    $photos = $snapshot['photos'] ?? [];
+                }
             }
         }
 
@@ -80,6 +98,7 @@ class PhotoboothController extends Controller
             'photobooth_api_key' => $validated['api_key'],
             'photobooth_active' => $request->boolean('active'),
         ]);
+        $this->forgetSnapshot($wedding);
 
         return redirect()->route('photobooth.index')->with('success', 'Koneksi Photobooth tersimpan.');
     }
@@ -98,10 +117,10 @@ class PhotoboothController extends Controller
             return $this->lockedResponse();
         }
 
-        $couple = trim($wedding->groom_name . ' & ' . $wedding->bride_name);
+        $couple = trim($wedding->groom_name.' & '.$wedding->bride_name);
 
         $payload = [
-            'title' => $couple . ' Wedding',
+            'title' => $couple.' Wedding',
             'groom_name' => $wedding->groom_name,
             'bride_name' => $wedding->bride_name,
             'wedding_date' => $wedding->wedding_date?->format('Y-m-d'),
@@ -126,6 +145,7 @@ class PhotoboothController extends Controller
             'photobooth_api_key' => $response->json('api_key'),
             'photobooth_active' => true,
         ]);
+        $this->forgetSnapshot($wedding);
 
         return redirect()->route('photobooth.index')
             ->with('success', 'Photobooth aktif. QR dan pengaturan sudah siap.');
@@ -183,7 +203,6 @@ class PhotoboothController extends Controller
             return $this->lockedResponse();
         }
 
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'groom_name' => 'required|string|max:100',
@@ -198,7 +217,8 @@ class PhotoboothController extends Controller
 
         return $this->guard(
             fn () => $this->api->updateEvent($wedding, $validated)->throw(),
-            'Pengaturan Photobooth tersimpan.'
+            'Pengaturan Photobooth tersimpan.',
+            $wedding
         );
     }
 
@@ -216,7 +236,7 @@ class PhotoboothController extends Controller
                 ->attach('banner', fopen($request->file('banner')->getRealPath(), 'r'), $request->file('banner')->getClientOriginalName())
                 ->post('/api/admin/banner')
                 ->throw();
-        }, 'Banner Photobooth diperbarui.');
+        }, 'Banner Photobooth diperbarui.', $wedding);
     }
 
     public function deletePhoto(int $photo)
@@ -225,9 +245,12 @@ class PhotoboothController extends Controller
             return $this->lockedResponse();
         }
 
+        $wedding = Wedding::current();
+
         return $this->guard(
-            fn () => $this->api->for(Wedding::current())->delete("/api/admin/photos/{$photo}")->throw(),
-            'Foto dihapus.'
+            fn () => $this->api->for($wedding)->delete("/api/admin/photos/{$photo}")->throw(),
+            'Foto dihapus.',
+            $wedding
         );
     }
 
@@ -241,6 +264,7 @@ class PhotoboothController extends Controller
             $response = $this->api->for(Wedding::current())->get('/api/admin/photos/export.zip')->throw();
         } catch (\Throwable $e) {
             report($e);
+
             return back()->with('error', 'Photobooth sedang tidak dapat dihubungi. File ZIP belum bisa diunduh.');
         }
 
@@ -254,14 +278,22 @@ class PhotoboothController extends Controller
      * Jalankan pemanggilan API ke Photobooth. Kalau Photobooth mati, hasilnya
      * pesan error di halaman, bukan 500.
      */
-    private function guard(callable $action, string $successMessage)
+    private function guard(callable $action, string $successMessage, ?Wedding $wedding = null)
     {
         try {
             $action();
         } catch (\Throwable $e) {
             report($e);
 
+            if ($wedding) {
+                $this->forgetFreshSnapshot($wedding);
+            }
+
             return back()->with('error', 'Photobooth sedang tidak dapat dihubungi. Coba lagi beberapa saat lagi.');
+        }
+
+        if ($wedding) {
+            $this->forgetSnapshot($wedding);
         }
 
         return back()->with('success', $successMessage);
@@ -271,6 +303,22 @@ class PhotoboothController extends Controller
     {
         return redirect()->route('photobooth.index')
             ->with('error', 'Photobooth belum bisa digunakan. Beli add-on Photobooth Digital terlebih dahulu.');
+    }
+
+    private function forgetFreshSnapshot(Wedding $wedding): void
+    {
+        Cache::forget($this->freshSnapshotKey($wedding));
+    }
+
+    private function forgetSnapshot(Wedding $wedding): void
+    {
+        Cache::forget($this->snapshotKey($wedding));
+        $this->forgetFreshSnapshot($wedding);
+    }
+
+    private function freshSnapshotKey(Wedding $wedding): string
+    {
+        return "photobooth:fresh-snapshot:{$wedding->id}";
     }
 
     private function snapshotKey(Wedding $wedding): string

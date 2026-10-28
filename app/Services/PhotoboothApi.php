@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Wedding;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
@@ -24,6 +25,25 @@ class PhotoboothApi
                 'Accept' => 'application/json',
             ])
             ->timeout(8);
+    }
+
+    /**
+     * Ambil event dan galeri secara bersamaan.
+     *
+     * @return array{event: Response, photos: Response}
+     */
+    public function dashboard(Wedding $wedding): array
+    {
+        return Http::pool(function (Pool $pool) use ($wedding) {
+            $headers = [
+                'X-Api-Key' => (string) $wedding->photoboothApiKey(),
+                'Accept' => 'application/json',
+            ];
+            $baseUrl = rtrim(config('services.photobooth.url', 'https://photobooth.nupsera.my.id'), '/');
+
+            $pool->as('event')->withHeaders($headers)->baseUrl($baseUrl)->timeout(8)->get('/api/admin/event');
+            $pool->as('photos')->withHeaders($headers)->baseUrl($baseUrl)->timeout(8)->get('/api/admin/photos');
+        });
     }
 
     /**

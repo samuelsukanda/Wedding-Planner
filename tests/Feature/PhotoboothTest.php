@@ -7,6 +7,7 @@ use App\Models\UpgradeRequest;
 use App\Models\User;
 use App\Models\Wedding;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -83,6 +84,62 @@ class PhotoboothTest extends TestCase
         $this->assertStringContainsString('12 - 12 - 2026', $html);
     }
 
+    public function test_photobooth_qr_print_shows_only_universal_qr_content(): void
+    {
+        config(['services.photobooth.url' => 'https://photobooth.test']);
+        [, $user] = $this->connected();
+
+        Http::fake([
+            'https://photobooth.test/api/admin/event' => Http::response(['title' => 'Samuel & Angela Wedding']),
+            'https://photobooth.test/api/admin/photos' => Http::response([]),
+        ]);
+
+        $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
+
+        $this->assertStringContainsString('id="photobooth-qr-print"', $html);
+        $this->assertStringContainsString('data-url="https://photobooth.test/e/sa2027"', $html);
+        $this->assertMatchesRegularExpression('#https://photobooth\.test/e/sa2027\s*</p>#', $html);
+        $this->assertStringContainsString('body * {', $html);
+        $this->assertStringContainsString('visibility: hidden !important;', $html);
+        $this->assertStringContainsString('requestAnimationFrame(() => window.print())', $html);
+        $this->assertStringContainsString('.photobooth-qr-print-button', $html);
+        $this->assertStringContainsString('Unduh QR PNG', $html);
+        $this->assertStringContainsString('downloadPhotoboothQr()', $html);
+        $this->assertStringContainsString("link.download = 'qr-code-sa2027.png'", $html);
+        $this->assertStringContainsString('image.data[i + 3] = 0;', $html);
+    }
+
+    public function test_qr_link_can_be_copied(): void
+    {
+        config(['services.photobooth.url' => 'https://photobooth.test']);
+        [, $user] = $this->connected();
+
+        Http::fake([
+            'https://photobooth.test/api/admin/event' => Http::response(['title' => 'Samuel & Angela Wedding']),
+            'https://photobooth.test/api/admin/photos' => Http::response([]),
+        ]);
+
+        $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
+
+        // Link QR bisa diklik untuk menyalin, plus tombol "Salin Link"
+        // di sebelahnya dengan status umpan balik.
+        $this->assertStringContainsString('data-copy="https://photobooth.test/e/sa2027"', $html);
+        $this->assertStringContainsString('photobooth-qr-copy-button', $html);
+        $this->assertStringContainsString('photobooth-qr-copy-status', $html);
+        $this->assertStringContainsString('Salin Link', $html);
+    }
+
+    public function test_photobooth_page_without_event_does_not_render_universal_qr(): void
+    {
+        [$wedding, $user] = $this->couple();
+        $wedding->update(['photobooth_active' => true]);
+
+        $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('id="photobooth-qr-print"', $html);
+        $this->assertStringNotContainsString('id="photobooth-qr"', $html);
+    }
+
     public function test_photo_delete_uses_sweetalert_confirm(): void
     {
         config(['services.photobooth.url' => 'https://photobooth.test']);
@@ -117,8 +174,16 @@ class PhotoboothTest extends TestCase
 
         $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
 
-        // Panel preview bingkai dengan nama & tanggal terisi, memakai font
-        // frame aktif, dan ikut berubah saat form di isi ulang.
+        // Preview bingkai tidak tampil langsung: tombol "Lihat Preview"
+        // men-toggle panel inline (bukan modal) di bawah tombol simpan.
+        // Panel polos hanya frame putih berisi nama & tanggal — tanpa teks
+        // caption penjelasan — memakai font frame aktif dan ikut berubah
+        // saat form diisi ulang.
+        $this->assertStringContainsString('Lihat Preview', $html);
+        $this->assertStringContainsString('@click="showPreview = !showPreview"', $html);
+        $this->assertStringContainsString('x-show="showPreview"', $html);
+        $this->assertStringNotContainsString('role="dialog"', $html);
+        $this->assertStringNotContainsString('mengikuti data pernikahan', $html);
         $this->assertStringContainsString('Preview Bingkai', $html);
         $this->assertStringContainsString('id="frame-preview"', $html);
         $this->assertStringContainsString("font-family:'Great Vibes', cursive", $html);
@@ -163,7 +228,7 @@ class PhotoboothTest extends TestCase
         Http::fake(['https://photobooth.test/*' => Http::response(['ok' => true])]);
 
         $this->actingAs($user)
-            ->put('/admin/wedding/' . $wedding->id, [
+            ->put('/admin/wedding/'.$wedding->id, [
                 'bride_name' => 'Siti',
                 'groom_name' => 'Budi',
                 'wedding_date' => '2028-02-03',
@@ -194,12 +259,31 @@ class PhotoboothTest extends TestCase
         config(['services.photobooth.url' => 'https://photobooth.test']);
         [, $user] = $this->connected();
 
-        Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('timeout'));
+        Http::fake(fn () => throw new ConnectionException('timeout'));
 
         $response = $this->actingAs($user)->get('/photobooth');
 
         $response->assertOk();
         $this->assertStringContainsString('tidak dapat dihubungi', $response->getContent());
+    }
+
+    public function test_photobooth_page_uses_fresh_snapshot_without_calling_api_again(): void
+    {
+        config(['services.photobooth.url' => 'https://photobooth.test']);
+        [, $user] = $this->connected();
+
+        Http::fake([
+            'https://photobooth.test/api/admin/event' => Http::response(['title' => 'Samuel & Angela Wedding']),
+            'https://photobooth.test/api/admin/photos' => Http::response([]),
+        ]);
+        $this->actingAs($user)->get('/photobooth')->assertOk();
+
+        Http::fake(fn () => throw new ConnectionException('unexpected request'));
+
+        $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
+
+        $this->assertStringContainsString('Samuel &amp; Angela Wedding', $html);
+        Http::assertNothingSent();
     }
 
     public function test_photobooth_page_shows_cached_data_when_api_is_down(): void
@@ -212,12 +296,14 @@ class PhotoboothTest extends TestCase
             'https://photobooth.test/api/admin/photos' => Http::response([]),
         ]);
         $this->actingAs($user)->get('/photobooth')->assertOk();
+        $this->travel(61)->seconds();
 
-        Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('timeout'));
+        Http::fake(fn () => throw new ConnectionException('timeout'));
 
         $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
 
         $this->assertStringContainsString('Samuel &amp; Angela Wedding', $html);
+        $this->assertStringContainsString('tidak dapat dihubungi', $html);
     }
 
     public function test_saving_settings_when_api_is_down_reports_error(): void
@@ -225,7 +311,7 @@ class PhotoboothTest extends TestCase
         config(['services.photobooth.url' => 'https://photobooth.test']);
         [, $user] = $this->connected();
 
-        Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('timeout'));
+        Http::fake(fn () => throw new ConnectionException('timeout'));
 
         $this->actingAs($user)
             ->put('/photobooth/settings', [
@@ -306,7 +392,7 @@ class PhotoboothTest extends TestCase
         ]);
         [$wedding, $user] = $this->couple();
 
-        Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('timeout'));
+        Http::fake(fn () => throw new ConnectionException('timeout'));
 
         $this->actingAs($user)
             ->post('/photobooth/activate')
@@ -373,7 +459,7 @@ class PhotoboothTest extends TestCase
         // belakangan bisa mengoverride stub spesifik di versi ini.
         Http::fake(fn ($request) => str_contains($request->url(), '/api/provision')
             ? Http::response(['slug' => 'sa2027', 'api_key' => 'generated-key'])
-            : throw new \Illuminate\Http\Client\ConnectionException('timeout'));
+            : throw new ConnectionException('timeout'));
 
         $html = $this->followingRedirects()->actingAs($user)
             ->post('/photobooth/activate')
@@ -404,7 +490,7 @@ class PhotoboothTest extends TestCase
         $this->assertStringContainsString('Buka Akses Photobooth Sekarang', $html);
         $this->assertStringContainsString('FITUR ADD-ON', $html);
         foreach (['img-1.jpg', 'img-2.jpg', 'img-3.jpg', 'img-4.jpg'] as $image) {
-            $this->assertStringContainsString('img/' . $image, $html);
+            $this->assertStringContainsString('img/'.$image, $html);
         }
     }
 
