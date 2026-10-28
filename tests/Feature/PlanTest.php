@@ -777,17 +777,20 @@ public function test_reject_field_offers_default_reason_templates()
             ->assertSee('Pengaturan Pro');
     }
 
-    public function test_admin_sidebar_groups_add_on_settings_in_dropdown(): void
+    public function test_admin_sidebar_shows_add_on_settings_as_flat_menus(): void
     {
         $html = $this->actingAs($this->superadmin())
             ->get('/admin/pro-settings')
             ->assertOk()
             ->getContent();
 
-        $this->assertStringContainsString('>Add-on</span>', $html);
+        // Add-on tidak lagi dropdown: kedua pengaturan jadi menu sendiri.
+        $this->assertStringNotContainsString('>Add-on</span>', $html);
+        $this->assertStringContainsString('href="https://nupsera.my.id/admin/pro-settings"', $html);
+        $this->assertStringContainsString('href="https://nupsera.my.id/admin/photobooth-settings"', $html);
         $this->assertStringContainsString('Pengaturan Pro', $html);
         $this->assertStringContainsString('Pengaturan Photobooth', $html);
-        $this->assertStringContainsString('x-collapse', $html);
+        $this->assertStringNotContainsString('x-collapse', $html);
     }
 
     public function test_superadmin_can_delete_a_request_and_its_proof_file()

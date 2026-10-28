@@ -24,7 +24,7 @@
             </p>
 
             <div class="relative z-10 mx-auto mt-5 h-44 w-full md:mt-6 md:h-48" style="max-width:34rem;min-height:11rem">
-                @foreach ([['img-3.jpg', 'left:5%;top:2.5rem;transform:rotate(-18deg)', 1], ['img-2.jpg', 'left:21%;top:0;transform:rotate(-8deg)', 2], ['img-1.jpg', 'right:21%;top:0;transform:rotate(8deg)', 4], ['img-4.jpg', 'right:5%;top:2.5rem;transform:rotate(18deg)', 3]] as [$image, $position, $layer])
+                @foreach ([['img-3.jpg', 'left:5%;top:2.5rem;transform:rotate(-18deg)', 1], ['img-2.jpg', 'left:21%;top:0;transform:rotate(-8deg)', 2], ['img-5.jpg', 'right:21%;top:0;transform:rotate(8deg)', 4], ['img-4.jpg', 'right:5%;top:2.5rem;transform:rotate(18deg)', 3]] as [$image, $position, $layer])
                     <div class="absolute rounded-2xl border border-[#B6ADA3]/30 bg-white p-2 shadow-lg shadow-[#5F6F5B]/10 transition-transform duration-300 ease-out hover:z-20 hover:-translate-y-2 hover:rotate-0 hover:shadow-xl motion-reduce:transform-none sm:p-2.5"
                         style="{{ $position }};z-index:{{ $layer }};width:clamp(4.5rem,13vw,6.5rem)">
                         <img src="{{ asset('img/' . $image) }}" alt=""
@@ -57,7 +57,8 @@
                 <li class="flex items-center gap-2 text-sm text-[#5F6F5B]"><i class="fa-solid fa-camera text-[#C2757F]"
                         aria-hidden="true"></i><span>Foto &amp; GIF Tanpa Batas</span></li>
                 <li class="flex items-center gap-2 text-sm text-[#5F6F5B]"><i
-                        class="fa-solid fa-wand-magic-sparkles text-[#C2757F]" aria-hidden="true"></i><span>Frame &amp; Stiker Kustom</span></li>
+                        class="fa-solid fa-wand-magic-sparkles text-[#C2757F]" aria-hidden="true"></i><span>Frame &amp;
+                        Stiker Kustom</span></li>
                 <li class="flex items-center gap-2 text-sm text-[#5F6F5B]"><i class="fa-solid fa-images text-[#C2757F]"
                         aria-hidden="true"></i><span>Live Gallery untuk Tamu</span></li>
             </ul>
