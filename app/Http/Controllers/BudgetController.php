@@ -34,11 +34,10 @@ class BudgetController extends Controller
         ]);
 
         // Get all vendors grouped by category for the auto-fill feature
-        $vendorsJson = Vendor::where('wedding_id', $wedding->id)
+        $vendors = Vendor::where('wedding_id', $wedding->id)
             ->whereNotNull('package')
             ->get(['id', 'name', 'category', 'package', 'price'])
-            ->groupBy('category')
-            ->toJson();
+            ->groupBy('category');
 
         return view('budgets.index', compact(
             'wedding',
@@ -48,7 +47,7 @@ class BudgetController extends Controller
             'totalRemaining',
             'chartData',
             'categories',
-            'vendorsJson'
+            'vendors'
         ));
     }
 

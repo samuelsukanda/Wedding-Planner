@@ -430,7 +430,7 @@
                                     class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#D8A7B1]/40 bg-white text-[#8B3A47]">
                                     <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
                                 </div>
-                                <img x-cloak x-show="previewUrl" :src="previewUrl" alt=""
+                                <img x-cloak x-show="previewUrl" :src="previewUrl" alt="Preview banner"
                                     class="h-16 w-20 shrink-0 rounded-lg border border-[#B6ADA3]/30 bg-white object-cover">
                                 <div class="min-w-0 flex-1">
                                     <p x-show="!fileName" class="text-sm font-semibold text-[#2D372E]">
@@ -555,6 +555,22 @@
                         colorDark: '#2B2523',
                         colorLight: '#FBF9F5'
                     });
+                    var updateAlt = function() {
+                        var qrImg = el.querySelector('img');
+                        if (qrImg && qrImg.getAttribute('alt') !== 'QR Code Photobooth') {
+                            qrImg.setAttribute('alt', 'QR Code Photobooth');
+                        }
+                    };
+                    updateAlt();
+                    if (window.MutationObserver && !el._qrObserver) {
+                        el._qrObserver = new MutationObserver(updateAlt);
+                        el._qrObserver.observe(el, {
+                            childList: true,
+                            subtree: true,
+                            attributes: true
+                        });
+                    }
+                    setTimeout(updateAlt, 50);
                 }
                 renderPhotoboothQr();
 

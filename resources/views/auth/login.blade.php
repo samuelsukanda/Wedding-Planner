@@ -299,7 +299,7 @@
 
 <body>
     <main id="main-content">
-        <div class="login-card" x-data="{ tab: '{{ old('_form') === 'register' || ($errors->any() && old('password_confirmation')) ? 'register' : 'login' }}' }">
+        <div class="login-card" x-data="{ tab: '{{ ($defaultTab ?? 'login') === 'register' || old('_form') === 'register' || ($errors->any() && old('password_confirmation')) ? 'register' : 'login' }}' }">
             {{-- Logo Nupsera: ikon + nama brand sesuai desain sidebar --}}
             <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:18px;">
                 <img src="{{ asset('img/nupsera-ori.png') }}" alt="Logo Nupsera" width="56" height="56"

@@ -24,6 +24,11 @@ trait ScopedToWedding
 
             if ($weddingId !== null) {
                 $builder->where($builder->getModel()->qualifyColumn('wedding_id'), $weddingId);
+            } elseif (! app()->runningInConsole()) {
+                // Di konteks HTTP tanpa wedding yang sah, jangan bocorkan semua
+                // tenant — balik hasil kosong (defense-in-depth). CLI/artisan/
+                // tes tetap bebas karena butuh query tanpa scope.
+                $builder->whereRaw('1 = 0');
             }
         });
     }

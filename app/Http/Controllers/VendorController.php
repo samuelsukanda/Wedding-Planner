@@ -110,6 +110,9 @@ class VendorController extends Controller
 
     public function destroyPackageItem(VendorPackageItem $item)
     {
+        // VendorPackageItem tanpa ScopedToWedding (tabel tak punya wedding_id) —
+        // cek kepemilikan manual lewat relasi rel.
+        abort_unless($item->vendor->wedding_id === Wedding::current()->id, 403);
         $item->delete();
         return redirect()->route('vendors.index')->with('success', 'Item paketan berhasil dihapus!');
     }

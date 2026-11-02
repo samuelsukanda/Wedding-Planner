@@ -7,7 +7,7 @@
         tab: {{ Js::from(in_array(request('tab'), ['info', 'checklist', 'budget', 'guests', 'vendors'], true) ? request('tab') : 'info') }},
         modal: null,
         currentItem: {},
-        vendors: {{ $pbudVendorsJson }},
+        vendors: @json($pbudVendors),
         selectedVendorId: '',
         get availableVendors() {
             const cat = this.currentItem.category;

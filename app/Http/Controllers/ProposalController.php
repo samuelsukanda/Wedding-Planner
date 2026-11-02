@@ -39,11 +39,10 @@ class ProposalController extends Controller
 
         // JSON vendor untuk picker autofill-harga di modal budget
         // (mirror BudgetController: dikelompokkan per kategori).
-        $pbudVendorsJson = $wedding->vendors()
+        $pbudVendors = $wedding->vendors()
             ->whereNotNull('package')
             ->get(['id', 'name', 'category', 'package', 'price'])
-            ->groupBy('category')
-            ->toJson();
+            ->groupBy('category');
 
         $checklistSummary = [
             'total' => $checklists->count(),
@@ -78,7 +77,7 @@ class ProposalController extends Controller
             'lamaranVendors',
             'otherVendors',
             'budgets',
-            'pbudVendorsJson',
+            'pbudVendors',
             'checklistSummary',
             'guestSummary',
             'budgetSummary',

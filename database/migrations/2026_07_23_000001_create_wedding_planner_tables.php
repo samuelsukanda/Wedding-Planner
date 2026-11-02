@@ -35,26 +35,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 3. Checklist Attachments
-        Schema::create('checklist_attachments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('checklist_id')->constrained()->onDelete('cascade');
-            $table->string('file_name');
-            $table->string('file_path');
-            $table->integer('file_size')->nullable();
-            $table->timestamps();
-        });
-
-        // 4. Budget Categories
-        Schema::create('budget_categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('icon')->nullable();
-            $table->string('color')->nullable();
-            $table->timestamps();
-        });
-
-        // 5. Budgets
+        // 3. Budgets
         Schema::create('budgets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('wedding_id')->constrained()->onDelete('cascade');
@@ -67,26 +48,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 6. Expenses
-        Schema::create('expenses', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('budget_id')->constrained()->onDelete('cascade');
-            $table->string('title');
-            $table->decimal('amount', 15, 2)->default(0);
-            $table->date('payment_date');
-            $table->string('receipt_file')->nullable();
-            $table->text('notes')->nullable();
-            $table->timestamps();
-        });
-
-        // 7. Vendor Categories
-        Schema::create('vendor_categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->timestamps();
-        });
-
-        // 8. Vendors
+        // 4. Vendors
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('wedding_id')->constrained()->onDelete('cascade');
@@ -135,14 +97,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 11. Guest Categories
-        Schema::create('guest_categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->timestamps();
-        });
-
-        // 12. Guests
+        // 9. Guests
         Schema::create('guests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('wedding_id')->constrained()->onDelete('cascade');
@@ -193,17 +148,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 16. Reports
-        Schema::create('reports', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('wedding_id')->constrained()->onDelete('cascade');
-            $table->string('report_type');
-            $table->timestamp('generated_at');
-            $table->json('summary_data')->nullable();
-            $table->timestamps();
-        });
-
-        // 17. Notifications
+        // 12. Notifications
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('wedding_id')->constrained()->onDelete('cascade');
@@ -215,35 +160,19 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 18. Activity Logs
-        Schema::create('activity_logs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('wedding_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
-            $table->string('action');
-            $table->text('description');
-            $table->timestamps();
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('activity_logs');
         Schema::dropIfExists('notifications');
-        Schema::dropIfExists('reports');
         Schema::dropIfExists('gifts');
         Schema::dropIfExists('rundown_events');
         Schema::dropIfExists('moodboards');
         Schema::dropIfExists('guests');
-        Schema::dropIfExists('guest_categories');
         Schema::dropIfExists('vendor_payments');
         Schema::dropIfExists('vendor_contracts');
         Schema::dropIfExists('vendors');
-        Schema::dropIfExists('vendor_categories');
-        Schema::dropIfExists('expenses');
         Schema::dropIfExists('budgets');
-        Schema::dropIfExists('budget_categories');
-        Schema::dropIfExists('checklist_attachments');
         Schema::dropIfExists('checklists');
         Schema::dropIfExists('weddings');
     }

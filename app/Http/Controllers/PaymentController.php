@@ -7,6 +7,7 @@ use App\Models\VendorPayment;
 use App\Models\Vendor;
 use App\Models\DropdownOption;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PaymentController extends Controller
 {
@@ -26,7 +27,7 @@ class PaymentController extends Controller
         $wedding = Wedding::current();
         $this->normalizeDigitInputs($request, ['nominal']);
         $validated = $request->validate([
-            'vendor_id' => 'required|exists:vendors,id',
+            'vendor_id' => ['required', Rule::exists('vendors', 'id')->where('wedding_id', $wedding->id)],
             'nominal' => $this->moneyRule(),
             'payment_date' => 'nullable|date',
             'payment_method' => 'nullable|string',
@@ -44,7 +45,7 @@ class PaymentController extends Controller
     {
         $this->normalizeDigitInputs($request, ['nominal']);
         $validated = $request->validate([
-            'vendor_id' => 'required|exists:vendors,id',
+            'vendor_id' => ['required', Rule::exists('vendors', 'id')->where('wedding_id', $wedding->id)],
             'nominal' => $this->moneyRule(),
             'payment_date' => 'nullable|date',
             'payment_method' => 'nullable|string',

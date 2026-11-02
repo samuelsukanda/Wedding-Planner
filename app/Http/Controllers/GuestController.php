@@ -245,7 +245,7 @@ class GuestController extends Controller
         $msg = $this->renderWaMessage($wedding->wa_template ?: $this->defaultWaTemplate(), $guest, $wedding);
 
         $phone = preg_replace('/[^0-9]/', '', $guest->phone);
-        $phoneNum = $phone[0] === '0' ? substr($phone, 1) : $phone;
+        $phoneNum = isset($phone[0]) && $phone[0] === '0' ? substr($phone, 1) : $phone;
 
         return 'https://api.whatsapp.com/send?phone=62' . $phoneNum . '&text=' . rawurlencode($msg);
     }

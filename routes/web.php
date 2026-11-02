@@ -122,7 +122,7 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     Route::get('guests/export/csv', [GuestController::class, 'exportCsv'])->name('guests.export');
     Route::get('guests/export/labels', [GuestController::class, 'exportLabels'])->name('guests.labels');
     Route::get('guests/{guest}/wa', [GuestController::class, 'sendWa'])->name('guests.wa');
-    Route::get('guests/wa-all', [GuestController::class, 'sendWaAll'])->name('guests.wa-all');
+    Route::get('guests/wa-all', [GuestController::class, 'sendWaAll'])->middleware('throttle:6,1')->name('guests.wa-all');
     Route::post('guests/{guest}/wa-sent', [GuestController::class, 'toggleWaSent'])->name('guests.wa-sent');
 
     // Module 6 - Moodboard. Sepenuhnya Pro, tanpa kuota: paket Free mendapat
@@ -196,7 +196,6 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
     // Module 10 - Gift Management
     Route::resource('gifts', GiftController::class)->except(['create', 'edit', 'show']);
     Route::post('gifts/{gift}/toggle-thank-you', [GiftController::class, 'toggleThankYou'])->name('gifts.toggle-thank-you');
-    Route::post('gifts/{gift}/toggle-thankyou', [GiftController::class, 'toggleThankYou'])->name('gifts.toggle-thankyou');
     Route::get('gifts/export/csv', [GiftController::class, 'exportCsv'])->name('gifts.export');
 
     // Module 11 - Reports

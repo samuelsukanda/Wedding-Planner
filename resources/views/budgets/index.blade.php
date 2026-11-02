@@ -12,7 +12,7 @@
         modalOpen: false,
         editMode: false,
         currentItem: {},
-        vendors: {{ $vendorsJson }},
+        vendors: @json($vendors),
         selectedVendorId: '',
         get availableVendors() {
             const cat = this.currentItem.category;

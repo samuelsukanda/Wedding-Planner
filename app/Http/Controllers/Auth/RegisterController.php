@@ -17,7 +17,7 @@ class RegisterController extends Controller
             return redirect()->route('dashboard');
         }
 
-        return view('auth.login');
+        return view('auth.login', ['defaultTab' => 'register']);
     }
 
     public function register(Request $request)

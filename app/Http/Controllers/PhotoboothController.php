@@ -207,7 +207,6 @@ class PhotoboothController extends Controller
             'title' => 'required|string|max:255',
             'groom_name' => 'required|string|max:100',
             'bride_name' => 'required|string|max:100',
-            'gallery_mode' => 'required|in:public,private',
             'frame_text' => 'nullable|string|max:40',
             'frame_font' => 'nullable|string|max:50',
         ]);
@@ -260,18 +259,22 @@ class PhotoboothController extends Controller
             return $this->lockedResponse();
         }
 
+        // Stream ke file sementara, bukan muat seluruh ZIP di memori (galeri
+        // besar bisa ratusan MB → OOM).
+        $tmp = tempnam(sys_get_temp_dir(), 'pbzip');
+
         try {
-            $response = $this->api->for(Wedding::current())->get('/api/admin/photos/export.zip')->throw();
+            $this->api->for(Wedding::current())->sink($tmp)->get('/api/admin/photos/export.zip')->throw();
         } catch (\Throwable $e) {
+            @unlink($tmp);
             report($e);
 
             return back()->with('error', 'Photobooth sedang tidak dapat dihubungi. File ZIP belum bisa diunduh.');
         }
 
-        return response($response->body(), 200, [
+        return response()->download($tmp, 'photobooth.zip', [
             'Content-Type' => 'application/zip',
-            'Content-Disposition' => 'attachment; filename="photobooth.zip"',
-        ]);
+        ])->deleteFileAfterSend();
     }
 
     /**
