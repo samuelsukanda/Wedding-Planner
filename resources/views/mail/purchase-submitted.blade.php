@@ -5,4 +5,4 @@ Pasangan: {{ $coupleName }}
 Nominal: Rp {{ number_format($amount, 0, ',', '.') }}
 User ID: {{ $userId }}
 
-Silakan buka menu Request Upgrade Pro untuk memeriksa bukti transfer.
+Silakan buka menu Riwayat Pembelian untuk memeriksa bukti transfer.

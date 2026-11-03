@@ -660,7 +660,7 @@
                 <a href="{{ route('admin.upgrade-requests.index') }}"
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.upgrade-requests.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
                     <i class="fa-solid fa-crown w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
-                    <span>Request Upgrade Pro</span>
+                    <span>Riwayat Pembelian</span>
                 </a>
 
                 <a href="{{ route('admin.social-media.index') }}"

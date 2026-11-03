@@ -760,7 +760,7 @@ public function test_reject_field_offers_default_reason_templates()
         $this->actingAs($this->superadmin())
             ->get('/admin/upgrade-requests')
             ->assertOk()
-            ->assertSee('Request Upgrade Pro');
+            ->assertSee('Riwayat Pembelian');
 
         $this->actingAs($this->superadmin())
             ->get('/admin/pro-settings')

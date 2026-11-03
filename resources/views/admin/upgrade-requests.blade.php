@@ -1,15 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'List Pembayaran')
+@section('title', 'Riwayat Pembelian')
 
 @section('content')
     <div class="space-y-6" x-data="{ lightboxOpen: false, lightboxSrc: '', lightboxTitle: '' }">
         <!-- Header -->
         <div class="bg-white p-5 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
-            <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Request Upgrade Pro</h1>
-            <p class="text-xs text-[#5F6F5B] mt-1">
-                Tinjau bukti pembayaran dan setujui atau tolak permintaan upgrade. Persetujuan akan mengaktifkan paket
-                <strong>Pro</strong>
+            <h1 class="text-xl md:text-2xl font-bold font-serif-title text-[#5F6F5B]">Riwayat Pembelian</h1>
+            <p class="text-xs text-[#5F6F5B] mt-1">Kelola dan pantau seluruh transaksi pembelian paket oleh pengguna Nupsera.
             </p>
         </div>
 
@@ -45,7 +43,7 @@
                                 </p>
                             </div>
                             <!-- Hapus tersedia untuk semua status, bukan cuma yang pending: record lama
-                                                 yang sudah disetujui atau ditolak juga perlu bisa dibersihkan. -->
+                                                     yang sudah disetujui atau ditolak juga perlu bisa dibersihkan. -->
                             <div class="flex items-center gap-1 shrink-0">
                                 <span
                                     class="rounded-full border px-2.5 py-0.5 text-[11px] font-semibold {{ $badge[0] }}">
@@ -133,7 +131,8 @@
                                         </select>
 
                                         <label for="reject-note-{{ $request->id }}" class="sr-only">Alasan ditolak
-                                            (wajib)</label>
+                                            (wajib)
+                                        </label>
                                         <input type="text" id="reject-note-{{ $request->id }}" name="admin_note"
                                             required maxlength="500" placeholder="Alasan ditolak (wajib)"
                                             aria-label="Alasan ditolak (wajib)"
