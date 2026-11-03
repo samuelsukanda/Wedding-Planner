@@ -21,7 +21,7 @@ class SuperadminSeedTest extends TestCase
     {
         $this->seed(DatabaseSeeder::class);
 
-        $admin = User::where('email', 'admin@nupsera.my.id')->first();
+        $admin = User::where('email', 'nupsera@gmail.com')->first();
 
         $this->assertNotNull($admin);
         $this->assertTrue($admin->is_superadmin);
@@ -33,7 +33,7 @@ class SuperadminSeedTest extends TestCase
     {
         $this->seed(DatabaseSeeder::class);
 
-        $admin = User::where('email', 'admin@nupsera.my.id')->first();
+        $admin = User::where('email', 'nupsera@gmail.com')->first();
         $admin->update(['password' => 'PasswordYangBerubah']);
         $this->assertFalse(Hash::check('lopyu', $admin->fresh()->password));
 
@@ -50,13 +50,13 @@ class SuperadminSeedTest extends TestCase
     {
         $this->seed(DatabaseSeeder::class);
 
-        User::where('email', 'admin@nupsera.my.id')
+        User::where('email', 'nupsera@gmail.com')
             ->update(['is_superadmin' => false]);
 
         $this->seed(DatabaseSeeder::class);
 
         $this->assertTrue(
-            User::where('email', 'admin@nupsera.my.id')->first()->is_superadmin
+            User::where('email', 'nupsera@gmail.com')->first()->is_superadmin
         );
     }
 
@@ -73,7 +73,7 @@ class SuperadminSeedTest extends TestCase
         $this->assertDatabaseMissing('users', ['email' => 'admin@weddingplanner.web.id']);
         $this->assertDatabaseHas('users', [
             'id' => $legacy->id,
-            'email' => 'admin@nupsera.my.id',
+            'email' => 'nupsera@gmail.com',
             'is_superadmin' => 1,
         ]);
     }

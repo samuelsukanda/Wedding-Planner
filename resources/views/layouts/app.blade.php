@@ -504,8 +504,7 @@
                 </div>
             </a>
             <button @click="sidebarOpen = false"
-                class="md:hidden text-[#5F6F5B] hover:text-[#2D372E] p-1.5 cursor-pointer"
-                aria-label="Tutup sidebar">
+                class="md:hidden text-[#5F6F5B] hover:text-[#2D372E] p-1.5 cursor-pointer" aria-label="Tutup sidebar">
                 <i class="fa-solid fa-xmark text-xl" aria-hidden="true"></i>
             </button>
         </div>
@@ -681,6 +680,12 @@
                     <i class="fa-solid fa-camera-retro w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
                     <span>Pengaturan Photobooth</span>
                 </a>
+
+                <a href="{{ route('admin.rekening.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.rekening.*') ? 'bg-[#D8A7B1]/20 text-[#5F6F5B] font-bold border border-[#D8A7B1]/40' : 'text-[#4E473F] hover:bg-[#FAF7F2] hover:text-[#2D372E]' }}">
+                    <i class="fa-solid fa-building-columns w-5 text-center text-[#D8A7B1]" aria-hidden="true"></i>
+                    <span>Rekening</span>
+                </a>
             @endif
         </nav>
 
@@ -692,8 +697,7 @@
             <div class="flex items-center gap-3 px-4 py-3 border-t border-[#B6ADA3]/25">
                 @if (auth()->user()?->avatarUrl())
                     <img src="{{ auth()->user()->avatarUrl() }}" alt="Foto {{ auth()->user()->name }}"
-                        width="36" height="36"
-                        class="w-9 h-9 rounded-full object-cover shrink-0">
+                        width="36" height="36" class="w-9 h-9 rounded-full object-cover shrink-0">
                 @else
                     <div
                         class="w-9 h-9 rounded-full bg-[#A855A0] text-white flex items-center justify-center text-sm font-bold shrink-0">
@@ -721,7 +725,8 @@
             @click="$dispatch('sidebar-collapsed', ! sidebarCollapsed); document.documentElement.classList.add('sidebar-toggling'); window.setTimeout(() => document.documentElement.classList.remove('sidebar-toggling'), 320)"
             class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-6 h-12 items-center justify-center rounded-full bg-white border border-[#B6ADA3]/40 text-[#5F6F5B] hover:text-[#C2757F] shadow-sm transition-colors cursor-pointer"
             :aria-label="sidebarCollapsed ? 'Perlebar sidebar' : 'Ciutkan sidebar'">
-            <i class="fa-solid text-[10px]" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'" aria-hidden="true"></i>
+            <i class="fa-solid text-[10px]" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"
+                aria-hidden="true"></i>
         </button>
     </aside>
 
@@ -734,7 +739,8 @@
                 <div class="mobile-sheet-grabber"></div>
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="font-serif-title text-lg font-bold text-[#5F6F5B]"
-                        x-text="sheet === 'planning' ? 'Planning' : (sheet === 'finance' ? 'Keuangan' : (sheet === 'creative' ? 'Kreatif' : 'Saya'))"></h2>
+                        x-text="sheet === 'planning' ? 'Planning' : (sheet === 'finance' ? 'Keuangan' : (sheet === 'creative' ? 'Kreatif' : 'Saya'))">
+                    </h2>
                     <button type="button" @click="sheet = null" aria-label="Tutup menu"
                         class="w-9 h-9 rounded-full text-[#5F6F5B] hover:bg-[#FAF7F2] cursor-pointer flex items-center justify-center">
                         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
@@ -871,13 +877,14 @@
                                 @foreach ($items as $item)
                                     <a href="{{ route($item['route']) }}"
                                         class="mobile-sheet-item {{ request()->routeIs($item['match']) ? 'mobile-sheet-item-active' : '' }}">
-                                        <span class="mobile-sheet-icon"><i
-                                                class="fa-solid {{ $item['icon'] }}" aria-hidden="true"></i></span>
+                                        <span class="mobile-sheet-icon"><i class="fa-solid {{ $item['icon'] }}"
+                                                aria-hidden="true"></i></span>
                                         <span class="min-w-0 flex-1">
                                             <strong>{{ $item['title'] }}</strong>
                                             <small>{{ $item['subtitle'] }}</small>
                                         </span>
-                                        <i class="fa-solid fa-chevron-right text-[10px] text-[#5F6F5B]" aria-hidden="true"></i>
+                                        <i class="fa-solid fa-chevron-right text-[10px] text-[#5F6F5B]"
+                                            aria-hidden="true"></i>
                                     </a>
                                 @endforeach
                             </div>
@@ -895,8 +902,7 @@
                     class="mobile-tab {{ request()->routeIs('checklists.*', 'vendors.*', 'vendor-directory.*', 'guests.*', 'rundowns.*', 'proposals.*', 'souvenirs.*', 'documents.*') ? 'mobile-tab-active' : '' }}">
                     <i class="fa-solid fa-list-check" aria-hidden="true"></i><span>Planning</span><b></b>
                 </button>
-                <button type="button" @click="sheet = sheet === 'creative' ? null : 'creative'"
-                    class="mobile-tab">
+                <button type="button" @click="sheet = sheet === 'creative' ? null : 'creative'" class="mobile-tab">
                     <i class="fa-solid fa-palette" aria-hidden="true"></i><span>Kreatif</span><b></b>
                 </button>
                 <button type="button" @click="sheet = sheet === 'finance' ? null : 'finance'"

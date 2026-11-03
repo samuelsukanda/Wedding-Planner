@@ -8,6 +8,7 @@ use App\Services\PhotoboothApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class PhotoboothController extends Controller
 {
@@ -165,7 +166,7 @@ class PhotoboothController extends Controller
         abort_if(! $wedding, 403, 'Akun belum terhubung ke acara pernikahan.');
 
         $validated = $request->validate([
-            'proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
+            'proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
         ]);
 
         $created = DB::transaction(function () use ($wedding, $request, $validated) {
@@ -190,6 +191,21 @@ class PhotoboothController extends Controller
         if (! $created) {
             return redirect()->route('photobooth.index')
                 ->with('error', 'Kamu sudah mengirim bukti transfer dan masih menunggu konfirmasi admin.');
+        }
+
+        $recipients = \App\Models\User::where('is_superadmin', true)->pluck('email')->filter()->all();
+        if (empty($recipients)) {
+            $recipients = [config('mail.from.address', 'nupsera@gmail.com')];
+        }
+        try {
+            Mail::to($recipients)->send(new \App\Mail\PurchaseSubmittedMail(
+                'photobooth',
+                (string) $wedding->couple_name,
+                (int) \App\Models\Setting::get('photobooth_price', 0),
+                $request->user()->id
+            ));
+        } catch (\Throwable $e) {
+            report($e);
         }
 
         return redirect()->route('photobooth.index')

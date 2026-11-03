@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use App\Models\Wedding;
+use App\Mail\PurchaseSubmittedMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Checkout paket Pro lewat transfer manual.
@@ -56,7 +58,7 @@ class UpgradeController extends Controller
         // Satu request yang menunggu konfirmasi saja. Tanpa ini user bisa
         // menumpuk bukti transfer dan antrean admin jadi tidak terbaca.
         $validated = $request->validate([
-            'proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
+            'proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
         ]);
 
         $created = DB::transaction(function () use ($wedding, $request, $validated, $isPhotobooth) {
@@ -78,7 +80,31 @@ class UpgradeController extends Controller
         });
         if (! $created) return back()->with('error', 'Kamu sudah mengirim bukti transfer dan masih menunggu konfirmasi admin.');
 
+        $this->notifyPurchase($wedding, $isPhotobooth, (int) Setting::get($isPhotobooth ? 'photobooth_price' : 'pro_price', 0), $request->user()->id);
+
         return redirect()->route('upgrade.index', $isPhotobooth ? ['feature' => 'photobooth'] : [])
             ->with('success', 'Bukti transfer terkirim. Menunggu konfirmasi admin.');
+    }
+
+    /**
+     * Kirim email notifikasi ke superadmin tentang pembelian baru.
+     */
+    protected function notifyPurchase(\App\Models\Wedding $wedding, bool $isPhotobooth, int $amount, int $userId): void
+    {
+        $recipients = \App\Models\User::where('is_superadmin', true)->pluck('email')->filter()->all();
+        if (empty($recipients)) {
+            $recipients = [config('mail.from.address', 'nupsera@gmail.com')];
+        }
+
+        try {
+            \Illuminate\Support\Facades\Mail::to($recipients)->send(new \App\Mail\PurchaseSubmittedMail(
+                $isPhotobooth ? 'photobooth' : 'pro',
+                (string) $wedding->couple_name,
+                $amount,
+                $userId
+            ));
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 }

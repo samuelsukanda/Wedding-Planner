@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Request Upgrade Pro')
+@section('title', 'List Pembayaran')
 
 @section('content')
     <div class="space-y-6" x-data="{ lightboxOpen: false, lightboxSrc: '', lightboxTitle: '' }">
@@ -45,7 +45,7 @@
                                 </p>
                             </div>
                             <!-- Hapus tersedia untuk semua status, bukan cuma yang pending: record lama
-                                             yang sudah disetujui atau ditolak juga perlu bisa dibersihkan. -->
+                                                 yang sudah disetujui atau ditolak juga perlu bisa dibersihkan. -->
                             <div class="flex items-center gap-1 shrink-0">
                                 <span
                                     class="rounded-full border px-2.5 py-0.5 text-[11px] font-semibold {{ $badge[0] }}">
@@ -102,7 +102,8 @@
                         @if ($request->status === 'pending')
                             <div class="space-y-3 pt-3 border-t border-[#B6ADA3]/25">
                                 <div class="grid grid-cols-2 gap-2.5">
-                                    <form method="POST" action="{{ route('admin.upgrade-requests.approve', $request->id) }}"
+                                    <form method="POST"
+                                        action="{{ route('admin.upgrade-requests.approve', $request->id) }}"
                                         data-confirm="Aktifkan paket Pro untuk {{ $request->wedding?->couple_name ?: 'Wedding Kit ini' }}?">
                                         @csrf
                                         <button type="submit"
@@ -118,9 +119,11 @@
                                     action="{{ route('admin.upgrade-requests.reject', $request->id) }}">
                                     @csrf
 
-                                     <div class="flex flex-col sm:flex-row gap-2">
-                                        <label for="reject-select-{{ $request->id }}" class="sr-only">Pilih template alasan penolakan</label>
-                                        <select id="reject-select-{{ $request->id }}" data-fill-target="reject-note-{{ $request->id }}"
+                                    <div class="flex flex-col sm:flex-row gap-2">
+                                        <label for="reject-select-{{ $request->id }}" class="sr-only">Pilih template
+                                            alasan penolakan</label>
+                                        <select id="reject-select-{{ $request->id }}"
+                                            data-fill-target="reject-note-{{ $request->id }}"
                                             aria-label="Pilih template alasan penolakan"
                                             class="sm:w-64 shrink-0 px-3 py-2 rounded-xl border border-[#B6ADA3]/40 bg-white text-xs text-[#5F6F5B] focus:border-[#D8A7B1] focus:outline-none transition cursor-pointer">
                                             <option value="">Pilih alasan…</option>
@@ -129,7 +132,8 @@
                                             @endforeach
                                         </select>
 
-                                        <label for="reject-note-{{ $request->id }}" class="sr-only">Alasan ditolak (wajib)</label>
+                                        <label for="reject-note-{{ $request->id }}" class="sr-only">Alasan ditolak
+                                            (wajib)</label>
                                         <input type="text" id="reject-note-{{ $request->id }}" name="admin_note"
                                             required maxlength="500" placeholder="Alasan ditolak (wajib)"
                                             aria-label="Alasan ditolak (wajib)"
@@ -162,28 +166,19 @@
         @endif
 
         {{-- Lightbox Modal --}}
-        <div x-show="lightboxOpen" x-cloak
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            @keydown.escape.window="lightboxOpen = false"
-            class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
-            style="display: none;">
+        <div x-show="lightboxOpen" x-cloak x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0" @keydown.escape.window="lightboxOpen = false"
+            class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" style="display: none;">
             <!-- Backdrop -->
-            <div class="fixed inset-0 bg-black/85 backdrop-blur-sm transition-opacity"
-                @click="lightboxOpen = false"></div>
+            <div class="fixed inset-0 bg-black/85 backdrop-blur-sm transition-opacity" @click="lightboxOpen = false"></div>
 
             <!-- Modal Content -->
             <div class="relative z-10 max-w-5xl w-full max-h-[92vh] flex flex-col items-center"
-                x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 scale-95"
-                x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-150"
-                x-transition:leave-start="opacity-100 scale-100"
-                x-transition:leave-end="opacity-0 scale-95">
+                x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
 
                 <!-- Top bar with title and buttons -->
                 <div class="w-full flex items-center justify-between text-white pb-3 px-1 gap-4">
@@ -192,13 +187,11 @@
                         <span class="text-sm font-medium truncate" x-text="lightboxTitle"></span>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
-                        <a :href="lightboxSrc" target="_blank" rel="noopener"
-                            title="Buka gambar di tab baru"
+                        <a :href="lightboxSrc" target="_blank" rel="noopener" title="Buka gambar di tab baru"
                             class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-sm transition-all cursor-pointer shadow-md">
                             <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         </a>
-                        <button type="button" @click="lightboxOpen = false"
-                            title="Tutup (Esc)"
+                        <button type="button" @click="lightboxOpen = false" title="Tutup (Esc)"
                             class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 active:scale-95 text-white flex items-center justify-center text-lg transition-all cursor-pointer shadow-md"
                             aria-label="Tutup lightbox">
                             <i class="fa-solid fa-xmark"></i>

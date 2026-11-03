@@ -42,6 +42,6 @@ class RegisterController extends Controller
         $request->session()->regenerate();
 
         // User baru belum punya data pernikahan, jadi langsung masuk wizard.
-        return redirect()->route('onboarding.index');
+        return redirect()->route('dashboard');
     }
 }

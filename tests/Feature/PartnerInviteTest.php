@@ -429,7 +429,7 @@ class PartnerInviteTest extends TestCase
 
         $this->actingAs($owner)
             ->delete('/profile/reset-data', ['confirm' => 'RESET'])
-            ->assertRedirect(route('onboarding.index'));
+            ->assertRedirect(route('dashboard'));
 
         $this->assertNull(WeddingInvite::find($invite->id));
     }

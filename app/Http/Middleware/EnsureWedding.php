@@ -46,7 +46,7 @@ class EnsureWedding
                 return $next($request);
             }
 
-            return redirect()->route('onboarding.index');
+            return redirect()->route('dashboard');
         }
 
         return $next($request);

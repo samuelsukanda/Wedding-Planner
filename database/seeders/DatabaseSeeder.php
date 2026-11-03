@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\DocumentTemplate;
 use App\Models\DropdownOption;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->seedSuperadmin();
         $this->seedDropdownMaster();
+        $this->seedSettings();
 
         // Template Persyaratan Nikah (Module 15).
         $this->call(DocumentTemplateSeeder::class);
@@ -50,12 +52,12 @@ class DatabaseSeeder extends Seeder
             ->where('is_superadmin', true)
             ->first();
 
-        if ($legacy && ! User::where('email', 'admin@nupsera.my.id')->exists()) {
-            $legacy->update(['email' => 'admin@nupsera.my.id']);
+        if ($legacy && ! User::where('email', 'nupsera@gmail.com')->exists()) {
+            $legacy->update(['email' => 'nupsera@gmail.com']);
         }
 
         User::updateOrCreate(
-            ['email' => 'admin@nupsera.my.id'],
+            ['email' => 'nupsera@gmail.com'],
             [
                 'name' => 'Superadmin',
                 // cast 'password' => 'hashed' di model User otomatis meng-hash nilai ini
@@ -148,6 +150,10 @@ class DatabaseSeeder extends Seeder
             'gift_type' => ['Jenis Hadiah', [
                 ['Cash', null], ['Barang', null],
             ]],
+            'upgrade_reject_reason' => ['Alasan Tolak Upgrade Pro', array_map(
+                fn (string $r) => [$r, null],
+                \App\Http\Controllers\AdminUpgradeController::DEFAULT_REJECT_REASONS
+            )],
         ];
 
         foreach ($groups as $groupKey => [$groupName, $options]) {
@@ -162,5 +168,22 @@ class DatabaseSeeder extends Seeder
                 );
             }
         }
+    }
+
+    /**
+     * Setelan global: kontak sosial + rekening pembayaran Pro.
+     */
+    private function seedSettings(): void
+    {
+        Setting::put('social_whatsapp', '085117658085');
+        Setting::put('social_instagram', 'https://www.instagram.com/nupsera/');
+        Setting::put('social_tiktok', '');
+
+        Setting::put('pro_payment_note', 'Semua bank A/n Sammuel');
+        Setting::put('pro_banks', json_encode([
+            ['icon' => 'fa-building-columns', 'name' => 'BCA', 'number' => '5410928045'],
+            ['icon' => 'fa-building-columns', 'name' => 'BNI', 'number' => '1956149673'],
+            ['icon' => 'fa-building-columns', 'name' => 'JAGO', 'number' => '104273096017'],
+        ], JSON_UNESCAPED_UNICODE));
     }
 }

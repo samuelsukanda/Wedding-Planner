@@ -30,6 +30,7 @@ use App\Http\Controllers\AdminPanelController;
 use App\Http\Controllers\UpgradeController;
 use App\Http\Controllers\AdminUpgradeController;
 use App\Http\Controllers\ProSettingsController;
+use App\Http\Controllers\RekeningController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\PhotoboothController;
 use App\Http\Controllers\AdminPhotoboothController;
@@ -239,6 +240,9 @@ Route::get('profile', fn () => redirect()->route('admin.index'));
 
         Route::get('admin/pro-settings', [ProSettingsController::class, 'edit'])->name('admin.pro-settings.index');
         Route::put('admin/pro-settings', [ProSettingsController::class, 'update'])->name('admin.pro-settings.update');
+
+        Route::get('admin/rekening', [RekeningController::class, 'edit'])->name('admin.rekening.index');
+        Route::put('admin/rekening', [RekeningController::class, 'update'])->name('admin.rekening.update');
 
         // Add-on Photobooth: harga pembelian & batas jumlah foto per event.
         Route::get('admin/photobooth-settings', [AdminPhotoboothController::class, 'edit'])->name('admin.photobooth-settings.index');

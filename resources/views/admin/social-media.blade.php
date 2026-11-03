@@ -16,11 +16,13 @@
             @csrf
             @method('PUT')
 
-            <div>
+            <div x-data="{ wa: '{{ old('social_whatsapp', $values['social_whatsapp']) }}' }">
                 <label for="social_whatsapp"
                     class="block text-xs font-bold uppercase tracking-wider text-[#5F6F5B] mb-1.5">WhatsApp</label>
                 <input type="text" name="social_whatsapp" id="social_whatsapp" inputmode="numeric"
-                    value="{{ old('social_whatsapp', $values['social_whatsapp']) }}" placeholder="6281234567890"
+                    :value="wpPhone(wa)"
+                    @input="wa = wpDigits($event.target.value); wpClamp($event.target, wpPhone)"
+                    placeholder="6281234567890"
                     aria-label="WhatsApp"
                     class="block w-full px-4 py-2.5 rounded-xl border border-[#B6ADA3]/40 bg-[#FAF7F2] text-sm text-[#5F6F5B] placeholder-[#B6ADA3] placeholder:font-normal focus:border-[#D8A7B1] focus:outline-none transition">
                 @error('social_whatsapp')

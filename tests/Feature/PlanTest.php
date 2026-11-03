@@ -587,13 +587,12 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         ];
 
         $this->actingAs($this->superadmin())
-            ->put('/admin/pro-settings', [
-                'pro_price' => 249000,
+            ->put('/admin/rekening', [
                 'banks' => $banks,
                 'pro_payment_note' => 'Kirim sesuai nominal lalu unggah bukti di sini.',
                 'pro_qris' => UploadedFile::fake()->image('qris.png'),
             ])
-            ->assertRedirect(route('admin.pro-settings.index'));
+            ->assertRedirect(route('admin.rekening.index'));
 
         $path = Setting::get('pro_qris_path');
         $this->assertStringStartsWith('qris/', $path);
@@ -602,12 +601,11 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
 
         // Unggah kedua menimpa file pertama supaya disk tidak menumpuk.
         $this->actingAs($this->superadmin())
-            ->put('/admin/pro-settings', [
-                'pro_price' => 249000,
+            ->put('/admin/rekening', [
                 'banks' => $banks,
                 'pro_qris' => UploadedFile::fake()->image('qris-lagi.png'),
             ])
-            ->assertRedirect(route('admin.pro-settings.index'));
+            ->assertRedirect(route('admin.rekening.index'));
 
         Storage::disk('public')->assertMissing($path);
         $this->assertStringStartsWith('qris/', Setting::get('pro_qris_path'));
@@ -647,8 +645,7 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
     public function test_empty_bank_rows_are_dropped_before_validation()
     {
         $this->actingAs($this->superadmin())
-            ->put('/admin/pro-settings', [
-                'pro_price' => 55000,
+            ->put('/admin/rekening', [
                 'banks' => [
                     ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '5410928045'],
                     ['icon' => 'fa-landmark', 'name' => '', 'number' => ''],
@@ -663,8 +660,7 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
     public function test_unknown_bank_icon_is_rejected()
     {
         $this->actingAs($this->superadmin())
-            ->put('/admin/pro-settings', [
-                'pro_price' => 55000,
+            ->put('/admin/rekening', [
                 'banks' => [['icon' => 'fa-skull', 'name' => 'BCA', 'number' => '123']],
             ])
             ->assertSessionHasErrors('banks.0.icon');
@@ -679,14 +675,9 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         ]));
 
         $this->actingAs($this->superadmin())
-            ->get('/admin/pro-settings')
+            ->get('/admin/rekening')
             ->assertOk()
-            ->assertSee('Rp 55.000')
-            ->assertSee('Rp 150.000')
-            ->assertSee('data-format="money"', false)
-            ->assertSee('104273096017')
-            // Nomor WA admin sudah tidak dikelola dari sini.
-            ->assertDontSee('Nomor WhatsApp Admin');
+            ->assertSee('104273096017');
     }
 
 public function test_reject_button_lives_inside_the_form_holding_the_reason()
@@ -818,12 +809,17 @@ public function test_superadmin_can_save_pro_settings()
         $this->actingAs($this->superadmin())
             ->put('/admin/pro-settings', [
                 'pro_price' => 249000,
+            ])
+            ->assertRedirect(route('admin.pro-settings.index'));
+
+        $this->actingAs($this->superadmin())
+            ->put('/admin/rekening', [
                 'banks' => [
                     ['icon' => 'fa-wallet', 'name' => 'Jago', 'number' => '104273096017'],
                     ['icon' => 'fa-landmark', 'name' => 'BCA', 'number' => '5410928045'],
                 ],
             ])
-            ->assertRedirect(route('admin.pro-settings.index'));
+            ->assertRedirect(route('admin.rekening.index'));
 
         $this->assertSame('249000', Setting::get('pro_price'));
         $this->assertSame([

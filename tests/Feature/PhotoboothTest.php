@@ -481,8 +481,9 @@ class PhotoboothTest extends TestCase
 
         // Struktur mengikuti locked Moodboard: centered hero, visual cards, benefits, CTA.
         $this->assertStringContainsString('Photobooth', $html);
-        $this->assertStringContainsString('Foto &amp; GIF Tanpa Batas', $html);
-        $this->assertStringContainsString('Frame &amp; Stiker Kustom', $html);
+        $this->assertStringContainsString('Foto &amp; Voice Note Tamu', $html);
+        $this->assertStringContainsString('Frame Nama', $html);
+        $this->assertStringContainsString('Pasangan', $html);
         $this->assertStringContainsString('Live Gallery untuk Tamu', $html);
         $this->assertStringContainsString('Buka Akses Photobooth Sekarang', $html);
 

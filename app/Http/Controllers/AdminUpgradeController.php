@@ -21,7 +21,7 @@ class AdminUpgradeController extends Controller
         return response()->file(Storage::disk('local')->path($upgradeRequest->proof_path));
     }
     /** Alasan bawaan kalau superadmin belum mengisi group Master Data. */
-    private const DEFAULT_REJECT_REASONS = [
+    public const DEFAULT_REJECT_REASONS = [
         'Bukti transfer tidak terbaca, silakan kirim ulang yang lebih jelas',
         'Nominal transfer tidak sesuai dengan harga paket Pro',
         'Transfer berasal dari rekening selain yang kami cantumkan',

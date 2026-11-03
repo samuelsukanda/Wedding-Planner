@@ -107,7 +107,7 @@ class ResetWeddingDataTest extends TestCase
 
         $this->actingAs($user)
             ->delete('/profile/reset-data', ['confirm' => 'RESET'])
-            ->assertRedirect(route('onboarding.index'));
+            ->assertRedirect(route('dashboard'));
 
         foreach ([Checklist::class, Budget::class, Guest::class, Moodboard::class, RundownEvent::class,
             Souvenir::class, DocumentRequirement::class, SavingsGoal::class, SavingsTransaction::class,

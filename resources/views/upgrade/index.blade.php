@@ -51,7 +51,7 @@
             {{-- checkout = false Initially: nomor rekening dan form upload sengaja
                  TIDAK ada di DOM sebelum tombol Pro diklik, supaya belum ada yang
                  bisa dikirim ke server tanpa lewat tombol itu. --}}
-            <div class="w-full space-y-6" x-data="{ modalOpen: false }">
+            <div class="w-full space-y-6" x-data="{ modalOpen: {{ $errors->has('proof') ? 'true' : 'false' }} }">
 
                 <!-- ================= HERO PAKET ================= -->
                 {{-- Warna hero pakai palet app (rose), bukan hijau tua: teks putih
@@ -61,11 +61,15 @@
 
                     <span
                         class="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                        <i class="fa-solid {{ $isPhotobooth ? 'fa-camera-retro' : 'fa-gem' }}"></i> {{ $isPhotobooth ? 'Add-On Photobooth' : 'Recommended' }}
+                        <i class="fa-solid {{ $isPhotobooth ? 'fa-camera-retro' : 'fa-gem' }}"></i>
+                        {{ $isPhotobooth ? 'Add-On Photobooth' : 'Recommended' }}
                     </span>
 
-                    <h2 class="mt-4 text-2xl md:text-3xl font-bold font-serif-title text-white">{{ $isPhotobooth ? 'Photobooth Digital' : 'Nupsera Pro' }}</h2>
-                    <p class="mt-1.5 text-sm text-white/85">{{ $isPhotobooth ? 'Aktifkan Photobooth untuk seluruh tamu di acaramu.' : 'Upgrade sekali, nikmati Pro selamanya.' }}</p>
+                    <h2 class="mt-4 text-2xl md:text-3xl font-bold font-serif-title text-white">
+                        {{ $isPhotobooth ? 'Photobooth Digital' : 'Nupsera Pro' }}</h2>
+                    <p class="mt-1.5 text-sm text-white/85">
+                        {{ $isPhotobooth ? 'Aktifkan Photobooth untuk seluruh tamu di acaramu.' : 'Upgrade sekali, nikmati Pro selamanya.' }}
+                    </p>
 
                     <div class="mt-5 flex items-end flex-wrap gap-x-3 gap-y-1">
                         {{-- Harga coret hanya muncul kalau superadmin mengisinya dan
@@ -86,7 +90,7 @@
                 <div class="w-full bg-white p-6 md:p-7 rounded-2xl border border-[#B6ADA3]/35 shadow-xs">
                     <h3 class="text-sm font-bold text-[#5F6F5B]">Yang kamu dapat</h3>
                     <ul class="mt-4 space-y-3">
-                        @foreach (($isPhotobooth ? ['Foto & GIF tanpa batas', 'Frame dan stiker sesuai tema', 'Live gallery untuk seluruh tamu', 'Bisa diakses dari HP maupun desktop'] : ['Moodboard tanpa batas jumlah item', 'Cari Vendor — katalog vendor weddings lengkap', 'Berlaku selamanya, tanpa biaya bulanan', 'Berlaku juga untuk akun pasangan di Workspace yang sama', 'Bisa diakses dari HP maupun desktop']) as $benefit)
+                        @foreach ($isPhotobooth ? ['Foto & voice note tamu undangan', 'Frame nama pasangan dan tanggal pernikahan', 'Live gallery untuk seluruh tamu', 'Bisa diakses dari HP maupun desktop'] : ['Moodboard tanpa batas jumlah item', 'Cari Vendor — katalog vendor wedding lengkap', 'Berlaku selamanya, tanpa biaya bulanan', 'Berlaku juga untuk akun pasangan di Workspace yang sama', 'Bisa diakses dari HP maupun desktop'] as $benefit)
                             <li class="flex items-center gap-3 text-sm text-[#5F6F5B]/85">
                                 <i class="fa-solid fa-circle-check text-[#C2757F]"></i>
                                 <span>{{ $benefit }}</span>
@@ -98,13 +102,14 @@
                 <!-- ================= CTA PEMBUKA CHECKOUT ================= -->
                 <button type="button" @click="modalOpen = true"
                     class="btn-primary-rose w-full px-6 py-4 rounded-2xl text-sm cursor-pointer">
-                    <i class="fa-solid {{ $isPhotobooth ? 'fa-camera-retro' : 'fa-gem' }} mr-2"></i> {{ $isPhotobooth ? 'Beli Add-On Photobooth' : 'Upgrade ke Pro' }}
+                    <i class="fa-solid {{ $isPhotobooth ? 'fa-camera-retro' : 'fa-gem' }} mr-2"></i>
+                    {{ $isPhotobooth ? 'Beli Add-On Photobooth' : 'Upgrade ke Pro' }}
                 </button>
 
                 <!-- ================= MODAL RINGKASAN PEMBELIAN =================
-                                                                     Struktur, warna, dan cara menutupnya mengikuti modal
-                                                                     "Tambah Data" di modul lain (x-show + x-outside + Escape),
-                                                                     supaya tidak ada gaya modal ketiga di aplikasi ini. -->
+                                                                                         Struktur, warna, dan cara menutupnya mengikuti modal
+                                                                                         "Tambah Data" di modul lain (x-show + x-outside + Escape),
+                                                                                         supaya tidak ada gaya modal ketiga di aplikasi ini. -->
                 <div x-show="modalOpen" x-transition.opacity x-cloak @keydown.escape.window="modalOpen = false"
                     class="fixed inset-0 z-50 bg-[#5F6F5B]/40 backdrop-blur-md flex items-center justify-center p-4">
                     <div x-outside="modalOpen = false"
@@ -122,7 +127,8 @@
                         <dl class="text-sm divide-y divide-[#B6ADA3]/25">
                             <div class="flex items-center justify-between gap-4 py-2.5">
                                 <dt class="text-[#5F6F5B]/70">Paket</dt>
-                                <dd class="font-semibold text-[#5F6F5B]">{{ $isPhotobooth ? 'Photobooth Digital' : 'Pro' }}</dd>
+                                <dd class="font-semibold text-[#5F6F5B]">{{ $isPhotobooth ? 'Photobooth Digital' : 'Pro' }}
+                                </dd>
                             </div>
                             @if ($priceBefore > $price && $price > 0)
                                 <div class="flex items-center justify-between gap-4 py-2.5">
@@ -193,7 +199,7 @@
                                 </div>
 
                                 <!-- Tampilan besar: ukuran terbatas, tutup lewat
-                                                 tombol X di pojok atau klik area gelap -->
+                                                                     tombol X di pojok atau klik area gelap -->
                                 <div x-show="open" x-on:click="open = false" x-cloak
                                     class="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6 cursor-zoom-out">
                                     <div class="relative flex items-center justify-center max-w-full max-h-full">
@@ -211,8 +217,9 @@
                         @endif
 
                         <!-- Kirim bukti -->
-                        <form method="POST" action="{{ $isPhotobooth ? route('photobooth.purchase') : route('upgrade.store') }}" enctype="multipart/form-data"
-                            class="space-y-4">
+                        <form method="POST"
+                            action="{{ $isPhotobooth ? route('photobooth.purchase') : route('upgrade.store') }}"
+                            enctype="multipart/form-data" class="space-y-4"
                             @csrf
                             @if ($isPhotobooth)
                                 <input type="hidden" name="feature" value="photobooth">
@@ -225,7 +232,7 @@
                                 <input type="file" name="proof" id="proof"
                                     accept="image/jpeg,image/png,application/pdf" required
                                     class="block w-full text-sm text-[#5F6F5B] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-[#FAF7F2] file:text-[#5F6F5B] file:text-xs file:font-semibold file:cursor-pointer hover:file:bg-[#F2EDE4] transition">
-                                <p class="mt-1.5 text-[11px] text-[#5F6F5B]/60">Format JPG, PNG, atau PDF. Maksimal 2 MB.
+                                <p class="mt-1.5 text-[11px] text-[#5F6F5B]/60">Format JPG, PNG, atau PDF. Maksimal 10 MB.
                                 </p>
                             </div>
 

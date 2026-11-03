@@ -28,7 +28,7 @@ class OnboardingTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        $response->assertRedirect(route('onboarding.index'));
+        $response->assertRedirect(route('dashboard'));
         $this->assertDatabaseHas('users', [
             'email' => 'nabila@example.com',
             'name' => 'Nabila',
@@ -144,7 +144,7 @@ class OnboardingTest extends TestCase
     {
         $user = User::factory()->create(['wedding_id' => null]);
 
-        $this->actingAs($user)->get('/guests')->assertRedirect(route('onboarding.index'));
+        $this->actingAs($user)->get('/guests')->assertRedirect(route('dashboard'));
     }
 
     public function test_user_with_wedding_is_not_blocked(): void

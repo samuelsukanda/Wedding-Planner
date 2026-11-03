@@ -24,6 +24,11 @@ class AdminPhotoboothController extends Controller
 
     public function update(Request $request)
     {
+        // Harga dikirim terformat ("Rp 55.000"), bersihkan dulu.
+        if ($request->filled('photobooth_price')) {
+            $request->merge(['photobooth_price' => preg_replace('/\D/', '', (string) $request->input('photobooth_price'))]);
+        }
+
         $validated = $request->validate([
             'photobooth_price' => ['required', 'integer', 'min:0'],
             'photobooth_photo_quota' => ['required', 'integer', 'min:0'],

@@ -28,6 +28,11 @@ class AdminPanelController extends Controller
         $waDigits = preg_replace('/\D/', '', (string) (
             Setting::get('social_whatsapp', '') ?: Setting::get('admin_whatsapp', '')
         ));
+        // Nomor disimpan mentah; untuk link wa.me butuh kode negara. Konversi
+        // awalan 0 -> 62 supaya link tetap valid (sama dengan buildWaUrl tamu).
+        if (str_starts_with($waDigits, '0') && strlen($waDigits) > 1) {
+            $waDigits = '62' . substr($waDigits, 1);
+        }
 
         $contact = [
             'whatsapp' => $waDigits,

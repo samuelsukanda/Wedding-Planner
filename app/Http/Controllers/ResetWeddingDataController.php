@@ -67,7 +67,7 @@ class ResetWeddingDataController extends Controller
             $wedding->delete();
         });
 
-        return redirect()->route('onboarding.index')
+        return redirect()->route('dashboard')
             ->with('success', 'Semua data pernikahan berhasil dihapus. Silakan isi ulang onboarding.');
     }
 }

@@ -120,7 +120,7 @@ class GoogleAuthController extends Controller
 
         // Tanpa data pernikahan, user baru diarahkan ke wizard.
         if (! $user->wedding_id) {
-            return redirect()->route('onboarding.index');
+            return redirect()->route('dashboard');
         }
 
         return redirect()->intended(route('dashboard'));

@@ -19,7 +19,7 @@
         </div>
 
         <form method="POST" action="{{ route('admin.photobooth-settings.update') }}"
-            class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-5 max-w-2xl">
+            class="bg-white p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-5 w-full">
             @csrf
             @method('PUT')
 
@@ -72,3 +72,16 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        (function() {
+            document.querySelectorAll('input[data-format="money"]').forEach(function(input) {
+                input.addEventListener('input', function() {
+                    input.value = window.wpMoney(input.value);
+                });
+                input.value = window.wpMoney(input.value);
+            });
+        })();
+    </script>
+@endpush
