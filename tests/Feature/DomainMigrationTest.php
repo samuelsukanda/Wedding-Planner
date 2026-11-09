@@ -23,10 +23,10 @@ class DomainMigrationTest extends TestCase
     {
         $this->get('/')
             ->assertOk()
-            ->assertSee('<link rel="canonical" href="https://nupsera.my.id/">', false)
+            ->assertSee('<link rel="canonical" href="'.config('app.url').'/">', false)
             ->assertSee('Nupsera', false)
             ->assertSee('WebApplication', false)
-            ->assertSee('https://nupsera.my.id/llms.txt', false);
+            ->assertSee(config('app.url').'/llms.txt', false);
     }
 
     public function test_crawler_endpoints_are_public(): void

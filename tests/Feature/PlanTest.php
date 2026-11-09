@@ -799,8 +799,8 @@ public function test_reject_field_offers_default_reason_templates()
 
         // Add-on tidak lagi dropdown: kedua pengaturan jadi menu sendiri.
         $this->assertStringNotContainsString('>Add-on</span>', $html);
-        $this->assertStringContainsString('href="https://nupsera.my.id/admin/pro-settings"', $html);
-        $this->assertStringContainsString('href="https://nupsera.my.id/admin/photobooth-settings"', $html);
+        $this->assertStringContainsString('href="'.config('app.url').'/admin/pro-settings"', $html);
+        $this->assertStringContainsString('href="'.config('app.url').'/admin/photobooth-settings"', $html);
         $this->assertStringContainsString('Pengaturan Pro', $html);
         $this->assertStringContainsString('Pengaturan Photobooth', $html);
         $this->assertStringNotContainsString('x-collapse', $html);

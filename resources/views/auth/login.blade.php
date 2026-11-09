@@ -7,27 +7,27 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description"
         content="Nupsera: Aplikasi wedding planner dan photobooth virtual pernikahan. Kelola anggaran, jadwal vendor, dan undangan secara serba otomatis.">
-    <link rel="canonical" href="https://nupsera.my.id/">
-    <link rel="author" href="https://nupsera.my.id/llms.txt">
+    <link rel="canonical" href="{{ config('app.url') }}/">
+    <link rel="author" href="{{ config('app.url') }}/llms.txt">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Nupsera">
     <meta property="og:title" content="Nupsera — Aplikasi Wedding Planner dan Photobooth Virtual">
     <meta property="og:description"
         content="Nupsera: Aplikasi wedding planner dan photobooth virtual pernikahan. Kelola anggaran, jadwal vendor, dan undangan secara serba otomatis.">
-    <meta property="og:url" content="https://nupsera.my.id/">
-    <meta property="og:image" content="https://nupsera.my.id/img/logo-brand.jpg">
+    <meta property="og:url" content="{{ config('app.url') }}/">
+    <meta property="og:image" content="{{ config('app.url') }}/img/logo-brand.jpg">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Nupsera — Aplikasi Wedding Planner dan Photobooth Virtual">
     <meta name="twitter:description"
         content="Nupsera: Aplikasi wedding planner dan photobooth virtual pernikahan. Kelola anggaran, jadwal vendor, dan undangan secara serba otomatis.">
-    <meta name="twitter:image" content="https://nupsera.my.id/img/logo-brand.jpg">
+    <meta name="twitter:image" content="{{ config('app.url') }}/img/logo-brand.jpg">
     @php(
     $seoSchema = [
         '@context' => 'https://schema.org',
         '@type' => 'WebApplication',
         'name' => 'Nupsera',
         'alternateName' => 'Nupsera Wedding & Moments',
-        'url' => 'https://nupsera.my.id/',
+        'url' => config('app.url'). '/',
         'applicationCategory' => 'LifestyleApplication',
         'operatingSystem' => 'Web',
         'inLanguage' => 'id-ID',
