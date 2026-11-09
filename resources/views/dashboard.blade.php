@@ -7,7 +7,8 @@
         <!-- Header Banner -->
         <div
             class="relative overflow-hidden rounded-2xl bg-[#5F6F5B] text-white p-6 sm:p-8 shadow-md border border-[#A3B7A6]/30">
-            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"
+                aria-hidden="true"></div>
             <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div>
                     <div
@@ -68,7 +69,8 @@
                         </div>
                         <div class="w-full h-3 bg-[#FAF7F2] rounded-full overflow-hidden p-0.5 border border-[#B6ADA3]/30">
                             <div class="h-full bg-gradient-to-r from-[#D8A7B1] to-[#A3B7A6] rounded-full transition-all duration-500"
-                                style="width: {{ min(100, $savingsTarget > 0 ? round($savingsBalance / $savingsTarget * 100) : 0) }}%"></div>
+                                style="width: {{ min(100, $savingsTarget > 0 ? round(($savingsBalance / $savingsTarget) * 100) : 0) }}%">
+                            </div>
                         </div>
                     </div>
                     <div class="mt-4 pt-3 border-t border-[#B6ADA3]/25 text-xs flex justify-between items-center">
@@ -171,8 +173,7 @@
             </div>
 
             <!-- Progress Seserahan -->
-            <div
-                class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
+            <div class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
                         <i class="fa-solid fa-gift text-[#D8A7B1]" aria-hidden="true"></i> Progress Seserahan
@@ -203,7 +204,8 @@
                 class="bg-white p-5 sm:p-6 rounded-2xl flex flex-col justify-between border border-[#B6ADA3]/35 shadow-xs">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-sm font-semibold text-[#5F6F5B] flex items-center gap-2">
-                        <i class="fa-solid fa-file-circle-check text-[#D8A7B1]" aria-hidden="true"></i> Progress Persyaratan
+                        <i class="fa-solid fa-file-circle-check text-[#D8A7B1]" aria-hidden="true"></i> Progress
+                        Persyaratan
                     </h2>
                     <a href="{{ route('documents.index') }}"
                         class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#FCE8EC] text-[#8B3A47] border border-[#D8A7B1]/60 hover:bg-[#F8D7DE] transition">
@@ -233,7 +235,8 @@
             <div class="md:col-span-2 bg-white p-5 sm:p-6 rounded-2xl border border-[#B6ADA3]/35 shadow-xs space-y-4">
                 <div class="flex items-center justify-between">
                     <h3 class="font-bold text-[#5F6F5B] text-lg flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left text-[#D8A7B1]" aria-hidden="true"></i> Checklist Mendatang
+                        <i class="fa-solid fa-clock-rotate-left text-[#D8A7B1]" aria-hidden="true"></i> Checklist
+                        Mendatang
                     </h3>
                     <a href="{{ route('checklists.index') }}"
                         class="text-xs text-[#5F6F5B] hover:text-[#5F6F5B] hover:underline font-semibold">Lihat Semua
@@ -271,7 +274,8 @@
                             </span>
                         </div>
                     @empty
-                        <div class="text-center py-8 text-[#6B6258] text-sm">Semua checklist tugas penting sudah selesai! 🎉
+                        <div class="text-center py-8 text-[#6B6258] text-sm">Semua checklist tugas penting sudah selesai!
+                            🎉
                         </div>
                     @endforelse
                 </div>
@@ -285,38 +289,44 @@
                 <div class="grid grid-cols-1 gap-2.5 text-sm">
                     <a href="{{ route('moodboards.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
-                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-palette text-[#D8A7B1]" aria-hidden="true"></i>
+                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-palette text-[#D8A7B1]"
+                                aria-hidden="true"></i>
                             Moodboard Inspirasi</span>
                         <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('rundowns.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
-                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-clock text-[#D8A7B1]" aria-hidden="true"></i>
+                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-clock text-[#D8A7B1]"
+                                aria-hidden="true"></i>
                             Rundown Acara</span>
                         <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('contracts.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF6F0] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
                         <span class="flex items-center gap-3 font-medium"><i
-                                class="fa-solid fa-file-contract text-[#D8A7B1]" aria-hidden="true"></i> Kontrak Vendor</span>
+                                class="fa-solid fa-file-contract text-[#D8A7B1]" aria-hidden="true"></i> Kontrak
+                            Vendor</span>
                         <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('payments.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
                         <span class="flex items-center gap-3 font-medium"><i
-                                class="fa-solid fa-credit-card text-[#D8A7B1]" aria-hidden="true"></i> Payment Tracker</span>
+                                class="fa-solid fa-credit-card text-[#D8A7B1]" aria-hidden="true"></i> Payment
+                            Tracker</span>
                         <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('gifts.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
-                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-gift text-[#D8A7B1]" aria-hidden="true"></i>
+                        <span class="flex items-center gap-3 font-medium"><i class="fa-solid fa-gift text-[#D8A7B1]"
+                                aria-hidden="true"></i>
                             Gift & Angpao</span>
                         <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('reports.index') }}"
                         class="flex items-center justify-between p-3 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 hover:border-[#D8A7B1] hover:bg-white transition-colors text-[#5F6F5B]">
                         <span class="flex items-center gap-3 font-medium"><i
-                                class="fa-solid fa-file-invoice-dollar text-[#D8A7B1]" aria-hidden="true"></i> Laporan Akhir & Export</span>
+                                class="fa-solid fa-file-invoice-dollar text-[#D8A7B1]" aria-hidden="true"></i> Laporan
+                            Akhir & Export</span>
                         <i class="fa-solid fa-chevron-right text-xs text-[#D8A7B1]" aria-hidden="true"></i>
                     </a>
                 </div>
