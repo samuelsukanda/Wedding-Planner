@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\PurchaseSubmittedMail;
 use App\Models\Notification;
 use App\Models\DropdownOption;
 use App\Models\Setting;
@@ -12,6 +13,7 @@ use App\Models\VendorCatalog;
 use App\Models\Wedding;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -75,11 +77,10 @@ class PlanTest extends TestCase
     {
         [, $user] = $this->couple();
 
-        // Photobooth adalah add-on berdiri sendiri, bukan bagian paket Pro,
-        // jadi paket Free tidak dialihkan ke /upgrade tapi diberi halaman
-        // pembelian.
-        $this->actingAs($user)
-            ->get('/photobooth')
+        // Photobooth add-on berdiri sendiri, bukan bagian paket Pro. Pola
+        // route mengikuti moodboard: halaman masuk render "locked" inline
+        // (bukan redirect), tombol belinya membawa ke /upgrade.
+        $this->actingAs($user)->get('/photobooth')
             ->assertOk()
             ->assertSee('Buka Akses Photobooth Sekarang');
     }
@@ -88,10 +89,9 @@ class PlanTest extends TestCase
     {
         [, $user] = $this->couple('pro');
 
-        // Menu Photobooth terbuka untuk semua paket: photobooth adalah add-on
-        // berdiri sendiri, jadi belum aktif pun halamannya harus tampil.
-        $this->actingAs($user)
-            ->get('/photobooth')
+        // Menu Photobooth terbuka untuk semua paket: add-on berdiri sendiri,
+        // belum aktif pun halaman locked-nya tampil.
+        $this->actingAs($user)->get('/photobooth')
             ->assertOk()
             ->assertSee('Buka Akses Photobooth Sekarang')
             ->assertSee('TERKUNCI');
@@ -102,6 +102,10 @@ class PlanTest extends TestCase
         [, $user] = $this->couple('pro');
         $html = $this->actingAs($user)->get('/photobooth')->assertOk()->getContent();
 
+        // Sidebar (via layout) memuat posisi Photobooth di bawah Moodboard
+        // dan di atas Keuangan.
+        $this->assertStringContainsString('>Photobooth</span>', $html);
+        $this->assertStringContainsString('>Moodboard</span>', $html);
         $this->assertLessThan(
             strpos($html, '>Photobooth</span>'),
             strpos($html, '>Keuangan &amp; Dokumen')
@@ -379,7 +383,7 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
 
         $this->actingAs($user)->get('/upgrade')
             ->assertOk()
-            ->assertSee('Pembayaran Pro Sedang Diverifikasi')
+            ->assertSee('Pembayaran Sedang Diverifikasi')
             ->assertSee('Admin sedang memeriksa pembayaran kamu.')
             ->assertSee('Rp 55.000')
             ->assertSee('Menunggu Aktivasi')
@@ -468,6 +472,24 @@ public function test_pending_state_shows_verification_card_with_refresh_only()
         $this->assertSame(249000, $request->amount);
         $this->assertSame($wedding->id, $request->wedding_id);
         Storage::disk('local')->assertExists($request->proof_path);
+    }
+
+    public function test_purchase_notification_attaches_the_transfer_proof(): void
+    {
+        Mail::fake();
+        Storage::fake('local');
+        Setting::put('pro_price', '249000');
+
+        [, $user] = $this->couple();
+
+        $this->actingAs($user)->post('/upgrade', ['proof' => UploadedFile::fake()->image('bukti.jpg')]);
+
+        Mail::assertSent(PurchaseSubmittedMail::class, function (PurchaseSubmittedMail $mail) {
+            $attachments = $mail->attachments();
+
+            return count($attachments) === 1
+                && $attachments[0]->as === 'bukti-transfer-budi-siti.jpg';
+        });
     }
 
     public function test_second_request_is_blocked_while_one_is_pending()

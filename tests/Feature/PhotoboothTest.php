@@ -487,8 +487,8 @@ class PhotoboothTest extends TestCase
         $this->assertStringContainsString('Live Gallery untuk Tamu', $html);
         $this->assertStringContainsString('Buka Akses Photobooth Sekarang', $html);
 
-        // Empat foto portrait mengitari lock card dalam busur setengah lingkaran.
-        $this->assertStringContainsString('Buka Akses Photobooth Sekarang', $html);
+        // CTA beli mengarah ke halaman beli bergaya paket Pro.
+        $this->assertStringContainsString(route('upgrade.index', ['feature' => 'photobooth']), $html);
         $this->assertStringContainsString('FITUR ADD-ON', $html);
         foreach (['img-2.jpg', 'img-3.jpg', 'img-4.jpg', 'img-5.jpg'] as $image) {
             $this->assertStringContainsString('img/'.$image, $html);

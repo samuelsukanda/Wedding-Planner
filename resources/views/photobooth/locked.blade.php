@@ -1,47 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Kreatif - Photobooth Digital')
+@section('title', 'Beli Add-On Photobooth Digital')
 
 @section('content')
     <div
         class="relative flex min-h-[calc(100vh_-_13rem)] flex-col justify-center overflow-hidden rounded-3xl px-5 py-4 text-center md:py-5">
-        @if (!empty($pending))
-            <div class="relative mx-auto w-full max-w-md">
-                <a href="{{ route('admin.index') }}"
-                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5F6F5B]/70 hover:text-[#5F6F5B] transition">
-                    <i class="fa-solid fa-chevron-left text-[10px]"></i> Kembali
-                </a>
-                <div class="mt-4 w-full bg-white p-6 md:p-7 rounded-2xl border border-[#D8A7B1]/50 shadow-xs space-y-5">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 shrink-0 rounded-2xl bg-[#D8A7B1] flex items-center justify-center">
-                            <i class="fa-solid fa-clock text-white text-xl"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <h2 class="text-lg font-bold font-serif-title text-[#5F6F5B]">Pembayaran Photobooth Sedang Diverifikasi</h2>
-                            <p class="text-xs text-[#5F6F5B]/70 mt-0.5">Admin sedang memeriksa pembayaran kamu.</p>
-                        </div>
-                    </div>
-                    <dl class="rounded-xl border border-[#D8A7B1]/35 bg-[#FBF2F4]/60 px-4 py-3.5 text-sm divide-y divide-[#D8A7B1]/20">
-                        <div class="flex items-center justify-between gap-4 py-1.5">
-                            <dt class="text-xs text-[#5F6F5B]/70">Nominal</dt>
-                            <dd class="font-semibold text-[#5F6F5B]">Rp {{ number_format($pending->amount, 0, ',', '.') }}</dd>
-                        </div>
-                        <div class="flex items-center justify-between gap-4 py-1.5">
-                            <dt class="text-xs text-[#5F6F5B]/70">Konfirmasi</dt>
-                            <dd class="text-[#5F6F5B]/90">{{ $pending->created_at->format('d/m/Y, H.i.s') }}</dd>
-                        </div>
-                        <div class="flex items-center justify-between gap-4 py-1.5">
-                            <dt class="text-xs text-[#5F6F5B]/70">Status</dt>
-                            <dd class="font-semibold text-[#C2757F]">Menunggu Aktivasi</dd>
-                        </div>
-                    </dl>
-                    <a href="{{ route('photobooth.index') }}"
-                        class="btn-primary-rose inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs w-full sm:w-auto">
-                        <i class="fa-solid fa-rotate-right"></i> Refresh Status
-                    </a>
-                </div>
-            </div>
-        @else
         <div aria-hidden="true"
             class="pointer-events-none absolute inset-x-0 top-1/2 h-72 w-[46rem] max-w-full -translate-y-1/2 rounded-full bg-[#F3E4E1]/50 blur-3xl">
         </div>
@@ -108,5 +71,4 @@
             </p> --}}
         </div>
     </div>
-    @endif
 @endsection

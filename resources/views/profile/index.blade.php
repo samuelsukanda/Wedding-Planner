@@ -157,7 +157,11 @@
                                     class="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#FAF7F2] border border-[#B6ADA3]/30 px-3.5 py-2.5">
                                     <div class="min-w-0">
                                         <div class="text-sm font-semibold text-[#5F6F5B]">
-                                            Paket {{ strtoupper($purchase->plan) }} &middot;
+                                            @if ($purchase->feature === 'photobooth')
+                                                Add-on Photobooth &middot;
+                                            @else
+                                                Paket {{ strtoupper($purchase->plan) }} &middot;
+                                            @endif
                                             Rp {{ number_format($purchase->amount, 0, ',', '.') }}
                                         </div>
                                         <div class="text-[11px] text-[#5F6F5B]">

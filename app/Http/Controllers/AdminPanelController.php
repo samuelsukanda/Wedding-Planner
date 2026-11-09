@@ -47,7 +47,7 @@ class AdminPanelController extends Controller
             // Lewat relasi jadi otomatis ter-scope ke wedding yang sedang login;
             // superadmin tanpa wedding tidak punya apa pun untuk ditampilkan.
             'upgradeRequests' => $wedding
-                ? $wedding->upgradeRequests()->latest()->get()
+                ? $wedding->upgradeRequests()->latest()->take(5)->get()
                 : collect(),
             'contact' => $contact,
         ]);

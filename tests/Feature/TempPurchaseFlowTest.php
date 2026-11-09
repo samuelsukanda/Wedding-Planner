@@ -55,7 +55,7 @@ class TempPurchaseFlowTest extends TestCase
 
         $response->assertRedirect(route('photobooth.index'));
 
-        $html = $this->actingAs($user)->get('/photobooth')->getContent();
-        $this->assertStringContainsString('Sedang Diverifikasi', $html, 'PHOTOBOOTH: pending card missing');
+        $html = $this->followingRedirects()->actingAs($user)->get('/photobooth')->getContent();
+        $this->assertStringContainsString('Buka Akses Photobooth Sekarang', $html, 'PHOTOBOOTH: locked page missing');
     }
 }

@@ -22,8 +22,9 @@ class PhotoboothController extends Controller
     {
         $wedding = Wedding::current();
 
-        // Belum punya add-on: yang tampil halaman pembelian, bukan halaman
-        // pengaturan. Photobooth berdiri sendiri, bukan bagian paket Pro.
+        // Belum punya add-on: tampil halaman "locked" kreatif dulu. Tombol
+        // belinya mengarah ke halaman beli (desain sama dengan paket Pro).
+        // Locked view sudah menangani status pending sendiri.
         if (! $wedding?->photobooth_active) {
             return view('photobooth.locked', [
                 'wedding' => $wedding,
@@ -169,19 +170,21 @@ class PhotoboothController extends Controller
             'proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
         ]);
 
-        $created = DB::transaction(function () use ($wedding, $request, $validated) {
+        $proofPath = null;
+        $created = DB::transaction(function () use ($wedding, $request, $validated, &$proofPath) {
             $wedding = $wedding->newQuery()->lockForUpdate()->findOrFail($wedding->id);
 
             if ($wedding->upgradeRequests()->where('feature', 'photobooth')->where('status', 'pending')->exists()) {
                 return false;
             }
 
+            $proofPath = $validated['proof']->store('upgrade-proofs', 'local');
             $wedding->upgradeRequests()->create([
                 'user_id' => $request->user()->id,
                 'feature' => 'photobooth',
                 'plan' => $wedding->plan,
                 'amount' => (int) Setting::get('photobooth_price', 0),
-                'proof_path' => $validated['proof']->store('upgrade-proofs', 'local'),
+                'proof_path' => $proofPath,
                 'status' => 'pending',
             ]);
 
@@ -202,7 +205,8 @@ class PhotoboothController extends Controller
                 'photobooth',
                 (string) $wedding->couple_name,
                 (int) \App\Models\Setting::get('photobooth_price', 0),
-                $request->user()->id
+                $request->user()->id,
+                $proofPath
             ));
         } catch (\Throwable $e) {
             report($e);

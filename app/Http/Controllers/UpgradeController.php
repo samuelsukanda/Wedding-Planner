@@ -61,11 +61,13 @@ class UpgradeController extends Controller
             'proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
         ]);
 
-        $created = DB::transaction(function () use ($wedding, $request, $validated, $isPhotobooth) {
+        $proofPath = null;
+        $created = DB::transaction(function () use ($wedding, $request, $validated, $isPhotobooth, &$proofPath) {
             $wedding = $wedding->newQuery()->lockForUpdate()->findOrFail($wedding->id);
             if ($wedding->upgradeRequests()
                 ->where('feature', $isPhotobooth ? 'photobooth' : 'pro')
                 ->where('status', 'pending')->exists()) return false;
+            $proofPath = $validated['proof']->store('upgrade-proofs', 'local');
             $wedding->upgradeRequests()->create([
             'user_id' => $request->user()->id,
             'feature' => $isPhotobooth ? 'photobooth' : 'pro',
@@ -73,14 +75,14 @@ class UpgradeController extends Controller
             // Harga direkam saat request dibuat supaya riwayat audit tetap
             // konsisten bila nanti superadmin menaikkan harga.
             'amount' => (int) Setting::get($isPhotobooth ? 'photobooth_price' : 'pro_price', 0),
-            'proof_path' => $validated['proof']->store('upgrade-proofs', 'local'),
+            'proof_path' => $proofPath,
             'status' => 'pending',
             ]);
             return true;
         });
         if (! $created) return back()->with('error', 'Kamu sudah mengirim bukti transfer dan masih menunggu konfirmasi admin.');
 
-        $this->notifyPurchase($wedding, $isPhotobooth, (int) Setting::get($isPhotobooth ? 'photobooth_price' : 'pro_price', 0), $request->user()->id);
+        $this->notifyPurchase($wedding, $isPhotobooth, (int) Setting::get($isPhotobooth ? 'photobooth_price' : 'pro_price', 0), $request->user()->id, $proofPath);
 
         return redirect()->route('upgrade.index', $isPhotobooth ? ['feature' => 'photobooth'] : [])
             ->with('success', 'Bukti transfer terkirim. Menunggu konfirmasi admin.');
@@ -89,7 +91,7 @@ class UpgradeController extends Controller
     /**
      * Kirim email notifikasi ke superadmin tentang pembelian baru.
      */
-    protected function notifyPurchase(\App\Models\Wedding $wedding, bool $isPhotobooth, int $amount, int $userId): void
+    protected function notifyPurchase(\App\Models\Wedding $wedding, bool $isPhotobooth, int $amount, int $userId, ?string $proofPath = null): void
     {
         $recipients = \App\Models\User::where('is_superadmin', true)->pluck('email')->filter()->all();
         if (empty($recipients)) {
@@ -101,7 +103,8 @@ class UpgradeController extends Controller
                 $isPhotobooth ? 'photobooth' : 'pro',
                 (string) $wedding->couple_name,
                 $amount,
-                $userId
+                $userId,
+                $proofPath
             ));
         } catch (\Throwable $e) {
             report($e);
